@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Scripts\Core\Game\Boot\**" />
+    <Compile Remove="Scripts\Core\Game\Domain\**" />
+    <Compile Remove="Scripts\Core\Game\Save\**" />
+    <Compile Remove="Scripts\Core\Game\World\**" />
+    <EmbeddedResource Remove="Scripts\Core\Game\Boot\**" />
+    <EmbeddedResource Remove="Scripts\Core\Game\Domain\**" />
+    <EmbeddedResource Remove="Scripts\Core\Game\Save\**" />
+    <EmbeddedResource Remove="Scripts\Core\Game\World\**" />
+    <None Remove="Scripts\Core\Game\Boot\**" />
+    <None Remove="Scripts\Core\Game\Domain\**" />
+    <None Remove="Scripts\Core\Game\Save\**" />
+    <None Remove="Scripts\Core\Game\World\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NameLibrary.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SocialRoles.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Traits.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NpcDefines.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaneDefines.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Scripts\Core\Events\" />
+    <Folder Include="Scripts\Core\Gameplay\" />
+    <Folder Include="Scripts\Core\Game\" />
+    <Folder Include="Scripts\Core\Managers\" />
+    <Folder Include="Scripts\Core\Systems\" />
+    <Folder Include="Scripts\Core\Utils\" />
+    <Folder Include="Scripts\Data\" />
+    <Folder Include="Scripts\Gameplay\" />
+    <Folder Include="Scripts\Resources\" />
+    <Folder Include="Scripts\Tests\" />
+    <Folder Include="Scripts\ThirdParty\" />
+    <Folder Include="Scripts\Tools\" />
+    <Folder Include="Scripts\UI\" />
+  </ItemGroup>
+
+</Project>

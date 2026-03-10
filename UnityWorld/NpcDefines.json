@@ -1,0 +1,62 @@
+[
+  {
+    "ID": "human_farmer",
+    "npcType": "Human",
+    "defaultRoles": [ "farmer" ],
+    "initAgeMin": 15.0,
+    "initAgeMax": 50.0,
+    "baseLifespanMax": 70.0,
+    "baseMoveSpeed": 2.5,
+    "initCultivationLevelMin": 0,
+    "initCultivationLevelMax": 0,
+    "initialTraits": []
+  },
+  {
+    "ID": "cultivator_wanderer",
+    "npcType": "Human",
+    "defaultRoles": [ "cultivator", "wanderer" ],
+    "initAgeMin": 16.0,
+    "initAgeMax": 30.0,
+    "baseLifespanMax": 500.0,
+    "baseMoveSpeed": 5.0,
+    "initCultivationLevelMin": 1,
+    "initCultivationLevelMax": 5,
+    "initialTraits": []
+  },
+  {
+    "ID": "human_soldier",
+    "npcType": "Human",
+    "defaultRoles": [ "soldier" ],
+    "initAgeMin": 18.0,
+    "initAgeMax": 40.0,
+    "baseLifespanMax": 65.0,
+    "baseMoveSpeed": 3.5,
+    "initCultivationLevelMin": 0,
+    "initCultivationLevelMax": 0,
+    "initialTraits": []
+  },
+  {
+    "ID": "human_merchant",
+    "npcType": "Human",
+    "defaultRoles": [ "merchant" ],
+    "initAgeMin": 20.0,
+    "initAgeMax": 55.0,
+    "baseLifespanMax": 75.0,
+    "baseMoveSpeed": 3.0,
+    "initCultivationLevelMin": 0,
+    "initCultivationLevelMax": 0,
+    "initialTraits": []
+  },
+  {
+    "ID": "cultivator_sect_disciple",
+    "npcType": "Human",
+    "defaultRoles": [ "cultivator" ],
+    "initAgeMin": 12.0,
+    "initAgeMax": 25.0,
+    "baseLifespanMax": 300.0,
+    "baseMoveSpeed": 4.5,
+    "initCultivationLevelMin": 1,
+    "initCultivationLevelMax": 3,
+    "initialTraits": []
+  }
+]

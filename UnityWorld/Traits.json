@@ -1,0 +1,60 @@
+[
+  {
+    "id": "brave",
+    "displayName": "勇敢",
+    "description": "面对危险时毫不退缩，令敌胆寒。",
+    "statModifiers": [
+      { "statId": "move_speed", "type": "flat", "value": 0.3 }
+    ]
+  },
+  {
+    "id": "coward",
+    "displayName": "胆小",
+    "description": "遇事易惊慌失措，常在危机前选择逃跑。",
+    "statModifiers": [
+      { "statId": "move_speed", "type": "flat", "value": -0.3 }
+    ]
+  },
+  {
+    "id": "greedy",
+    "displayName": "贪财",
+    "description": "对钱财有异常的执念，为利可弯腰折节。",
+    "statModifiers": []
+  },
+  {
+    "id": "just",
+    "displayName": "正义",
+    "description": "心怀天下，嫉恶如仇，以公正为行事准则。",
+    "statModifiers": []
+  },
+  {
+    "id": "strong_body",
+    "displayName": "体魄强健",
+    "description": "天生体质出众，比常人更为耐久。",
+    "statModifiers": [
+      { "statId": "lifespan_max", "type": "percent", "value": 0.1 }
+    ]
+  },
+  {
+    "id": "frail",
+    "displayName": "体弱多病",
+    "description": "身体羸弱，寿元不如常人，修行亦更为艰难。",
+    "statModifiers": [
+      { "statId": "lifespan_max", "type": "percent", "value": -0.2 }
+    ]
+  },
+  {
+    "id": "cultivation_genius",
+    "displayName": "修炼奇才",
+    "description": "天生对天地灵气亲和，修炼速度远超同侪。",
+    "statModifiers": [
+      { "statId": "time_flow_rate", "type": "percent", "value": 0.2 }
+    ]
+  },
+  {
+    "id": "vengeful",
+    "displayName": "有仇必报",
+    "description": "记恨于心，睚眦必报，绝不轻易原谅冒犯者。",
+    "statModifiers": []
+  }
+]

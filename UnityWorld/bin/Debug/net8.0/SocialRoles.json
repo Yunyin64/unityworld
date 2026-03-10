@@ -1,0 +1,42 @@
+[
+  {
+    "id": "farmer",
+    "displayName": "农民",
+    "description": "耕作土地为生，是世间最普通的劳动者。"
+  },
+  {
+    "id": "merchant",
+    "displayName": "商人",
+    "description": "以货殖往来为业，走南闯北，精于计算。"
+  },
+  {
+    "id": "soldier",
+    "displayName": "士兵",
+    "description": "为主家效力的武卒，受过基础军事训练。"
+  },
+  {
+    "id": "noble",
+    "displayName": "贵族",
+    "description": "出身名门，享有特权，肩负宗族责任。"
+  },
+  {
+    "id": "scholar",
+    "displayName": "学者",
+    "description": "博览群书，精通典籍，以知识为立身之本。"
+  },
+  {
+    "id": "bandit",
+    "displayName": "强盗",
+    "description": "游走于法外之地，以武力谋财，为世所不容。"
+  },
+  {
+    "id": "wanderer",
+    "displayName": "游侠",
+    "description": "居无定所，仗剑天涯，不受任何势力束缚。"
+  },
+  {
+    "id": "cultivator",
+    "displayName": "修士",
+    "description": "踏上修行之路，以感悟天地法则为毕生志向。"
+  }
+]

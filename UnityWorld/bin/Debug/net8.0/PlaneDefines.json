@@ -1,0 +1,35 @@
+[
+  {
+    "ID": "sub_cave_small",
+    "DisplayName": "洞府（小）",
+    "Kind": "subPlane",
+    "Width": 20,
+    "Height": 20,
+    "TimeFlowRate": 1.0,
+    "AuraBonus": null
+  },
+  {
+    "ID": "sub_secret_realm",
+    "DisplayName": "秘境",
+    "Kind": "subPlane",
+    "Width": 40,
+    "Height": 40,
+    "TimeFlowRate": 2.0,
+    "AuraBonus": null
+  },
+  {
+    "ID": "sub_spirit_mountain",
+    "DisplayName": "灵气充沛的仙山",
+    "Kind": "subPlane",
+    "Width": 30,
+    "Height": 30,
+    "TimeFlowRate": 1.5,
+    "AuraBonus": {
+      "Metal": 10,
+      "Wood": 20,
+      "Water": 5,
+      "Fire": 5,
+      "Earth": 10
+    }
+  }
+]
