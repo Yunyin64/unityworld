@@ -1,0 +1,49 @@
+f:\Openclaw\UnityWorld\UnityWorld\Program.cs(23,12): warning CS8602: 解引用可能出现空引用。 [f:\Openclaw\UnityWorld\UnityWorld\UnityWorld.csproj]
+f:\Openclaw\UnityWorld\UnityWorld\Program.cs(139,25): warning CS8602: 解引用可能出现空引用。 [f:\Openclaw\UnityWorld\UnityWorld\UnityWorld.csproj]
+[SocialRoleMgr] 加载完成：8 个社会角色定义
+[TraitDefineMgr] 加载完成：8 个特质定义
+[NpcDefineMgr] 加载完成：5 个 NPC 定义
+[PlaneDefineMgr] 加载完成：3 个位面定义
+[TagDefineMgr] 加载完成：14 个Tag定义
+[TriggerDefineMgr] 加载完成：4 个Trigger定义
+[ConditionDefineMgr] 加载完成：3 个Condition定义
+[ActionDefineMgr] 加载完成：8 个Action定义
+[EffectDefineMgr] 加载完成：0 个Effect定义
+[CardDefineMgr] 加载完成：4 个Card模板定义
+[GameDataMgr] 所有数据加载完成
+主世界大小：200×200
+=== 世界初始化完成 ===
+
+=== 创建了 3 个NPC ===
+
+── 第 0 年 [Tick=0] ──────────────────
+  ✅存活 [冯金花] Female [farmer] 凡人 | 年龄 19.9/70岁 (28%) | 时间流速 ×1.0 | (10,20) PlaneId(0)
+  ✅存活 [周建军] Male [farmer] 凡人 | 年龄 40.4/70岁 (58%) | 时间流速 ×1.0 | (15,22) PlaneId(0)
+  ✅存活 [洗玄上人·朱庆年] Male [cultivator,wanderer] 修为Lv.3 | 年龄 19.6/500岁 (4%) | 时间流速 ×1.0 | (100,200) PlaneId(0)
+
+
+=== 修士进入洞天秘境（时间流速 ×2）===
+
+
+═══════════════════════════════════════
+  卡牌生成测试
+═══════════════════════════════════════
+
+[火系卡 1] Trigger=trigger_on_burn | Condition=cond_target_burn | Actions=[action_burn_spread,action_apply_burn,action_fire_dmg_3] | PowerScore=5 | Tags=[被动,火,燃烧,状态,范围,异常,伤害]
+[火系卡 2] Trigger=trigger_on_burn | Condition=cond_target_burn | Actions=[action_fire_dmg_3,action_apply_burn,action_burn_spread] | PowerScore=5 | Tags=[被动,火,燃烧,状态,伤害,异常,范围]
+[火系卡 3] Trigger=trigger_on_burn | Condition=cond_target_burn | Actions=[action_fire_dmg_3,action_burn_spread,action_fire_dmg_1] | PowerScore=3 | Tags=[被动,火,燃烧,状态,伤害,范围]
+[攻击卡 1] Trigger=trigger_on_attack | Condition=cond_target_low_hp | Actions=[action_atk_1,action_fire_dmg_1,action_atk_3] | PowerScore=2 | Tags=[主动,攻击,致命,条件,伤害,火]
+[攻击卡 2] Trigger=trigger_on_attack | Condition=cond_target_low_hp | Actions=[action_atk_3,action_fire_dmg_1,action_atk_1] | PowerScore=2 | Tags=[主动,攻击,致命,条件,伤害,火]
+[CardSystemGenerate] 已导出 5 张卡牌 到 f:\Openclaw\UnityWorld\UnityWorld\bin\Debug\net8.0\Data\CardTemp.json
+
+导出完成：f:\Openclaw\UnityWorld\UnityWorld\bin\Debug\net8.0\Data\CardTemp.json
+
+═══════════════════════════════════════
+
+=== 开始实时模拟（Ctrl+C 退出）===
+
+── 第 1 年 [Tick=12] ──────────────────
+  ✅存活 [冯金花] Female [farmer] 凡人 | 年龄 20.9/70岁 (30%) | 时间流速 ×1.0 | (10,20) PlaneId(0)
+  ✅存活 [周建军] Male [farmer] 凡人 | 年龄 41.4/70岁 (59%) | 时间流速 ×1.0 | (15,22) PlaneId(0)
+  ✅存活 [洗玄上人·朱庆年] Male [cultivator,wanderer] 修为Lv.3 | 年龄 21.6/500岁 (4%) | 时间流速 ×2.0 | (100,200) PlaneId(0)
+

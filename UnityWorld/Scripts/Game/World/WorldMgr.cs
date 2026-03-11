@@ -29,6 +29,7 @@ namespace UnityWorld.Game.World
         public static void Start()
         {
             
+        Console.WriteLine("=== 世界初始化完成 ===\n");
         }
 
         /// <summary>

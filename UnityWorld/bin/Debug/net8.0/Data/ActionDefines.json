@@ -1,0 +1,72 @@
+﻿[{
+  "ID": "action_fire_dmg_1",
+  "DisplayName": "火焰伤害1",
+  "desc": "造成 1 点火焰伤害",
+  "score": 1,
+  "tags": ["火", "伤害"],
+  "conflictTags": [],
+  "rarity": 0
+},
+{
+  "ID": "action_fire_dmg_3",
+  "DisplayName": "火焰伤害3",
+  "desc": "造成 3 点火焰伤害",
+  "score": 3,
+  "tags": ["火", "火", "伤害"],
+  "conflictTags": [],
+  "rarity": 0
+},
+{
+  "ID": "action_apply_burn",
+  "DisplayName": "附加燃烧",
+  "desc": "对目标附加燃烧状态",
+  "score": 3,
+  "tags": ["火", "燃烧", "异常"],
+  "conflictTags": ["冰"],
+  "rarity": 0
+},
+{
+  "ID": "action_burn_spread",
+  "DisplayName": "燃烧扩散",
+  "desc": "将燃烧扩散到相邻敌人",
+  "score": 4,
+  "tags": ["火", "火", "燃烧", "范围"],
+  "conflictTags": [],
+  "rarity": 1
+},
+{
+  "ID": "action_forge_1",
+  "DisplayName": "铸造武器",
+  "desc": "铸造 1 件武器",
+  "score": 3,
+  "tags": ["火", "铸造", "武器"],
+  "conflictTags": [],
+  "rarity": 1
+},
+{
+  "ID": "action_atk_1",
+  "DisplayName": "物理伤害1",
+  "desc": "造成 1 点物理伤害",
+  "score": 1,
+  "tags": ["攻击", "伤害"],
+  "conflictTags": [],
+  "rarity": 0
+},
+{
+  "ID": "action_atk_3",
+  "DisplayName": "物理伤害3",
+  "desc": "造成 3 点物理伤害",
+  "score": 3,
+  "tags": ["攻击", "攻击", "伤害"],
+  "conflictTags": [],
+  "rarity": 0
+},
+{
+  "ID": "action_execute",
+  "DisplayName": "处决",
+  "desc": "直接处决低血量目标",
+  "score": 5,
+  "tags": ["攻击", "致命", "黑暗"],
+  "conflictTags": [],
+  "rarity": 2
+}]

@@ -1,0 +1,16 @@
+[
+  { "ID": "fire",     "DisplayName": "火",   "desc": "火焰属性，与燃烧、灼烧相关" },
+  { "ID": "ice",      "DisplayName": "冰",   "desc": "冰霜属性，与冻结、减速相关" },
+  { "ID": "burn",     "DisplayName": "燃烧", "desc": "持续燃烧状态" },
+  { "ID": "freeze",   "DisplayName": "冻结", "desc": "冻结状态，行动受限" },
+  { "ID": "dot",      "DisplayName": "持续伤害", "desc": "每回合持续造成伤害" },
+  { "ID": "debuff",   "DisplayName": "异常", "desc": "各类负面状态的统称" },
+  { "ID": "damage",   "DisplayName": "伤害", "desc": "直接造成生命值损失" },
+  { "ID": "aoe",      "DisplayName": "范围", "desc": "影响多个目标" },
+  { "ID": "forge",    "DisplayName": "铸造", "desc": "锻造/增强武器相关" },
+  { "ID": "weapon",   "DisplayName": "武器", "desc": "与武器相关的效果" },
+  { "ID": "passive",  "DisplayName": "被动", "desc": "被动触发类效果" },
+  { "ID": "active",   "DisplayName": "主动", "desc": "主动使用类效果" },
+  { "ID": "control",  "DisplayName": "控制", "desc": "限制敌方行动" },
+  { "ID": "slow",     "DisplayName": "减速", "desc": "降低敌方移动或行动速度" }
+]

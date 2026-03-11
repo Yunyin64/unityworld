@@ -1,0 +1,29 @@
+﻿[
+  {
+    "ID": "cond_none",
+    "DisplayName": "无条件",
+    "desc": "无条件，始终生效",
+    "score": 0,
+    "tags": [],
+    "conflictTags": [],
+    "rarity": 0
+  },
+  {
+    "ID": "cond_target_burn",
+    "DisplayName": "目标燃烧",
+    "desc": "目标有燃烧状态时",
+    "score": -2,
+    "tags": ["火", "燃烧", "状态"],
+    "conflictTags": ["冰"],
+    "rarity": 1
+  },
+  {
+    "ID": "cond_target_low_hp",
+    "DisplayName": "目标低血",
+    "desc": "目标 HP 低于 30%",
+    "score": -3,
+    "tags": ["攻击", "致命", "条件"],
+    "conflictTags": [],
+    "rarity": 1
+  }
+]

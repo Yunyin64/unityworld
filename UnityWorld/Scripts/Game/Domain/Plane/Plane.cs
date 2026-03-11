@@ -41,6 +41,8 @@ namespace UnityWorld.Game.Domain
         public static PlaneConfig ForMainPlane(string name = "主世界") => new()
         {
             Name = name,
+            Width = 200,   // 主世界默认 200×200（可修改）
+            Height = 200,
             Kind = PlaneTypes.PlaneKind.MainPlane,
             TimeFlowRate = 1f,
         };

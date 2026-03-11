@@ -1,0 +1,46 @@
+[
+  {
+    "ID": "card_fire_common",
+    "DisplayName": "火焰卡（普通）",
+    "desc": "普通的火系卡牌模板，单Effect，预算适中",
+    "rarity": 0,
+    "maxEffects": 1,
+    "effectScoreLimit": 3,
+    "tags": ["fire"],
+    "matchType": 2,
+    "matchDegree": 0.7
+  },
+  {
+    "ID": "card_fire_rare",
+    "DisplayName": "火焰卡（稀有）",
+    "desc": "稀有的火系卡牌模板，双Effect，高浓度火属性",
+    "rarity": 2,
+    "maxEffects": 2,
+    "effectScoreLimit": 6,
+    "tags": ["fire", "fire", "burn"],
+    "matchType": 2,
+    "matchDegree": 0.8
+  },
+  {
+    "ID": "card_ice_common",
+    "DisplayName": "冰霜卡（普通）",
+    "desc": "普通的冰系卡牌模板，单Effect",
+    "rarity": 0,
+    "maxEffects": 1,
+    "effectScoreLimit": 3,
+    "tags": ["ice"],
+    "matchType": 2,
+    "matchDegree": 0.7
+  },
+  {
+    "ID": "card_chaos_rare",
+    "DisplayName": "混沌卡（稀有）",
+    "desc": "不限定主题，任意搭配的稀有混沌卡",
+    "rarity": 2,
+    "maxEffects": 2,
+    "effectScoreLimit": 5,
+    "tags": [],
+    "matchType": 3,
+    "matchDegree": 0.0
+  }
+]

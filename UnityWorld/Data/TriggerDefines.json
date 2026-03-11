@@ -1,0 +1,38 @@
+﻿[
+  {
+    "ID": "trigger_on_use",
+    "DisplayName": "使用时",
+    "desc": "使用时触发",
+    "score": 0,
+    "tags": ["主动", "使用"],
+    "conflictTags": [],
+    "rarity": 0
+  },
+  {
+    "ID": "trigger_on_attack",
+    "DisplayName": "攻击时",
+    "desc": "攻击时触发",
+    "score": 0,
+    "tags": ["主动", "攻击"],
+    "conflictTags": [],
+    "rarity": 0
+  },
+  {
+    "ID": "trigger_on_burn",
+    "DisplayName": "燃烧触发",
+    "desc": "敌人触发燃烧时",
+    "score": -3,
+    "tags": ["被动", "火", "燃烧"],
+    "conflictTags": [],
+    "rarity": 1
+  },
+  {
+    "ID": "trigger_on_death",
+    "DisplayName": "死亡触发",
+    "desc": "敌人死亡时触发",
+    "score": -4,
+    "tags": ["被动", "死亡", "黑暗"],
+    "conflictTags": [],
+    "rarity": 1
+  }
+]

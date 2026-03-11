@@ -24,10 +24,18 @@ namespace UnityWorld.Game.Data
         {
             baseDir ??= AppContext.BaseDirectory;
             // 注册到列表，方便统一调用 Load
-        _datamgrs.Add(new SocialRoleMgr(Path.Combine(baseDir, "SocialRoles.json")));
-        _datamgrs.Add(new TraitDefineMgr(Path.Combine(baseDir, "Traits.json")));
-        _datamgrs.Add(new NpcDefineMgr(Path.Combine(baseDir, "NpcDefines.json")));
-        _datamgrs.Add(new PlaneDefineMgr(Path.Combine(baseDir, "PlaneDefines.json")));
+        var dataDir = Path.Combine(baseDir, "Data");
+        _datamgrs.Add(new SocialRoleMgr(Path.Combine(dataDir, "SocialRoles.json")));
+        _datamgrs.Add(new TraitDefineMgr(Path.Combine(dataDir, "Traits.json")));
+        _datamgrs.Add(new NpcDefineMgr(Path.Combine(dataDir, "NpcDefines.json")));
+        _datamgrs.Add(new PlaneDefineMgr(Path.Combine(dataDir, "PlaneDefines.json")));
+        // ── 卡牌系统 ──────────────────────────────────────────
+        _datamgrs.Add(new TagDefineMgr(Path.Combine(dataDir, "TagDefines.json")));
+        _datamgrs.Add(new TriggerDefineMgr(Path.Combine(dataDir, "TriggerDefines.json")));
+        _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "ConditionDefines.json")));
+        _datamgrs.Add(new ActionDefineMgr(Path.Combine(dataDir, "ActionDefines.json")));
+        _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
+        _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "CardDefines.json")));
 
             Instance = this;
         }

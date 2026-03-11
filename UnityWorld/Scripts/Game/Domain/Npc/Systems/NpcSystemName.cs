@@ -39,7 +39,7 @@ namespace UnityWorld.Game.Domain
         public NpcSystemName(Rng rng, string? jsonPath = null)
         {
             _rng = rng;
-            jsonPath ??= Path.Combine(AppContext.BaseDirectory, "NameLibrary.json");
+            jsonPath ??= Path.Combine(AppContext.BaseDirectory, "Data", "NameLibrary.json");
             _library = LoadLibrary(jsonPath);
         }
 
