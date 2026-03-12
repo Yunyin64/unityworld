@@ -15,7 +15,7 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("score")]
         public int Score { get; set; } = 0;
 
-        /// <summary>Tag列表（重复表示浓度）</summary>
+        /// <summary>Tag列表（这里不可重复）</summary>
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; } = [];
 
@@ -24,7 +24,7 @@ namespace UnityWorld.Game.Data
         public List<string> ConflictTags { get; set; } = [];
 
         /// <summary>稀有度</summary>
-        [JsonPropertyName("rarity")]
-        public int Rarity { get; set; } = 0;
+        [JsonPropertyName("weight")]
+        public int Weight { get; set; } = 0;
     }
 }

@@ -1,0 +1,1222 @@
+## 来自你的消息
+先不写代码，我们来设计一个基于tag组合的卡牌系统，怎么样
+<environment_details>
+# Current Time
+2026/3/11 上午11:20:27 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+
+
+## 工具调用结果
+<activated_skill name="openspec-explore">
+<instructions>
+Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
+
+**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first (e.g., start a change with `/opsx:new` or `/opsx:ff`). You MAY create OpenSpec artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.
+
+**This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.
+
+**Input**: The argument after `/opsx:explore` is whatever the user wants to think about. Could be:
+- A vague idea: "real-time collaboration"
+- A specific problem: "the auth system is getting unwieldy"
+- A change name: "add-dark-mode" (to explore in context of that change)
+- A comparison: "postgres vs sqlite for this"
+- Nothing (just enter explore mode)
+
+---
+
+## The Stance
+
+- **Curious, not prescriptive** - Ask questions that emerge naturally, don't follow a script
+- **Open threads, not interrogations** - Surface multiple interesting directions and let the user follow what resonates. Don't funnel them through a single path of questions.
+- **Visual** - Use ASCII diagrams liberally when they'd help clarify thinking
+- **Adaptive** - Follow interesting threads, pivot when new information emerges
+- **Patient** - Don't rush to conclusions, let the shape of the problem emerge
+- **Grounded** - Explore the actual codebase when relevant, don't just theorize
+
+---
+
+## What You Might Do
+
+Depending on what the user brings, you might:
+
+**Explore the problem space**
+- Ask clarifying questions that emerge from what they said
+- Challenge assumptions
+- Reframe the problem
+- Find analogies
+
+**Investigate the codebase**
+- Map existing architecture relevant to the discussion
+- Find integration points
+- Identify patterns already in use
+- Surface hidden complexity
+
+**Compare options**
+- Brainstorm multiple approaches
+- Build comparison tables
+- Sketch tradeoffs
+- Recommend a path (if asked)
+
+**Visualize**
+```
+┌─────────────────────────────────────────┐
+│     Use ASCII diagrams liberally        │
+├─────────────────────────────────────────┤
+│                                         │
+│   ┌────────┐         ┌────────┐        │
+│   │ State  │────────▶│ State  │        │
+│   │   A    │         │   B    │        │
+│   └────────┘         └────────┘        │
+│                                         │
+│   System diagrams, state machines,      │
+│   data flows, architecture sketches,    │
+│   dependency graphs, comparison tables  │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**Surface risks and unknowns**
+- Identify what could go wrong
+- Find gaps in understanding
+- Suggest spikes or investigations
+
+---
+
+## OpenSpec Awareness
+
+You have full context of the OpenSpec system. Use it naturally, don't force it.
+
+### Check for context
+
+At the start, quickly check what exists:
+```bash
+openspec list --json
+```
+
+This tells you:
+- If there are active changes
+- Their names, schemas, and status
+- What the user might be working on
+
+If the user mentioned a specific change name, read its artifacts for context.
+
+### When no change exists
+
+Think freely. When insights crystallize, you might offer:
+
+- "This feels solid enough to start a change. Want me to create one?"
+  → Can transition to `/opsx:new` or `/opsx:ff`
+- Or keep exploring - no pressure to formalize
+
+### When a change exists
+
+If the user mentions a change or you detect one is relevant:
+
+1. **Read existing artifacts for context**
+   - `openspec/changes/<name>/proposal.md`
+   - `openspec/changes/<name>/design.md`
+   - `openspec/changes/<name>/tasks.md`
+   - etc.
+
+2. **Reference them naturally in conversation**
+   - "Your design mentions using Redis, but we just realized SQLite fits better..."
+   - "The proposal scopes this to premium users, but we're now thinking everyone..."
+
+3. **Offer to capture when decisions are made**
+
+   | Insight Type | Where to Capture |
+   |--------------|------------------|
+   | New requirement discovered | `specs/<capability>/spec.md` |
+   | Requirement changed | `specs/<capability>/spec.md` |
+   | Design decision made | `design.md` |
+   | Scope changed | `proposal.md` |
+   | New work identified | `tasks.md` |
+   | Assumption invalidated | Relevant artifact |
+
+   Example offers:
+   - "That's a design decision. Capture it in design.md?"
+   - "This is a new requirement. Add it to specs?"
+   - "This changes scope. Update the proposal?"
+
+4. **The user decides** - Offer and move on. Don't pressure. Don't auto-capture.
+
+---
+
+## What You Don't Have To Do
+
+- Follow a script
+- Ask the same questions every time
+- Produce a specific artifact
+- Reach a conclusion
+- Stay on topic if a tangent is valuable
+- Be brief (this is thinking time)
+
+---
+
+## Ending Discovery
+
+There's no required ending. Discovery might:
+
+- **Flow into action**: "Ready to start? `/opsx:new` or `/opsx:ff`"
+- **Result in artifact updates**: "Updated design.md with these decisions"
+- **Just provide clarity**: User has what they need, moves on
+- **Continue later**: "We can pick this up anytime"
+
+When things crystallize, you might offer a summary - but it's optional. Sometimes the thinking IS the value.
+
+---
+
+## Guardrails
+
+- **Don't implement** - Never write code or implement features. Creating OpenSpec artifacts is fine, writing application code is not.
+- **Don't fake understanding** - If something is unclear, dig deeper
+- **Don't rush** - Discovery is thinking time, not task time
+- **Don't force structure** - Let patterns emerge naturally
+- **Don't auto-capture** - Offer to save insights, don't just do it
+- **Do visualize** - A good diagram is worth many paragraphs
+- **Do explore the codebase** - Ground discussions in reality
+- **Do question assumptions** - Including the user's and your own
+</instructions>
+</activated_skill>
+
+## 来自 CodeMaker 的消息
+太好了！基于 tag 组合的卡牌系统是个很有趣的设计方向。让我们一起来探索这个想法。
+
+---
+
+先问一个核心问题，帮我理解你的出发点：
+
+**"tag 组合"** 在你脑中的样子是什么？
+
+## 工具调用结果
+我这里设计一个层次：一张卡由一个或多个Effect组成，effect由Trigger，condition,List<Action>组成.
+
+## 来自 CodeMaker 的消息
+非常清晰！这是一个很扎实的数据驱动设计思路。让我先把这个结构可视化一下：
+
+```
+┌─────────────────────────────────────────────────────┐
+│                       Card                          │
+│  ┌─────────────────────────────────────────────┐   │
+│  │              Effect (可多个)                 │   │
+│  │                                             │   │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  │   │
+│  │  │ Trigger  │  │Condition │  │ Actions  │  │   │
+│  │  │          │  │          │  │  ┌──────┐ │  │   │
+│  │  │ 何时触发 │  │ 满足条件 │  │  │Act 1 │ │  │   │
+│  │  │          │  │          │  │  ├──────┤ │  │   │
+│  │  └──────────┘  └──────────┘  │  │Act 2 │ │  │   │
+│  │         ↓           ↓        │  ├──────┤ │  │   │
+│  │      触发时 → 检查 → 执行    │  │Act N │ │  │   │
+│  │                              │  └──────┘ │  │   │
+│  └──────────────────────────────┴──────────────┘   │
+└─────────────────────────────────────────────────────┘
+```
+
+这个结构本身就很强大。现在 **tag** 在哪一层介入是关键问题：
+
+## 工具调用结果
+Tag,是一切的原点。每个trigger、condition、action这种“节点point”，都会拥有许多Tag。tag也会双向持有类似的节点。比如，添加燃烧（action）就有“火”“燃烧”“异常”，这些tag。而effect，就是会拥有一个tag合集。我们最终的目的，是为了，在指定一个或多个tag之后，能自动组合出一个effect，去组成一张卡牌。同理，卡牌就可以用来组合成卡组/卡包。卡组卡包就可以组成修炼体系，变成一个个体或者集体的战斗体系。
+
+## 来自 CodeMaker 的消息
+这个思路非常深刻！你在描述的其实是一个**语义驱动的自动组合系统**。让我来梳理一下我理解的整个愿景：
+
+---
+
+## 核心思想：Tag 作为语义空间
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Tag 语义空间                              │
+│                                                             │
+│   "火"   "燃烧"   "异常"   "范围"   "持续"   "强化"         │
+│     ↑        ↑       ↑       ↑        ↑        ↑            │
+│     │        │       │       │        │        │            │
+│   各种节点(Trigger / Condition / Action) 持有这些 Tag       │
+│   各种节点 也可以通过 Tag 反向找到彼此                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 自动组合链（从 Tag → 卡组体系）
+
+```
+  输入: ["火", "燃烧", "范围"]
+       │
+       ▼
+  ┌──────────────────────────────────────────────┐
+  │              Tag 匹配引擎                     │
+  │                                              │
+  │  找 Triggers   找 Conditions   找 Actions    │
+  │  (含这些tag)   (含这些tag)     (含这些tag)   │
+  └──────────────────────────────────────────────┘
+       │
+       ▼
+  ┌──────────────────────────────────────────────┐
+  │           自动组合 → Effect                   │
+  │  Trigger: 攻击时                              │
+  │  Condition: 目标有"可燃"tag                   │
+  │  Actions: [附加燃烧, 扩散到范围内]             │
+  └──────────────────────────────────────────────┘
+       │
+       ▼
+  ┌──────────────────────────────────────────────┐
+  │            Effect 组成 Card                   │
+  └──────────────────────────────────────────────┘
+       │
+       ▼
+  Card → Deck/Pack → 修炼体系 → 战斗体系（个体/集体）
+```
+
+---
+
+这个愿景很宏大，有几个我很好奇的关键设计点：
+
+## 工具调用结果
+由玩家/设计师选定 tag 后，系统枚举所有合法组合供挑选（辅助设计工具）。玩家在游戏中消耗资源来"解锁"或"合成"新的 Effect/Card。AI/算法根据tag自动生成一个最优(或者按分数配给)的effect（运行时自动）。这是一种"卡牌编辑器"，玩家可以自由组合 tag 来创造自己的卡牌。我的这个设计，可以完成这些所有事情
+
+## 来自 CodeMaker 的消息
+哇，这是一个**元系统**——它是所有这些系统的底层基础设施。这个设计的野心非常大，而且是合理的。
+
+让我换个角度，来探讨最关键的挑战：
+
+---
+
+## 核心难题：Tag 组合的"合法性"
+
+当你给出 `["火", "燃烧", "范围"]` 时，系统可能找到：
+
+```
+Triggers:   [攻击时, 受伤时, 回合开始, 施法时, ...]  各自有"火"相关tag
+Conditions: [有燃烧状态时, 目标HP<50%, 相邻单位>2个, ...]
+Actions:    [附加燃烧, 扩散伤害, 范围灼烧, 持续掉血, ...]
+```
+
+**组合空间会爆炸**：假设各有 10 个候选，三层组合就是 `10 × 10 × 10 = 1000` 种 Effect，Actions 还是 List...
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                   三个核心问题                            │
+│                                                          │
+│  1. 过滤  - 哪些组合是"合法"的？                          │
+│             谁来决定 Trigger+Condition 的兼容性？         │
+│                                                          │
+│  2. 排序  - 哪些组合"更好"？                              │
+│             靠什么打分？（强度？主题契合度？稀有度？）     │
+│                                                          │
+│  3. 边界  - Action List 怎么限制数量？                    │
+│             无限堆 Action 会破坏平衡么？                  │
+└──────────────────────────────────────────────────────────┘
+```
+
+你对这三个问题有初步想法吗？还是说 tag 系统本身就能解决兼容性问题？
+
+## 来自你的消息
+你想，其实trigger、condition、action，都是可以有分数的。trigger最简单也是默认的，使用时，就是一种0分。同理condition，无条件就是0分。action就是正数分。这种每个节点，都是人工配置管理的，也就是有triggerDefine/conditionDefine/actionDefine。合法性的话，冲突就可以按Tag来，或者特例配死在define里。而且，从设计上来说，设计出容易不合法的这种节点，本身就是不合理的。打分也是人来打（未来可以ai，但本质最后还是配置，还是人的操作）。actionlist是正数分，总和是不能超过规定分数的。
+<environment_details>
+# Current Time
+2026/3/11 上午11:39:57 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+这个设计非常优雅！你用**分数（Score）作为平衡锚点**，把复杂的合法性问题转化成了简单的数值约束。让我把这套逻辑整理清楚：
+
+---
+
+## 分数系统设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Effect 分数构成                              │
+│                                                                 │
+│  Trigger      Condition      Action × N                         │
+│  ┌────────┐   ┌──────────┐   ┌──────┐ ┌──────┐ ┌──────┐       │
+│  │使用时  │   │无条件    │   │燃烧  │ │扩散  │ │持续  │       │
+│  │ = 0   │   │  = 0     │   │ =+3  │ │ =+5  │ │ =+2  │       │
+│  └────────┘   └──────────┘   └──────┘ └──────┘ └──────┘       │
+│                                                                 │
+│  触发条件越苛刻  → 分数越低（甚至负数？）                         │
+│  条件越严格     → 分数越低                                       │
+│  Action 越强力  → 分数越高                                       │
+│                                                                 │
+│  总分 = Trigger分 + Condition分 + Σ(Action分)                   │
+│  约束: 总分 ≤ Effect 的分数上限                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Define 层（人工配置管理）
+
+```
+TriggerDefine {
+    id: "on_attack"
+    tags: ["攻击", "主动"]
+    score: 0          // 最普通触发，0分
+    conflictTags: []
+}
+
+TriggerDefine {
+    id: "on_enemy_death"
+    tags: ["死亡", "被动", "条件苛刻"]
+    score: -3         // 触发条件苛刻，给Action更多预算
+    conflictTags: []
+}
+
+ConditionDefine {
+    id: "no_condition"
+    tags: []
+    score: 0
+}
+
+ConditionDefine {
+    id: "target_has_burn"
+    tags: ["燃烧", "状态检查"]
+    score: -2         // 有条件限制，给Action预算
+    conflictTags: ["冰冻"]   // 特例：与冰冻状态检查冲突
+}
+
+ActionDefine {
+    id: "apply_burn"
+    tags: ["火", "燃烧", "异常", "DoT"]
+    score: +3
+    conflictTags: []
+}
+```
+
+---
+
+## 合法性策略（很简洁！）
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  合法性检查层次                           │
+│                                                         │
+│  1. 分数约束          总分 ≤ 上限                        │
+│                                                         │
+│  2. Tag 冲突检测      组合中的Tag互相排斥？               │
+│     例: "冰" + "火" 的Action → Tag冲突 → 非法            │
+│                                                         │
+│  3. 特例硬编码        写死在 Define 里的 conflictList    │
+│     例: certain Trigger 不允许搭配 certain Condition     │
+│                                                         │
+│  ✓ 设计原则：节点本身设计好，冲突自然稀少                 │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+这个思路有一个很巧妙的地方我想确认一下：
+
+**Trigger 和 Condition 的分数是负数或0（释放预算），Action 是正数（消耗预算）**——这意味着越苛刻的触发条件，反而能让你"装"更强的 Action，对吗？
+
+比如：
+```
+"当敌人HP低于20%时触发" (Trigger: -5) 
++ "目标有3个异常状态" (Condition: -4)  
++ [超强Action总分+8] + [超强Action总分+1]
+= 总分 0，合法！
+
+vs 普通:
+"使用时" (0) + "无条件" (0) + [普通Action+3] = 总分3
+```
+
+这是你想要的机制吗？还是 Trigger/Condition 的负分有别的含义？
+
+## 来自你的消息
+是的，你理解的很对。
+<environment_details>
+# Current Time
+2026/3/11 上午11:41:42 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+很好！那这个核心机制就很清晰了。我们继续往上层探索——
+
+---
+
+## 往上走一层：Card 的组合
+
+一张 Card 由多个 Effect 组成，那 Card 层面的约束是什么？
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                          Card                                   │
+│                                                                 │
+│   Effect A (分数上限=5)    Effect B (分数上限=3)                 │
+│   ┌─────────────────┐     ┌─────────────────┐                  │
+│   │ Trigger: -2     │     │ Trigger:  0     │                  │
+│   │ Condition: -1   │     │ Condition: 0    │                  │
+│   │ Actions: +8    │     │ Actions: +3    │                  │
+│   │ 总分: 5 ✓      │     │ 总分: 3 ✓      │                  │
+│   └─────────────────┘     └─────────────────┘                  │
+│                                                                 │
+│   Card 总分 = Effect A上限 + Effect B上限 = 8 ？                │
+│   还是 Card 自己有一个独立的总分上限？                           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 工具调用结果
+Card 的稀有度/等级决定了它能装几个 Effect 以及每个 Effect 的上限。Card 本身也有 Tag，Tag 决定了能组合哪些 Effect。我这里也可以引入一个复杂度计算，默认值是分数的绝对值(当然也可以在define里手配)。而每多一条effect就让分数上升许多。这样先用tag帅选可用节点，组合effect，再用效果分数+复杂分数，根据card的稀有度、强度、等级，通过随机算法获得card。节点还可以有个稀有度，决定被随机到的可能性。
+
+## 来自 CodeMaker 的消息
+现在整个系统的轮廓越来越清晰了！你引入了**两个维度的约束**，这是个非常精妙的设计：
+
+---
+
+## 双维度约束：强度分 vs 复杂度分
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Effect 的两个维度                             │
+│                                                                 │
+│   强度分 (Power Score)          复杂度分 (Complexity Score)     │
+│   ─────────────────────         ──────────────────────────     │
+│   Trigger(-) + Condition(-) +   各节点分数的 |绝对值| 之和      │
+│   Σ Actions(+) ≤ 上限           或 define 里手配                │
+│                                                                 │
+│   衡量: 这个效果有多强？         衡量: 这个效果有多复杂/特殊？   │
+│                                                                 │
+│   例: "受到致命伤害时(-5),        强度分 = -5-3+8 = 0           │
+│        目标有冰冻(-3),            复杂度 = 5+3+8 = 16           │
+│        造成超大伤害(+8)"          → 高复杂，低强度 → 高稀有！   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Card 的完整生成逻辑
+
+```
+Card 稀有度/等级
+       │
+       ├──→ 可容纳 Effect 数量上限   (比如 普通:1, 稀有:2, 史诗:3)
+       ├──→ 每个 Effect 的强度上限   (比如 普通:3, 稀有:6, 史诗:10)
+       ├──→ 总复杂度上限             (越高稀有 → 可以更复杂)
+       └──→ 可用节点稀有度范围       (普通卡不能随机到传说节点)
+              │
+              ▼
+       Card 自身 Tags
+              │
+              ▼ 筛选
+       可用节点池 (TriggerDefine/ConditionDefine/ActionDefine)
+              │
+              ▼ 随机算法（权重=节点稀有度）
+       组合出 Effect(s)
+              │
+              ▼ 验证
+       强度分 ✓ + 复杂度分 ✓ + Tag冲突 ✓
+              │
+              ▼
+           生成 Card ✓
+```
+
+---
+
+## 节点稀有度影响随机权重
+
+```
+节点稀有度:  普通    非常规   稀有    传说
+随机权重:    60%     25%      12%     3%
+
+高稀有Card → 解锁传说节点权重 + 总复杂度预算更高
+           → 自然地生成出更独特的效果
+```
+
+---
+
+这个设计已经相当完整了。我现在想问一个关于**Tag 在 Card 层筛选**的细节：
+
+Card 自身的 Tag 是怎么筛选 Effect 节点的？是**必须包含 Card 的某个 Tag**，还是**不能与 Card 的 Tag 冲突**，还是别的逻辑？比如一张"冰系"Card，它能不能随机到一个带"火"tag 的 Action？
+
+## 来自你的消息
+我觉得，可以在生成的时候，加入一个“匹配类型”和“匹配度”参数？你觉得呢
+<environment_details>
+# Current Time
+2026/3/11 下午1:47:10 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+这个想法非常好！"匹配类型"+"匹配度"本质上是把**筛选策略本身参数化**，让系统更灵活。我们来展开推敲一下：
+
+---
+
+## 匹配类型 × 匹配度 的设计空间
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      匹配类型候选                                │
+│                                                                 │
+│  STRICT    严格匹配   节点必须包含Card所有Tag                    │
+│  INCLUDE   包含匹配   节点至少包含Card的N个Tag                   │
+│  EXCLUDE   排除匹配   节点不能包含与Card冲突的Tag                │
+│  WEIGHTED  权重匹配   Tag重合越多，被随机到的权重越高            │
+│  FREE      自由匹配   不受Card Tag约束（完全随机）               │
+└─────────────────────────────────────────────────────────────────┘
+
+         匹配度 (0.0 ~ 1.0)
+         │
+    0.0  ├── 完全自由，Card Tag不影响节点筛选
+         │
+    0.5  ├── 倾向匹配，但允许偏题节点混入
+         │
+    1.0  └── 必须严格符合Card Tag主题
+```
+
+---
+
+## 一个具体的例子
+
+假设 Card Tags = `["冰", "减速", "控制"]`，节点池中：
+
+```
+节点 A: tags=["冰","冻结"]        → 重合2个
+节点 B: tags=["火","燃烧"]        → 重合0个
+节点 C: tags=["减速","控制"]      → 重合2个
+节点 D: tags=["暗","诅咒","控制"] → 重合1个
+```
+
+| 匹配类型 | 匹配度 | 结果 |
+|--------|--------|------|
+| STRICT | 1.0 | 只有A、C（必须含Card全部tag） |
+| WEIGHTED | 0.8 | A权重高，D权重低但还能出现 |
+| WEIGHTED | 0.3 | B也有机会随机到（异色混搭） |
+| FREE | - | ABCD权重相同 |
+
+---
+
+## 这个参数挂在哪里？
+
+这里有个有趣的设计决策：
+
+```
+方案1: 挂在 Card 上
+  → 每张Card自己决定"我有多纯粹"
+  → 混搭卡 vs 纯色卡 天然区分
+
+方案2: 挂在 CardPool/生成配置 上  
+  → 比如"这套卡池是主题卡池，匹配度0.9"
+  → "这是混沌卡池，匹配度0.2"
+
+方案3: 挂在 Card 稀有度 上
+  → 普通卡高匹配度（主题纯粹）
+  → 传说卡低匹配度（跨界混搭）→ 更意外，更独特！
+```
+
+你倾向于哪个挂载位置？还是三者都有？
+
+## 来自你的消息
+1，2.都挺好的。我觉得这样，卡牌本身在生成时就要有这样一对参数，用来决定对节点point的筛选匹配规则。同时，当卡牌全部生成好了之后，卡组主题也可以复用这个规则来组合。这本质上是一种，List<Tag>与dic<id,List<Tag>>的匹配算法
+<environment_details>
+# Current Time
+2026/3/11 下午1:52:18 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+精准！你把它抽象到了本质——这是一个**通用的 Tag 匹配算法**，可以被系统各层复用：
+
+---
+
+## 核心抽象：TagMatcher
+
+```
+输入:
+  查询方  →  List<Tag>              (Card的tags / 卡组主题的tags)
+  候选池  →  Dict<id, List<Tag>>    (节点池 / 卡牌池)
+  参数    →  MatchType + MatchDegree
+
+输出:
+  筛选+加权后的候选列表（可直接用于随机抽取）
+```
+
+---
+
+## 复用链路（同一个算法，三层都在用）
+
+```
+                    TagMatcher (List<Tag>, Dict<id,List<Tag>>, MatchType, MatchDegree)
+                         │
+          ┌──────────────┼──────────────────┐
+          │              │                  │
+          ▼              ▼                  ▼
+   Effect 生成      Card 生成          Deck 生成
+   ──────────────   ──────────────     ──────────────
+   查询方:           查询方:            查询方:
+   Effect的Tags     Card的Tags         卡组主题Tags
+
+   候选池:           候选池:            候选池:
+   Dict<            Dict<              Dict<
+    nodeId,          effectId,          cardId,
+    List<Tag>        List<Tag>          List<Tag>
+   >                >                  >
+```
+
+---
+
+## TagMatcher 算法草图
+
+```
+score(query: List<Tag>, candidate: List<Tag>) → float:
+    intersection = |query ∩ candidate|
+    
+    STRICT:   intersection == |query| ? 1.0 : 0.0
+    INCLUDE:  intersection / |query|              // 覆盖率
+    WEIGHTED: intersection / |query ∪ candidate|  // Jaccard相似度
+    FREE:     1.0
+
+weight = score ^ (1 / (1 - matchDegree + ε))
+  matchDegree → 1.0 时，低分节点权重趋近于0（严格）
+  matchDegree → 0.0 时，权重趋于均匀（自由）
+```
+
+---
+
+## 这个设计最漂亮的地方
+
+```
+┌─────────────────────────────────────────────────────┐
+│  同一套匹配逻辑，描述了整个游戏内容的"亲和力"        │
+│                                                     │
+│  节点  ──亲和力──▶  Effect                          │
+│  Effect ──亲和力──▶ Card                            │
+│  Card   ──亲和力──▶ Deck                            │
+│  Deck   ──亲和力──▶ 修炼体系                        │
+│                                                     │
+│  每一层都是:                                        │
+│  "我是谁(Tags)" × "我有多纯粹(MatchDegree)"         │
+│  = 我会吸引什么，我会排斥什么                        │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+这里有一个值得考虑的细节：**candidate 的 Tags 参与匹配时，用的是它"全部 tags"还是"主题 tags"？** 
+
+比如 `apply_burn` 有 tags `["火","燃烧","异常","DoT"]`，一张 `["火"]` 的 Card 来匹配——是只看交集数量，还是说节点自身的 tag 越多、反而匹配度被稀释（Jaccard 会这样）？这两种行为你更倾向于哪个？
+
+## 来自你的消息
+全部。而且这里是这样的，List<tag>不是hashset，里面其实总和了之后，是可以有tag重复数量这种概念的。List ["火","火","火","Dot"]，这种就是超级高的火浓度，交集数量能被重复计算
+<environment_details>
+# Current Time
+2026/3/11 下午1:56:22 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+这个设计太妙了！**Tag 的重复数量本身就是浓度/权重的表达**，不需要额外引入权重字段，List 本身就携带了语义强度信息。
+
+---
+
+## Tag 浓度的概念
+
+```
+["火"]                →  普通火属性
+["火", "火"]          →  火属性强化
+["火", "火", "火", "DoT"]  →  超高火浓度，带持续效果倾向
+
+本质上这是一个 TagBag（多重集合 Multiset）
+而不是 Set
+```
+
+---
+
+## 匹配算法升级：基于 Multiset 的交集
+
+```
+query     = ["火","火","火","DoT"]        → {火:3, DoT:1}
+candidate = ["火","燃烧","异常","DoT"]    → {火:1, 燃烧:1, 异常:1, DoT:1}
+
+Multiset交集 = min(count_q, count_c) for each tag
+             = {火:min(3,1), DoT:min(1,1)}
+             = {火:1, DoT:1}
+             = 交集总数 2
+
+candidate = ["火","火","燃烧","DoT"]     → {火:2, 燃烧:1, DoT:1}
+Multiset交集 = {火:min(3,2), DoT:min(1,1)}
+             = {火:2, DoT:1}
+             = 交集总数 3  ← 更高！更匹配！
+```
+
+---
+
+## 浓度的涌现效果
+
+这意味着**节点本身也可以通过 Tag 重复来声明自己的"专精度"**：
+
+```
+ActionDefine "普通火球":
+  tags: ["火", "伤害"]           → 泛用火系
+
+ActionDefine "炽焰核心":
+  tags: ["火","火","火","爆炸"]  → 极度火系专精
+  → 只有高火浓度的Card才会高概率随机到它
+  → 天然形成"主题专精节点"的稀缺性
+```
+
+---
+
+## 完整的 TagBag Matcher
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  TagBagMatcher                                                  │
+│                                                                 │
+│  query:     Multiset<Tag>   ("我想要什么")                      │
+│  candidate: Multiset<Tag>   ("我是什么")                        │
+│                                                                 │
+│  intersectionCount = Σ min(query[t], candidate[t]) for t in T  │
+│  queryTotal        = Σ query[t]                                 │
+│  candidateTotal    = Σ candidate[t]                             │
+│                                                                 │
+│  INCLUDE:   intersectionCount / queryTotal                      │
+│  JACCARD:   intersectionCount / (queryTotal+candidateTotal      │
+│                                  -intersectionCount)            │
+│                                                                 │
+│  rawScore ∈ [0, 1]                                             │
+│  weight = rawScore ^ (1/(1-matchDegree+ε))    ← matchDegree调节│
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 一个有趣的涌现现象
+
+```
+Card Tags = ["火","火","火","控制","控制"]
+
+→ 高火浓度节点 被强烈吸引
+→ 高控制浓度节点 也被强烈吸引
+→ 火+控制 混合节点 被最强烈吸引（两边都有交集）
+→ 纯冰节点 几乎不会出现
+
+这张Card天然成为"火焰控制流"主题
+不需要任何额外的主题配置！
+Tag浓度 = 身份宣言
+```
+
+---
+
+现在整个系统从底层节点到顶层卡组，都是靠这一套 **TagBag + Matcher** 驱动的。
+
+下一个值得思考的点：**这些 Tag 浓度是怎么来的？** 是设计师手动配置每个节点的 tag 重复数，还是说有某种规则自动计算（比如 define 里有个 `tagWeight` 字段，展开时自动填充重复次数）？
+
+## 来自你的消息
+是组合的。比如trigger是“敌人触发燃烧时”，这个是tag“火”“燃烧”，action是造成3点火伤（tag“火”）和铸造1（tag"火"“铸造”“武器”），这里最后就是三个火的一个listtag
+<environment_details>
+# Current Time
+2026/3/11 下午1:59:04 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+完美！Tag 浓度是**自然涌现**的，不是手配的——Effect 把所有节点的 Tag 全部汇聚到一起，重复自然累积：
+
+---
+
+## Tag 汇聚过程（自底向上）
+
+```
+Effect 的 TagBag = Trigger.tags + Condition.tags + Σ Action.tags
+
+Trigger:  "敌人触发燃烧时"  → ["火", "燃烧"]
+Condition: 无条件           → []
+Action 1:  造成3点火伤      → ["火", "伤害"]
+Action 2:  铸造1            → ["火", "铸造", "武器"]
+
+                    ↓ 合并（直接 List 拼接）
+
+Effect.tags = ["火", "燃烧", "火", "伤害", "火", "铸造", "武器"]
+            = { 火:3, 燃烧:1, 伤害:1, 铸造:1, 武器:1 }
+
+火的浓度 = 3  ← 自然涌现，不需要手配
+```
+
+---
+
+## 同样的，Card 的 TagBag 也是涌现的
+
+```
+Card.tags = Σ Effect.tags  （所有Effect的tags拼在一起）
+
+Effect A: ["火","燃烧","火","伤害","火","铸造","武器"]
+Effect B: ["火","冲击","伤害","穿透"]
+
+Card.tags = ["火","燃烧","火","伤害","火","铸造","武器",
+             "火","冲击","伤害","穿透"]
+          = { 火:4, 伤害:2, 燃烧:1, 铸造:1, 武器:1, 冲击:1, 穿透:1 }
+```
+
+---
+
+## 整个系统的 Tag 流动
+
+```
+Define层（人工配置Tag）
+    │
+    │  TriggerDefine.tags
+    │  ConditionDefine.tags      ← 唯一需要手配的地方
+    │  ActionDefine.tags
+    │
+    ▼
+Effect层（自动汇聚）
+    Effect.tags = 所有节点 tags 的 List 拼接
+    │
+    ▼
+Card层（自动汇聚）
+    Card.tags = 所有 Effect tags 的 List 拼接
+    │
+    ▼
+Deck层（自动汇聚）
+    Deck.tags = 所有 Card tags 的 List 拼接
+    │
+    ▼
+TagBagMatcher 在每一层做筛选/随机
+```
+
+---
+
+## 这个设计的核心优雅之处
+
+```
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+│  设计师只需要在 Define 层配置一次 Tag               │
+│                                                     │
+│  之后所有层的"身份"、"主题"、"亲和力"               │
+│  全部自动涌现，无需额外维护                          │
+│                                                     │
+│  一个节点的 Tag 改了                                │
+│  → Effect 的 TagBag 自动变                          │
+│  → Card 的 TagBag 自动变                            │
+│  → Deck 的 TagBag 自动变                            │
+│  → 所有匹配关系自动重新计算                          │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+这里有一个小问题值得考虑：**Card/Deck 的 TagBag 是实时计算还是缓存的？**
+
+因为一张稍微复杂的卡（2-3个Effect，每个Effect有3-4个节点）Tag 总数可能达到 20-30 个，如果 Deck 里有 30 张卡，Deck.tags 就是几百个 Tag 的大 List。匹配时实时合并计算没问题，但如果频繁调用，缓存一份 `Dict<Tag, int>` 的 Multiset 会更高效。你觉得这个值得在设计阶段就考虑进去吗？
+
+## 来自你的消息
+先不考虑。因为tag是用在生成时的。没有什么战斗中检索要考虑tag问题，tag只是描述，用来确定“是什么”。战斗中检索这种会有其他系统处理，今天不考虑
+<environment_details>
+# Current Time
+2026/3/11 下午2:01:16 (Asia/Shanghai, UTC+8:00)
+</environment_details>
+
+
+## 来自 CodeMaker 的消息
+对，划清边界很重要！Tag 系统的职责就是**描述与生成时匹配**，不承担运行时战斗逻辑。
+
+---
+
+## 职责边界确认
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  Tag 系统职责                        │
+│                                                     │
+│  ✅  描述节点/Effect/Card/Deck "是什么"              │
+│  ✅  生成时筛选候选池                                │
+│  ✅  生成时计算匹配权重                              │
+│  ✅  驱动随机组合                                    │
+│                                                     │
+│  ❌  战斗中的状态检查                                │
+│  ❌  运行时效果触发判断                              │
+│  ❌  性能敏感的实时检索                              │
+│                                                     │
+│  → 战斗逻辑由其他系统处理，Tag 不参与               │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+那我们现在对整个系统已经有了相当完整的设计轮廓。要不要做一个整体的梳理总结，看看还有没有什么盲点没覆盖到？
+
+或者你想继续深挖某一块——比如 **Define 的数据结构设计**、**随机算法的具体实现思路**、还是直接考虑**怎么落地到代码**？
+
+## 来自你的消息
+
+<system-reminder>
+Context has been compressed using structured 8-section algorithm. All essential information has been preserved for seamless continuation.
+</system-reminder>
+
+### Compression Summary:
+<analysis>
+1.  **Chronological Analysis**:
+    *   **Goal**: Design a tag-based card system.
+    *   **Mechanism Design**: We discussed the hierarchy (Card -> Effect -> Nodes). Nodes are Trigger, Condition, and Actions.
+    *   **Constraints**: Introduced a "Score Budget" system. Triggers/Conditions provide negative/zero scores (releasing budget), and Actions consume positive scores. Total score must be <= Limit.
+    *   **Complexity**: Added "Complexity Score" (absolute sum of scores) to determine rarity/technicality.
+    *   **Semantic Layer**: Tags are the foundation. Nodes have TagBags (List<string>). Repetition in the list represents "Concentration" or "Intensity" of that attribute.
+    *   **Matching Algorithm**: We defined the `TagBagMatcher` concept using `MatchType` (Strict, Include, Weighted, Free) and `MatchDegree` (0.0 to 1.0) to filter and weight nodes during generation.
+    *   **User Intervention**: The user specifically corrected the initial file structure, requiring a dedicated `TagDefine`, `TagDefineMgr`, and `TagMgr` structure instead of just a utility class.
+    *   **Implementation**: I created 15+ files following the C# domain-driven/data-mgr pattern used in the existing codebase (similar to `TraitDefine`).
+
+2.  **Key Patterns**:
+    *   **Defines**: Data-only classes for JSON deserialization (inherited from `DefineBase`).
+    *   **Mgrs**: Singleton managers for loading and querying Defines.
+    *   **Domain Data**: Runtime instances (e.g., `CardData`, `EffectData`) that store the results of the generation process.
+    *   **Systems**: Pure logic classes (e.g., `CardSystemGenerate`) that perform the heavy lifting of matching and combination.
+
+3.  **Recent Actions**:
+    *   Created `TagDefine`, `TriggerDefine`, `ConditionDefine`, `ActionDefine`, and `CardDefine`.
+    *   Created corresponding Manager classes.
+    *   Created `TagId`, `TagMgr`, `CardId`, `CardData`, `EffectData`, and logic systems.
+    *   Created 5 empty JSON files for data seeding.
+
+4.  **Pending**: The actual logic within `TagMgr.Match` and the generator's recruitment process are currently `TODO`.
+</analysis>
+
+<summary>
+1. Primary Request and Intent:
+   The primary intent is to design and implement a meta-system for card generation based on semantic Tags. The system should automatically compose Cards from Effects (Trigger + Condition + Actions) by matching tag "concentrations" and staying within a "Score Budget." The user requested a skeleton implementation with simple code/variables/functions first, to be refined later.
+
+2. Key Technical Concepts:
+   - TagBag / Multiset: Using `List<string>` where repeated tags represent intensity (e.g., `["Fire", "Fire"]` is stronger than `["Fire"]`).
+   - Score Budgeting: Triggers and Conditions have negative/zero scores (difficulty/cost), while Actions have positive scores (benefit). 
+   - Complexity Score: The sum of absolute values of all node scores, used to gauge the "technicality" or rarity of a card.
+   - TagBag Matcher: A matching engine using `MatchType` (Strict, Include, Weighted, Free) and `MatchDegree` (strictness) to filter and weight candidate nodes.
+   - Decoupled Hierarchy: Tag -> Node Define -> Effect (Runtime) -> Card (Runtime) -> Deck.
+
+3. Files and Code Sections:
+   - Scripts/Game/Data/Defines/TagDefine.cs: Basic tag metadata (ID, DisplayName, Desc).
+   - Scripts/Game/Data/Defines/TriggerDefine.cs / ConditionDefine.cs / ActionDefine.cs: Node definitions containing `Score`, `Tags` (List), and `ConflictTags`.
+   - Scripts/Game/Domain/Tag/TagMgr.cs: The heart of the system, responsible for the `Match` algorithm.
+     ```csharp
+     public Dictionary<string, float> Match(List<string> query, Dictionary<string, List<string>> candidates, MatchType matchType, float matchDegree)
+     ```
+   - Scripts/Game/Domain/Card/Data/EffectData.cs: Runtime object holding the combined results of a trigger, condition, and actions.
+     ```csharp
+     public class EffectData {
+         public string TriggerId;
+         public string ConditionId;
+         public List<string> ActionIds;
+         public List<string> Tags; // Aggregated from nodes
+         public int PowerScore;
+         public int ComplexityScore;
+     }
+     ```
+   - Scripts/Game/Domain/Card/Systems/CardSystemGenerate.cs: Higher-level logic for selecting nodes and building valid Effects/Cards.
+
+4. Errors and fixes:
+    - Structural Misalignment: Initially, I proposed putting the Tag matching logic in a generic utility. 
+      - Fix: The user corrected this, requesting a first-class `TagDefine`, `TagDefineMgr`, and `TagMgr` structure to treat Tags as core entities. I refactored the proposal and implementation accordingly.
+
+5. Problem Solving:
+   - Combinatorial Explosion: Addressed by using the "Score Budget" and "Tag Concentration" to prune the search space of possible node combinations.
+   - Theme Consistency: Solved by aggregating tags from the bottom up (Nodes -> Effect -> Card -> Deck), allowing the same matching algorithm to ensure a Deck matches a "Theme" just as an Action matches a "Card."
+
+6. All user messages:
+    - "先不写代码，我们来设计一个基于tag组合的卡牌系统，怎么样"
+    - "我这里设计一个层次：一张卡由一个或多个Effect组成，effect由Trigger，condition,List<Action>组成."
+    - "Tag,是一切的原点。每个trigger、condition、action这种“节点point”，都会拥有许多Tag。tag也会双向持有类似的节点。比如，添加燃烧（action）就有“火”“燃烧”“异常”，这些tag。而effect，就是会拥有一个tag合集。我们最终的目的，是为了，在指定一个或多个tag之后，能自动组合出一个effect，去组成一张卡牌。同理，卡牌就可以用来组合成卡组/卡包。卡组卡包就可以组成修炼体系，变成一个个体或者集体的战斗体系。"
+    - "由玩家/设计师选定 tag 后，系统枚举所有合法组合供挑选（辅助设计工具）。玩家在游戏中消耗资源来\"解锁\"或\"合成\"新的 Effect/Card。AI/算法根据tag自动生成一个最优(或者按分数配给)的effect（运行时自动）。这是一种\"卡牌编辑器\"，玩家可以自由组合 tag 来创造自己的卡牌。我的这个设计，可以完成这些所有事情"
+    - "你想，其实trigger、condition、action，都是可以有分数的。trigger最简单也是默认的，使用时，就是一种0分。同理condition，无条件就是0分。action就是正数分。这种每个节点，都是人工配置管理的，也就是有triggerDefine/conditionDefine/actionDefine。合法性的话，冲突就可以按Tag来，或者特例配死在define里。而且，从设计上来说，设计出容易不合法的这种节点，本身就是不合理的。打分也是人来打（未来可以ai，但本质最后还是配置，还是人的操作）。actionlist是正数分，总和是不能超过规定分数的。"
+    - "是的，你理解的很对。"
+    - "Card 的稀有度/等级决定了它能装几个 Effect 以及每个 Effect 的上限。Card 本身也有 Tag，Tag 决定了能组合哪些 Effect。我这里也可以引入一个复杂度计算，默认值是分数的绝对值(当然也可以在define里手配)。而每多一条effect就让分数上升许多。这样先用tag帅选可用节点，组合effect，再用效果分数+复杂分数，根据card的稀有度、强度、等级，通过随机算法获得card。节点还可以有个稀有度，决定被随机到的可能性。"
+    - "我觉得，可以在生成的时候，加入一个“匹配类型”和“匹配度”参数？你觉得呢"
+    - "1，2.都挺好的。我觉得这样，卡牌本身在生成时就要有这样一对参数，用来决定对节点point的筛选匹配规则。同时，当卡牌全部生成好了之后，卡组主题也可以复用这个规则来组合。这本质上是一种，List<Tag>与dic<id,List<Tag>>的匹配算法"
+    - "全部。而且这里是这样的，List<tag>不是hashset，里面其实总和了之后，是可以有tag重复数量这种概念的。List [\"火\",\"火\",\"火\",\"Dot\"]，这种就是超级高的火浓度，交集数量能被重复计算"
+    - "是组合的。比如trigger是“敌人触发燃烧时”，这个是tag“火”“燃烧”，action是造成3点火伤（tag“火”）和铸造1（tag\"火\"“铸造”“武器”），这里最后就是三个火的一个listtag"
+    - "先不考虑。因为tag是用在生成时的。没有什么战斗中检索要考虑tag问题，tag只是描述，用来确定“是什么”。战斗中检索这种会有其他系统处理，今天不考虑"
+    - "你整理下我们的设计，读下现有的文件结构，然后给我看一个你觉得可以怎么创建新的文件和文件夹来实现我们这个系统"
+    - "不合理。我希望有个TagDefine,,TagDefineMgr,TagMgr的结构。帮我重新设计一个文件结构"
+    - "开始吧。有两个要求：1文件完整创建，不要删东西2每个文件只加简单的部分代码、变量、函数，后续我们再一个个部分细化"
+
+7. Pending Tasks:
+   - Implement the Multiset/TagBag matching logic in `TagMgr.cs`.
+   - Implement the `GenerateCard` and `GenerateEffect` logic in `CardSystemGenerate.cs`.
+   - Populate `TagDefines.json` with sample data for testing.
+
+8. Current Work:
+   Immediately before this summary, I completed the creation of 20 skeleton files (Defines, Managers, Domain Data, and Systems) implementing the revised "Tag-First" architecture. All files use placeholder logic (e.g., `return [];` or `// TODO`) to keep the initial commit simple as requested.
+
+9. Optional Next Step:
+   Implement the `TagMgr.Match` algorithm to handle Multiset intersections and weighting.
+   > "下一步最关键的是 TagMgr.Match() 的 Multiset 匹配算法实现，要继续细化吗？"
+
+10. Active Skills:
+   <activated_skill name="openspec-explore">
+<instructions>
+Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
+
+**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first (e.g., start a change with `/opsx:new` or `/opsx:ff`). You MAY create OpenSpec artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.
+
+**This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.
+
+**Input**: The argument after `/opsx:explore` is whatever the user wants to think about. Could be:
+- A vague idea: "real-time collaboration"
+- A specific problem: "the auth system is getting unwieldy"
+- A change name: "add-dark-mode" (to explore in context of that change)
+- A comparison: "postgres vs sqlite for this"
+- Nothing (just enter explore mode)
+
+---
+
+## The Stance
+
+- **Curious, not prescriptive** - Ask questions that emerge naturally, don't follow a script
+- **Open threads, not interrogations** - Surface multiple interesting directions and let the user follow what resonates. Don't funnel them through a single path of questions.
+- **Visual** - Use ASCII diagrams liberally when they'd help clarify thinking
+- **Adaptive** - Follow interesting threads, pivot when new information emerges
+- **Patient** - Don't rush to conclusions, let the shape of the problem emerge
+- **Grounded** - Explore the actual codebase when relevant, don't just theorize
+
+---
+
+## What You Might Do
+
+Depending on what the user brings, you might:
+
+**Explore the problem space**
+- Ask clarifying questions that emerge from what they said
+- Challenge assumptions
+- Reframe the problem
+- Find analogies
+
+**Investigate the codebase**
+- Map existing architecture relevant to the discussion
+- Find integration points
+- Identify patterns already in use
+- Surface hidden complexity
+
+**Compare options**
+- Brainstorm multiple approaches
+- Build comparison tables
+- Sketch tradeoffs
+- Recommend a path (if asked)
+
+**Visualize**
+```
+┌─────────────────────────────────────────┐
+│     Use ASCII diagrams liberally        │
+├─────────────────────────────────────────┤
+│                                         │
+│   ┌────────┐         ┌────────┐        │
+│   │ State  │────────▶│ State  │        │
+│   │   A    │         │   B    │        │
+│   └────────┘         └────────┘        │
+│                                         │
+│   System diagrams, state machines,      │
+│   data flows, architecture sketches,    │
+│   dependency graphs, comparison tables  │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**Surface risks and unknowns**
+- Identify what could go wrong
+- Find gaps in understanding
+- Suggest spikes or investigations
+
+---
+
+## OpenSpec Awareness
+
+You have full context of the OpenSpec system. Use it naturally, don't force it.
+
+### Check for context
+
+At the start, quickly check what exists:
+```bash
+openspec list --json
+```
+
+This tells you:
+- If there are active changes
+- Their names, schemas, and status
+- What the user might be working on
+
+If the user mentioned a specific change name, read its artifacts for context.
+
+### When no change exists
+
+Think freely. When insights crystallize, you might offer:
+
+- "This feels solid enough to start a change. Want me to create one?"
+  → Can transition to `/opsx:new` or `/opsx:ff`
+- Or keep exploring - no pressure to formalize
+
+### When a change exists
+
+If the user mentions a change or you detect one is relevant:
+
+1. **Read existing artifacts for context**
+   - `openspec/changes/<name>/proposal.md`
+   - `openspec/changes/<name>/design.md`
+   - `openspec/changes/<name>/tasks.md`
+   - etc.
+
+2. **Reference them naturally in conversation**
+   - "Your design mentions using Redis, but we just realized SQLite fits better..."
+   - "The proposal scopes this to premium users, but we're now thinking everyone..."
+
+3. **Offer to capture when decisions are made**
+
+   | Insight Type | Where to Capture |
+   |--------------|------------------|
+   | New requirement discovered | `specs/<capability>/spec.md` |
+   | Requirement changed | `specs/<capability>/spec.md` |
+   | Design decision made | `design.md` |
+   | Scope changed | `proposal.md` |
+   | New work identified | `tasks.md` |
+   | Assumption invalidated | Relevant artifact |
+
+   Example offers:
+   - "That's a design decision. Capture it in design.md?"
+   - "This is a new requirement. Add it to specs?"
+   - "This changes scope. Update the proposal?"
+
+4. **The user decides** - Offer and move on. Don't pressure. Don't auto-capture.
+
+---
+
+## What You Don't Have To Do
+
+- Follow a script
+- Ask the same questions every time
+- Produce a specific artifact
+- Reach a conclusion
+- Stay on topic if a tangent is valuable
+- Be brief (this is thinking time)
+
+---
+
+## Ending Discovery
+
+There's no required ending. Discovery might:
+
+- **Flow into action**: "Ready to start? `/opsx:new` or `/opsx:ff`"
+- **Result in artifact updates**: "Updated design.md with these decisions"
+- **Just provide clarity**: User has what they need, moves on
+- **Continue later**: "We can pick this up anytime"
+
+When things crystallize, you might offer a summary - but it's optional. Sometimes the thinking IS the value.
+
+---
+
+## Guardrails
+
+- **Don't implement** - Never write code or implement features. Creating OpenSpec artifacts is fine, writing application code is not.
+- **Don't fake understanding** - If something is unclear, dig deeper
+- **Don't rush** - Discovery is thinking time, not task time
+- **Don't force structure** - Let patterns emerge naturally
+- **Don't auto-capture** - Offer to save insights, don't just do it
+- **Do visualize** - A good diagram is worth many paragraphs
+- **Do explore the codebase** - Ground discussions in reality
+- **Do question assumptions** - Including the user's and your own
+</instructions>
+</activated_skill>
+
+</summary>
+        

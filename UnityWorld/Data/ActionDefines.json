@@ -5,25 +5,25 @@
   "score": 1,
   "tags": ["火", "伤害"],
   "conflictTags": [],
-  "rarity": 0
+  "Weight": 1
 },
 {
   "ID": "action_fire_dmg_3",
   "DisplayName": "火焰伤害3",
   "desc": "造成 3 点火焰伤害",
   "score": 3,
-  "tags": ["火", "火", "伤害"],
+  "tags": ["火", "伤害"],
   "conflictTags": [],
-  "rarity": 0
+  "Weight": 1
 },
 {
-  "ID": "action_apply_burn",
-  "DisplayName": "附加燃烧",
-  "desc": "对目标附加燃烧状态",
+  "ID": "action_apply_burn_1",
+  "DisplayName": "附加1层燃烧",
+  "desc": "对目标附加1层燃烧状态",
   "score": 3,
   "tags": ["火", "燃烧", "异常"],
   "conflictTags": ["冰"],
-  "rarity": 0
+  "Weight": 1
 },
 {
   "ID": "action_burn_spread",
@@ -32,7 +32,7 @@
   "score": 4,
   "tags": ["火", "火", "燃烧", "范围"],
   "conflictTags": [],
-  "rarity": 1
+  "Weight": 1
 },
 {
   "ID": "action_forge_1",
@@ -41,7 +41,7 @@
   "score": 3,
   "tags": ["火", "铸造", "武器"],
   "conflictTags": [],
-  "rarity": 1
+  "Weight": 1
 },
 {
   "ID": "action_atk_1",
@@ -50,7 +50,7 @@
   "score": 1,
   "tags": ["攻击", "伤害"],
   "conflictTags": [],
-  "rarity": 0
+  "Weight": 1
 },
 {
   "ID": "action_atk_3",
@@ -59,7 +59,7 @@
   "score": 3,
   "tags": ["攻击", "攻击", "伤害"],
   "conflictTags": [],
-  "rarity": 0
+  "Weight": 1
 },
 {
   "ID": "action_execute",
@@ -68,5 +68,5 @@
   "score": 5,
   "tags": ["攻击", "致命", "黑暗"],
   "conflictTags": [],
-  "rarity": 2
+  "Weight": 2
 }]

@@ -13,9 +13,13 @@ namespace UnityWorld.Game.Data
 
         /// <summary>强度分（正数，消耗Effect预算）</summary>
         [JsonPropertyName("score")]
-        public int Score { get; set; } = 0;
+        public float Score { get; set; } = 0;
+        
+        /// <summary>稀有度</summary>
+        [JsonPropertyName("weight")]
+        public float Weight { get; set; } = 1;
 
-        /// <summary>Tag列表（重复表示浓度）</summary>
+        /// <summary>Tag列表（这里不可重复）</summary>
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; } = [];
 
@@ -23,8 +27,5 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("conflictTags")]
         public List<string> ConflictTags { get; set; } = [];
 
-        /// <summary>稀有度</summary>
-        [JsonPropertyName("rarity")]
-        public int Rarity { get; set; } = 0;
     }
 }

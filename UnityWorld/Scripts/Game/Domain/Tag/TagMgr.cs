@@ -119,18 +119,5 @@ namespace UnityWorld.Game.Domain.Tag
         }
     }
 
-    /// <summary>
-    /// Tag 匹配类型
-    /// </summary>
-    public enum TagMatchType
-    {
-        /// <summary>严格匹配：候选必须包含 query 的所有 Tag</summary>
-        Strict,
-        /// <summary>包含匹配：候选覆盖 query Tag 的比例越高权重越大</summary>
-        Include,
-        /// <summary>权重匹配：基于 Jaccard 相似度（推荐）</summary>
-        Weighted,
-        /// <summary>自由匹配：不受 query Tag 约束</summary>
-        Free,
-    }
+    
 }

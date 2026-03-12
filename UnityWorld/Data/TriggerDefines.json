@@ -6,7 +6,7 @@
     "score": 0,
     "tags": ["主动", "使用"],
     "conflictTags": [],
-    "rarity": 0
+    "weight": 1
   },
   {
     "ID": "trigger_on_attack",
@@ -15,7 +15,7 @@
     "score": 0,
     "tags": ["主动", "攻击"],
     "conflictTags": [],
-    "rarity": 0
+    "weight": 0
   },
   {
     "ID": "trigger_on_burn",
@@ -24,7 +24,7 @@
     "score": -3,
     "tags": ["被动", "火", "燃烧"],
     "conflictTags": [],
-    "rarity": 1
+    "weight": 1
   },
   {
     "ID": "trigger_on_death",
@@ -33,6 +33,6 @@
     "score": -4,
     "tags": ["被动", "死亡", "黑暗"],
     "conflictTags": [],
-    "rarity": 1
+    "weight": 1
   }
 ]

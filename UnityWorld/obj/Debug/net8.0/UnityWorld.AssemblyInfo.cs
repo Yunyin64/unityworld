@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("UnityWorld")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+420814f47d6e873dbf0d08a14fb70446f5cfd7d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f2e21ba31c568df02403b91136601cbda9c244da")]
 [assembly: System.Reflection.AssemblyProductAttribute("UnityWorld")]
 [assembly: System.Reflection.AssemblyTitleAttribute("UnityWorld")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

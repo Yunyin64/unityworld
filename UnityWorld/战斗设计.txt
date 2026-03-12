@@ -1,0 +1,255 @@
+================================================================
+  战斗系统设计文档
+  UnityWorld · Combat System Design
+  最后更新：2026-03-12（第二次更新：出招表模型）
+================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  一、设计原则
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 离线模拟（Offline Simulation）
+   战斗是"发生在一瞬间"的事件。CombatScene 从外部接收参数，
+   同步跑完整场战斗，输出结果，不依赖任何全局 Tick 或协程。
+
+2. 纯实例，无单例
+   CombatScene 是完全独立的对象，不挂靠 WorldMgr/NpcMgr 的
+   生命周期。多场战斗可以并发存在，互不干扰。
+
+3. 大世界隔离
+   战斗内的所有状态变化（HP 损耗、临时增益）记录在 CombatNpc
+   上，不直接修改大世界的 Npc/StatBlock。结算后由调用方凭
+   CombatResult 决定如何回写。
+
+4. 玩家参与（暂未实现，预留接口）
+   未来玩家参战时，战斗 UI 层主动调用 SubmitPlayerAction() 驱动
+   CombatScene 推进，CombatScene 本身结构不变。
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  二、核心类结构
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Scripts/Game/Domain/Combat/
+  ├── CombatScene.cs       战斗场景主控，驱动完整生命周期
+  ├── CombatNpc.cs         战斗参与者，继承 Npc，附加战斗专用状态
+  ├── CombatResult.cs      战斗结算结果，含单人数据和全局数据
+  ├── DamageInfo.cs        伤害事件描述（已有）
+  └── Element.cs           元素类型（已有）
+
+  Scripts/Game/Domain/Enum/EnumTypes.cs  新增战斗相关枚举
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  三、CombatScene 生命周期
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ┌─────────┐    ┌──────────┐    ┌───────┐    ┌──────────┐    ┌─────────┐
+  │  Init   │───▶│ PreStart │───▶│ Start │───▶│ NextTurn │───▶│   End   │
+  └─────────┘    └──────────┘    └───────┘    └──────────┘    └─────────┘
+                                                   ▲  │ 战斗          │
+                                                   └──┘ 未结束        ▼
+                                                              GetResult()
+
+内置状态机（CombatPhase）防止方法被乱序调用，违规调用直接抛异常。
+
+──────────────────────────────────────────────────────────────
+  Phase 1 · Init
+──────────────────────────────────────────────────────────────
+  调用：scene.Init(participants, maxTurns)
+
+  - 接收参战者列表：IEnumerable<(NpcId id, CombatTeam team)>
+  - 为每个参战者构建 CombatNpc 实例（此时不读属性）
+  - 设置环境参数：回合上限（默认100）
+  - ※ 已移除 initialHandSize，出招表模型不使用手牌概念
+
+──────────────────────────────────────────────────────────────
+  Phase 2 · PreStart
+──────────────────────────────────────────────────────────────
+  调用：scene.PreStart()
+
+  - 快照各参战者 HP → CombatNpc.SnapshotHp()
+    （当前占位：修为等级×100，最低100；待接入真实 StatId.HpMax）
+  - 构建各自出招表 → CombatNpc.DeckSequence
+    （当前占位：空序列；待接入 CardSystemDeck）
+  - 初始化所有 NPC 的出招指针 CurrentDeckIndex = 0、CycleCount = 0
+  - 按速度（Speed）降序排列行动顺序（速度高者先手；占位：用修为等级代替）
+  - 分配初始 Target：战斗开始时由外部指定或按规则自动分配
+    （当前占位：各 NPC 默认指向最近一名敌方存活者；待细化 Target 分配逻辑）
+  - 触发"战斗开始前"被动/Trait（预留，TODO）
+
+──────────────────────────────────────────────────────────────
+  Phase 3 · Start
+──────────────────────────────────────────────────────────────
+  调用：scene.Start()
+
+  - 确认所有 NPC 出招表非空（空则警告并跳过该 NPC）
+  - 初始化行动索引，进入 Running 状态
+
+──────────────────────────────────────────────────────────────
+  Phase 4 · NextTurn（循环调用）
+──────────────────────────────────────────────────────────────
+  调用：while (!scene.IsFinished) scene.NextTurn()
+
+  ※ 「出招表」模型说明：
+    - 每个 NPC 持有一个有序出招序列（DeckSequence），不随机摸牌
+    - CurrentDeckIndex 指向当前该出的招式
+    - 走完整圈后 CycleCount++ 并重置 CurrentDeckIndex = 0
+
+  单次 NextTurn 流程：
+    1. 找下一个可行动者（跳过 Defeated / Escaped / Skipped）
+    2. 若无人可动 → 强制结束（AllDefeated）
+    3. 取当前行动者（甲）的 DeckSequence[CurrentDeckIndex] 作为出招
+    4. 取甲的 Target（乙）的 DeckSequence[CurrentDeckIndex] 作为应招
+    5. 执行卡与卡的结算（规则待定，见九·待设计）
+    6. 甲与乙的 CurrentDeckIndex 各自推进1位
+       - 若甲走完整圈 → 甲 CycleCount++，重置 CurrentDeckIndex = 0
+       - 若乙走完整圈 → 乙 CycleCount++，重置 CurrentDeckIndex = 0
+    7. 推进总行动索引（轮到下一个 NPC）
+    8. 检查结束条件
+
+  Target 维护规则：
+    - 每个 NPC 持有单向 Target 引用（指向某个 CombatNpc）
+    - 若 Target 被击败/逃跑，需重新分配 Target
+      （当前占位：自动换成同阵营最近的存活敌人；待细化）
+    - 减员后允许多个 NPC 共享同一个 Target（围攻）
+
+  结束条件（按优先级）：
+    · 回合数 >= MaxTurns         → TurnLimitReached（平局）
+    · 场上只剩一方存活            → AllDefeated（该方胜利）
+
+──────────────────────────────────────────────────────────────
+  Phase 5 · GetResult
+──────────────────────────────────────────────────────────────
+  调用：var result = scene.GetResult()
+
+  - 只能在 IsFinished == true 后调用，否则抛异常
+  - 返回 CombatResult，包含全部结算信息
+  - CombatScene 生命周期就此结束，可由 GC 回收
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  四、CombatNpc 设计
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  继承关系：CombatNpc : Npc
+
+  战斗专用字段：
+  ┌──────────────────────┬─────────────────────────────────────────────┐
+  │ Team                 │ 所属阵营（TeamA/B/C/D）                      │
+  │ Status               │ 当前状态（Active/Defeated/Escaped/Skipped）  │
+  │ HpAtCombatStart      │ 战斗开始时 HP 快照（用于计算损耗）            │
+  │ CurrentHp            │ 战斗内当前 HP（与大世界 StatBlock 独立）      │
+  │ DeckSequence         │ 有序出招表（固定顺序，不打乱）                │
+  │ CurrentDeckIndex     │ 当前出招指针（指向下一张待出的牌）            │
+  │ CycleCount           │ 已完成循环次数（走完整张出招表算一次）        │
+  │ Target               │ 当前战斗目标（单向，指向某个 CombatNpc）      │
+  │ TurnsActed           │ 本场已行动回合数                             │
+  └──────────────────────┴─────────────────────────────────────────────┘
+
+  ※ 已移除字段：Hand（手牌）、Discard（弃牌堆）
+     出招表模型中无需摸牌/弃牌机制，改为按索引顺序循环出招。
+
+  关键方法：
+  - SnapshotHp(float hp)     快照初始 HP
+  - ApplyDamage(float)       扣血，自动触发 Defeated 判定
+  - ApplyHeal(float)         回血，不超过初始 HP 上限
+  - IsActive                 快捷属性：Status == Active
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  五、CombatResult 结构
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CombatResult（全局）
+  ├── EndReason        战斗结束原因（枚举）
+  ├── WinnerTeam       胜利阵营（平局时为 None）
+  ├── TotalTurns       总回合数
+  └── Combatants       List<CombatantResult>
+
+  CombatantResult（单人）
+  ├── NpcId            对应大世界 NpcId
+  ├── Team             所属阵营
+  ├── FinalStatus      最终状态
+  ├── HpLost           本场承受的总 HP 损耗
+  ├── TurnsActed       本场行动回合数
+  └── IsDefeated       是否阵亡（快捷属性）
+
+  工具方法：
+  - result.GetOutcome(team)         从某方视角获取胜/负/平/逃
+  - result.GetSurvivors(team)       获取某阵营存活者列表
+  - result.GetDefeated(team)        获取某阵营阵亡者列表
+  - result.GetCombatant(npcId)      获取指定 NPC 的结算数据
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  六、枚举一览（EnumTypes.cs）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CombatEndReason
+    None / AllDefeated / TurnLimitReached / Surrender / Escaped / SpecialCondition
+
+  CombatTeam
+    None / TeamA / TeamB / TeamC / TeamD
+
+  CombatantStatus
+    Active / Defeated / Escaped / Skipped
+
+  CombatOutcome（从某方视角）
+    Victory / Defeat / Draw / Escaped
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  七、标准用法示例（伪代码）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  var rng = new Rng(seed);
+  var scene = new CombatScene(rng);
+
+  scene.Init(new[] {
+      (npcA.Id, CombatTeam.TeamA),
+      (npcB.Id, CombatTeam.TeamA),
+      (npcC.Id, CombatTeam.TeamB),
+  }, maxTurns: 50);
+
+  scene.PreStart();
+  scene.Start();
+
+  while (!scene.IsFinished)
+      scene.NextTurn();
+
+  var result = scene.GetResult();
+
+  // 回写大世界
+  foreach (var cr in result.Combatants)
+  {
+      var npc = NpcMgr.Instance.GetById(cr.NpcId);
+      if (cr.IsDefeated)
+          HandleNpcDeath(npc);
+      else
+          npc.Stats.SetBase(StatId.HpCurrent,
+              npc.Stats.Get(StatId.HpCurrent) - cr.HpLost);
+  }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  八、待接入 / TODO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ── 数据接入 ──────────────────────────────────────────────────
+  [ ] SnapshotHp         接入真实 StatId.HpMax（当前：修为等级×100）
+  [ ] BuildDeckSequence  接入 CardSystemDeck，按 NPC 主题 Tag 构建有序出招表
+  [ ] SpeedStat          接入真实速度属性（当前：用修为等级占位）
+
+  ── 核心规则 ──────────────────────────────────────────────────
+  [ ] CardVsCard         设计卡与卡的结算规则（伤害公式、效果触发）【待脑暴】
+  [ ] TargetAssign       细化初始 Target 分配策略（距离？威胁值？随机？）
+  [ ] TargetReassign     细化 Target 被击败后的重新分配逻辑
+
+  ── 系统扩展 ──────────────────────────────────────────────────
+  [ ] ExecuteCard        接入完整 Effect 系统，解析 card.Effects 逐条执行
+  [ ] OnPreStartPassives 接入 Trait 被动，触发 CombatStart 类型效果
+  [ ] 玩家参战           在 NextTurn 内加 SubmitPlayerAction() 分支
+
+
+================================================================
