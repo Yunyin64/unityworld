@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -29,13 +30,13 @@ namespace UnityWorld.Game.Data
         /// 手配时可不填，由系统运行时计算校验；填了则作为快速读取缓存
         /// </summary>
         [JsonPropertyName("powerScore")]
-        public int PowerScore { get; set; } = 0;
+        public float PowerScore { get; set; } = 0;
 
         /// <summary>
         /// 复杂度分缓存（= Σ |Score| of all nodes）
         /// 同上，可不填
         /// </summary>
         [JsonPropertyName("complexityScore")]
-        public int ComplexityScore { get; set; } = 0;
+        public float ComplexityScore { get; set; } = 0;
     }
 }

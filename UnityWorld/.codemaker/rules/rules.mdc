@@ -1,0 +1,267 @@
+---
+description: AI coding guidance and rules for this repository.
+alwaysApply: true
+---
+<rule>
+
+## 0. 首要约束（不可违反）
+
+- **不允许删除 .cs 文件**，尤其禁止用 cmd/terminal 执行 `del`/`rm` 删除文件。现有文件结构已经过设计，改造请在原文件上修改。
+- **零幻觉原则**：只引用本规则中列出的或代码库中确实存在的 API、类名、字段名，不得凭空创造。
+- **风格一致性**：必须严格匹配现有缩进（4 空格）、using 排序和命名风格。
+
+---
+
+## 1. 高层架构总览
+
+```
+UnityWorld/
+├── Scripts/
+│   ├── Core/                  # 引擎无关的核心基础设施
+│   │   ├── Base/              # 接口定义（IDomainMgrBase, IDataMgrBase）
+│   │   └── Systems/           # 跨域系统（EventMgr, LogMgr, LocalizationMgr）
+│   └── Game/
+│       ├── Boot/              # 游戏入口（GameEntry, GameLoopDriver）
+│       ├── Data/              # 静态配置数据（Define 定义 + DataMgr 加载）
+│       │   ├── Defines/       # *Define.cs：JSON 对应的静态数据结构
+│       │   └── Mgr/           # *DefineMgr.cs：加载/查询 Define 的管理器
+│       ├── Domain/            # 运行时领域（NPC、Tile、Plane、Trait、Combat…）
+│       │   ├── Npc/           # Npc 实体 + NpcMgr + NpcSystem* 子系统
+│       │   ├── Tile/          # Tile 实体 + TileAura + TileSystemAura
+│       │   ├── Plane/         # Plane 实体 + PlaneMgr + PlaneGenerator
+│       │   ├── Trait/         # Trait 实体 + TraitMgr + TraitSystem*
+│       │   ├── Modifier/      # ModifierBase 体系（TileModifier/NpcModifier/CardModifier）
+│       │   ├── AuraDao/       # 元气天道（AuraDaoMgr：全局五行收支感知）
+│       │   ├── Stat/          # StatBlock + StatEntry + StatModifier
+│       │   ├── Tag/           # TagMgr（多集合 Tag 匹配算法）
+│       │   └── Combat/        # 战斗场景（CombatScene, CombatNpc）
+│       ├── World/             # 驱动层（WorldMgr Tick 入口, WorldTime）
+│       ├── Save/              # 存档（SaveMgr, SaveModel）
+│       ├── UI/                # 界面（Screens + Widgets）
+│       └── UnityAdapter/      # Unity 表现层桥接（Presenter/View/DebugPanel）
+```
+
+**分层原则**：
+- `Data/` 只读静态配置Define，不依赖 `Domain/`
+- `Domain/` 纯运行时逻辑，不直接引用 Unity 引擎 API
+- `World/` 是 Tick 驱动的入口，协调 `Domain/` 中各 Mgr
+- `UnityAdapter/` 是 Unity View 层，单向依赖 `Domain/`，不反向,暂时不写
+
+---
+
+## 2. 游戏主循环与入口
+
+```
+WorldMgr.Initialize(seed)          // 1. 加载数据 + 初始化所有 Mgr
+WorldMgr.Start()                   // 2. 打印启动日志
+WorldMgr.Tick(deltaTime)           // 3. 每帧调用（由 GameLoopDriver 驱动）
+```
+
+
+**生命周期接口**（`IDomainMgrBase`）：
+```csharp
+void Init();           // 无耦合初始化（自身状态）
+void Begin();          // 有耦合初始化（依赖其他 Mgr）
+void Tick(float dt);   // 帧更新（逻辑）
+void Update();         // 帧更新（轻量回调）
+void Render(float dt); // 渲染更新
+void End();            // 销毁/清理
+IEnumerator Save();    // 存档
+IEnumerator Load();    // 读档
+```
+
+> **重要**：`Begin()`/`Update()`/`Render()` 等方法目前大量 `throw new NotImplementedException()`，这是正常的——未实现的生命周期方法保留占位符即可，不要删除接口方法。
+
+---
+
+## 3. 命名约定（严格遵守）
+
+| 元素 | 规范 | 示例 |
+|---|---|---|
+| 类 | PascalCase | `NpcSystemBio`, `TileModifier` |
+| 接口 | `I` + PascalCase | `IDomainMgrBase`, `INpcSystem` |
+| 公有属性/方法 | PascalCase | `CurrentAura`, `GetById()` |
+| 私有字段 | `_` + camelCase | `_allNpcs`, `_rng` |
+| 静态常量/静态只读 | PascalCase | `NpcId.Invalid`, `TileId.Zero` |
+| 枚举 | PascalCase（类型+值） | `BaseElementType.Huo`, `ModifierType.Flat` |
+| 事件枚举 | `Em_` 前缀 | `Em_Event` |
+| 管理器类 | `*Mgr` 后缀 | `NpcMgr`, `TraitMgr`, `PlaneMgr` |
+| 系统类（子系统） | `*System*` | `NpcSystemBio`, `TileSystemAura` |
+| 定义数据类 | `*Define` | `NpcDefine`, `TraitDefine` |
+| 定义管理器 | `*DefineMgr` 或 `*Mgr` | `TraitDefineMgr`, `NpcDefineMgr` |
+| ID 结构体 | `*Id` | `NpcId`, `TileId`, `TraitId` |
+| ID 生成器 | `*IdGenerator` | `NpcIdGenerator`, `PlaneIdGenerator` |
+| 数据容器类 | `*Data` | `NpcBioData`, `NpcPositionData` |
+| 文件名 | 与主类名完全一致 | `NpcSystemBio.cs` |
+| namespace | `UnityWorld.Game.Domain`（领域层）/ `UnityWorld.Game.Data`（数据层）/ `UnityWorld.Game.World`（驱动层）/ `UnityWorld.Core`（核心层） | — |
+
+---
+
+## 4. 注释与文档规范
+
+- **所有 public 成员必须有 `<summary>` XML 注释**，私有方法可酌情省略
+- 区域分隔使用 `// ── 区域名 ─────────────────────────────────────` 格式（见 NpcMgr.cs 为标准）
+- TODO 注释格式：`// TODO: 描述内容`
+- 中文注释：业务逻辑描述用中文，技术术语可保留英文
+
+---
+
+## 5. 核心 API 快速参考
+
+### 5.1 全局单例访问
+
+```csharp
+GameDataMgr.Instance           // 静态数据总入口
+NpcMgr.Instance                // NPC管理器（可为 null，用 ? 访问）
+```
+
+
+### 5.10 数据定义查询（IDataMgrBase<T>）
+
+```csharp
+TDefine? Get(string id)        // 按 ID 查询，不存在返回 null
+IEnumerable<TDefine> GetAll()  // 全量查询
+bool Contains(string id)       // 存在性检查
+
+// 访问示例
+GameDataMgr.Instance.  // 不直接暴露子 Mgr，通过单例类分别访问
+TraitDefineMgr.Instance?.Get("brave")
+NpcDefineMgr.Instance?.Get("human_farmer")
+```
+
+### 5.11 随机数（可复现）
+
+```csharp
+// 使用 Rng（不使用 UnityEngine.Random，保证可复现）
+var rng = new Rng(seed);
+float f = rng.Range(float min, float max);
+int   i = rng.Range(int min, int max);    // [min, max) 左闭右开
+```
+
+### 5.12 日志
+
+```csharp
+LogMgr.Dbg(string msg, params object[] args)   // Debug 日志
+LogMgr.Warn(string msg, params object[] args)  // 警告
+LogMgr.Err(string msg, params object[] args)   // 错误
+```
+
+---
+
+## 6. 关键枚举与类型
+基本都在Scripts\Game\Domain\Enum\EnumTypes.cs
+```
+
+---
+
+
+### 8.4 数据层与运行时层分离
+
+- `*Define`（在 `Data/Defines/`）= 静态配置，JSON 加载，只读
+- 运行时实例（在 `Domain/`）= 游戏状态，可变
+- `DefineBase` 是所有 Define 的基类：`string ID`, `string DisplayName`（JSON 字段名大写）
+
+```csharp
+// 正确：运行时查询 Define
+var define = TraitDefineMgr.Instance?.Get(traitId.Value);
+// 正确：运行时读取 NPC 状态
+float age = npc.Stats.Get(StatId.AgeAccumulated);
+```
+---
+
+## 9. 生命周期管理
+
+### 9.1 Mgr 注册模式
+
+所有领域 Mgr 在 `WorldMgr.Initialize()` 中统一注册到 `_mgrs` 列表：
+
+```csharp
+// WorldMgr.Initialize() 模式
+_mgrs.Add(new NpcMgr(seed));
+var planeMgr = new PlaneMgr { AuraDaoMgr = WorldMgr.AuraDaoMgr };
+_mgrs.Add(planeMgr);
+foreach (var mgr in _mgrs) mgr.Init();
+```
+
+### 9.2 单例访问约定
+
+Mgr 的单例在构造函数内赋值（`Instance = this`），使用时务必做**空值检查**：
+
+```csharp
+// 正确
+var npc = NpcMgr.Instance?.GetById(id);
+
+// 错误（可能 NullReferenceException）
+var npc = NpcMgr.Instance.GetById(id);
+```
+
+### 9.3 事件监听清理
+
+在 `End()` 中必须 RemoveEvent，防止内存泄漏：
+```csharp
+public void End()
+{
+    EventMgr.Instance?.RemoveEvent(Em_Event.SomeEvent, OnSomeEvent);
+    // 清理其他监听...
+}
+```
+
+---
+
+## 10. 性能约定
+
+- **遍历 Tile 的热路径**：大量 Tile（主世界 200×200 = 40,000）遍历时，跳过 `Modifiers.Count == 0` 的 Tile（`TileSystemAura` 示范了此优化）
+- **失衡权重缓存**：`AuraDaoMgr.GetImbalanceWeight()` 内含每 Tick 缓存，无需在外部缓存
+- **随机数**：使用 `Rng(seed)` 而非 `System.Random` 或 `UnityEngine.Random`，保证可复现性
+- **集合遍历中不修改集合**：需要在遍历后批量移除时，先收集到临时 `List<>`，遍历结束后再移除（`TileSystemAura.Tick` 的 `toRemove` 模式）
+- **快照开销**：`AuraDaoMgr.TakeSnapshot()` 是 O(n) 操作（n = Tile 数量），只在地图生成时调用一次，不在 Tick 中重复调用
+
+---
+
+## 11. 新文件脚手架模板
+
+### 11.1 新增 NpcSystem（子系统）
+
+记得建立对应的SystemBase
+
+### 11.2 新增领域 Mgr
+
+记得继承IDomainMgrBase
+
+### 11.3 新增 Define（静态数据）
+
+记得继承DefineBase
+
+### 11.4 新增 Modifier（元气修正源）
+
+记得继承ModifierBase
+
+
+## 12. 开发工作流
+
+### 构建与运行
+
+暂时不用验证与运行
+```
+
+### 添加新数据文件
+
+1. 在 `Data/Defines/` 新建 `*Define.cs`（继承 `DefineBase`）
+2. 在 `Data/Mgr/` 新建 `*DefineMgr.cs`（实现 `IDataMgrBase<TDefine>`）
+3. 在 `GameDataMgr` 构造函数中 `_datamgrs.Add(new XxxDefineMgr(path))` 注册
+
+### 新增领域功能检查清单
+
+- [ ] 文件名与主类名一致
+- [ ] namespace 正确（`UnityWorld.Game.Domain` 或 `UnityWorld.Game.Data`）
+- [ ] 所有 `public` 成员有 `<summary>` 注释
+- [ ] 新的 `IDomainMgrBase` 实现在 `WorldMgr.Initialize()` 中注册
+- [ ] `End()` 中清理了所有事件监听
+- [ ] 遍历中不直接修改集合（用 toRemove 临时列表）
+- [ ] 随机数使用 `Rng` 而非 `System.Random`/`UnityEngine.Random`
+
+Object实例类型的记得要拥有对应的Define
+
+最好都引用下UnityWorld.Core
+
+</rule>

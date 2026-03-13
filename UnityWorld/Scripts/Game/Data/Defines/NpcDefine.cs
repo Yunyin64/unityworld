@@ -1,4 +1,5 @@
 using UnityWorld.Game.Domain;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {

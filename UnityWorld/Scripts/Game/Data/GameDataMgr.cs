@@ -37,6 +37,7 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "CardDefines.json")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
+        _datamgrs.Add(new EventDefineMgr(Path.Combine(dataDir, "EventDefines.json")));
 
             Instance = this;
         }

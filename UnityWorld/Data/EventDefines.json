@@ -1,0 +1,42 @@
+[
+  {
+    "ID": "NpcMoved",
+    "DisplayName": "NPC移动",
+    "Scopes": ["global", "npc", "tile", "plane"]
+  },
+  {
+    "ID": "NpcDied",
+    "DisplayName": "NPC死亡",
+    "Scopes": ["global", "npc", "plane"]
+  },
+  {
+    "ID": "NpcBorn",
+    "DisplayName": "NPC出生",
+    "Scopes": ["global", "npc", "plane"]
+  },
+  {
+    "ID": "NpcStatChanged",
+    "DisplayName": "NPC属性变化",
+    "Scopes": ["global", "npc"]
+  },
+  {
+    "ID": "NpcTraitAdded",
+    "DisplayName": "NPC获得特质",
+    "Scopes": ["global", "npc"]
+  },
+  {
+    "ID": "NpcTraitRemoved",
+    "DisplayName": "NPC失去特质",
+    "Scopes": ["global", "npc"]
+  },
+  {
+    "ID": "TileAuraChanged",
+    "DisplayName": "地块元气变化",
+    "Scopes": ["global", "tile", "plane"]
+  },
+  {
+    "ID": "PlaneGenerated",
+    "DisplayName": "位面生成",
+    "Scopes": ["global", "plane"]
+  }
+]

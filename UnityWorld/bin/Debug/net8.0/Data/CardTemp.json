@@ -139,6 +139,146 @@
       "complexityScore": 8,
       "ID": "gen_effect_0010",
       "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（被动,火,燃烧）",
+      "triggerId": "trigger_on_burn",
+      "conditionId": "cond_target_burn",
+      "actionIds": [
+        "action_burn_spread",
+        "action_apply_burn_1",
+        "action_fire_dmg_3"
+      ],
+      "powerScore": 5,
+      "complexityScore": 15,
+      "ID": "gen_effect_0011",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（被动,火,燃烧）",
+      "triggerId": "trigger_on_burn",
+      "conditionId": "cond_target_burn",
+      "actionIds": [
+        "action_apply_burn_1",
+        "action_burn_spread",
+        "action_fire_dmg_3"
+      ],
+      "powerScore": 5,
+      "complexityScore": 15,
+      "ID": "gen_effect_0012",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（被动,火,燃烧）",
+      "triggerId": "trigger_on_burn",
+      "conditionId": "cond_target_burn",
+      "actionIds": [
+        "action_apply_burn_1",
+        "action_burn_spread",
+        "action_fire_dmg_1"
+      ],
+      "powerScore": 3,
+      "complexityScore": 13,
+      "ID": "gen_effect_0013",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（主动,攻击,致命）",
+      "triggerId": "trigger_on_attack",
+      "conditionId": "cond_target_low_hp",
+      "actionIds": [
+        "action_atk_1",
+        "action_fire_dmg_1",
+        "action_atk_3"
+      ],
+      "powerScore": 2,
+      "complexityScore": 8,
+      "ID": "gen_effect_0014",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（主动,攻击,致命）",
+      "triggerId": "trigger_on_attack",
+      "conditionId": "cond_target_low_hp",
+      "actionIds": [
+        "action_atk_3",
+        "action_fire_dmg_1",
+        "action_atk_1"
+      ],
+      "powerScore": 2,
+      "complexityScore": 8,
+      "ID": "gen_effect_0015",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（被动,火,燃烧）",
+      "triggerId": "trigger_on_burn",
+      "conditionId": "cond_target_burn",
+      "actionIds": [
+        "action_burn_spread",
+        "action_apply_burn_1",
+        "action_fire_dmg_3"
+      ],
+      "powerScore": 5,
+      "complexityScore": 15,
+      "ID": "gen_effect_0016",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（被动,火,燃烧）",
+      "triggerId": "trigger_on_burn",
+      "conditionId": "cond_target_burn",
+      "actionIds": [
+        "action_apply_burn_1",
+        "action_burn_spread",
+        "action_fire_dmg_3"
+      ],
+      "powerScore": 5,
+      "complexityScore": 15,
+      "ID": "gen_effect_0017",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（被动,火,燃烧）",
+      "triggerId": "trigger_on_burn",
+      "conditionId": "cond_target_burn",
+      "actionIds": [
+        "action_apply_burn_1",
+        "action_burn_spread",
+        "action_fire_dmg_1"
+      ],
+      "powerScore": 3,
+      "complexityScore": 13,
+      "ID": "gen_effect_0018",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（主动,攻击,致命）",
+      "triggerId": "trigger_on_attack",
+      "conditionId": "cond_target_low_hp",
+      "actionIds": [
+        "action_atk_1",
+        "action_fire_dmg_1",
+        "action_atk_3"
+      ],
+      "powerScore": 2,
+      "complexityScore": 8,
+      "ID": "gen_effect_0019",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成 Effect（主动,攻击,致命）",
+      "triggerId": "trigger_on_attack",
+      "conditionId": "cond_target_low_hp",
+      "actionIds": [
+        "action_atk_3",
+        "action_fire_dmg_1",
+        "action_atk_1"
+      ],
+      "powerScore": 2,
+      "complexityScore": 8,
+      "ID": "gen_effect_0020",
+      "DisplayName": ""
     }
   ],
   "cards": [
@@ -314,6 +454,182 @@
         "火"
       ],
       "ID": "gen_card_0010",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（被动,火,燃烧）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0011"
+      ],
+      "tags": [
+        "被动",
+        "火",
+        "燃烧",
+        "状态",
+        "范围",
+        "异常",
+        "伤害"
+      ],
+      "ID": "gen_card_0011",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（被动,火,燃烧）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0012"
+      ],
+      "tags": [
+        "被动",
+        "火",
+        "燃烧",
+        "状态",
+        "异常",
+        "范围",
+        "伤害"
+      ],
+      "ID": "gen_card_0012",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（被动,火,燃烧）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0013"
+      ],
+      "tags": [
+        "被动",
+        "火",
+        "燃烧",
+        "状态",
+        "异常",
+        "范围",
+        "伤害"
+      ],
+      "ID": "gen_card_0013",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（主动,攻击,致命）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0014"
+      ],
+      "tags": [
+        "主动",
+        "攻击",
+        "致命",
+        "条件",
+        "伤害",
+        "火"
+      ],
+      "ID": "gen_card_0014",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（主动,攻击,致命）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0015"
+      ],
+      "tags": [
+        "主动",
+        "攻击",
+        "致命",
+        "条件",
+        "伤害",
+        "火"
+      ],
+      "ID": "gen_card_0015",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（被动,火,燃烧）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0016"
+      ],
+      "tags": [
+        "被动",
+        "火",
+        "燃烧",
+        "状态",
+        "范围",
+        "异常",
+        "伤害"
+      ],
+      "ID": "gen_card_0016",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（被动,火,燃烧）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0017"
+      ],
+      "tags": [
+        "被动",
+        "火",
+        "燃烧",
+        "状态",
+        "异常",
+        "范围",
+        "伤害"
+      ],
+      "ID": "gen_card_0017",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（被动,火,燃烧）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0018"
+      ],
+      "tags": [
+        "被动",
+        "火",
+        "燃烧",
+        "状态",
+        "异常",
+        "范围",
+        "伤害"
+      ],
+      "ID": "gen_card_0018",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（主动,攻击,致命）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0019"
+      ],
+      "tags": [
+        "主动",
+        "攻击",
+        "致命",
+        "条件",
+        "伤害",
+        "火"
+      ],
+      "ID": "gen_card_0019",
+      "DisplayName": ""
+    },
+    {
+      "desc": "生成卡牌（主动,攻击,致命）",
+      "rarity": 0,
+      "effectIds": [
+        "gen_effect_0020"
+      ],
+      "tags": [
+        "主动",
+        "攻击",
+        "致命",
+        "条件",
+        "伤害",
+        "火"
+      ],
+      "ID": "gen_card_0020",
       "DisplayName": ""
     }
   ]
