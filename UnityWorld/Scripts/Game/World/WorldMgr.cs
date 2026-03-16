@@ -1,5 +1,6 @@
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.World
 {
@@ -34,7 +35,11 @@ namespace UnityWorld.Game.World
             // PlaneMgr 需要 AuraDaoMgr 引用，以便 Fill() 完成后自动拍摄快照
             var planeMgr = new PlaneMgr { AuraDaoMgr = AuraDaoMgr };
             _mgrs.Add(planeMgr);
-            
+
+            // ── 叙事系统 ──────────────────────────────────────
+            _mgrs.Add(new StoryMgr(seed));
+            _mgrs.Add(new ActionCardMgr());
+
             foreach (var mgr in _mgrs) mgr.Init();  // 初始化时先Tick一次，建立初始状态（如生成NPC）
         }
 

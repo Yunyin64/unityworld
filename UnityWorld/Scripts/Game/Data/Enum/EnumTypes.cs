@@ -171,3 +171,62 @@ public enum Em_Event
 {
     
 }
+
+// ══════════════════════════════════════════════════════════
+//  叙事系统相关枚举
+// ══════════════════════════════════════════════════════════
+
+/// <summary>
+/// 故事触发来源（天地人三池）
+/// </summary>
+public enum StoryPoolSource
+{
+    /// <summary>天：宿命池（时间到达触发）</summary>
+    Fate,
+    /// <summary>地：劫缘池（周期性权重随机触发）</summary>
+    Karma,
+    /// <summary>人：抉择池（个体主动使用 ActionCard 触发）</summary>
+    Will,
+}
+
+/// <summary>
+/// StoryCondition 判断目标类型
+/// </summary>
+public enum StoryConditionTargetType
+{
+    /// <summary>NPC 属性值（Stat）</summary>
+    NpcStat,
+    /// <summary>NPC 是否拥有某 Tag</summary>
+    NpcTag,
+    /// <summary>NPC 是否拥有某 Trait</summary>
+    NpcTrait,
+    /// <summary>区域五行元气浓度</summary>
+    AuraElement,
+    /// <summary>游戏世界时间</summary>
+    WorldTime,
+    /// <summary>NPC 关系值</summary>
+    Relation,
+}
+
+/// <summary>
+/// StoryCondition 比较运算符
+/// </summary>
+public enum StoryConditionOperator
+{
+    /// <summary>大于</summary>
+    GreaterThan,
+    /// <summary>小于</summary>
+    LessThan,
+    /// <summary>等于</summary>
+    Equal,
+    /// <summary>不等于</summary>
+    NotEqual,
+    /// <summary>大于等于</summary>
+    GreaterThanOrEqual,
+    /// <summary>小于等于</summary>
+    LessThanOrEqual,
+    /// <summary>包含（用于 Tag/Trait 检查）</summary>
+    Contains,
+    /// <summary>不包含</summary>
+    NotContains,
+}

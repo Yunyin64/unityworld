@@ -38,6 +38,10 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "CardDefines.json")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
         _datamgrs.Add(new EventDefineMgr(Path.Combine(dataDir, "EventDefines.json")));
+        // ── 叙事系统 ──────────────────────────────────────────
+        _datamgrs.Add(new OptionDefineMgr(Path.Combine(dataDir, "OptionDefines.json")));
+        _datamgrs.Add(new StoryDefineMgr(Path.Combine(dataDir, "StoryDefines.json")));
+        _datamgrs.Add(new ActionCardDataMgr(Path.Combine(dataDir, "ActionCardDefines.json")));
 
             Instance = this;
         }
