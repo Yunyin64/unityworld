@@ -39,7 +39,7 @@ namespace UnityWorld.Game.Domain
         public Tile(TileId id, TileAura currentAura)
         {
             Id = id;
-            CurrentAura.Jing  = currentAura.Jing;
+            CurrentAura.Jin  = currentAura.Jin;
             CurrentAura.Mu    = currentAura.Mu;
             CurrentAura.Shui  = currentAura.Shui;
             CurrentAura.Huo   = currentAura.Huo;

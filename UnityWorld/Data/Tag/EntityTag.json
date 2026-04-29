@@ -1,0 +1,10 @@
+[
+  { "id": "Entity", "displayName": "实体", "Desc": "世界中存在的实体对象", "Parent": null },
+  { "id": "Building", "displayName": "建筑", "Desc": "各类人造建筑", "Parent": "Entity" },
+  { "id": "Color", "displayName": "颜色", "Desc": "各类色彩（最多两个字）", "Parent": "Entity" },
+  { "id": "Carrer", "displayName": "职业", "Desc": "各类人造建筑", "Parent": "Entity" },
+  { "id": "Plant", "displayName": "植物", "Desc": "各类人造建筑", "Parent": "Entity" },
+  { "id": "Animal", "displayName": "动物", "Desc": "各类人造建筑", "Parent": "Entity" },
+  { "id": "Material", "displayName": "材料", "Desc": "各类人造建筑", "Parent": "Entity" },
+  { "id": "Weapon", "displayName": "武器", "Desc": "各类武器类型", "Parent": "Entity" }
+]

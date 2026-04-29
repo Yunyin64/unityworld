@@ -47,5 +47,6 @@ namespace UnityWorld.Game.Data
         public IEnumerable<TagDefine> GetAll() => _tags.Values;
 
         public bool Contains(string id) => _tags.ContainsKey(id);
+        public IEnumerable<TagDefine> Query(Func<TagDefine, bool> predicate) => _tags.Values.Where(predicate);
     }
 }

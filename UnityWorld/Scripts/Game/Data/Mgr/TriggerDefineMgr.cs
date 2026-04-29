@@ -47,5 +47,6 @@ namespace UnityWorld.Game.Data
         public IEnumerable<TriggerDefine> GetAll() => _triggers.Values;
 
         public bool Contains(string id) => _triggers.ContainsKey(id);
+        public IEnumerable<TriggerDefine> Query(Func<TriggerDefine, bool> predicate) => _triggers.Values.Where(predicate);
     }
 }

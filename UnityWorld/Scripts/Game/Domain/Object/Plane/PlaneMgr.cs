@@ -12,13 +12,13 @@ namespace UnityWorld.Game.Domain
 
         private readonly Dictionary<PlaneId, Plane> _planes = new();
 
-        public static PlaneMgr? Instance { get; private set; } 
+        public static PlaneMgr Instance { get; private set; } 
 
         /// <summary>主世界（唯一，游戏初始化时创建）</summary>
-        public Plane? MainPlane { get; private set; }
+        public Plane MainPlane { get; private set; }
 
         /// <summary>天道管理器引用（可选），用于在位面生成完毕后自动拍摄元气快照</summary>
-        public AuraDaoMgr? AuraDaoMgr { get; set; }
+        public AuraDaoMgr AuraDaoMgr { get; set; }
 
         // ── 初始化 ────────────────────────────────────────
 
@@ -96,16 +96,16 @@ namespace UnityWorld.Game.Domain
         /// <summary>当前位面总数（含封印）</summary>
         public int Count => _planes.Count;
 
-        public string Name => throw new NotImplementedException();
+        public string Name => "PlaneMgr";
 
-        public string Desc => throw new NotImplementedException();
+        public string Desc => "";
 
         // ── NPC归属 ───────────────────────────────────────
 
         /// <summary>
         /// 查找某NPC当前所在的位面（线性查找，仅适合低频调用）
         /// </summary>
-        public Plane? FindPlaneOfNpc(NpcId npcId)
+        public Plane? FindPlaneOfNpc(int npcId)
         {
             foreach (var plane in _planes.Values)
                 if (plane.ContainsNpc(npcId)) return plane;
@@ -116,7 +116,7 @@ namespace UnityWorld.Game.Domain
         /// 将NPC从旧位面迁移到新位面（原子操作）。
         /// 同时更新 NpcSystemPosition 里的位置记录（可选传入）。
         /// </summary>
-        public bool MoveNpc(NpcId npcId, PlaneId targetPlaneId,
+        public bool MoveNpc(int npcId, PlaneId targetPlaneId,
                             TileId targetTileId = default,
                             NpcSystemPosition? posSystem = null)
         {
@@ -130,8 +130,6 @@ namespace UnityWorld.Game.Domain
             // 加入目标位面
             target.AddNpc(npcId);
 
-            // 同步位置系统（如果传入）
-            posSystem?.Teleport(npcId, targetPlaneId, targetTileId);
 
             return true;
         }
@@ -152,32 +150,32 @@ namespace UnityWorld.Game.Domain
 
         public void Begin()
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Update()
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Render(float dt)
         {
-            throw new NotImplementedException();
+             
         }
 
         public void End()
         {
-            throw new NotImplementedException();
+             
         }
 
-        public IEnumerator Save()
+    public IEnumerator Save()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
-        public IEnumerator Load()
+    public IEnumerator Load()
         {
-            throw new NotImplementedException();
+            yield break;
         }
     }
 }

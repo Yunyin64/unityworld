@@ -1,0 +1,195 @@
+[
+ 
+  {
+    "ID": "ac_practice_meditate",
+    "DisplayName": "静坐冥想",
+    "Tags": ["修炼", "灵", "安静"],
+    "BehaviorId": "Practice",
+    "BehaviorDuration": 120.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["修炼", "开始", "冥想"]
+    },
+    "OnEnd": {
+      "StoryTags": ["修炼", "结束", "冥想", "感悟"]
+    },
+    "OnTick": {
+      "Chance": 0.05,
+      "Trigger": {
+        "StoryTags": ["修炼", "感悟", "灵"]
+      }
+    },
+    "OnInterrupt": {
+      "StoryTags": ["修炼", "打断", "走火"]
+    }
+  },
+  {
+    "ID": "ac_practice_body",
+    "DisplayName": "体魄淬炼",
+    "Tags": ["修炼", "武", "肉身"],
+    "BehaviorId": "Practice",
+    "BehaviorDuration": 60.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["修炼", "开始", "武"]
+    },
+    "OnEnd": {
+      "StoryTags": ["修炼", "结束", "武", "肉身"]
+    },
+    "OnTick": {
+      "Chance": 0.08,
+      "Trigger": {
+        "StoryTags": ["修炼", "淬炼", "肉身"]
+      }
+    }
+  },
+  {
+    "ID": "ac_explore_surroundings",
+    "DisplayName": "探索四方",
+    "Tags": ["探索", "发现", "冒险"],
+    "BehaviorId": "Explore",
+    "BehaviorDuration": 90.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["探索", "出发"]
+    },
+    "OnEnd": {
+      "StoryTags": ["探索", "归来", "发现"]
+    },
+    "OnTick": {
+      "Chance": 0.1,
+      "Trigger": {
+        "StoryTags": ["探索", "发现", "随机"]
+      }
+    },
+    "OnInterrupt": {
+      "StoryTags": ["探索", "危险", "打断"]
+    }
+  },
+  {
+    "ID": "ac_explore_treasure",
+    "DisplayName": "寻宝探秘",
+    "Tags": ["探索", "宝物", "机缘"],
+    "BehaviorId": "Explore",
+    "BehaviorDuration": 60.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": true,
+    "OnEnd": {
+      "StoryTags": ["探索", "宝物", "机缘"]
+    },
+    "OnTick": {
+      "Chance": 0.15,
+      "Trigger": {
+        "StoryTags": ["探索", "发现", "宝物"]
+      }
+    }
+  },
+  {
+    "ID": "ac_social_chat",
+    "DisplayName": "闲聊交谈",
+    "Tags": ["社交", "交流", "日常"],
+    "BehaviorId": "Social",
+    "BehaviorDuration": 30.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["社交", "开始", "交谈"]
+    },
+    "OnEnd": {
+      "StoryTags": ["社交", "结束", "交谈"]
+    }
+  },
+  {
+    "ID": "ac_social_trade",
+    "DisplayName": "物品交易",
+    "Tags": ["社交", "交易", "商"],
+    "BehaviorId": "Social",
+    "BehaviorDuration": 20.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["社交", "交易", "开始"]
+    },
+    "OnEnd": {
+      "StoryTags": ["社交", "交易", "结束"]
+    }
+  },
+  {
+    "ID": "ac_social_debate",
+    "DisplayName": "论道",
+    "Tags": ["社交", "论道", "灵", "感悟"],
+    "BehaviorId": "Social",
+    "BehaviorDuration": 60.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["社交", "论道", "开始"]
+    },
+    "OnEnd": {
+      "StoryTags": ["社交", "论道", "感悟"]
+    },
+    "OnTick": {
+      "Chance": 0.1,
+      "Trigger": {
+        "StoryTags": ["社交", "论道", "灵感"]
+      }
+    }
+  },
+  {
+    "ID": "ac_instant_pill",
+    "DisplayName": "服用丹药",
+    "Tags": ["消耗", "丹药", "恢复"],
+    "BehaviorId": "",
+    "BehaviorDuration": 0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": true,
+    "OnStart": {
+      "StoryTags": ["丹药", "服用", "恢复"]
+    }
+  },
+  {
+    "ID": "ac_instant_talisman",
+    "DisplayName": "使用符箓",
+    "Tags": ["消耗", "符箓", "火"],
+    "BehaviorId": "",
+    "BehaviorDuration": 0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": true,
+    "OnStart": {
+      "StoryTags": ["符箓", "使用", "火"]
+    }
+  },
+  {
+    "ID": "ac_practice_alchemy",
+    "DisplayName": "炼丹",
+    "Tags": ["修炼", "炼丹", "火", "丹药"],
+    "BehaviorId": "Practice",
+    "BehaviorDuration": 180.0,
+    "BehaviorIsPrimary": true,
+    "IsConsumable": false,
+    "OnStart": {
+      "StoryTags": ["炼丹", "开始"]
+    },
+    "OnEnd": {
+      "StoryTags": ["炼丹", "结束", "成丹"]
+    },
+    "OnTick": {
+      "Chance": 0.05,
+      "Trigger": {
+        "StoryTags": ["炼丹", "火候", "变化"]
+      }
+    },
+    "OnTimer": {
+      "Delay": 90.0,
+      "Trigger": {
+        "StoryTags": ["炼丹", "关键", "火候"]
+      }
+    },
+    "OnInterrupt": {
+      "StoryTags": ["炼丹", "失败", "炸炉"]
+    }
+  }
+]

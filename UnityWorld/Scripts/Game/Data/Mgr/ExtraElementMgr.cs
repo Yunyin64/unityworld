@@ -47,5 +47,6 @@ namespace UnityWorld.Game.Data
         public IEnumerable<ExtraElementDefine> GetAll() => _elements.Values;
 
         public bool Contains(string id) => _elements.ContainsKey(id);
+        public IEnumerable<ExtraElementDefine> Query(Func<ExtraElementDefine, bool> predicate) => _elements.Values.Where(predicate);
     }
 }

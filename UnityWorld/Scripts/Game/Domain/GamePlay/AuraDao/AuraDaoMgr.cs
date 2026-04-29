@@ -11,7 +11,7 @@ namespace UnityWorld.Game.Domain
     /// 
     /// 天道只感知、不主动干预——它计算偏差并暴露权重，具体事件触发由其他系统决定。
     /// </summary>
-    public class AuraDaoMgr
+    public class AuraDaoMgr:IGameplayMgrBase
     {
         // ── 原初快照 ─────────────────────────────────────
 
@@ -28,6 +28,10 @@ namespace UnityWorld.Game.Domain
         private readonly Dictionary<BaseElementType, float> _imbalanceWeightCache = new();
         private bool _cacheValid = false;
 
+        public string Name => "AuraDaoMgr";
+
+        public string Desc => "";
+
         // ── 快照 ──────────────────────────────────────────
 
         /// <summary>
@@ -39,7 +43,7 @@ namespace UnityWorld.Game.Domain
             {
                 var snapshot = new TileAura
                 {
-                    Jing = tile.CurrentAura.Jing,
+                    Jin = tile.CurrentAura.Jin,
                     Mu   = tile.CurrentAura.Mu,
                     Shui = tile.CurrentAura.Shui,
                     Huo  = tile.CurrentAura.Huo,
@@ -71,7 +75,7 @@ namespace UnityWorld.Game.Domain
         {
             var balance = new Dictionary<BaseElementType, float>
             {
-                [BaseElementType.Jing] = 0f,
+                [BaseElementType.Jin] = 0f,
                 [BaseElementType.Mu]   = 0f,
                 [BaseElementType.Shui] = 0f,
                 [BaseElementType.Huo]  = 0f,
@@ -84,7 +88,7 @@ namespace UnityWorld.Game.Domain
                 {
                     if (!_originSnapshot.TryGetValue(id, out var origin)) continue;
 
-                    balance[BaseElementType.Jing] += tile.CurrentAura.Jing - origin.Jing;
+                    balance[BaseElementType.Jin] += tile.CurrentAura.Jin - origin.Jin;
                     balance[BaseElementType.Mu]   += tile.CurrentAura.Mu   - origin.Mu;
                     balance[BaseElementType.Shui] += tile.CurrentAura.Shui - origin.Shui;
                     balance[BaseElementType.Huo]  += tile.CurrentAura.Huo  - origin.Huo;
@@ -126,6 +130,41 @@ namespace UnityWorld.Game.Domain
                 _imbalanceWeightCache[element] = System.MathF.Abs(delta);
 
             _cacheValid = true;
+        }
+
+        public void Init()
+        {
+             
+        }
+
+        public void Begin()
+        {
+             
+        }
+
+        public void Tick(float deltaTime)
+        {
+             
+        }
+
+        public void Update()
+        {
+             
+        }
+
+        public void Render(float dt)
+        {
+             
+        }
+
+        public void End()
+        {
+             
+        }
+
+        public void Log()
+        {
+             
         }
     }
 }

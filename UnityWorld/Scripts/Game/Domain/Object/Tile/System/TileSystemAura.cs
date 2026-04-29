@@ -28,7 +28,7 @@ namespace UnityWorld.Game.Domain
                 foreach (var modifier in tile.Modifiers)
                 {
                     // 将 AuraData（每秒变化量）按 deltaTime 比例累积到 CurrentAura
-                    tile.CurrentAura.Jing  += modifier.AuraData.Jing  * deltaTime;
+                    tile.CurrentAura.Jin  += modifier.AuraData.Jin  * deltaTime;
                     tile.CurrentAura.Mu    += modifier.AuraData.Mu    * deltaTime;
                     tile.CurrentAura.Shui  += modifier.AuraData.Shui  * deltaTime;
                     tile.CurrentAura.Huo   += modifier.AuraData.Huo   * deltaTime;

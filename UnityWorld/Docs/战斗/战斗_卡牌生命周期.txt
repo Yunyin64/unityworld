@@ -1,0 +1,118 @@
+# 战斗系统 · 卡牌生命周期与数据格式
+### 标准用法示例、卡牌在战斗中的完整生命周期、ManaCost 数据格式
+
+→ 本文件为战斗系统的一部分。另见：
+→ 战斗/战斗_核心机制.txt（设计原则、体验循环、核心属性、Tick驱动、待发槽、对拼、血量伤势、Mana）
+→ 战斗/战斗_TCA体系.txt（卡牌模型、枚举、TCA架构、Action原子、API注册表）
+
+---
+
+## 十一、标准用法示例（伪代码）
+
+  var rng = new Rng(seed);
+  var scene = new CombatScene(rng);
+
+  scene.Init(new[] {
+      (npcA.Id, CombatTeam.TeamA),
+      (npcB.Id, CombatTeam.TeamB),
+  }, maxTicks: 500);
+
+  scene.PreStart();   // 快照属性、装载卡组、分配Target
+  scene.Start();      // 进入Running
+
+  while (!scene.IsFinished)
+      scene.Tick();   // 推进所有计时器，触发对拼/直击
+
+  var result = scene.GetResult();
+
+  // 回写大世界（含伤势卡）
+  foreach (var cr in result.Combatants)
+  {
+      var npc = NpcMgr.Instance?.GetById(cr.int);
+      // 回写HP损耗
+      // 回写伤势卡到NPC卡组
+  }
+
+---
+
+## 十五、一张卡在战斗中的完整生命周期
+
+  战斗初始化阶段（Keyword 介入点 ①）
+    装载卡组时，扫描每张卡的 Effects，处理初始化类 Keyword：
+      ⚡ Initial → 该卡 CD 设为 0（已满）
+      ⚡ Sluggish → 该卡首次 CD 翻倍
+
+  CD阶段（等待）
+    CardData 安静躺在卡组里，CombatCardState 追踪 CD 计时器
+
+  CD满 → Keyword 预处理（Keyword 介入点 ②）
+    扫描该卡 Effects 中的预处理类 Keyword：
+      ⚡ Weapon → 向卡组上方搜索武器卡，用其属性补全
+                  Action Context 中的空位（如 Element=None → "Huo"）
+      ⚡ Overcharge → 消耗额外灵元，提升拼点数值
+
+  CD满 → 扫描判定
+    遍历 CardData 所有 Effect 的所有 ActionData
+    有 FuncName 为 Attack/Shield/Block 的吗？
+
+    ┌─── 有（攻防卡）───┐      ┌─── 没有（效果卡）───┐
+    │                   │      │                     │
+    ▼                   │      ▼                     │
+  攻防路径              │    效果路径                 │
+  （Keyword 介入点 ③）  │                            │
+                        │                            │
+  ⚡ Rush?              │    直接执行所有             │
+  ├─ 是 → 跳过待发槽   │    Trigger=OnUse 的         │
+  │       直接直击对方  │    Effect 的 Actions        │
+  │       → 跳到后处理  │    → Heal(5) 直接生效       │
+  └─ 否 → 正常流程     │    → 跳到后处理             │
+                        │                            │
+  从 Attack/Shield/     │                            │
+  Block Action 的参数   │                            │
+  提取拼点数据(临时)    │                            │
+                        │                            │
+  拼点数据塞入待发槽    │                            │
+  ⚡ 挤出时检查：       │                            │
+     被挤卡有 Fortify?  │                            │
+     ├─ 是 → 新卡直击  │                            │
+     └─ 否 → 旧卡直击  │                            │
+  等对拼                │                            │
+                        │                            │
+  对拼结算              │                            │
+  → 比数值定胜负        │                            │
+  → 伤害/治疗           │                            │
+                        │                            │
+  拼完后 → 后续结算     │                            │
+  → OnUse Effect 中     │                            │
+    非拼点的 Action      │                            │
+    现在触发！           │                            │
+    如 AddPoison(1)      │                            │
+  → OnContestWin/Lose   │                            │
+    的 Effect 检查触发   │                            │
+                        │                            │
+  后处理（Keyword 介入点 ④）                          │
+    ⚡ Consume → 计数-1，归零则移除卡牌释放 Size      │
+    ⚡ Ammo → 计数-1，归零则卡牌休眠停止 CD           │
+  → CD重置              │                            │
+  → 丢弃拼点数据        │                            │
+
+  被动拦截（Keyword 介入点 ⑤，任意时刻）
+    ⚡ Anchored → 被位移 Action 选中时，位移无效
+
+  关键点：
+    - 拼点数据是临时的，CD满时构造，拼完即丢弃
+    - 待发槽里放的是拼点数据（ContestData），不是卡本身
+    - 一张卡"真正使用"是在拼点结算完之后
+    - 多骰子（一张卡多个拼点Action）未来支持，当前只取第一个
+    - Keyword 在管线的 5 个节点介入，不改变 TCA 管线本身
+
+---
+
+## 十六、ManaCost 数据格式
+
+  ManaCost 使用 Dict 格式表示元素×数量：
+
+  JSON 示例：
+    "manaCost": {"Huo": 1}           → 需要1个火灵元
+    "manaCost": {"Shui": 2, "Mu": 1} → 需要2水1木
+    "manaCost": {}                    → 无灵元需求

@@ -17,7 +17,7 @@ namespace UnityWorld.Game.Domain
         public TraitId Id { get; }
 
         /// <summary>持有此 Trait 的 NPC</summary>
-        public NpcId OwnerId { get; }
+        public int OwnerId { get; }
 
         // ── 运行时状态 ────────────────────────────────────
 
@@ -35,7 +35,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 构造 ─────────────────────────────────────────
 
-        public Trait(TraitId id, NpcId ownerId)
+        public Trait(TraitId id, int ownerId)
         {
             Id = id;
             OwnerId = ownerId;

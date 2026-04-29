@@ -1,0 +1,46 @@
+[
+  {
+    "ID": "cond_none",
+    "DisplayName": "无条件",
+    "Desc": "无条件，始终生效",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [],
+    "LuaTemplate": ""
+  },
+  {
+    "ID": "cond_target_has_buff",
+    "DisplayName": "目标有Buff",
+    "Desc": "目标NPC有指定{BuffType}时",
+    "Tags": ["状态", "条件"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffType",
+        "Type": "String",
+        "Value": ["Burn", "Vulnerable", "Weakness", "Stun", "Armor"],
+        "Score": [-2, -2, -2, -3, -1]
+      }
+    ],
+    "LuaTemplate": "ctx.Target:HasBuff(\"{BuffType}\")"
+  },
+  {
+    "ID": "cond_target_low_hp",
+    "DisplayName": "目标低血",
+    "Desc": "目标HP低于{Threshold}%",
+    "Tags": ["攻击", "致命", "条件"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Threshold",
+        "Type": "Int",
+        "Value": [30, 50],
+        "Score": [-3, -1]
+      }
+    ],
+    "LuaTemplate": "ctx.Target.Hp < ctx.Target.MaxHp * {Threshold} / 100"
+  }
+]

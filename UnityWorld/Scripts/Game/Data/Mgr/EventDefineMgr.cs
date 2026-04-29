@@ -65,5 +65,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>是否存在指定事件 ID</summary>
         public bool Contains(string id) => _defines.ContainsKey(id);
+        public IEnumerable<EventDefine> Query(Func<EventDefine, bool> predicate) => _defines.Values.Where(predicate);
     }
 }

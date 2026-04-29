@@ -1,0 +1,177 @@
+# NPC 灵魂系统设计文档
+### 道心·性格·命途的三层灵魂架构
+
+> *"道心是灵魂最深处的方向，性格是它在尘世的显影，命途是它在天道中的回响。"*
+
+---
+
+## 一、设计核心理念
+
+NPC 不是一组数值的集合，而是一个有方向的存在。
+
+灵魂系统的目标，不是让 NPC"表演"他们的性格，而是让 NPC 在性格与命运的结构性张力中，产生真实的戏剧冲突。
+
+**关键原则：灵魂是抽象的锚点，性格是具象的显影，命途是天道的回响。**
+
+---
+
+## 二、三层架构总览
+
+```
+SoulBase（不可变·抽象）
+    │  灵魂原型，荣格八维，决定 CoreGoal
+    │  是跨轮回、跨世的唯一性所在
+    ▼
+CoreGoal（隐藏·道心）
+    │  一个 string，修士的"道心"
+    │  不直接参与游戏进程
+    │  通过宿命天道，悄悄影响命运走向
+    ▼
+Personality Data（具象·可修正）
+    │  性格数值，直接驱动 AI 决策
+    │  被 Trait 后天修正
+    ▼
+Trait（后天修正层）
+    世界感知到的 NPC = 属性 + Trait 组合
+```
+
+---
+
+## 三、SoulBase——灵魂原型
+
+**本质**：以荣格八维认知模型为骨架的抽象灵魂原型。
+
+**核心属性**：
+- 不可改变——它是这个灵魂在这个世界上的唯一性所在
+- 决定 CoreGoal 的初始方向
+- 未来轮回系统中，SoulBase 将是穿越轮回的"灵魂记忆"载体
+
+**设计哲学**：Soul 是抽象的，Personality 是具象的。两者之间的关系，由未来的轮回系统等玩法系统处理。Soul 必须被抽象，才能成为最独一无二的东西。
+
+---
+
+## 四、CoreGoal——道心
+
+**本质**：一个 string，描述这个灵魂最深处的方向。
+
+**特性**：
+- 隐藏——不对外公开，其他 NPC 和玩家无法直接读取
+- 静默——不直接参与游戏进程的机制计算
+- 当前实现：NPC 创建时，从预配置的 CoreGoalDefine 列表中随机选取
+- 未来规划：专属玩法系统处理道心的觉醒、动摇、坚守
+
+**道心示例**（待策划填充）：
+- "长生不死"
+- "复仇雪恨"
+- "传道于世"
+- "证得大道"
+- "守护一方"
+- "问鼎天下"
+
+**关键设计**：道心不被宣告，但命运在泄露它。玩家通过观察一个 NPC 反复遭遇某类事件，可以推断其道心所在。
+
+---
+
+## 五、Personality Data——性格
+
+**本质**：驱动 AI 决策的具象数值层，类似 CK3 的 AI Personality 系统。
+
+**与 SoulBase 的关系**：Soul 是抽象原型，Personality 是它在当世的具象投影。同一个 Soul，在不同轮回中可能呈现不同的 Personality。
+
+**性格维度**（待数值策划定义，示例）：
+- Sociability（社交倾向）
+- Aggression（进取冲突倾向）
+- Cautiousness（谨慎保守倾向）
+- Ambition（野心成就倾向）
+- 等……
+
+**被 Trait 修正**：Trait 可以修正 Personality 的部分数值。修正幅度和上限由数值策划控制。
+
+---
+
+## 六、Trait——后天修正
+
+**本质**：NPC 后天获得的标签式特质，对 Personality 数值进行修正。
+
+**生成方式**：随机 Personality 数值 + 随机抽取 Trait 组合，产生有趣的人格组合。
+
+**世界感知层**：其他 NPC 和玩家所感知到的一个角色，就是他的**属性 + Trait 组合**。CoreGoal 和 SoulBase 是隐藏信息。
+
+---
+
+## 七、决策系统耦合
+
+### 7.1 BehaviorCard 选择（WillPool）
+
+NPC 从 WillPool 持有的 BehaviorCard 中进行选择时，Personality 数值影响权重：
+
+```
+每张 BehaviorCard 对应若干 Personality 维度的亲和度
+Personality 越高的维度，对应类型的 BehaviorCard 权重越高
+
+例：Sociability 高 → Social 类 BehaviorCard 权重提升
+    Cautiousness 高 → Practice/闭关 类 BehaviorCard 权重提升
+```
+
+### 7.2 Story Option 自动选择
+
+NPC 遭遇显示事件（IsHide=false）时，自动从 Option 中做选择：
+
+```
+最终权重 = BaseWeight + PersonalityWeight + ConditionBonus
+
+BaseWeight：策划配置的基础概率
+PersonalityWeight：该 Option 对应的 Personality 维度亲和度加权
+ConditionBonus：Option 的 Condition 满足时（如 HasTrait / Stat > xx）给予高额加权
+```
+
+---
+
+## 八、戏剧冲突机制
+
+**NPC 永远扮演自己的角色，会导致缺乏戏剧冲突。** 解法不是"违背性格有代价"，而是**结构性张力**：
+
+```
+CoreGoal（灵魂方向）× Personality（行为倾向）= 冲突张力
+
+例：CoreGoal = 复仇  ×  Personality：Aggression 低、Sociability 高
+→ 这个 NPC 天性温和，却被道心驱向冲突
+→ 每次遭遇相关 Option，温和性格与复仇道心就在权重上撕扯
+```
+
+冲突越深，NPC 越立体。设计 CoreGoal 时，应有意识地考虑它与常见 Personality 组合的张力空间。
+
+---
+
+## 九、宿命天道——CoreGoal 的机制落点
+
+CoreGoal 虽不直接参与进程，但通过**宿命天道**对世界产生影响：
+
+```
+NPC 的 CoreGoal（道心，隐藏）
+    ↓ 宿命天道读取
+FatePool / KarmaPool 加权
+    ↓
+这个 NPC 的际遇，悄悄向道心方向倾斜
+```
+
+**天道的统一定义**：
+
+> 天道 = 将世界某个抽象维度，转化为对事件池的具体干预的中间层
+
+| 天道     | 抽象来源           
+|----------|--------------------|------------------|
+| 五行天道 | 地块元气浓度       | 
+| 宿命天道 | NPC 的 SoulBAse   | 
+| 修行天道 | Practice和gongfa相关         | 
+| 行为天道 | NPCBehavior          | 
+| 名相天道 |   Npc的Name和外观        | 
+
+每个天道都是一个从"隐藏规律"到"可感知世界"的翻译器,在项目里，就是Gameplay下的一个GamplyMgr
+
+---
+
+## 十、一句话总结
+
+> 道心是灵魂不言于外的方向，性格是它每日显影的样貌，命途是天道替它书写的际遇。
+> 三者合一，才是一个真实存在于这个世界中的修士。

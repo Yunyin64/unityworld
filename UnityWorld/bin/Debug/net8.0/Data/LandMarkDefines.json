@@ -1,0 +1,35 @@
+[
+  {
+    "ID": "natural_leyline_eye",
+    "DisplayName": "灵脉眼",
+    "IsNatural": true,
+    "IsSingleton": false,
+    "SpawnWeight": 2.0,
+    "PlacementTerrains": [],
+    "PlacementExtraTerrains": [],
+    "ModifierDefineIds": ["aura_leyline_spring"],
+    "Tags": ["圣地", "灵脉", "修炼"]
+  },
+  {
+    "ID": "natural_volcanic_pillar",
+    "DisplayName": "天火圣柱",
+    "IsNatural": true,
+    "IsSingleton": false,
+    "SpawnWeight": 1.0,
+    "PlacementTerrains": [5],
+    "PlacementExtraTerrains": [],
+    "ModifierDefineIds": ["aura_volcanic_heat"],
+    "Tags": ["火", "奇观", "危险"]
+  },
+  {
+    "ID": "building_sect_gate",
+    "DisplayName": "宗门山门",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "SpawnWeight": 0,
+    "PlacementTerrains": [],
+    "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [],
+    "Tags": ["宗门", "建筑", "人类"]
+  }
+]

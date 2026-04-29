@@ -1,173 +1,123 @@
 using System.Collections;
+using System.Text.Json;
+using UnityWorld.Core;
 using UnityWorld.Game.Data;
+using UnityWorld.Game.Domain.Tag;
 
-namespace UnityWorld.Game.Domain.Card
+namespace UnityWorld.Game.Domain
 {
     /// <summary>
     /// Card 管理器
-    /// 负责持有运行时生成的所有 Card 实例，并提供从 Define 实例化的入口
+    /// 负责持有运行时生成的所有 Card 实例，提供从 Define 实例化的入口，
+    /// 以及卡组组合和动态生成功能
     /// </summary>
-    public class CardMgr:IDomainMgrBase
+    public class CardMgr : DomainMgrBase<Card>,ISoulBase
     {
-        public static CardMgr? Instance { get; private set; }
+        public static CardMgr Instance { get; private set; }
 
-        public string Name => throw new NotImplementedException();
+        public SoulData Soul { get; set; }        private readonly Rng _rng = new();
 
-        public string Desc => throw new NotImplementedException();
-
-        private readonly Dictionary<CardId, CardData> _cards = [];
-        private int _nextId = 1;
-
-        public CardMgr()
+        private static readonly JsonSerializerOptions _jsonOpts = new()
         {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        };
+
+        public CardMgr(int seed)
+        {
+            Soul = new SoulData(seed);
             Instance = this;
         }
-
-        // ── 注册 / 查询 ──────────────────────────────────────
-
-        /// <summary>注册一张已生成的 Card</summary>
-        public void Add(CardData card)
-        {
-            _cards[card.Id] = card;
-        }
-
-        /// <summary>获取 Card 实例</summary>
-        public CardData? Get(CardId id)
-            => _cards.TryGetValue(id, out var c) ? c : null;
-
-        /// <summary>获取所有 Card</summary>
-        public IEnumerable<CardData> GetAll() => _cards.Values;
 
         // ── 从 Define 实例化 ──────────────────────────────────
 
         /// <summary>
-        /// 从 CardDefine 实例化一张 CardData，加入管理并返回。
+        /// 从 CardDefine 实例化一张 Card，加入管理并返回。
         /// CardDefine → 遍历 EffectIds → 每个 EffectDefine 构造 EffectData → 拼 TagBag。
         /// </summary>
-        public CardData? InstantiateFromDefine(string cardDefineId)
+        public Card InstantiateFromDefine(string cardDefineId)
         {
             var cardDefine = CardDefineMgr.Instance?.Get(cardDefineId);
             if (cardDefine == null)
             {
-                Console.WriteLine($"[CardMgr] 找不到 CardDefine：{cardDefineId}");
+                LogMgr.Err("[CardMgr] 找不到 CardDefine：{0}", cardDefineId);
                 return null;
             }
 
-            var card = new CardData
+            var card = new Card
             {
-                Id = new CardId(_nextId++),
+                Id = Soul.NewId(),
                 DefineId = cardDefineId,
-            };
-
-            foreach (var effectId in cardDefine.EffectIds)
-            {
-                var effectData = BuildEffectFromDefine(effectId);
-                if (effectData != null)
+                DisplayName = cardDefine.DisplayName,
+                BaseData = new CardBaseData
                 {
-                    card.Effects.Add(effectData);
-                    card.Tags.AddRange(effectData.Tags); // TagBag 自然涌现
-                }
-            }
-
+                    Size = cardDefine.Size,
+                    Cooldown = cardDefine.Cooldown,
+                    CardType = Enum.TryParse<CardType>(cardDefine.CardType, out var ct) ? ct : CardType.ZhaoShi,
+                    ManaCost = ElementType.ToDic(cardDefine.ManaCost),
+                },
+            };
             // 若 CardDefine 手配了额外 Tags，追加进来
-            card.Tags.AddRange(cardDefine.Tags);
+            card.BaseData.Tags.AddRange(cardDefine.Tags);
 
-            Add(card);
+            Add(card.Id,card);
             return card;
         }
 
+
+        // ── 卡组组合（原 CardSystemDeck）────────────────────────
+
         /// <summary>
-        /// 从 EffectDefine 构造一个 EffectData 运行时对象，包含完整 TagBag 和分数。
+        /// 根据主题 TagBag 从卡池中匹配组合一套卡组
         /// </summary>
-        public EffectData? BuildEffectFromDefine(string effectDefineId)
+        /// <param name="themeTags">卡组主题 TagBag（重复表示浓度）</param>
+        /// <param name="matchType">匹配类型</param>
+        /// <param name="matchDegree">匹配度</param>
+        /// <param name="deckSize">卡组张数</param>
+        public List<Card> BuildDeck(
+            List<string> themeTags,
+            TagMatchType matchType,
+            float matchDegree,
+            int deckSize)
         {
-            var effectDefine = EffectDefineMgr.Instance?.Get(effectDefineId);
-            if (effectDefine == null)
-            {
-                Console.WriteLine($"[CardMgr] 找不到 EffectDefine：{effectDefineId}");
-                return null;
-            }
-
-            var triggerDefine   = TriggerDefineMgr.Instance?.Get(effectDefine.TriggerId);
-            var conditionDefine = string.IsNullOrEmpty(effectDefine.ConditionId)
-                ? null
-                : ConditionDefineMgr.Instance?.Get(effectDefine.ConditionId);
-
-            var effectData = new EffectData
-            {
-                TriggerId   = effectDefine.TriggerId,
-                ConditionId = effectDefine.ConditionId,
-                ActionIds   = new List<string>(effectDefine.ActionIds),
-            };
-
-            // ── 聚合 TagBag ──────────────────────────────────
-            if (triggerDefine != null)
-                effectData.Tags.AddRange(triggerDefine.Tags);
-            if (conditionDefine != null)
-                effectData.Tags.AddRange(conditionDefine.Tags);
-
-            float powerScore = 0;
-            float complexityScore = 0;
-
-            powerScore      += triggerDefine?.Score ?? 0;
-            complexityScore += Math.Abs(triggerDefine?.Score ?? 0);
-            powerScore      += conditionDefine?.Score ?? 0;
-            complexityScore += Math.Abs(conditionDefine?.Score ?? 0);
-
-            foreach (var actionId in effectDefine.ActionIds)
-            {
-                var actionDefine = ActionDefineMgr.Instance?.Get(actionId);
-                if (actionDefine == null) continue;
-
-                effectData.Tags.AddRange(actionDefine.Tags);
-                powerScore      += actionDefine.Score;
-                complexityScore += Math.Abs(actionDefine.Score);
-            }
-
-            effectData.PowerScore      = powerScore;
-            effectData.ComplexityScore = complexityScore;
-
-            return effectData;
+            // TODO: 实现 Deck 组合逻辑
+            // 复用 TagMgr.Match，输入已有 Card 的 TagBag
+            return [];
         }
 
-        public void Init()
+        // ── 生命周期 ──────────────────────────────────────────
+
+        public override void Init() { }
+
+        public override void Begin() { }
+
+        public override void Tick(float deltaTime) { }
+
+        public override void Update() { }
+
+        public override void Render(float dt) { }
+
+        public override void End()
         {
-            throw new NotImplementedException();
+            Instance = null;
         }
 
-        public void Begin()
+    public override IEnumerator Save()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
-        public void Tick(float deltaTime)
+    public override IEnumerator Load()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
-        public void Update()
+        /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>
+        public void Log()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Render(float dt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void End()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerator Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerator Load()
-        {
-            throw new NotImplementedException();
+            LogMgr.Dbg("[CardMgr] Card管理器 | Cards={0}", _allEntities.Count);
         }
     }
+
 }

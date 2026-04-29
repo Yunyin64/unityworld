@@ -1,0 +1,7 @@
+[
+  { "id": "Huo", "displayName": "火", "Desc": "火焰属性，与燃烧、灼烧相关", "Parent": "Element"},
+  { "id": "Shui", "displayName": "水", "Desc": "水流属性，与冻结、治疗相关", "Parent": "Element"},
+  { "id": "Jin", "displayName": "金", "Desc": "金属属性，与锋锐、穿透相关", "Parent": "Element" },
+  { "id": "Mu", "displayName": "木", "Desc": "木属性，与生长、治愈相关", "Parent": "Element" },
+  { "id": "Tu", "displayName": "土", "Desc": "土属性，与厚重、坚守相关", "Parent": "Element" }
+]

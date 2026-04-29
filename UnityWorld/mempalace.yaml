@@ -1,0 +1,28 @@
+wing: unityworld
+rooms:
+- name: bin
+  description: Files from bin/
+- name: data
+  description: Files from Data/
+- name: documentation
+  description: Files from Docs/
+- name: obj
+  description: Files from obj/
+- name: openspec
+  description: Files from openspec/
+- name: scripts
+  description: Files from Scripts/
+- name: unityadapter
+  description: Files from UnityAdapter/
+- name: webadapter
+  description: Files from WebAdapter/
+- name: planning
+  description: Files from specs/
+- name: testing
+  description: Files from Tests/
+- name: frontend
+  description: Files from UI/
+- name: configuration
+  description: Files from Config/
+- name: general
+  description: Files that don't fit other rooms

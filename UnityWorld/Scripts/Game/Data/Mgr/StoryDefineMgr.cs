@@ -97,5 +97,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>故事 ID 是否存在</summary>
         public bool Contains(string id) => _stories.ContainsKey(id);
+        public IEnumerable<StoryDefine> Query(Func<StoryDefine, bool> predicate) => _stories.Values.Where(predicate);
     }
 }

@@ -1,73 +1,44 @@
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Domain
 {
-    /// <summary>
-    /// NPC生物基础数据（身份信息，不随Tick变化的部分）
-    /// </summary>
-    public class NpcBioData
-    {
-        /// <summary>名字</summary>
-        public string Name { get; set; } = "";
+    public class NpcSystemBio : NpcSystemBase<NpcBioData>
+    {   
+        protected override Dictionary<int, NpcBioData> _dataTable { get;set; } = new();
 
-        /// <summary>性别</summary>
-        public NpcTypes.Gender Gender { get; set; }
-
-        /// <summary>种族</summary>
-        public NpcTypes.NpcType NpcType { get; set; }
-
-    }
-
-    /// <summary>
-    /// NPC生物系统：管�?NPC 的身份信息，并每 Tick 推进寿元积累�?
-    /// 
-    /// 寿元逻辑�?
-    ///   AgeAccumulated += dt * TimeFlowRate（每Tick�?
-    ///   �?AgeAccumulated >= LifespanMax 时，NPC寿终
-    /// </summary>
-    public class NpcSystemBio : NpcSystemBase
-    {
-        private readonly Dictionary<NpcId, NpcBioData> _bioTable = new();
-
-        /// <summary>注册一个NPC的生物数据（创建时调用）</summary>
-        public void Register(Npc npc, NpcBioData bioData)
-        {
-            _bioTable[npc.Id] = bioData;
-        }
-
-        /// <summary>获取NPC的生物数�?/summary>
-        public NpcBioData? GetBio(NpcId id)
-        {
-            return _bioTable.TryGetValue(id, out var data) ? data : null;
-        }
-
-        /// <summary>每Tick推进寿元积累（由NpcMgr驱动�?/summary>
         public override void OnTick(Npc npc, float deltaTime)
         {
-            float timeFlowRate = npc.Stats.Get(StatId.TimeFlowRate, 1f);
-            float ageDelta = deltaTime * timeFlowRate;
-
-            var ageEntry = npc.Stats.GetEntry(StatId.AgeAccumulated);
-            if (ageEntry != null)
-                ageEntry.BaseValue += ageDelta;
+            
         }
 
-        /// <summary>判断NPC是否寿终</summary>
-        public bool IsLifespanExhausted(Npc npc)
+        /// <summary>
+        /// NPC 诞生时初始化 BioData：从 ctx kv 读取姓名/性别，填充所有基础生物信息并注册
+        /// </summary>
+        public override void OnEntityBorn(BirthContext context)
         {
-            float age = npc.Stats.Get(StatId.AgeAccumulated);
-            float maxLifespan = npc.Stats.Get(StatId.LifespanMax, float.MaxValue);
-            return age >= maxLifespan;
-        }
+            var npc = context.MainNpc;
 
-        /// <summary>获取NPC年龄（年�?/summary>
-        public float GetAge(Npc npc) => npc.Stats.Get(StatId.AgeAccumulated);
+            var data = new NpcBioData
+            {
+                Gender = context.GetEmValue<NpcTypes.Gender>("Gender"),
+                NpcType = NpcTypes.NpcType.Human,
+                IsAlive = true,
+                AgeAccumulated = 0f,
+                BirthTick = 0,
+                BaseMoveSpeed = 3f,
+                NameData = new NpcNameData
+                {
+                    Surname = context.GetValue("Surname"),
+                    GivenName = context.GetValue("GivenName"),
+                    DaoTitle = context.GetValue("DaoTitle"),
+                },
+                AppearanceData = new NpcAppearanceData
+                {
+                    Height = npc.Soul.Random(155f, 190f),
+                },
+            };
 
-        /// <summary>获取寿元剩余比例 [0,1]</summary>
-        public float GetLifespanRatio(Npc npc)
-        {
-            float age = npc.Stats.Get(StatId.AgeAccumulated);
-            float maxLifespan = npc.Stats.Get(StatId.LifespanMax, 1f);
-            return MathF.Min(1f, age / maxLifespan);
+            Register(npc, data);
         }
     }
 }

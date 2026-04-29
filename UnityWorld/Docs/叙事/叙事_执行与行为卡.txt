@@ -1,0 +1,168 @@
+# 叙事系统 · 执行架构与行为卡
+### 双轨执行、BehaviorCard行为卡、事件传导链、NPC AI决策、文件结构
+
+→ 本文件为叙事系统的一部分。另见：
+→ 叙事/叙事_三池架构.txt（核心理念、弹窗事件驱动、天地人三池、StoryDefine、双向持有）
+
+---
+
+## 六、双轨执行架构
+
+每个 StoryBaseDefine（Story 和 Option 均适用）的执行，支持两套轨道：
+
+```
+StoryEvent 触发
+      ↓
+  有 LuaScript？
+  ┌─────┴─────┐
+  有           无
+  ↓             ↓
+ Lua轨         简单轨
+ （预留，       （直接执行
+  当前降级       Conditions
+  走简单轨）     + Effects）
+```
+
+### 简单轨：StoryEffectFunc 原子效果注册表
+
+配置文件中 Effects 字段存储 `{FuncName, Args}` 列表，系统通过字符串查找注册表执行对应函数。
+
+内置原子效果：
+- `GiveTrait` / `RemoveTrait`：给 NPC 添加/移除特质
+- `GiveBehaviorCard`：给 NPC 添加行为卡
+- `ModifyAura`：修改区域五行浓度
+- `ModifyStat`：修改 NPC 属性值
+- `TriggerStory`：链式触发另一个事件（事件可以嵌套触发事件）
+- `TriggerStoryByTag`：按 Tag 在全局池中匹配并触发事件
+- `AddToFatePool` / `AddToKarmaPool`：动态向池中写入新事件
+- `EmitEvent`：通过 EventMgr 广播系统事件
+
+### 复杂轨：LuaScript（预留）
+
+LuaScript 字段指向一个 Lua 脚本文件路径。Lua 脚本内部可以：
+- 实现任意复杂的条件逻辑
+- 调用所有 StoryEffectFunc 原子操作（Lua 可以调用简单轨）
+- 访问世界状态（五行/NPC/地块）
+- 实现多分支对话树
+
+当前版本 LuaScript 字段预留，运行时遇到非空值时打 Warning 并降级到简单轨。
+
+---
+
+## 七、BehaviorCard·行为卡系统
+
+BehaviorCard 是"人·抉择池"的具体载体，也是叙事系统与玩法系统的桥接点。
+
+```
+BehaviorCardDefine（静态定义）
+    ├── Tags          ← 语义标签
+    ├── StoryIds      ← 直接指定：触发哪些 Story（确定性）
+    ├── StoryTags     ← 动态匹配：按 TagBag 在 StoryPool 中匹配（涌现性）
+    └── IsConsumable  ← 使用后是否消耗
+
+BehaviorCard（运行时实例）
+    ├── DefineId      ← 引用 BehaviorCardDefine
+    ├── OwnerId       ← 持有者 int
+    └── UsageCount    ← 使用次数记录
+```
+
+### 双模式触发
+
+```
+使用 BehaviorCard
+      ↓
+StoryIds 不为空？
+  ┌─────┴─────┐
+  是            否
+  ↓              ↓
+从列表随机选    用 StoryTags 做
+一个 StoryId    TagBag 匹配
+（确定性）       （涌现性）
+      ↓
+StoryMgr.TriggerStory(storyId, subject)
+```
+
+**确定性**适合剧情关键节点（"使用这张卡，必然触发这个剧情"）。
+**涌现性**适合日常行为卡（"外出游历，根据当前世界状态遭遇不同的事情"）。
+
+---
+
+## 八、事件传导链·世界的涌现叙事
+
+隐形事件 + 链式触发，构成世界叙事自动演化的引擎：
+
+```
+隐形Story "五行失衡加剧" 被劫缘池触发
+    ↓
+Effect: ModifyAura(火+30)
+Effect: TriggerStoryByTag(["火","灾难"])
+    ↓
+TagBag 匹配 → 命中隐形Story "山林大旱"
+    ↓
+Effect: ModifyAura(木-20)
+Effect: TriggerStoryByTag(["饥荒","民间"])
+    ↓
+TagBag 匹配 → 命中显示Story "村民求助"（弹窗事件！）
+    ↓
+玩家/NPC 做出选择
+    ↓
+选择结果改变世界状态，可能触发新的宿命/劫缘条目
+```
+
+玩家看不见前面那些隐形事件的推进过程，只看见最终浮出的"村民求助"弹窗——但这个弹窗的出现，是整个世界系统推演的结果，不是硬编码的脚本触发。
+
+**这就是"世界在玩家来之前就已经在运转"的感觉。**
+
+---
+
+## 九、NPC AI 决策（预留）
+
+对于显示事件（IsHide=false），NPC 需要自动做出选项选择。
+
+当前版本 AI 决策模块**留空**，NPC 遇到显示事件时随机选择或选第一项。
+
+未来规划（方案 C：Trait + 目标混合）：
+- **Trait 驱动**：NPC 的 Trait Tags 与 Option Tags 做 TagBag 匹配，越符合人设的选项权重越高
+- **目标驱动**：NPC 有长远目标（升阶/复仇/守护），评估每个 Option 对目标的收益贡献
+- **混合权重**：人设越强烈的 NPC 越感性（Trait 权重高），目标越明确的 NPC 越理性（目标权重高）
+
+→ 详见 角色/灵魂设计.txt（灵魂系统中的决策耦合设计）
+
+---
+
+## 十、文件结构一览
+
+```
+Scripts/Game/
+├── Data/
+│   ├── Defines/
+│   │   ├── StoryBaseDefine.cs       ← 基类
+│   │   ├── StoryDefine.cs           ← 事件定义
+│   │   ├── OptionDefine.cs          ← 选项定义
+│   │   └── BehaviorCardDefine.cs      ← 行为卡定义
+│   └── Mgr/
+│       ├── StoryDefineMgr.cs        ← 加载+双向合并
+│       ├── OptionDefineMgr.cs       ← 加载
+│       └── BehaviorCardDataMgr.cs     ← 加载
+└── Domain/
+    ├── Story/
+    │   ├── StoryMgr.cs              ← 三池调度+统一触发入口
+    │   ├── FatePool.cs              ← 天：宿命池
+    │   ├── KarmaPool.cs             ← 地：劫缘池
+    │   ├── KarmaEntry.cs            ← 劫缘条目
+    │   ├── StoryContext.cs          ← 执行上下文
+    │   ├── StoryCondition.cs        ← 条件判断
+    │   ├── StoryEffectEntry.cs      ← 效果条目（FuncName+Args）
+    │   └── StoryEffectFunc.cs       ← 原子效果注册表
+    └── BehaviorCard/
+        ├── BehaviorCard.cs            ← 运行时实例
+        └── BehaviorCardMgr.cs         ← 实例管理+UseCard
+```
+
+---
+
+## 十一、一句话总结
+
+> 宿命（天）是时间轴上预写的节点，劫缘（地）是环境涌现的随机际遇，抉择（人）是个体主动书写的行为选择。
+> 三池共享同一个触发引擎，共同指向同一种原子——StoryDefine。
+> 改命的本质，是用"人"的抉择，影响"地"的际遇，最终干预"天"的宿命。

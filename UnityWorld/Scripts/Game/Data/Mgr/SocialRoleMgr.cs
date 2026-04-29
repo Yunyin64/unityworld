@@ -9,7 +9,7 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class SocialRoleMgr : IDataMgrBase<SocialRoleDefine>
     {
-        public static SocialRoleMgr? Instance { get; private set; } 
+        public static SocialRoleMgr Instance { get; private set; } 
         private Dictionary<string, SocialRoleDefine> _roles = [];
 
         private static readonly JsonSerializerOptions _jsonOpts = new()
@@ -52,6 +52,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>角色 id 是否存在</summary>
         public bool Contains(string id) => _roles.ContainsKey(id);
-
+        public IEnumerable<SocialRoleDefine> Query(Func<SocialRoleDefine, bool> predicate) => _roles.Values.Where(predicate);
     }
 }

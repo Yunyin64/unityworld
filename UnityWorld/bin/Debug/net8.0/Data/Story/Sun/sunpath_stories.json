@@ -1,0 +1,80 @@
+[
+  {
+    "id": "sunpath_awaken",
+    "Tags": ["太阳", "道统", "传承", "异象"],
+    "IsHide": false,
+    "Title": "金乌异象",
+    "Text": "天际骤然出现一轮赤金色的太阳虚影，烈焰之气自远古而来。有道行深厚者感知到——某个沉寂已久的传承，正在苏醒。",
+    "Conditions": [],
+    "Effects": [
+      { "scope": "World", "func": "ModifyAura", "args": ["fire", 20] },
+      { "scope": "World", "func": "AddToFatePool", "args": [30, "sunpath_treasure_seek"] }
+    ],
+    "OptionIds": []
+  },
+
+  {
+    "id": "sunpath_treasure_seek",
+    "Tags": ["太阳", "法宝", "传人", "天命"],
+    "IsHide": true,
+    "Conditions": [],
+    "Effects": [
+      {
+        "scope": "World",
+        "func": "TriggerStoryOnNpc",
+        "args": ["sunpath_chosen_sense", { "hasTrait": "fire_walker" }, "random_one"]
+      }
+    ]
+  },
+
+  {
+    "id": "sunpath_chosen_sense",
+    "Tags": ["太阳", "传人", "感应", "天命"],
+    "IsHide": false,
+    "Title": "金乌之眼",
+    "Text": "你心中骤然一热，一道金色的意识涌入识海——那柄悬于虚空的法宝，正在注视着你。",
+    "message": [
+      { "scope": "Tile", "Text": "一道赤金光柱自天际落下，烈焰之气席卷四方——传说中的太阳法宝，就降临在你的附近。" }
+    ],
+    "Conditions": [],
+    "Effects": [
+      { "scope": "Self", "func": "GiveTrait", "args": ["sunpath_chosen"] }
+    ],
+    "OptionIds": []
+  },
+
+  {
+    "id": "sunpath_treasure_shatter",
+    "Tags": ["太阳", "法宝", "破碎", "异象"],
+    "IsHide": false,
+    "Title": "金乌镜碎",
+    "Text": "轰然一声，太阳法宝「金乌镜」骤然崩裂，碎成三片，化作流星散落四方。",
+    "message": [
+      { "scope": "World", "Text": "太阳传承就此断绝，天地间火元气剧烈动荡。" },
+      { "scope": "Tile", "Text": "远方天际突然传来一声巨响，数道金色流星划破长空，不知落向何处。" }
+    ],
+    "Conditions": [],
+    "Effects": [
+      { "scope": "Self", "func": "RemoveTrait", "args": ["sunpath_chosen"] },
+      { "scope": "World", "func": "ModifyAura", "args": ["fire", -30] },
+      { "scope": "World", "func": "AddLandMarkToRandomTile", "args": [3, "sunpath_shard"] }
+    ],
+    "OptionIds": []
+  },
+
+  {
+    "id": "sunpath_shard_found",
+    "Tags": ["太阳", "碎片", "机缘", "法宝"],
+    "IsHide": false,
+    "Title": "金乌残光",
+    "Text": "脚下的土地散发着微弱的金色光芒，拨开草丛，一块破碎的镜片静静躺在那里——它的表面还残存着灼热的温度，仿佛刚刚从天而降。",
+    "message": [
+      { "scope": "Tile", "Text": "同伴在附近发现了一块散发金光的碎片。" }
+    ],
+    "Conditions": [],
+    "Effects": [
+      { "scope": "Tile", "func": "RemoveLandMark", "args": ["sunpath_shard"] }
+    ],
+    "OptionIds": ["option_sunpath_shard_take", "option_sunpath_shard_leave"]
+  }
+]

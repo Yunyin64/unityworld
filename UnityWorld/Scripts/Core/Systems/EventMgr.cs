@@ -112,7 +112,7 @@ namespace UnityWorld.Core
         /// </summary>
         /// <param name="listenerKey">调试标识 Key，用于排查悬空监听时定位来源</param>
         /// <param name="eventId">事件字符串 ID，如 "NpcMoved"</param>
-        /// <param name="scope">监听的 Scope 实例（如 <c>new ScopeKey(EventScope.Npc, npcId)</c>）</param>
+        /// <param name="scope">监听的 Scope 实例（如 <c>new ScopeKey(Scope.Npc, npcId)</c>）</param>
         /// <param name="listener">监听者实例</param>
         public void RegisterEvent(string listenerKey, string eventId, ScopeKey scope, IEventListener listener)
         {
@@ -151,7 +151,7 @@ namespace UnityWorld.Core
         /// <param name="eventId">事件字符串 ID，如 "NpcMoved"</param>
         /// <param name="args">事件参数（由事件定义约定具体类型）</param>
         /// <param name="scopes">涉及的 scope 实例列表（自动补充 Global，无需显式传入）</param>
-        public void TriggerEvent(string eventId, object args, params (EventScope scope, string id)[] scopes)
+        public void TriggerEvent(string eventId, object args, params (Scope scope, string id)[] scopes)
         {
             // ① 校验事件是否在 EventDefine 中已定义
             var define = EventDefineMgr.Instance?.Get(eventId);
@@ -165,7 +165,7 @@ namespace UnityWorld.Core
             {
                 foreach (var declaredScope in define.Scopes)
                 {
-                    if (declaredScope == EventScope.Global) continue; // Global 自动补充，不需要检查
+                    if (declaredScope == Scope.Global) continue; // Global 自动补充，不需要检查
                     bool found = false;
                     foreach (var (s, _) in scopes)
                     {
@@ -187,7 +187,7 @@ namespace UnityWorld.Core
                 // ④ 广播调用方传入的各 scope
                 foreach (var (scopeType, id) in scopes)
                 {
-                    if (scopeType == EventScope.Global) continue; // 已在上面处理
+                    if (scopeType == Scope.Global) continue; // 已在上面处理
                     DispatchToScope(eventId, new ScopeKey(scopeType, id), args);
                 }
             }
@@ -215,26 +215,6 @@ namespace UnityWorld.Core
                 foreach (var e in entries) yield return e.ListenerKey;
             }
         }
-
-        // ── 旧接口兼容（Lua 残留，待 Lua 集成时替换） ─────────
-
-        /// <summary>
-        /// 旧版 Lua 事件注册标记接口，已废弃。
-        /// </summary>
-        [Obsolete("LuaRegisterEvent 已废弃，请使用 RegisterEvent 配合 LuaEventListener")]
-        public void LuaRegisterEvent(Em_Event e) { }
-
-        /// <summary>
-        /// 旧版 Lua 事件注销标记接口，已废弃。
-        /// </summary>
-        [Obsolete("LuaUnRegisterEvent 已废弃，请使用 RemoveEvent 配合 LuaEventListener")]
-        public void LuaUnRegisterEvent(Em_Event e) { }
-
-        /// <summary>
-        /// 旧版 Step 方法，已废弃，请使用 Tick。
-        /// </summary>
-        [Obsolete("Step 已废弃，请使用 Tick(float deltaTime)")]
-        public void Step(float dt) { }
 
         // ── 私有实现 ──────────────────────────────────────────
 

@@ -14,7 +14,7 @@ namespace UnityWorld.Core
     {
         public string Name => "LogMgr";
 
-        public string Desc => throw new NotImplementedException();
+        public string Desc => "";
 
 
         public  void Init()
@@ -43,32 +43,32 @@ namespace UnityWorld.Core
 
         public void Begin()
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Tick(float deltaTime)
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Update()
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Render(float dt)
         {
-            throw new NotImplementedException();
+             
         }
 
-        public IEnumerator Save()
+    public IEnumerator Save()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
-        public IEnumerator Load()
+    public IEnumerator Load()
         {
-            throw new NotImplementedException();
+            yield break;
         }
     }
 }

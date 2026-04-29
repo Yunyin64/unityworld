@@ -58,7 +58,7 @@
 ──────────────────────────────────────────────────────────────
   调用：scene.Init(participants, maxTurns)
 
-  - 接收参战者列表：IEnumerable<(NpcId id, CombatTeam team)>
+  - 接收参战者列表：IEnumerable<(int id, CombatTeam team)>
   - 为每个参战者构建 CombatNpc 实例（此时不读属性）
   - 设置环境参数：回合上限（默认100）
   - ※ 已移除 initialHandSize，出招表模型不使用手牌概念
@@ -139,7 +139,7 @@
   │ Team                 │ 所属阵营（TeamA/B/C/D）                      │
   │ Status               │ 当前状态（Active/Defeated/Escaped/Skipped）  │
   │ HpAtCombatStart      │ 战斗开始时 HP 快照（用于计算损耗）            │
-  │ CurrentHp            │ 战斗内当前 HP（与大世界 StatBlock 独立）      │
+  │ Hp            │ 战斗内当前 HP（与大世界 StatBlock 独立）      │
   │ DeckSequence         │ 有序出招表（固定顺序，不打乱）                │
   │ CurrentDeckIndex     │ 当前出招指针（指向下一张待出的牌）            │
   │ CycleCount           │ 已完成循环次数（走完整张出招表算一次）        │
@@ -168,7 +168,7 @@
   └── Combatants       List<CombatantResult>
 
   CombatantResult（单人）
-  ├── NpcId            对应大世界 NpcId
+  ├── int            对应大世界 int
   ├── Team             所属阵营
   ├── FinalStatus      最终状态
   ├── HpLost           本场承受的总 HP 损耗
@@ -223,7 +223,7 @@
   // 回写大世界
   foreach (var cr in result.Combatants)
   {
-      var npc = NpcMgr.Instance.GetById(cr.NpcId);
+      var npc = NpcMgr.Instance.GetById(cr.int);
       if (cr.IsDefeated)
           HandleNpcDeath(npc);
       else

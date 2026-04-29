@@ -82,15 +82,15 @@ IEnumerator Load();    // 读档
 | 接口 | `I` + PascalCase | `IDomainMgrBase`, `INpcSystem` |
 | 公有属性/方法 | PascalCase | `CurrentAura`, `GetById()` |
 | 私有字段 | `_` + camelCase | `_allNpcs`, `_rng` |
-| 静态常量/静态只读 | PascalCase | `NpcId.Invalid`, `TileId.Zero` |
+| 静态常量/静态只读 | PascalCase | `int.Invalid`, `TileId.Zero` |
 | 枚举 | PascalCase（类型+值） | `BaseElementType.Huo`, `ModifierType.Flat` |
 | 事件枚举 | `Em_` 前缀 | `Em_Event` |
 | 管理器类 | `*Mgr` 后缀 | `NpcMgr`, `TraitMgr`, `PlaneMgr` |
 | 系统类（子系统） | `*System*` | `NpcSystemBio`, `TileSystemAura` |
 | 定义数据类 | `*Define` | `NpcDefine`, `TraitDefine` |
 | 定义管理器 | `*DefineMgr` 或 `*Mgr` | `TraitDefineMgr`, `NpcDefineMgr` |
-| ID 结构体 | `*Id` | `NpcId`, `TileId`, `TraitId` |
-| ID 生成器 | `*IdGenerator` | `NpcIdGenerator`, `PlaneIdGenerator` |
+| ID 结构体 | `*Id` | `int`, `TileId`, `TraitId` |
+| ID 生成器 | `*IdGenerator` | `intGenerator`, `PlaneIdGenerator` |
 | 数据容器类 | `*Data` | `NpcBioData`, `NpcPositionData` |
 | 文件名 | 与主类名完全一致 | `NpcSystemBio.cs` |
 | namespace | `UnityWorld.Game.Domain`（领域层）/ `UnityWorld.Game.Data`（数据层）/ `UnityWorld.Game.World`（驱动层）/ `UnityWorld.Core`（核心层） | — |

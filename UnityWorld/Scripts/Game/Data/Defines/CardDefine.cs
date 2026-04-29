@@ -17,6 +17,22 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("rarity")]
         public int Rarity { get; set; } = 0;
 
+        /// <summary>卡牌占用手牌格数</summary>
+        [JsonPropertyName("size")]
+        public int Size { get; set; } = 1;
+
+        /// <summary>冷却回合数</summary>
+        [JsonPropertyName("cooldown")]
+        public int Cooldown { get; set; } = 4;
+
+        /// <summary>卡牌类型（ZhaoShi / FaBao / Wound 等）</summary>
+        [JsonPropertyName("cardType")]
+        public string CardType { get; set; } = "ZhaoShi";
+
+        /// <summary>灵元消耗（元素名 → 数量）</summary>
+        [JsonPropertyName("manaCost")]
+        public Dictionary<string, int> ManaCost { get; set; } = new();
+
         /// <summary>卡牌所属的 Effect 定义 ID 列表（引用 EffectDefine）</summary>
         [JsonPropertyName("effectIds")]
         public List<string> EffectIds { get; set; } = [];

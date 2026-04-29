@@ -32,21 +32,21 @@ namespace UnityWorld.Game.World
             WorldTime.Initialize(seed);
             _mgrs.Add(new NpcMgr(seed));
 
-            // PlaneMgr 需要 AuraDaoMgr 引用，以便 Fill() 完成后自动拍摄快照
             var planeMgr = new PlaneMgr { AuraDaoMgr = AuraDaoMgr };
             _mgrs.Add(planeMgr);
 
             // ── 叙事系统 ──────────────────────────────────────
             _mgrs.Add(new StoryMgr(seed));
-            _mgrs.Add(new ActionCardMgr());
+            _mgrs.Add(new BehaviorCardMgr());
+            _mgrs.Add(new CardMgr(seed));
 
-            foreach (var mgr in _mgrs) mgr.Init();  // 初始化时先Tick一次，建立初始状态（如生成NPC）
+            foreach (var mgr in _mgrs) mgr.Init();  // 无耦合的初始化
         }
 
         public static void Start()
         {
-            var eventCount = EventDefineMgr.Instance?.GetAll() is var all ? System.Linq.Enumerable.Count(all) : 0;
-            LogMgr.Dbg("[WorldMgr] 已加载 {0} 个事件定义", eventCount);
+            foreach (var mgr in _mgrs) mgr.Begin();  // 有耦合的初始化
+            
             Console.WriteLine("=== 世界初始化完成 ===\n");
         }
 

@@ -1,0 +1,20 @@
+[
+  {"id":"Sword","displayName":"剑","Desc":"双刃短兵器","Parent":"Weapon"},
+  {"id":"Blade","displayName":"刀","Desc":"单刃劈砍兵器","Parent":"Weapon"},
+  {"id":"Spear","displayName":"枪","Desc":"长柄穿刺兵器","Parent":"Weapon"},
+  {"id":"Bow","displayName":"弓","Desc":"远程射击兵器","Parent":"Weapon"},
+  {"id":"Staff","displayName":"杖","Desc":"法术施放媒介","Parent":"Weapon"},
+  {"id":"Dagger","displayName":"匕首","Desc":"短小隐蔽兵器","Parent":"Weapon"},
+  {"id":"Axe","displayName":"斧","Desc":"重型劈砍兵器","Parent":"Weapon"},
+  {"id":"Hammer","displayName":"锤","Desc":"重型钝击兵器","Parent":"Weapon"},
+  {"id":"Whip","displayName":"鞭","Desc":"柔韧抽击兵器","Parent":"Weapon"},
+  {"id":"Halberd","displayName":"戟","Desc":"钩刺兼备长兵","Parent":"Weapon"},
+  {"id":"Shield","displayName":"盾","Desc":"防御格挡器具","Parent":"Weapon"},
+  {"id":"Crossbow","displayName":"弩","Desc":"机械发射弓箭","Parent":"Weapon"},
+  {"id":"Sickle","displayName":"镰","Desc":"弯刃收割兵器","Parent":"Weapon"},
+  {"id":"Trident","displayName":"叉","Desc":"三尖刺击长兵","Parent":"Weapon"},
+  {"id":"Flail","displayName":"锏","Desc":"棱脊硬击短兵","Parent":"Weapon"},
+  {"id":"Rope","displayName":"索","Desc":"缠绕捆缚软兵","Parent":"Weapon"},
+  {"id":"Fan","displayName":"扇","Desc":"扇形施法器具","Parent":"Weapon"},
+  {"id":"Bell","displayName":"铃","Desc":"振鸣法器重器","Parent":"Weapon"}
+]

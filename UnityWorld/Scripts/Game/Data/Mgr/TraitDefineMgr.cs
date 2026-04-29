@@ -50,5 +50,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>特质 id 是否存在</summary>
         public bool Contains(string id) => _traits.ContainsKey(id);
+        public IEnumerable<TraitDefine> Query(Func<TraitDefine, bool> predicate) => _traits.Values.Where(predicate);
     }
 }

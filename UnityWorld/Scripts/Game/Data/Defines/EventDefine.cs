@@ -12,6 +12,6 @@ namespace UnityWorld.Game.Data
         /// 该事件声明要广播到的 Scope 列表。
         /// EventMgr 在触发时会对比调用方传入的 scope，缺失时输出 Warn。
         /// </summary>
-        public EventScope[] Scopes { get; set; } = [];
+        public Scope[] Scopes { get; set; } = [];
     }
 }

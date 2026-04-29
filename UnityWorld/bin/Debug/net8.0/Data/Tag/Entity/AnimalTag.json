@@ -1,0 +1,11 @@
+[
+  {"id":"Beast","displayName":"野兽","Desc":"野生猛兽","Parent":"Animal"},
+  {"id":"Bird","displayName":"飞禽","Desc":"鸟类动物","Parent":"Animal"},
+  {"id":"Fish","displayName":"鱼类","Desc":"水生动物","Parent":"Animal"},
+  {"id":"Insect","displayName":"昆虫","Desc":"小型节肢动物","Parent":"Animal"},
+  {"id":"Livestock","displayName":"家畜","Desc":"驯养的禽畜","Parent":"Animal"},
+  {"id":"Pet","displayName":"宠物","Desc":"观赏陪伴动物","Parent":"Animal"},
+  {"id":"Monster","displayName":"妖兽","Desc":"变异或灵异生物","Parent":"Animal"},
+  {"id":"Reptile","displayName":"爬虫","Desc":"爬行动物","Parent":"Animal"},
+  {"id":"Dragon","displayName":"龙","Desc":"龙族生物，上古神兽之属","Parent":"Animal"}
+]

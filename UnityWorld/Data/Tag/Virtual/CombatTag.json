@@ -1,0 +1,8 @@
+[
+  {"id":"Damage","displayName":"伤害","Desc":"直接造成生命值损失","Parent":"Combat"},
+  {"id":"Aoe","displayName":"范围","Desc":"影响多个目标","Parent":"Combat"},
+  {"id":"Control","displayName":"控制","Desc":"限制敌方行动","Parent":"Combat"},
+  {"id":"Passive","displayName":"被动","Desc":"被动触发类效果","Parent":"Combat"},
+  {"id":"Active","displayName":"主动","Desc":"主动使用类效果","Parent":"Combat"},
+  {"id":"Execute","displayName":"斩杀","Desc":"对低血量目标增伤","Parent":"Combat"}
+]

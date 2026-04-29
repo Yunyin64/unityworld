@@ -1,0 +1,85 @@
+[
+  {
+    "ID": "card_mu_stab",
+    "DisplayName": "刺击",
+    "Desc": "木系刺击，造成4点木刺伤害",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Mu": 1
+    }, 
+    "Tags": [
+      "木",
+      "刺",
+      "攻击"
+    ]
+  },
+  {
+    "ID": "card_mu_convert",
+    "DisplayName": "转化",
+    "Desc": "将至多1个任意灵元转化回蓝条MP",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 12,
+    "CardType": "FaShu",
+    "ManaCost": {}, 
+    "Tags": [
+      "木",
+      "辅助",
+      "转化"
+    ]
+  },
+  {
+    "ID": "card_mu_haste",
+    "DisplayName": "木灵",
+    "Desc": "加速上方一张卡（CD累计速率提升100%），可叠加",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Mu": 1
+    }, 
+    "Tags": [
+      "木",
+      "辅助",
+      "加速"
+    ]
+  },
+  {
+    "ID": "card_mu_vulnerable",
+    "DisplayName": "易伤",
+    "Desc": "给敌方施加1层易伤，下次受到伤害时额外承受伤害",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Mu": 1
+    }, 
+    "Tags": [
+      "木",
+      "控制",
+      "易伤"
+    ]
+  },
+  {
+    "ID": "card_mu_heal_wound",
+    "DisplayName": "疗愈",
+    "Desc": "移除己方随机一张Size为1的伤势卡",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 15,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Mu": 2
+    }, 
+    "Tags": [
+      "木",
+      "治疗",
+      "疗伤"
+    ]
+  }
+]

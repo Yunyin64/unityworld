@@ -1,5 +1,5 @@
 using UnityWorld.Game.Data;
-
+using UnityWorld.Core;
 namespace UnityWorld.Game.Domain
 {
     /// <summary>
@@ -12,26 +12,19 @@ namespace UnityWorld.Game.Domain
     /// - TraitMgr 由外部注入，系统本身不持有全局引用。
     /// </para>
     /// </summary>
-    public class NpcSystemTrait : NpcSystemBase
+    public class NpcSystemTrait : NpcSystemBase<NpcTraitData>
     {
-        // NpcId → 该 NPC 当前持有的 Trait 实例表（TraitId → Trait）
-        private readonly Dictionary<NpcId, Dictionary<TraitId, Trait>> _traitTable = new();
-
-        // 特质定义数据源（在 NpcMgr 初始化时注入）
-        private IDataMgrBase<TraitDefine>? _traitMgr;
-
-        /// <summary>注入特质数据源（在 NpcMgr 初始化时调用一次）</summary>
-        public void SetTraitMgr(IDataMgrBase<TraitDefine> traitMgr) => _traitMgr = traitMgr;
+        protected override Dictionary<int, NpcTraitData> _dataTable { get; set; } = new();
 
         // ── 注册 ──────────────────────────────────────────
 
         /// <summary>为 NPC 初始化空的 Trait 槽（NPC 创建时调用）</summary>
-        public void Register(NpcId id)
-            => _traitTable.TryAdd(id, new Dictionary<TraitId, Trait>());
+        public void Register(int id)
+            => _dataTable.TryAdd(id, new NpcTraitData());
 
         /// <summary>NPC 销毁时释放数据</summary>
-        public void Unregister(NpcId id)
-            => _traitTable.Remove(id);
+        public void Unregister(int id)
+            => _dataTable.Remove(id);
 
         // ── 添加 ──────────────────────────────────────────
 
@@ -42,12 +35,6 @@ namespace UnityWorld.Game.Domain
         /// <returns>true=添加成功，false=已存在或定义缺失</returns>
         public bool AddTrait(Npc npc, TraitId traitId)
         {
-            if (!_traitTable.TryGetValue(npc.Id, out var dict)) return false;
-            if (dict.ContainsKey(traitId)) return false;
-
-            var trait = new Trait(traitId, npc.Id);
-            dict[traitId] = trait;
-            ApplyModifiers(npc.Stats, trait);
             return true;
         }
 
@@ -59,29 +46,28 @@ namespace UnityWorld.Game.Domain
         /// <returns>true=移除成功，false=不存在</returns>
         public bool RemoveTrait(Npc npc, TraitId traitId)
         {
-            if (!_traitTable.TryGetValue(npc.Id, out var dict)) return false;
-            if (!dict.Remove(traitId, out var trait)) return false;
-
-            RevokeModifiers(npc.Stats, trait);
             return true;
         }
 
         // ── 查询 ──────────────────────────────────────────
 
         /// <summary>获取 NPC 持有的某个 Trait 实例（不存在返回 null）</summary>
-        public Trait? GetTrait(NpcId id, TraitId traitId)
-            => _traitTable.TryGetValue(id, out var dict) && dict.TryGetValue(traitId, out var t)
-                ? t : null;
+        public Trait GetTrait(int id, TraitId traitId)
+        {
+            return null;
+        }
 
         /// <summary>获取 NPC 当前持有的所有 Trait 实例（只读快照）</summary>
-        public IReadOnlyCollection<Trait> GetTraits(NpcId id)
-            => _traitTable.TryGetValue(id, out var dict)
-                ? dict.Values
-                : Array.Empty<Trait>();
+        public IReadOnlyCollection<Trait> GetTraits(int id)
+        {
+            return null;
+        }
 
         /// <summary>NPC 是否持有指定 Trait</summary>
-        public bool HasTrait(NpcId id, TraitId traitId)
-            => _traitTable.TryGetValue(id, out var dict) && dict.ContainsKey(traitId);
+        public bool HasTrait(int id, TraitId traitId)
+        {
+            return true;
+        }
 
         // ── 存档恢复 ──────────────────────────────────────
 
@@ -91,35 +77,30 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void ReapplyAll(Npc npc)
         {
-            if (!_traitTable.TryGetValue(npc.Id, out var dict)) return;
+            
+        }
 
-            foreach (var trait in dict.Values)
-                RevokeModifiers(npc.Stats, trait);
-
-            foreach (var trait in dict.Values)
-                ApplyModifiers(npc.Stats, trait);
+        /// <summary>
+        /// NPC 诞生时：创建空 Trait 数据并注册
+        /// </summary>
+        public override void OnEntityBorn(BirthContext context)
+        {
+            var npc = context.MainNpc;
+            Register(npc, new NpcTraitData());
         }
 
         // ── Tick ──────────────────────────────────────────
 
         public override void OnTick(Npc npc, float deltaTime)
         {
-            if (!_traitTable.TryGetValue(npc.Id, out var dict)) return;
-
-            foreach (var trait in dict.Values)
-                trait.TickTime(deltaTime);
+            
         }
 
         // ── 内部工具 ──────────────────────────────────────
 
         private void ApplyModifiers(StatBlock stats, Trait trait)
         {
-            if (_traitMgr == null) return;
-            var define = _traitMgr.Get(trait.Id.Value);
-            if (define == null || !define.HasModifiers) return;
-
-            foreach (var (statId, modifier) in define.BuildModifiers())
-                stats.AddModifier(statId, modifier);
+            
         }
 
         private static void RevokeModifiers(StatBlock stats, Trait trait)

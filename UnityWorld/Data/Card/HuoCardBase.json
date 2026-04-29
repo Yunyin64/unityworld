@@ -1,0 +1,118 @@
+[
+  {
+    "ID": "card_huo_shot",
+    "DisplayName": "射击",
+    "Desc": "火系射击，造成5点火射伤害",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 6,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Huo": 1
+    }, 
+    "Tags": [
+      "火",
+      "射击",
+      "攻击"
+    ]
+  },
+  {
+    "ID": "card_huo_drain",
+    "DisplayName": "回灵",
+    "Desc": "立刻抽取3点MP转化为灵元",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Huo": 1
+    }, 
+    "Tags": [
+      "火",
+      "辅助",
+      "回灵"
+    ]
+  },
+  {
+    "ID": "card_huo_burst",
+    "DisplayName": "爆燃",
+    "Desc": "全卡加速1s",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 10,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Huo": 2
+    }, 
+    "Tags": [
+      "火",
+      "辅助",
+      "充能"
+    ]
+  },
+  {
+    "ID": "card_huo_spear",
+    "DisplayName": "火枪",
+    "Desc": "火系刺击，造成8点火刺伤害",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 15,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Huo": 1
+    }, 
+    "Tags": [
+      "火",
+      "刺",
+      "攻击"
+    ]
+  },
+  {
+    "ID": "card_huo_self_burn",
+    "DisplayName": "自燃",
+    "Desc": "给自己加1层燃烧，抽取1灵元",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 2,
+    "CardType": "FaShu",
+    "ManaCost": {}, 
+    "Tags": [
+      "火",
+      "燃烧",
+      "辅助"
+    ]
+  },
+  {
+    "ID": "card_huo_flame_slash",
+    "DisplayName": "烈焰斩",
+    "Desc": "4点火斩，击中本体则施加1燃烧",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Huo": 1
+    }, 
+    "Tags": [
+      "火",
+      "斩",
+      "攻击",
+      "燃烧"
+    ]
+  },
+  {
+    "ID": "card_huo_incinerate",
+    "DisplayName": "焚烧",
+    "Desc": "转化1点木灵元回蓝1",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4,
+    "CardType": "FaShu",
+    "ManaCost": {}, 
+    "Tags": [
+      "火",
+      "辅助",
+      "转化"
+    ]
+  }
+]

@@ -1,0 +1,226 @@
+[
+  {
+    "ID": "card_form_jian_zhan",
+    "DisplayName": "剑斩",
+    "Desc": "基础剑招，造成3点<武器>斩伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "斩",
+      "剑"
+    ]
+  },
+  {
+    "ID": "card_form_jian_ci",
+    "DisplayName": "剑刺",
+    "Desc": "基础剑招，造成3点<武器>刺伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4.5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "刺",
+      "剑"
+    ]
+  },
+  {
+    "ID": "card_form_jian_qi",
+    "DisplayName": "剑气",
+    "Desc": "基础剑招，造成3点<武器>射伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5.5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "射击",
+      "剑"
+    ]
+  },
+  {
+    "ID": "card_form_dao_zhan",
+    "DisplayName": "刀斩",
+    "Desc": "基础刀招，造成4点<武器>斩伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 6,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "斩",
+      "刀"
+    ]
+  },
+  {
+    "ID": "card_form_dao_qi",
+    "DisplayName": "刀气",
+    "Desc": "基础刀招，造成4点<武器>射伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 6.5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "射击",
+      "刀"
+    ]
+  },
+  {
+    "ID": "card_form_dao_da",
+    "DisplayName": "刀打",
+    "Desc": "基础刀招，造成3点<武器>打伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5.5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "打",
+      "刀"
+    ]
+  },
+  {
+    "ID": "card_form_quan_da",
+    "DisplayName": "拳打",
+    "Desc": "基础拳招，造成2点<武器>打伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "打",
+      "拳"
+    ]
+  },
+  {
+    "ID": "card_form_quan_feng",
+    "DisplayName": "拳风",
+    "Desc": "基础拳招，造成2点<武器>射伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4.5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "射击",
+      "拳"
+    ]
+  },
+  {
+    "ID": "card_form_ci_quan",
+    "DisplayName": "刺拳",
+    "Desc": "基础拳招，造成2点<武器>刺伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 3.5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "刺",
+      "拳"
+    ]
+  },
+  {
+    "ID": "card_form_qiang_ci",
+    "DisplayName": "枪刺",
+    "Desc": "基础枪招，造成4点<武器>刺伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 6,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "刺",
+      "枪"
+    ]
+  },
+  {
+    "ID": "card_form_qiang_sao",
+    "DisplayName": "枪扫",
+    "Desc": "基础枪招，造成3点<武器>斩伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "斩",
+      "枪"
+    ]
+  },
+  {
+    "ID": "card_form_qiang_za",
+    "DisplayName": "枪砸",
+    "Desc": "基础枪招，造成4点<武器>打伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 7,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "攻击",
+      "打",
+      "枪"
+    ]
+  },
+  {
+    "ID": "card_fist_block",
+    "DisplayName": "拳挡",
+    "Desc": "格挡<武器>点",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 3,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "防御",
+      "格挡",
+      "拳"
+    ]
+  },
+  {
+    "ID": "card_blade_block",
+    "DisplayName": "刀挡",
+    "Desc": "格挡<武器>点",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 4,
+    "CardType": "ZhaoShi",
+    "ManaCost": {}, 
+    "Tags": [
+      "武器",
+      "防御",
+      "格挡",
+      "刀"
+    ]
+  }
+]

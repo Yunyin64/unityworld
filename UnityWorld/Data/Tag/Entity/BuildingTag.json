@@ -1,0 +1,164 @@
+[
+  {
+    "id": "Tower",
+    "displayName": "塔",
+    "Desc": "塔类建筑",
+    "Parent": "Building"
+  },
+  {
+    "id": "Forge",
+    "displayName": "坊",
+    "Desc": "锻造作坊",
+    "Parent": "Building"
+  },
+  {
+    "id": "Inn",
+    "displayName": "客栈",
+    "Desc": "旅人休憩之处",
+    "Parent": "Building"
+  },
+  {
+    "id": "Temple",
+    "displayName": "庙",
+    "Desc": "祭祀神灵之地",
+    "Parent": "Building"
+  },
+  {
+    "id": "Well",
+    "displayName": "井",
+    "Desc": "取水设施",
+    "Parent": "Building"
+  },
+  {
+    "id": "Dock",
+    "displayName": "码头",
+    "Desc": "水路交通枢纽",
+    "Parent": "Building"
+  },
+  {
+    "id": "Watchtower",
+    "displayName": "哨塔",
+    "Desc": "瞭望警戒的高塔",
+    "Parent": "Building"
+  },
+  {
+    "id": "Shrine",
+    "displayName": "祠",
+    "Desc": "供奉祖先之处",
+    "Parent": "Building"
+  },
+  {
+    "id": "Prison",
+    "displayName": "牢狱",
+    "Desc": "关押犯人的场所",
+    "Parent": "Building"
+  },
+  {
+    "id": "Library",
+    "displayName": "藏书阁",
+    "Desc": "珍藏典籍之所",
+    "Parent": "Building"
+  },
+  {
+    "id": "Palace",
+    "displayName": "宫",
+    "Desc": "宫殿类建筑",
+    "Parent": "Building"
+  },
+  {
+    "id": "Pavilion",
+    "displayName": "阁",
+    "Desc": "楼阁类建筑",
+    "Parent": "Building"
+  },
+  {
+    "id": "Altar",
+    "displayName": "坛",
+    "Desc": "祭祀祈福之坛",
+    "Parent": "Building"
+  },
+  {
+    "id": "Gate",
+    "displayName": "门",
+    "Desc": "门户关卡建筑",
+    "Parent": "Building"
+  },
+  {
+    "id": "Cave",
+    "displayName": "洞",
+    "Desc": "洞府修炼之所",
+    "Parent": "Building"
+  },
+  {
+    "id": "Hall",
+    "displayName": "殿",
+    "Desc": "大殿议事之处",
+    "Parent": "Building"
+  },
+  {
+    "id": "Courtyard",
+    "displayName": "院",
+    "Desc": "院落居住之地",
+    "Parent": "Building"
+  },
+  {
+    "id": "Vault",
+    "displayName": "库",
+    "Desc": "储存宝物之库",
+    "Parent": "Building"
+  },
+  {
+    "id": "Bathhouse",
+    "displayName": "池",
+    "Desc": "灵气汤池建筑",
+    "Parent": "Building"
+  },
+  {
+    "id": "Tomb",
+    "displayName": "墓",
+    "Desc": "墓葬之地",
+    "Parent": "Building"
+  },
+  {
+    "id": "Market",
+    "displayName": "市",
+    "Desc": "交易买卖之所",
+    "Parent": "Building"
+  },
+  {
+    "id": "Greenhouse",
+    "displayName": "圃",
+    "Desc": "种植灵草之地",
+    "Parent": "Building"
+  },
+  {
+    "id": "Barracks",
+    "displayName": "营",
+    "Desc": "兵士驻扎之所",
+    "Parent": "Building"
+  },
+  {
+    "id": "Observatory",
+    "displayName": "观星台",
+    "Desc": "观测星象之台",
+    "Parent": "Building"
+  },
+  {
+    "id": "Bridge",
+    "displayName": "桥",
+    "Desc": "跨水通行之桥",
+    "Parent": "Building"
+  },
+  {
+    "id": "Dojo",
+    "displayName": "道场",
+    "Desc": "修炼武道之所",
+    "Parent": "Building"
+  },
+  {
+    "id": "Warehouse",
+    "displayName": "仓",
+    "Desc": "储存物资之所",
+    "Parent": "Building"
+  }
+]

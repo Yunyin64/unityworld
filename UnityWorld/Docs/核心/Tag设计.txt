@@ -1,0 +1,74 @@
+1. 核心愿景
+构建一个基于 Tag (标签语义词袋) 的元系统，用于描述、匹配、组合游戏中的一切核心元素。玩家或设计师通过输入期望的 Tags，系统能够自动枚举并组合出合法、有主题、符合强度预算的卡牌、卡组乃至战斗体系。
+
+2. 核心设计哲学
+语义驱动：Tag 是一切描述的原点。
+数据驱动：所有规则和内容通过配置定义，易于扩展和迭代。
+自动涌现：高层次的主题、风格、强度由底层配置的简单组合自然形成，而非硬编码。
+灵活控制：通过“匹配类型”和“匹配度”参数，允许设计者精准控制生成内容的“纯粹度”与“多样性”。
+3. 核心概念定义
+3.1 Tag 与 TagBag
+Tag：一个语义词，如 "火"、"控制"、"治疗"。
+TagBag：一种 List<Tag> 数据结构，其中 Tag 的重复次数代表该语义的浓度/强度。例如，["火", "火", "火"] 比 ["火"] 代表着更纯粹、更强烈的火属性。这是与传统 Set 结构的核心区别。
+3.2 定义层（Define Layer）
+这是设计师工作的输入层，所有基础组件在此定义。
+
+定义类	核心属性	作用
+TagDefine	ID, DisplayName, Desc	定义所有可用的语义标签元数据。
+TriggerDefine	ID, Tags, Score, ConflictTags	定义效果何时触发。Score 通常为0或负数，代表触发难度（难度越高，分越低，为后续Actions释放更多预算）。
+ConditionDefine	ID, Tags, Score, ConflictTags	定义效果生效的条件。Score 通常为0或负数，代表条件苛刻程度。
+ActionDefine	ID, Tags, Score, ConflictTags	定义效果的具体行动。Score 为正数，代表行动强度，消耗预算。
+CardDefine	ID, Tags, Rarity, MaxEffectCount, MaxEffectPowerScore, MaxComplexityScore, MatchType, MatchDegree	定义卡牌的生成模板。其中包括卡牌自身主题 Tag、稀有度、资源预算（效果数量、强度分上限、复杂度分上限）以及最重要的 匹配规则（MatchType, MatchDegree）。
+3.3 运行时数据层（Runtime Data Layer）
+这是系统生成后的产出层。
+
+数据类	核心属性	生成逻辑
+EffectData	TriggerId, ConditionId, ActionIds, Tags, PowerScore, ComplexityScore	由单个Trigger、Condition和多个Actions组合而成。其 Tags 是所有组成节点 Tags 的 List拼接，浓度自然涌现。PowerScore = Trigger.Score + Condition.Score + Σ Actions.Score，必须小于等于预设上限。ComplexityScore 通常为所有节点 Score 的绝对值之和，衡量效果的复杂/特殊程度。
+CardData	DefineId, Effects, Tags, ...	由多个 EffectData 组成。其 Tags 是所有下属 Effect 的 Tags 的 List拼接，卡牌的整体主题和风格自然涌现。其合法性受 CardDefine 中的各项上限约束。
+4. 核心算法：TagBag 匹配器 (TagBagMatcher)
+4.1 功能
+给定一个查询方的 TagBag 和一个候选池（Dict<候选ID，候选的TagBag>），根据指定的 MatchType 和 MatchDegree，计算每个候选的匹配权重。
+
+4.2 匹配类型 (MatchType)
+类型	描述	计算方式
+STRICT	候选必须包含查询方的所有Tag。	匹配度 = (intersectionCount == queryTotal) ? 1.0 : 0.0
+INCLUDE	候选与查询方的交集越多越好。关注“覆盖率”。	匹配度 = intersectionCount / queryTotal
+WEIGHTED	Jaccard相似度。既考虑交集，也考虑候选自身的独特Tag。	匹配度 = intersectionCount / (queryTotal + candidateTotal - intersectionCount)
+FREE	完全自由，忽略查询方Tag。	匹配度 = 1.0
+计算变量:
+
+queryTotal：查询方TagBag中所有Tag的计数总和。
+candidateTotal：候选TagBag中所有Tag的计数总和。
+intersectionCount：核心！ 对于每个Tag t，取 min(queryTagBag[t], candidateTagBag[t])，然后求和。这实现了 Multiset（多重集）交集的精确计算。
+4.3 匹配度 (MatchDegree)
+范围：0.0 到 1.0。
+作用：控制匹配度的“放大效应”。
+0.0：最宽松。所有候选的最终权重趋近于均匀分布，即使匹配度很低也有机会。
+1.0：最严格。匹配度低的候选，其最终权重会急剧下降，甚至趋近于0，确保结果高度符合查询主题。
+权重计算公式： finalWeight = rawMatchScore ^ (1 / (1 - matchDegree + epsilon))
+5. 生成流程与系统复用
+同一套 TagBagMatcher 算法在不同层级被复用，确保了整个系统语义的一致性。
+
+<TEXT>
+1. 生成单个 Effect:
+   查询方: Effect 预设（或从上层继承）的 Tag
+   候选池: {TriggerId -> Tags}, {ConditionId -> Tags}, {ActionId -> Tags}
+   匹配参数: 从上层 CardDefine 继承或 Effect 模板自定
+   结果: 筛选出高权重的 Trigger, Condition, Actions，组合成 EffectData。
+2. 生成 Card:
+   查询方: CardDefine.Tags
+   候选池: {预先生成的 EffectData ID -> EffectData.Tags}
+   匹配参数: CardDefine.MatchType, CardDefine.MatchDegree
+   结果: 筛选出高权重的 EffectDatas，组合成 CardData。
+3. 组建 Deck:
+   查询方: 玩家指定的卡组主题 Tag
+   候选池: {已解锁 CardData ID -> CardData.Tags}
+   匹配参数: 玩家指定的 MatchType, MatchDegree
+   结果: 筛选出高权重的 CardDatas，组成卡组。此为“卡组主题匹配”，与“卡牌生成”使用同一套逻辑。
+6. 系统优势总结
+强大的表达能力：通过 Tag 和 TagBag，既能描述“是什么”（["火"]），也能描述“有多专注于此”（["火","火","火"]）。
+极低的维护成本：设计师只需在底层节点（Trigger/Condition/Action）配置 Tag，更高层级的主题和风格自动涌现，无需重复配置。
+灵活的生成控制：MatchType 和 MatchDegree 提供了从“严格主题”到“混沌混搭”的完整光谱，满足不同场景需求（如主题卡包 vs 随机惊喜包）。
+优雅的约束系统：“强度分（PowerScore）”与“复杂度分（ComplexityScore）”双维度约束，巧妙地将平衡性问题转化为数值预算问题，易于理解和调整。
+清晰的职责分离：Tag 系统专注于描述与生成，不涉足运行时的战斗状态判断，架构清晰，性能友好。
+此设计实现了从一个语义概念（Tag）到完整战斗体系的自动化、数据化、多样化构建，是游戏内容生成的强大基础设施。

@@ -1,0 +1,570 @@
+/* ── 全局样式 ────────────────────────────────────── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-panel: #0f0f1a;
+    --text-primary: #eee;
+    --text-secondary: #888;
+    --accent: #4a9eff;
+    --accent-hover: #6ab0ff;
+    --border: #333;
+    --success: #4caf50;
+    --warning: #ff9800;
+    --error: #f44336;
+}
+
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── 顶部工具栏 ────────────────────────────────────── */
+.toolbar {
+    height: 48px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+}
+
+.toolbar-left, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar-center {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.time {
+    color: var(--accent);
+    font-size: 14px;
+}
+
+.speed {
+    min-width: 40px;
+    text-align: center;
+}
+
+/* ── 按钮 ────────────────────────────────────── */
+.btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    font-size: 18px;
+}
+
+.btn-sm {
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.btn-close:hover {
+    color: var(--error);
+}
+
+/* ── 主体区域 ────────────────────────────────────── */
+.main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* ── 面板 ────────────────────────────────────── */
+.panel {
+    width: 280px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-left {
+    border-right: 1px solid var(--border);
+}
+
+.panel-right {
+    border-left: 1px solid var(--border);
+}
+
+.panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.panel-content {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.hint {
+    color: var(--text-secondary);
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* ── NPC 信息 ────────────────────────────────────── */
+.npc-info {
+    font-size: 13px;
+}
+
+.npc-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.npc-stat {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+}
+
+.npc-stat-label {
+    color: var(--text-secondary);
+}
+
+.npc-stat-value {
+    color: var(--accent);
+}
+
+.progress-bar {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s;
+}
+
+.npc-traits, .npc-roles {
+    margin-top: 12px;
+}
+
+.npc-traits h4, .npc-roles h4 {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.trait-tag, .role-tag {
+    display: inline-block;
+    background: var(--bg-secondary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    margin: 2px;
+}
+
+/* ── 地块信息 ────────────────────────────────────── */
+.tile-info {
+    font-size: 13px;
+}
+
+.tile-coord {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.tile-terrain {
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.aura-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+}
+
+/* ── 地块信息 ────────────────────────────────────── */
+.tile-info {
+    font-size: 13px;
+}
+
+.tile-coord {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--accent);
+}
+
+.tile-terrain {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.terrain-icon {
+    font-size: 24px;
+}
+
+.terrain-name {
+    font-size: 14px;
+}
+
+.aura-section {
+    margin-top: 12px;
+}
+
+.aura-section h4 {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.aura-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.aura-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.aura-label {
+    width: 20px;
+    font-size: 12px;
+}
+
+.aura-bar-fill {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.aura-fill {
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.aura-fill.Jin { background: #f1c40f; }
+.aura-fill.mu { background: #2ecc71; }
+.aura-fill.shui { background: #3498db; }
+.aura-fill.huo { background: #e74c3c; }
+.aura-fill.tu { background: #9b59b6; }
+
+.aura-value {
+    width: 40px;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ── 地图容器 ────────────────────────────────────── */
+.map-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+#mapCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: grab;
+}
+
+#mapCanvas:active {
+    cursor: grabbing;
+}
+
+.tooltip {
+    position: absolute;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.tooltip.hidden {
+    display: none;
+}
+
+/* ── 行为卡区域 ────────────────────────────────────── */
+.action-bar {
+    height: 140px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.action-bar-header {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.action-bar-header h3 {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.action-cards {
+    flex: 1;
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    align-items: center;
+}
+
+.action-card {
+    min-width: 120px;
+    height: 80px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.action-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.action-card-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.action-card-name {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.action-card-desc {
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.action-card.success-rate {
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: auto;
+}
+
+/* ── 模态框 ────────────────────────────────────── */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.log-list {
+    padding: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+}
+
+.log-entry {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+}
+
+.log-time {
+    color: var(--text-secondary);
+    min-width: 140px;
+}
+
+.log-level {
+    min-width: 50px;
+}
+
+.log-level.Info { color: var(--accent); }
+.log-level.Warning { color: var(--warning); }
+.log-level.Error { color: var(--error); }
+
+.log-message {
+    flex: 1;
+}
+
+/* ── 设置表单 ────────────────────────────────────── */
+.settings-form {
+    padding: 16px;
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    font-size: 13px;
+}
+
+.form-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.form-group input[type="range"] {
+    width: 150px;
+}
+
+/* ── 连接状态 ────────────────────────────────────── */
+.connection-status {
+    position: fixed;
+    bottom: 150px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-panel);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-dot.connected {
+    background: var(--success);
+}
+
+.status-dot.disconnected {
+    background: var(--error);
+}
+
+.status-text {
+    color: var(--text-secondary);
+}
+
+/* ── 滚动条样式 ────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}

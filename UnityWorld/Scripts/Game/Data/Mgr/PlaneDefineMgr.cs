@@ -54,6 +54,7 @@ namespace UnityWorld.Game.Data
 
         /// <summary>是否存在指定 DefineId</summary>
         public bool Contains(string defineId) => _defines.ContainsKey(defineId);
+        public IEnumerable<PlaneDefine> Query(Func<PlaneDefine, bool> predicate) => _defines.Values.Where(predicate);
 
         /// <summary>按位面类型筛选</summary>
         public IEnumerable<PlaneDefine> GetByKind(Domain.PlaneTypes.PlaneKind kind)

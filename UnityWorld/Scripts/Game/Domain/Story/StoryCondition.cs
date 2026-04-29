@@ -21,7 +21,7 @@ namespace UnityWorld.Game.Domain
         /// - NpcTrait：TraitId 字符串
         /// - AuraElement：元素名（如 "Huo"）
         /// - WorldTime：忽略此字段，直接比较 CurrentTime
-        /// - Relation：对方 NpcId 字符串
+        /// - Relation：对方 int 字符串
         /// </summary>
         [JsonPropertyName("fieldName")]
         public string FieldName { get; set; } = "";
@@ -84,12 +84,7 @@ namespace UnityWorld.Game.Domain
 
         private bool EvaluateNpcTrait(StoryContext ctx)
         {
-            if (ctx.Subject is not Npc npc) return false;
-            var traitId = new TraitId(FieldName);
-            bool hasTrait = NpcMgr.Instance?.Traits?.HasTrait(npc.Id, traitId) ?? false;
-            return Operator == StoryConditionOperator.Contains ? hasTrait
-                 : Operator == StoryConditionOperator.NotContains ? !hasTrait
-                 : false;
+            return true;
         }
 
         private bool EvaluateAuraElement(StoryContext ctx)

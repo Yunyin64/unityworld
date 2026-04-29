@@ -1,0 +1,204 @@
+# 战斗系统 · TCA 体系与 Action 原子
+### 卡牌模型、枚举一览、Trigger-Condition-Action 架构、Action原子、API注册表
+
+→ 本文件为战斗系统的一部分。另见：
+→ 战斗/战斗_核心机制.txt（设计原则、体验循环、核心属性、Tick驱动、待发槽、对拼、血量伤势、Mana）
+→ 战斗/战斗_卡牌生命周期.txt（伪代码示例、卡牌完整生命周期、ManaCost格式）
+
+---
+
+## 九、卡牌模型
+
+  CardType（风味/显示性分类，同时决定Mana消耗模式等规则差异）：
+    招式 / 法术 / 法宝 / 丹药 / 阵法 / 神通
+
+  卡的实际行为 = 由 List<EffectData> 决定：
+    EffectData 支持两种模式：
+
+    模式一：TCA Effect（数据驱动）
+      EffectData = Trigger + Condition + List<Action>
+      用 TCA 组合描述"在什么时机、什么条件下、做什么事"
+
+    模式二：Keyword Effect（引擎硬编码）
+      EffectData = KeywordId + KeywordParams
+      IsKeyword = true，不使用 Trigger/Condition/Actions
+      引擎按 KeywordId 分发到专用代码路径执行
+      改变卡牌的存在方式、生命周期、或与其他卡的引用关系
+
+    两种模式共享 Score 和 Tags 字段，共存于同一个 Effects 列表中
+    → 详见：战斗/战斗_机制原子清单.txt「Keyword Effect」章节
+
+  判断是否进待发槽：
+    Effect 中包含 AttackValue / ShieldValue / DefendValue
+    → 是攻防卡 → CD到后进待发槽参与对拼
+    Effect 中不包含上述数值
+    → 是效果卡 → CD到后直接结算，不进待发槽
+
+  卡牌属性：
+    Cost        : 1/2/3（占卡组空间）
+    ManaCost    : 灵元需求（元素×数量，可为空）
+    Cooldown    : CD满值
+    CardType    : 招式/法术/法宝/丹药/阵法/神通
+    Effects     : List<EffectData>（所有行为从这里来）
+
+---
+
+## 十、枚举一览
+
+  CombatEndReason
+    None / SpaceOverflow / TurnLimitReached / AllDefeated /
+    Surrender / Escaped / SpecialCondition
+
+  CombatTeam
+    None / TeamA / TeamB / TeamC / TeamD
+
+  CombatantStatus
+    Active / Defeated / Escaped / Skipped
+
+  CombatOutcome（从某方视角）
+    Victory / Defeat / Draw / Escaped
+
+  CardType（卡牌风味分类）
+    ZhaoShi / FaShu / FaBao / DanYao / ZhenFa / ShenTong
+
+  PhysicalType（物理攻击类型）
+    Zhan / Ci / Da / SheJi
+
+  BaseElementType（已有）
+    Jin / Mu / Shui / Huo / Tu / Extra
+
+---
+
+## 十二、TCA 体系（Trigger + Condition + Action）
+
+  卡牌所有行为由 Effect 组合描述，
+  每个 Effect = 一个 Trigger + 一个 Condition + 若干 Action。
+
+  ── Trigger（触发时机） ────────────────────────────────
+
+    OnUse           使用时（CD到了就触发）
+    OnHit           被攻击时
+    OnLowHp         HP低于阈值时
+    OnTick          每N Tick持续触发（如中毒）
+    OnStart         战斗开始时（被动光环）
+    OnContestWin    对拼赢时
+    OnContestLose   对拼输时
+    ...更多
+
+  ── Condition（条件）────────────────────────────────────
+
+    None            无条件
+    HpBelow(30%)    HP低于阈值
+    HasElement(火)  拥有某元素灵元
+    ...更多
+
+  ── Action（原子操作）──────────────────────────────────
+
+    Action 是最小的执行单元。
+    每个 Action = 一个函数名(FuncName) + 一个参数包(Params)。
+    Action 不知道自己在哪个上下文中被调用，被调用就执行。
+
+    拼点类示例：
+      Attack("Huo", "SheJi", 3)  → 造成3点火系射击伤害
+      Shield("Shui", "Da", 4)    → 盾值4，水系打击
+      Block("None", "Ci", 3)     → 防值3，无属性刺击
+
+    效果类示例：
+      Heal(5)                    → 恢复5点HP
+      SelfDamage(3)              → 自伤3点
+      AddPoison(2)               → 给目标添加2层中毒
+      BuffAtk(1, "火")           → 给符合条件的卡+1攻击
+      InsertCard("curse_1")      → 给对方卡组塞入诅咒卡
+
+  ── 组合示例 ──────────────────────────────────────────
+
+    火球（造成3🔥🏹）：
+      Effect: Trigger=OnUse, Condition=None
+              Actions=[Attack("Huo","SheJi",3)]
+
+    毒蛇刺（2🌿🗡 + 中毒）：
+      Effect: Trigger=OnUse, Condition=None
+              Actions=[Attack("Mu","Ci",2), AddPoison(1)]
+
+    金蝉脱壳（被打时有概率闪避）：
+      Effect: Trigger=OnHit, Condition=HpBelow(30%)
+              Actions=[Dodge()]
+
+    复合卡（拼赢回血）：
+      Effect[0]: Trigger=OnUse, Actions=[Attack("Huo","Zhan",3)]
+      Effect[1]: Trigger=OnContestWin, Actions=[Heal(2)]
+
+---
+
+## 十三、Action 是原子 —— 数据流与运行时可变性
+
+  核心原则：Action 在运行时是实例，数值可被 buff/debuff 修改。
+
+  数据流：
+
+    ActionDefine（JSON静态定义）
+      {"id":"attack_huo_shot_3", "funcName":"Attack",
+       "params":["Huo","SheJi",3], "score":1, "tags":["火","攻击"]}
+        │
+        │ 初始化时拷贝
+        ▼
+    ActionData（运行时实例，持有 ContextBase 参数包）
+      FuncName: "Attack"
+      Context: {Element=Huo, PhysicalType=SheJi, AttackValue=3}
+        │
+        │ 被 buff 修改
+        ▼
+      Context: {Element=Huo, PhysicalType=SheJi, AttackValue=4}
+
+  EffectData 持有 List<ActionData>（而非 List<string> ActionIds）。
+  这样战斗中修改数值时，直接改 ActionData.Context 即可。
+
+  场景举例：
+    "为上方的火系攻击卡增加1点攻击"
+    → 找到某个 EffectData 中 FuncName="Attack" 的 ActionData
+    → actionData.Context.Set("AttackValue", 4)
+    → 下次拼点时读到的就是 4
+
+---
+
+## 十四、API 注册表（函数签名管理）
+
+  每个 Action 的 FuncName 对应一个注册的 API 签名。
+  API 签名定义了参数列表（名称 + 类型），纯粹描述函数接口。
+
+  位置：Scripts/Game/Domain/!Global/API/
+
+  APIMgr 职责：
+    1. 解析 —— 把 ActionDefine.Params 列表按签名转为带名称的参数包
+       params: ["Huo","SheJi",3] + funcName: "Attack"
+       → 查签名知道第0个叫"Element"，第1个叫"PhysicalType"，第2个叫"AttackValue"
+       → 填入 ContextBase
+
+    2. 校验 —— 检查参数数量/类型是否匹配签名
+
+    3. 查询 —— 按函数名查找签名定义
+
+  API 签名不带业务语义标记（不标"是否拼点"之类），
+  它只是纯粹的函数名+参数列表。
+  谁是拼点函数由战斗系统根据 FuncName 自行判断。
+
+  已注册的内置 API：
+
+    Attack(Element:String, PhysicalType:String, AttackValue:Float)
+    Shield(Element:String, PhysicalType:String, ShieldValue:Float)
+    Block(Element:String, PhysicalType:String, BlockValue:Float)
+    Heal(HealValue:Float)
+    SelfDamage(DamageValue:Float)
+
+  Modifier 管理 API（详见 → 战斗/战斗_Modifier系统.txt）：
+
+    AddModifier(ModifierId:String, Target:String)
+      在目标身上实例化一个 Modifier。
+      Target = Self / Enemy / Attacker 等。
+
+    RemoveModifier(ModifierId:String, Target:String)
+      移除目标身上的指定 Modifier。
+
+    ModifyStacks(ModifierId:String, Target:String, Delta:Int)
+      增减目标身上某 Modifier 的层数。
+      Delta 为正数增加，负数减少，减至 0 时 Modifier 移除。

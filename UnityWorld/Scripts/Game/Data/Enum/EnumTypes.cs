@@ -1,18 +1,56 @@
 
-    /// <summary>
-    /// 伤害类型：决定伤害受哪种防御减免
-    /// </summary>
-    public enum DamageType
-    {
-        /// <summary>受物理防御减免</summary>
-        Physical,
 
-        /// <summary>受元素抗性减免</summary>
-        Element,
 
-        /// <summary>真实伤害，无视所有防御</summary>
-        True,
-    }
+public enum PracticePath
+{
+    None,
+    Wu,
+    Ling,
+    Hun
+}
+public enum CardType
+{
+    ZhaoShi,
+    FaShu,
+    FaBao,
+    Hun,
+    Wound
+}
+
+
+        public enum CultivationPointType
+        {
+           Card
+        }
+public enum ContestType
+{
+    Zhan,
+    Da,
+    Ci,
+    SheJi,
+    Shield,
+    Block
+}
+
+public enum DamageType
+{
+    None,
+    Zhan,
+    Da,
+    Ci,
+    SheJi,
+}
+
+public enum BehaviorStoryTrigger
+{
+    OnStart,
+    OnEnd,
+    OnInterrupt,
+    OnTimer,
+    OnTick
+}
+
+
     /// <summary>
     /// 元素类型：决定伤害触发的元素反应
     /// </summary>
@@ -28,7 +66,7 @@
         Shui,
 
         /// <summary>金元素</summary>
-        Jing,
+        Jin,
 
         /// <summary>木元素</summary>
         Mu,
@@ -95,23 +133,6 @@
         TeamD,
     }
 
-    /// <summary>
-    /// 战斗参与者当前状态
-    /// </summary>
-    public enum CombatantStatus
-    {
-        /// <summary>正常行动中</summary>
-        Active,
-
-        /// <summary>已被击败（HP归零）</summary>
-        Defeated,
-
-        /// <summary>已逃离战场</summary>
-        Escaped,
-
-        /// <summary>跳过本回合（眩晕/冻结等）</summary>
-        Skipped,
-    }
 
     /// <summary>
     /// 战斗胜负结果（从某一方视角）
@@ -134,26 +155,10 @@
     /// <summary>
     /// 属性修正类型
     /// </summary>
-    public enum ModifierType
-    {
-        /// <summary>加法修正：最终�?+= Value</summary>
-        Flat,
-
-        /// <summary>百分比修正：最终�?*= (1 + Value)</summary>
-        Percent,
-
-        /// <summary>强制覆盖：最终值直�?= Value（优先级最高，多个Override取最后一个）</summary>
-        Override,
-
-        /// <summary>上限夹紧：最终�?= min(最终�? Value)</summary>
-        ClampMax,
-
-        /// <summary>下限夹紧：最终�?= max(最终�? Value)</summary>
-        ClampMin,
-    }
+   
 
 /// <summary>事件广播的 Scope 层级（游戏内有限实体类型，按需扩展枚举值）</summary>
-public enum EventScope
+public enum Scope
 {
     /// <summary>全局层：任何监听者均可收到</summary>
     Global,
@@ -163,14 +168,11 @@ public enum EventScope
     Tile,
     /// <summary>位面层：只广播到指定 Plane 身上的监听者</summary>
     Plane,
+    Card,
+    CombatCard,
+    CombatNpc 
 }
 
-/// <summary>旧版全局事件枚举，已废弃，请改用字符串 eventId + EventDefine 机制</summary>
-[System.Obsolete("Em_Event 已废弃，请使用 EventDefine 字符串 ID 体系")]
-public enum Em_Event
-{
-    
-}
 
 // ══════════════════════════════════════════════════════════
 //  叙事系统相关枚举
@@ -185,7 +187,7 @@ public enum StoryPoolSource
     Fate,
     /// <summary>地：劫缘池（周期性权重随机触发）</summary>
     Karma,
-    /// <summary>人：抉择池（个体主动使用 ActionCard 触发）</summary>
+    /// <summary>人：抉择池（个体主动使用 BehaviorCard 触发）</summary>
     Will,
 }
 

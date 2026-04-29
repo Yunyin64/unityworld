@@ -1,0 +1,115 @@
+[
+  {
+    "ID": "card_jin_slash",
+    "DisplayName": "斩击",
+    "Desc": "金系斩击，造成2点金斩伤害",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 2,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Jin": 1
+    }, 
+    "Tags": [
+      "金",
+      "斩",
+      "攻击"
+    ]
+  },
+  {
+    "ID": "card_jin_charge",
+    "DisplayName": "加速",
+    "Desc": "充能上方卡牌，使其CD减少1 tick",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 5,
+    "CardType": "FaShu",
+    "ManaCost": {}, 
+    "Tags": [
+      "金",
+      "辅助",
+      "充能"
+    ]
+  },
+  {
+    "ID": "card_jin_heavy_slash",
+    "DisplayName": "重斩",
+    "Desc": "金系重斩，造成6点金斩伤害",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 4,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Jin": 1
+    }, 
+    "Tags": [
+      "金",
+      "斩",
+      "攻击"
+    ]
+  },
+  {
+    "ID": "card_jin_whirlwind",
+    "DisplayName": "回旋斩",
+    "Desc": "3点物理斩击，每触发一次攻击卡为自己充能1s",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 8,
+    "CardType": "FaShu",
+    "ManaCost": {}, 
+    "Tags": [
+      "金",
+      "斩",
+      "攻击",
+      "充能"
+    ]
+  },
+  {
+    "ID": "card_jin_armor_break",
+    "DisplayName": "破甲",
+    "Desc": "消除对方5点护盾值",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 5,
+    "CardType": "FaShu",
+    "ManaCost": {}, 
+    "Tags": [
+      "金",
+      "破甲"
+    ]
+  },
+  {
+    "ID": "card_jin_armor",
+    "DisplayName": "金甲",
+    "Desc": "展开12点金系护盾",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 8,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Jin": 2
+    }, 
+    "Tags": [
+      "金",
+      "防御",
+      "盾"
+    ]
+  },
+  {
+    "ID": "card_jin_needle",
+    "DisplayName": "金针",
+    "Desc": "1点金刺，击中本体则下次manaCost减1",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 2,
+    "CardType": "FaShu",
+    "ManaCost": {
+      "Jin": 1
+    }, 
+    "Tags": [
+      "金",
+      "刺",
+      "攻击"
+    ]
+  }
+]

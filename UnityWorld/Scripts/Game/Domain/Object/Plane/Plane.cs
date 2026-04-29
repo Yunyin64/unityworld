@@ -110,7 +110,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public TileAura PlaneAuraBonus { get; } = new()
         {
-            Jing = 0f, Mu = 0f, Shui = 0f, Huo = 0f, Tu = 0f,
+            Jin = 0f, Mu = 0f, Shui = 0f, Huo = 0f, Tu = 0f,
         };
 
         // ── 地块 ──────────────────────────────────────────
@@ -125,10 +125,10 @@ namespace UnityWorld.Game.Domain
 
         // ── NPC列表 ───────────────────────────────────────
 
-        private readonly HashSet<NpcId> _npcIds = new();
+        private readonly HashSet<int> _npcIds = new();
 
         /// <summary>本位面所有NPC的ID（只读快照）</summary>
-        public IReadOnlyCollection<NpcId> NpcIds => _npcIds;
+        public IReadOnlyCollection<int> ints => _npcIds;
 
         /// <summary>本位面当前NPC数量</summary>
         public int NpcCount => _npcIds.Count;
@@ -147,7 +147,7 @@ namespace UnityWorld.Game.Domain
 
             if (config.AuraBonus != null)
             {
-                PlaneAuraBonus.Jing = config.AuraBonus.Jing;
+                PlaneAuraBonus.Jin = config.AuraBonus.Jin;
                 PlaneAuraBonus.Mu   = config.AuraBonus.Mu;
                 PlaneAuraBonus.Shui = config.AuraBonus.Shui;
                 PlaneAuraBonus.Huo  = config.AuraBonus.Huo;
@@ -217,7 +217,7 @@ namespace UnityWorld.Game.Domain
             var effective = new TileAura();
             if (_tiles.TryGetValue(id, out var tile))
             {
-                effective.Jing = tile.CurrentAura.Jing + PlaneAuraBonus.Jing;
+                effective.Jin = tile.CurrentAura.Jin + PlaneAuraBonus.Jin;
                 effective.Mu   = tile.CurrentAura.Mu   + PlaneAuraBonus.Mu;
                 effective.Shui = tile.CurrentAura.Shui + PlaneAuraBonus.Shui;
                 effective.Huo  = tile.CurrentAura.Huo  + PlaneAuraBonus.Huo;
@@ -229,13 +229,13 @@ namespace UnityWorld.Game.Domain
         // ── NPC管理 ───────────────────────────────────────
 
         /// <summary>将NPC加入本位面</summary>
-        public bool AddNpc(NpcId npcId) => _npcIds.Add(npcId);
+        public bool AddNpc(int npcId) => _npcIds.Add(npcId);
 
         /// <summary>将NPC从本位面移除</summary>
-        public bool RemoveNpc(NpcId npcId) => _npcIds.Remove(npcId);
+        public bool RemoveNpc(int npcId) => _npcIds.Remove(npcId);
 
         /// <summary>判断NPC是否在本位面</summary>
-        public bool ContainsNpc(NpcId npcId) => _npcIds.Contains(npcId);
+        public bool ContainsNpc(int npcId) => _npcIds.Contains(npcId);
 
         // ── 状态控制 ──────────────────────────────────────
 

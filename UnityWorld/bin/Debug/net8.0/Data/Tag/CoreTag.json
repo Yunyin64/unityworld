@@ -1,0 +1,4 @@
+[
+  { "id": "Core", "displayName": "核心", "Desc": "世界观的基石，人类配置的元分类" },
+  { "id": "Element", "displayName": "五行", "Desc": "世界底层的五种元素", "Parent": "Core" }
+]

@@ -7,4 +7,6 @@ using System.Text.Json.Serialization;
         public string ID { get; set; } = "";
         [JsonPropertyName("DisplayName")]
         public string DisplayName { get; set; } = "";
+
+        public List<string> Tags { get; set;} = new();
     }

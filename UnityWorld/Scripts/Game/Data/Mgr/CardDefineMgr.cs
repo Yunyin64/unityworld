@@ -46,6 +46,10 @@ namespace UnityWorld.Game.Data
 
         public IEnumerable<CardDefine> GetAll() => _cards.Values;
 
+
+
         public bool Contains(string id) => _cards.ContainsKey(id);
+
+        public IEnumerable<CardDefine> Query(Func<CardDefine, bool> predicate) => _cards.Values.Where(predicate);
     }
 }

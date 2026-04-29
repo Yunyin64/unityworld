@@ -54,6 +54,7 @@ namespace UnityWorld.Game.Data
 
         /// <summary>是否存在指定 DefineId</summary>
         public bool Contains(string defineId) => _defines.ContainsKey(defineId);
+        public IEnumerable<NpcDefine> Query(Func<NpcDefine, bool> predicate) => _defines.Values.Where(predicate);
 
         /// <summary>从已加载定义中随机获取一个</summary>
         public NpcDefine? GetRandom(Random rng)

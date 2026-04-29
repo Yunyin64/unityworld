@@ -47,5 +47,6 @@ namespace UnityWorld.Game.Data
         public IEnumerable<EffectDefine> GetAll() => _effects.Values;
 
         public bool Contains(string id) => _effects.ContainsKey(id);
+        public IEnumerable<EffectDefine> Query(Func<EffectDefine, bool> predicate) => _effects.Values.Where(predicate);
     }
 }

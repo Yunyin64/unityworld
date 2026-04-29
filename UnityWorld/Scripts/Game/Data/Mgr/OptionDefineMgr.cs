@@ -58,5 +58,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>选项 ID 是否存在</summary>
         public bool Contains(string id) => _options.ContainsKey(id);
+        public IEnumerable<OptionDefine> Query(Func<OptionDefine, bool> predicate) => _options.Values.Where(predicate);
     }
 }

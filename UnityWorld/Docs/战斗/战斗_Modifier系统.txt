@@ -1,0 +1,173 @@
+# 战斗系统 · Modifier 系统
+### ModifierDefine 体系、四大组成部分、三种宿主类型、与现有系统的关系
+
+> 最后更新：2026-04-15
+
+→ 本文件为战斗系统的一部分。另见：
+→ 战斗/战斗_核心机制.txt（设计原则、Tick驱动、待发槽、对拼、血量伤势、Mana）
+→ 战斗/战斗_TCA体系.txt（卡牌模型、TCA架构、Action原子、API注册表）
+→ 战斗/战斗_机制原子清单.txt（数值操控、状态控制、卡组操作、Keyword Effect）
+
+---
+
+## 一、设计背景
+
+Action 是战斗系统的最小执行单元，但 Action 执行后产生的持续效果——
+持续多久、能否叠加、如何驱散、被动数值修正如何生效——缺少统一的容器。
+
+Modifier 就是这个容器。
+它是 Action 的"持续化身"：Action 生产 Modifier，Modifier 独立存活。
+
+已有先例：TileModifierDefine 用于地块元气修正。
+本设计将 Modifier 概念统一扩展到战斗中的卡牌、NPC、战场三个层级。
+
+---
+
+## 二、ModifierDefine 总览
+
+ModifierDefine 是一种 Define（静态定义），描述一个 Modifier 的完整行为。
+运行时通过 Action（如 AddModifier）实例化到目标身上。
+
+每个 ModifierDefine 由四部分组成：
+
+  A 生命周期 ── 我能存在多久（必填）
+  B 数值修正 ── 我静静存在就能改变什么（可选）
+  C 触发机制 ── 我能在事件中做什么（可选）
+  D 特殊实现 ── Lua 硬编码扩展（可选，策划无感）
+
+  B 和 C 至少填一个。只有 A 没有 B/C 的 Modifier 没有意义。
+
+---
+
+## 三、A · 生命周期
+
+生命周期管理 Modifier 的存亡，核心参数两个：
+
+  Stacks（层数）
+    当前多少层。被 Action 或自身 TCA 扣减。扣至 0 时移除。
+
+  Duration（持续时间，Tick 数）
+    每 Tick 自动倒计时。到 0 时移除。
+
+  两者可共存：3层且持续10Tick，谁先归零谁先杀死 Modifier。
+
+  所有"花式移除条件"不在 A 中处理，交给 C（触发机制）用 TCA 实现。
+  例如"被打时移除自身" = T:OnHit C:任意 A:RemoveSelf()
+  A 只管最基础的计数。
+
+---
+
+## 四、B · 数值修正（被动效果）
+
+只要 Modifier 存在就持续生效，移除后修正立即消失。
+
+  B = 不需要事件触发的被动效果
+
+  典型表达：
+    "受到伤害 -1"
+    "所有火系卡攻击 +1"
+    "CD 推进速率 -50%"
+
+  修正目标取决于宿主类型（见第六节）：
+    CardModifier → 改该卡的 CD、ActionData 中的数值
+    NpcModifier  → 改该 NPC 的 Stat（基础属性、战斗属性）
+    CombatNpcModifier → 改战场全局规则参数
+
+---
+
+## 五、C · 触发机制（主动效果）
+
+完全复用卡牌的 TCA 架构：Trigger + Condition + Action[]。
+需要某个事件发生才触发。
+
+  C = 在特定事件发生时执行的效果
+
+  典型表达：
+    "被攻击时给攻击者施加减速"
+    "每3Tick对自身造成1点伤害"
+    "对拼赢时回1血"
+
+  C 也用于管理自身生命周期：
+    T:OnTick(3) → A:ModifyStacks(Self, -1)    每3Tick扣1层
+    T:OnHit → A:RemoveSelf()                   被打时移除自身
+
+  一个 Modifier 可以同时拥有 B 和 C。
+
+---
+
+## 六、三种宿主类型
+
+ModifierDefine 声明其宿主类型，决定挂载目标和可修正的属性范围。
+
+### CardModifier — 挂在某张特定卡实例上
+
+  适用场景：修正目标是特定卡实例，无法抽象为 NPC 的全局属性。
+  典型案例："上方第1和第2张火系卡的攻击+1"
+  → 目标由位置决定，只能定点挂载到具体的卡上。
+
+### NpcModifier — 挂在某个 CombatNpc 上
+
+  适用场景：修正目标可以抽象为 NPC 的某个 Stat / 全局属性。
+  典型案例："该 NPC 所有火系攻击卡拼点+1"
+  → 这是一个可查询的属性，所有火系卡结算时去读它。
+
+### CombatNpcModifier — 挂在整场战斗上
+
+  适用场景：修正影响战场全局规则，不归属于某个 NPC。
+  典型案例：环境效果（"此战场所有火系伤害+2"）、天象、地形战斗效果。
+
+  判断标准：
+    能抽象成 NPC 的 Stat？ → NpcModifier
+    只能改特定卡实例？     → CardModifier
+    影响全局？             → CombatNpcModifier
+
+---
+
+## 七、D · 特殊实现
+
+为复杂逻辑预留的 Lua 外部扩展出口。
+策划不需要考虑，程序按需对接。
+
+---
+
+## 八、Modifier 与现有系统的关系
+
+### Action 生产 Modifier
+
+  卡牌通过 TCA Action 创建 Modifier：
+    AddModifier(ModifierId, Target)       在目标身上实例化 Modifier
+    RemoveModifier(ModifierId, Target)    移除目标身上指定 Modifier
+    ModifyStacks(ModifierId, Target, Delta) 增减目标某 Modifier 的层数
+
+  Modifier 自身的 TCA（C部分）也可以调用这些 Action，
+  实现 Modifier 之间的联动。
+
+### Modifier 不占卡组空间
+
+  Modifier 独立于卡组之外，不占 SP。
+  这是 Modifier 与伤势卡的核心区别：
+    伤势卡 = 塞入卡组、占 SP、参与 CD 循环的永久惩罚
+    Modifier = 独立于卡组、不占 SP、战斗内的临时状态
+
+  两者和平共存，各司其职。
+
+### Tick 结算时序
+
+  每个 Tick 中，Modifier 的结算在卡牌 CD 推进之前：
+    ① Modifier 持续时间倒计时
+    ② Modifier 的 OnTick 类 TCA 触发
+    ③ 移除到期的 Modifier
+    ④ 卡牌 CD 推进（此时 Modifier 的数值修正 B 已生效/失效）
+
+---
+
+## 九、现有机制原子 → Modifier 映射表
+
+  | 原有概念 | 宿主类型 | A 生命周期 | B 数值修正 | C 触发机制 |
+  |---------|---------|-----------|-----------|-----------|
+  | 护甲N | NpcModifier | N层 | 受到伤害-1（每次消耗1层） | — |
+  | 易伤X | NpcModifier | 1次触发后消失 | — | OnHit→伤害+X，RemoveSelf |
+  | 虚弱X | NpcModifier | 1次出手后消失 | 下一张待发卡拼点-X | 出手后 RemoveSelf |
+  | 眩晕 | NpcModifier | 持续X Tick | 所有卡CD推进速率=0 | — |
+  | XX强化1 | NpcModifier | 看具体设计 | 对应元素攻击卡拼点+1 | — |
+  | 中毒N | NpcModifier | N层 | — | 每Y Tick→SelfDamage(1)，扣1层 |

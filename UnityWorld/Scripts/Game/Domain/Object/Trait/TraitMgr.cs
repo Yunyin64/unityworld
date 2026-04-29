@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityWorld.Core;
 using UnityWorld.Game.Data;
 namespace UnityWorld.Game.Domain
 {
@@ -15,12 +16,12 @@ namespace UnityWorld.Game.Domain
     {
         public static TraitMgr? Instance { get; private set; }
 
-        public string Name => throw new NotImplementedException();
+        public string Name => "TraitMgr";
 
-        public string Desc => throw new NotImplementedException();
+        public string Desc => "";
 
-        // NpcId → 该 NPC 当前持有的 Trait 实例表（TraitId → Trait）
-        private readonly Dictionary<NpcId, Dictionary<TraitId, Trait>> _traitTable = new();
+        // int → 该 NPC 当前持有的 Trait 实例表（TraitId → Trait）
+        private readonly Dictionary<int, Dictionary<TraitId, Trait>> _traitTable = new();
 
         // 特质定义数据源（由外部注入）
         private IDataMgrBase<TraitDefine>? _traitDefineMgr;
@@ -32,7 +33,7 @@ namespace UnityWorld.Game.Domain
 
         public void Init()
         {
-            throw new NotImplementedException();
+             
         }
 
         /// <summary>注入特质定义数据源</summary>
@@ -41,11 +42,11 @@ namespace UnityWorld.Game.Domain
         // ── 注册 ──────────────────────────────────────────
 
         /// <summary>为 NPC 初始化空的 Trait 槽（NPC 创建时调用）</summary>
-        public void Register(NpcId id)
+        public void Register(int id)
             => _traitTable.TryAdd(id, new Dictionary<TraitId, Trait>());
 
         /// <summary>NPC 销毁时释放数据</summary>
-        public void Unregister(NpcId id)
+        public void Unregister(int id)
             => _traitTable.Remove(id);
 
         // ── 添加 ──────────────────────────────────────────
@@ -84,18 +85,18 @@ namespace UnityWorld.Game.Domain
         // ── 查询 ──────────────────────────────────────────
 
         /// <summary>获取 NPC 持有的某个 Trait 实例（不存在返回 null）</summary>
-        public Trait? GetTrait(NpcId id, TraitId traitId)
+        public Trait? GetTrait(int id, TraitId traitId)
             => _traitTable.TryGetValue(id, out var dict) && dict.TryGetValue(traitId, out var t)
                 ? t : null;
 
         /// <summary>获取 NPC 当前持有的所有 Trait 实例（只读快照）</summary>
-        public IReadOnlyCollection<Trait> GetTraits(NpcId id)
+        public IReadOnlyCollection<Trait> GetTraits(int id)
             => _traitTable.TryGetValue(id, out var dict)
                 ? dict.Values
                 : Array.Empty<Trait>();
 
         /// <summary>NPC 是否持有指定 Trait</summary>
-        public bool HasTrait(NpcId id, TraitId traitId)
+        public bool HasTrait(int id, TraitId traitId)
             => _traitTable.TryGetValue(id, out var dict) && dict.ContainsKey(traitId);
 
         // ── 存档恢复 ──────────────────────────────────────
@@ -134,8 +135,6 @@ namespace UnityWorld.Game.Domain
             var define = _traitDefineMgr.Get(trait.Id.Value);
             if (define == null || !define.HasModifiers) return;
 
-            foreach (var (statId, modifier) in define.BuildModifiers())
-                stats.AddModifier(statId, modifier);
         }
 
         private static void RevokeModifiers(StatBlock stats, Trait trait)
@@ -152,32 +151,32 @@ namespace UnityWorld.Game.Domain
 
         public void Begin()
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Update()
         {
-            throw new NotImplementedException();
+             
         }
 
         public void Render(float dt)
         {
-            throw new NotImplementedException();
+             
         }
 
         public void End()
         {
-            throw new NotImplementedException();
+             
         }
 
-        public IEnumerator Save()
+    public IEnumerator Save()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
-        public IEnumerator Load()
+    public IEnumerator Load()
         {
-            throw new NotImplementedException();
+            yield break;
         }
     }
 }

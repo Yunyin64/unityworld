@@ -8,7 +8,7 @@ namespace UnityWorld.Game.Domain
     /// 叙事管理器：天地人三池调度与统一触发入口
     /// 天（宿命池）：时间到达后触发预写事件
     /// 地（劫缘池）：周期性权重随机触发环境事件
-    /// 人（抉择池）：由 ActionCardMgr 驱动，通过此管理器统一触发
+    /// 人（抉择池）：由 BehaviorCardMgr 驱动，通过此管理器统一触发
     /// </summary>
     public class StoryMgr : IDomainMgrBase
     {
@@ -24,8 +24,8 @@ namespace UnityWorld.Game.Domain
         public float KarmaTriggerInterval { get; set; } = 30f;
 
         // ── 内部状态 ──────────────────────────────────────────
-        private readonly Dictionary<NpcId, FatePool>  _fatePools  = new();
-        private readonly Dictionary<NpcId, KarmaPool> _karmaPools = new();
+        private readonly Dictionary<int, FatePool>  _fatePools  = new();
+        private readonly Dictionary<int, KarmaPool> _karmaPools = new();
         private float   _karmaTimer = 0f;
         private float   _currentTime = 0f;
         private Rng?    _rng;
@@ -92,7 +92,7 @@ namespace UnityWorld.Game.Domain
         // ── 公共 API：三池管理 ────────────────────────────────
 
         /// <summary>向指定 NPC 的宿命池添加条目</summary>
-        public void AddToFatePool(NpcId npcId, float triggerTime, string storyId)
+        public void AddToFatePool(int npcId, float triggerTime, string storyId)
         {
             if (!_fatePools.TryGetValue(npcId, out var pool))
             {
@@ -104,7 +104,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>向指定 NPC 的劫缘池添加条目</summary>
-        public void AddToKarmaPool(NpcId npcId, string storyId, float weight, List<StoryCondition>? conditions = null)
+        public void AddToKarmaPool(int npcId, string storyId, float weight, List<StoryCondition>? conditions = null)
         {
             if (!_karmaPools.TryGetValue(npcId, out var pool))
             {
@@ -154,7 +154,7 @@ namespace UnityWorld.Game.Domain
                 EventMgr.Instance?.TriggerEvent(
                     "story.show",
                     new { StoryId = storyId, Subject = subject, Options = define.MergedOptionIds },
-                    (EventScope.Global, "")
+                    (Scope.Global, "")
                 );
             }
             else
@@ -194,7 +194,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 内部方法 ──────────────────────────────────────────
 
-        private void OnFateTrigger(NpcId npcId, string storyId)
+        private void OnFateTrigger(int npcId, string storyId)
         {
             var subject = NpcMgr.Instance?.GetById(npcId);
             TriggerStory(storyId, subject, StoryPoolSource.Fate, _rng);

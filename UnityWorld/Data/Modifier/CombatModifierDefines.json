@@ -1,0 +1,29 @@
+[
+  {
+    "ID": "combat_buff_strength",
+    "DisplayName": "力量增幅",
+    "Duration": 10.0,
+    "MaxStack": 3,
+    "RefreshOnStack": true,
+    "StatModifiers": [
+      {
+        "StatId": "ATK",
+        "Type": 0,
+        "Value": 5.0,
+        "ValuePerStack": 2.0
+      }
+    ],
+    "TriggerIds": [],
+    "ImplId": ""
+  },
+  {
+    "ID": "combat_debuff_burn",
+    "DisplayName": "灼烧",
+    "Duration": 5.0,
+    "MaxStack": 5,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "TriggerIds": [],
+    "ImplId": "burn"
+  }
+]

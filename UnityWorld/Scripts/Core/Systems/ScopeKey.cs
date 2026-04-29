@@ -9,7 +9,7 @@ namespace UnityWorld.Core
     public readonly struct ScopeKey : IEquatable<ScopeKey>
     {
         /// <summary>Scope 层级类型</summary>
-        public EventScope Scope { get; }
+        public Scope Scope { get; }
 
         /// <summary>
         /// 对象 ID（字符串形式）。Global scope 时为 <see cref="string.Empty"/>。
@@ -17,14 +17,14 @@ namespace UnityWorld.Core
         public string Id { get; }
 
         /// <summary>创建一个 ScopeKey</summary>
-        public ScopeKey(EventScope scope, string id)
+        public ScopeKey(Scope scope, string id)
         {
             Scope = scope;
             Id = id ?? string.Empty;
         }
 
         /// <summary>全局 Scope 的标准 Key（Id 为空字符串）</summary>
-        public static ScopeKey Global => new ScopeKey(EventScope.Global, string.Empty);
+        public static ScopeKey Global => new ScopeKey(Scope.Global, string.Empty);
 
         // ── 相等性 ─────────────────────────────────────────
 
@@ -48,6 +48,6 @@ namespace UnityWorld.Core
 
         /// <inheritdoc/>
         public override string ToString() =>
-            Scope == EventScope.Global ? "Global" : $"{Scope}[{Id}]";
+            Scope == Scope.Global ? "Global" : $"{Scope}[{Id}]";
     }
 }

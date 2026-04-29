@@ -8,7 +8,7 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class ActionDefineMgr : IDataMgrBase<ActionDefine>
     {
-        public static ActionDefineMgr? Instance { get; private set; }
+        public static ActionDefineMgr Instance { get; private set; }
 
         private Dictionary<string, ActionDefine> _actions = [];
 
@@ -47,5 +47,6 @@ namespace UnityWorld.Game.Data
         public IEnumerable<ActionDefine> GetAll() => _actions.Values;
 
         public bool Contains(string id) => _actions.ContainsKey(id);
+        public IEnumerable<ActionDefine> Query(Func<ActionDefine, bool> predicate) => _actions.Values.Where(predicate);
     }
 }

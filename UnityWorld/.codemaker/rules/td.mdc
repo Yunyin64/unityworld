@@ -4,3 +4,6 @@ alwaysApply: true
 ---
 
 写代码时，现有的文件结构基本都是合理的，不要随意删除整个cs文件。尤其不允许直接用cmd删除文件
+tools\view_class.py 是看类型的好工具
+
+用powershell时不需要cat，这里是windows

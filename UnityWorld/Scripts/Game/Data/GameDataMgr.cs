@@ -33,7 +33,6 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new TagDefineMgr(Path.Combine(dataDir, "TagDefines.json")));
         _datamgrs.Add(new TriggerDefineMgr(Path.Combine(dataDir, "TriggerDefines.json")));
         _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "ConditionDefines.json")));
-        _datamgrs.Add(new ActionDefineMgr(Path.Combine(dataDir, "ActionDefines.json")));
         _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "CardDefines.json")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
@@ -41,7 +40,11 @@ namespace UnityWorld.Game.Data
         // ── 叙事系统 ──────────────────────────────────────────
         _datamgrs.Add(new OptionDefineMgr(Path.Combine(dataDir, "OptionDefines.json")));
         _datamgrs.Add(new StoryDefineMgr(Path.Combine(dataDir, "StoryDefines.json")));
-        _datamgrs.Add(new ActionCardDataMgr(Path.Combine(dataDir, "ActionCardDefines.json")));
+        _datamgrs.Add(new BehaviorCardDataMgr(Path.Combine(dataDir, "BehaviorCardDefines.json")));
+        // ── NPC 修正 ──────────────────────────────────────────
+        _datamgrs.Add(new NpcModifierDefineMgr(Path.Combine(dataDir, "NpcModifierDefines.json")));
+        // ── Stat 定义（按 Type 分文件存放在 Data/Stat/ 文件夹下）────
+        _datamgrs.Add(new StatDefineMgr(Path.Combine(dataDir, "Stat")));
 
             Instance = this;
         }

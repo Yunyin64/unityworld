@@ -1,0 +1,5 @@
+[
+  { "id": "Virtual", "displayName": "虚拟", "Desc": "非实体的语义概念", "Parent": null },
+  { "id": "Combat", "displayName": "战斗", "Desc": "战斗相关的语义", "Parent": "Virtual" },
+  { "id": "Status", "displayName": "状态", "Desc": "角色身上的状态效果", "Parent": "Virtual" }
+]

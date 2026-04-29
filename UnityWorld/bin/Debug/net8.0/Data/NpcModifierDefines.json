@@ -1,0 +1,9 @@
+[
+  {
+    "ID": "npc_mod_example",
+    "DisplayName": "示例NPC修正",
+    "Duration": -1,
+    "MaxStack": 0,
+    "StatModifiers": []
+  }
+]

@@ -47,7 +47,7 @@
    │  FatePool   │    │  KarmaPool  │    │   WillPool      │
    └─────────────┘    └─────────────┘    └─────────────────┘
    时间→StoryId映射   带权重+条件的       个体持有的
-   时间到→触发         事件条目列表       ActionCard 实例
+   时间到→触发         事件条目列表       BehaviorCard 实例
    必然（条件可拦截）   周期性权重随机      主动行为选择
 ```
 
@@ -79,16 +79,16 @@
 
 ### 3.3 人——抉择池（WillPool）
 
-**本质**：个体持有的 ActionCard 实例集合，通过 ActionCardMgr 管理。
+**本质**：个体持有的 BehaviorCard 实例集合，通过 BehaviorCardMgr 管理。
 
-**触发规则**：个体在空闲时，由 AI（或玩家主观能动性）从持有的 ActionCard 中选择一张使用，触发对应的 Story。
+**触发规则**：个体在空闲时，由 AI（或玩家主观能动性）从持有的 BehaviorCard 中选择一张使用，触发对应的 Story。
 
 **设计哲学**：抉择是"人"的主动意志。这是修行路上唯一可以**改命**的手段——宿命可能无法改变，劫缘随机降临，但抉择是个体对自身命运的主动书写。移动、修行、炼丹、社交、挂机……所有行为都是一张张可选择的卡牌。
 
 **使用场景**：
-- 玩家持有"外出游历"ActionCard，主动触发随机遭遇事件
-- NPC 持有"闭关修炼"ActionCard，AI 判断当前应该修炼时自动触发
-- 获得特殊机缘后，NPC 解锁"渡劫"ActionCard
+- 玩家持有"外出游历"BehaviorCard，主动触发随机遭遇事件
+- NPC 持有"闭关修炼"BehaviorCard，AI 判断当前应该修炼时自动触发
+- 获得特殊机缘后，NPC 解锁"渡劫"BehaviorCard
 
 ---
 
@@ -174,7 +174,7 @@ StoryEvent 触发
 
 内置原子效果：
 - `GiveTrait` / `RemoveTrait`：给 NPC 添加/移除特质
-- `GiveActionCard`：给 NPC 添加行为卡
+- `GiveBehaviorCard`：给 NPC 添加行为卡
 - `ModifyAura`：修改区域五行浓度
 - `ModifyStat`：修改 NPC 属性值
 - `TriggerStory`：链式触发另一个事件（事件可以嵌套触发事件）
@@ -194,27 +194,27 @@ LuaScript 字段指向一个 Lua 脚本文件路径。Lua 脚本内部可以：
 
 ---
 
-## 七、ActionCard·行为卡系统
+## 七、BehaviorCard·行为卡系统
 
-ActionCard 是"人·抉择池"的具体载体，也是叙事系统与玩法系统的桥接点。
+BehaviorCard 是"人·抉择池"的具体载体，也是叙事系统与玩法系统的桥接点。
 
 ```
-ActionCardDefine（静态定义）
+BehaviorCardDefine（静态定义）
     ├── Tags          ← 语义标签
     ├── StoryIds      ← 直接指定：触发哪些 Story（确定性）
     ├── StoryTags     ← 动态匹配：按 TagBag 在 StoryPool 中匹配（涌现性）
     └── IsConsumable  ← 使用后是否消耗
 
-ActionCard（运行时实例）
-    ├── DefineId      ← 引用 ActionCardDefine
-    ├── OwnerId       ← 持有者 NpcId
+BehaviorCard（运行时实例）
+    ├── DefineId      ← 引用 BehaviorCardDefine
+    ├── OwnerId       ← 持有者 int
     └── UsageCount    ← 使用次数记录
 ```
 
 ### 双模式触发
 
 ```
-使用 ActionCard
+使用 BehaviorCard
       ↓
 StoryIds 不为空？
   ┌─────┴─────┐
@@ -282,11 +282,11 @@ Scripts/Game/
 │   │   ├── StoryBaseDefine.cs       ← 基类
 │   │   ├── StoryDefine.cs           ← 事件定义
 │   │   ├── OptionDefine.cs          ← 选项定义
-│   │   └── ActionCardDefine.cs      ← 行为卡定义
+│   │   └── BehaviorCardDefine.cs      ← 行为卡定义
 │   └── Mgr/
 │       ├── StoryDefineMgr.cs        ← 加载+双向合并
 │       ├── OptionDefineMgr.cs       ← 加载
-│       └── ActionCardDataMgr.cs     ← 加载
+│       └── BehaviorCardDataMgr.cs     ← 加载
 └── Domain/
     ├── Story/
     │   ├── StoryMgr.cs              ← 三池调度+统一触发入口
@@ -297,9 +297,9 @@ Scripts/Game/
     │   ├── StoryCondition.cs        ← 条件判断
     │   ├── StoryEffectEntry.cs      ← 效果条目（FuncName+Args）
     │   └── StoryEffectFunc.cs       ← 原子效果注册表
-    └── ActionCard/
-        ├── ActionCard.cs            ← 运行时实例
-        └── ActionCardMgr.cs         ← 实例管理+UseCard
+    └── BehaviorCard/
+        ├── BehaviorCard.cs            ← 运行时实例
+        └── BehaviorCardMgr.cs         ← 实例管理+UseCard
 ```
 
 ---
