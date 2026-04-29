@@ -1,0 +1,30 @@
+# ── 默认排除所有 ──────────────────────────────────────────
+/*
+/UnityWorld/*
+
+# ── 白名单：只跟踪以下内容 ────────────────────────────────
+
+# 根目录保留 .gitignore 自身
+!/.gitignore
+
+# UnityWorld 目录本身要放行
+!/UnityWorld/
+
+# UnityWorld 下的目录白名单
+!/UnityWorld/.codemaker/
+!/UnityWorld/.codemaker/**
+!/UnityWorld/Data/
+!/UnityWorld/Data/**
+!/UnityWorld/Docs/
+!/UnityWorld/Docs/**
+!/UnityWorld/openspec/
+!/UnityWorld/openspec/**
+!/UnityWorld/Scripts/
+!/UnityWorld/Scripts/**
+!/UnityWorld/tools/
+!/UnityWorld/tools/**
+
+# UnityWorld 下的文件白名单
+!/UnityWorld/UnityWorld.sln
+!/UnityWorld/UnityWorld.csproj
+!/UnityWorld/Program.cs
