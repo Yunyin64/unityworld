@@ -36,6 +36,9 @@ namespace UnityWorld.Game.World
             _gameplays.Add(new CombatMgr(seed));
             _gameplays.Add(new CultivationMgr(seed));
             
+            _domains.Add(new LuaMgr());
+            _domains.Add(new APIMgr());
+            
             
             _domains.Add(new StatMgr(seed));
             _domains.Add(new NpcMgr(seed));

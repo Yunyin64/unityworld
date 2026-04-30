@@ -31,7 +31,7 @@ namespace UnityWorld.Game.Domain.Combat
             //可能要加入护盾上限值，待定
             ShieldValue += val;
             ShieldValue = Math.Clamp(ShieldValue, 0, float.MaxValue);
-            CombatScene.Log($"{GetName()} 的护盾值变更：{val:+0.##;-0.##;0}，当前护盾={ShieldValue:0.##}");
+            Log($"护盾值变更：{val:+0.##;-0.##;0}，当前护盾={ShieldValue:0.##}");
         }
     }
 }

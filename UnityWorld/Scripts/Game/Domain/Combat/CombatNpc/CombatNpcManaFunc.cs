@@ -22,8 +22,7 @@ namespace UnityWorld.Game.Domain.Combat
                 Ticks["ManaDraw"] = 0;
                 DrawMana((int)Stats.Get("ManaDrawCost"));
             } 
-            CombatScene.Log($"[CombatNpc] DoManaDraw: Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
-        }
+          }
 
         public void DrawMana(int costvalue)
         {
@@ -57,7 +56,8 @@ namespace UnityWorld.Game.Domain.Combat
                             ManaPool[chosen]++;
                         else
                             ManaPool[chosen] = 1;
-                    }
+                    }  
+                Log($"DoManaDraw: Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
                
         }
         public void ManaConvert(Dictionary<ElementType, int> cost)
@@ -68,7 +68,7 @@ namespace UnityWorld.Game.Domain.Combat
                 totalConsumed = ConsumeMana(cost);
             }
             RecoverMana(totalConsumed);
-            CombatScene.Log($"[CombatNpc] ManaConvert: Consumed={totalConsumed}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
+            Log($"ManaConvert: Consumed={totalConsumed}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
         }
         
         public int GetManaCount(ElementType element)
@@ -107,11 +107,16 @@ namespace UnityWorld.Game.Domain.Combat
                     //Trigger:触发消耗某类灵元事件
                     totalConsumed += amount;
                     ManaPool[key] -= amount;
-                    if (ManaPool[key] <= 0) LogMgr.Warn($"[CombatNpc] 灵元 {key.ExtraTypeId} 耗尽");
+                    
+                    if (ManaPool[key] <= 0)
+                    {
+                        //LogMgr.Warn($"[CombatNpc] 灵元 {key.ExtraTypeId} 耗尽");
+                        //Trigger:触发耗尽某类灵元事件
+                    } 
                 }
             }
             //Trigger:触发消耗灵元事件
-            CombatScene.Log($"[CombatNpc] ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
+            Log($"ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
             return totalConsumed;
         }
         public void RecoverMana(int amount)

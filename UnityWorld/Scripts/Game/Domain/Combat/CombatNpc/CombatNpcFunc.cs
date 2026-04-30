@@ -51,7 +51,7 @@ namespace UnityWorld.Game.Domain.Combat
                     CardDeck.Add(combatCard);
                 }
             }                                    
-            CombatScene.Log($"[CombatNpc] InitDeck: {GetName()} 初始化卡组，卡牌数量={CardDeck.Count}");        
+            Log($"初始化卡组，卡牌数量={CardDeck.Count}");        
         }
 
         public void ProcessContest()
@@ -88,17 +88,17 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 float shieldGain = contestData.ContestValue;
                 attacker.ChangeShield(shieldGain);
-                CombatScene.Log($"  溢出: [{attacker.GetName()}]{contestData} 叠甲+{shieldGain:F0}，当前Shield={attacker.ShieldValue:F0}");
+                Log($"  溢出: [{attacker.GetName()}]{contestData} 叠甲+{shieldGain:F0}，当前Shield={attacker.ShieldValue:F0}");
             }
 
             // ── Block 溢出：防值消失，不造成伤害，不触发攻击事件 ─────────
             if (contestData.ContestType == ContestType.Block)
             {
-                CombatScene.Log($"  溢出: [{attacker.GetName()}]{contestData} 防值溢出消失");
+                Log($"  溢出: [{attacker.GetName()}]{contestData} 防值溢出消失");
             }
             if (contestData.IsAttackType)
             {
-            CombatScene.Log($"  直击: [{attacker.GetName()}]{contestData} → [{target.GetName()}]");
+            Log($"  直击: [{attacker.GetName()}]{contestData} → [{target.GetName()}]");
             var ctx = new DamageInfo(contestData);
             ctx.Damage = contestData.ContestValue;
             
@@ -131,11 +131,11 @@ namespace UnityWorld.Game.Domain.Combat
             // 安全检查：若任一方待发槽已空（上一轮对拼清掉），跳过
             if (contestA == null || contestB == null)
             {
-                CombatScene.Log($"  对拼跳过: [{npcA.GetName()}]槽={contestA != null} [{npcB.GetName()}]槽={contestB != null}");
+                Log($"  对拼跳过: [{npcA.GetName()}]槽={contestA != null} [{npcB.GetName()}]槽={contestB != null}");
                 ret.Set("IsEmpty", true);
                 return ret;
             }
-            CombatScene.Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
+            Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
 
             float valueA = contestA.ContestValue;
             float valueB = contestB.ContestValue;
@@ -144,7 +144,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 判断胜负
             if (Math.Abs(valueA - valueB) < 0.001f)
             {
-                CombatScene.Log($"    平局，差值=0，无伤害");
+                Log($"    平局，差值=0，无伤害");
                 // 清空双方待发槽，重置 CD
                 ret.Set("IsDraw", true);
                 return ret;
@@ -198,14 +198,14 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 var val = win.ContestValue - lose.ContestValue;
                 ChangeShield(val);
-                CombatScene.Log($"    [{GetName()}]盾卡胜，护盾+{val}，当前Shield={ShieldValue}");
+                Log($"盾卡胜，护盾+{val}，当前Shield={ShieldValue}");
 
                 //差值
             }
             else if (win.ContestType == ContestType.Block)
             {
                 //格挡
-                CombatScene.Log($"    [{GetName()}]防卡胜，差值消失");
+                Log($"防卡胜，差值消失");
             }
             
             // ── 赢家触发 trigger_on_attack ────────────────────────
@@ -259,7 +259,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (injuryCard == null)
             {
                 // 兜底：如果 Define 缺失，用最基础的伤口
-                CombatScene.Log($"  [警告] 找不到伤势卡 Define：{woundCardId}，使用默认 card_wound_slash");
+                Log($"  [警告] 找不到伤势卡 Define：{woundCardId}，使用默认 card_wound_slash");
                 injuryCard = CardMgr.Instance?.InstantiateFromDefine("card_wound_slash");
             }
             // 伤势卡塞入卡组

@@ -33,6 +33,7 @@ namespace UnityWorld.Game.Domain
             LogMgr.Dbg("└═══════════════════════════════════════════");
         }
 
+
         public override string ToString()
         {
             return $"Card({DefineId}, {DisplayName})";

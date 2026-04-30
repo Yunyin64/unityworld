@@ -16,7 +16,8 @@ namespace UnityWorld.Game.Domain
         public NpcAppearanceData AppearanceData { get; set; } = new();
 
         /// <summary>名字（只读代理，返回 NameData.FullName 拼接结果）</summary>
-        public string Name { get => NameData.FullName; }
+        public string Name { get => NameData.Name; }
+        public string FullName { get => NameData.FullName; }
 
         /// <summary>性别</summary>
         public NpcTypes.Gender Gender { get; set; }
@@ -50,6 +51,8 @@ namespace UnityWorld.Game.Domain
         public NpcBioData Clone()
         {
             var copy = (NpcBioData)MemberwiseClone();
+            copy.NameData = NameData.Clone();
+            copy.AppearanceData = AppearanceData.Clone();
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();

@@ -97,12 +97,12 @@
 - [x] 11.5 CombatLogger 提供 `ExportToFile(string filePath)` 方法：将 `_sb` 内容写入指定 txt 文件（`File.WriteAllText`），路径默认为 `CombatLogs/combat_{timestamp}.txt`
 - [x] 11.6 CombatLogger 提供 `Clear()` 方法：清空 _sb
 - [x] 11.7 CombatScene 新增 `_logger` 字段（CombatLogger 实例），暴露 internal 属性 `Logger` 供 Handler 访问
-- [x] 11.8 修改 `CombatScene.Log(string msg)` → 改为调用 `_logger.Log(msg)`，保持所有现有 Handler 的调用不变
+- [x] 11.8 修改 `Log(string msg)` → 改为调用 `_logger.Log(msg)`，保持所有现有 Handler 的调用不变
 - [x] 11.9 CombatScene.Init 中：`_logger = new CombatLogger()`，输出战斗初始化信息
 - [x] 11.10 CombatScene.PreStart 中：对每个 CombatNpc 调用 `_logger.LogDeckInfo(npc)`，输出双方卡组信息
 - [x] 11.11 CombatScene.Tick 中：开头调用 `_logger.LogSeparator($"Tick {CurrentTick}")`；每 5 Tick 或关键事件后调用 `_logger.LogNpcSnapshot(npc)` 输出快照
 - [x] 11.12 战斗结束时（SpilloverHandler.SetResult 后）：调用 `_logger.LogNpcSnapshot` 输出最终状态，然后 `_logger.ExportToFile()` 自动导出
-- [x] 11.13 各 Handler 中已有的 `CombatScene.Log(...)` 调用无需修改（已通过 11.8 统一重定向到 Logger）
+- [x] 11.13 各 Handler 中已有的 `Log(...)` 调用无需修改（已通过 11.8 统一重定向到 Logger）
 - [x] 11.14 新增的关键行为节点补充日志：卡牌 CD 就绪时、Buff 添加/移除时、Condition 评估结果时、EventMgr TriggerEvent 时
 
 ## 12. 测试入口与验证

@@ -35,6 +35,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>当前已进行的总Tick数</summary>
         public int CurrentTick { get; private set; } = 0;
 
+        private static bool openLog = true;
+        private static CombatScene mainScene = null;
+        private bool haslog = false;
+
         // ── 状态机 ────────────────────────────────────────────
 
         private CombatPhase _phase = CombatPhase.Idle;
@@ -56,9 +60,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         /// <param name="npcParticipants">大世界 Npc + 阵营列表</param>
         /// <param name="maxTicks">Tick上限，默认100</param>
-        public void Init(
-            IEnumerable<(Npc npc, CombatTeam team)> npcParticipants,
-            int maxTicks = 100)
+        public void Init(  IEnumerable<(Npc npc, CombatTeam team)> npcParticipants,  int maxTicks = 100)
         {
             AssertPhase(CombatPhase.Idle, nameof(Init));
 
@@ -101,6 +103,8 @@ namespace UnityWorld.Game.Domain.Combat
 
             }
 
+            // 分配初始 Target：每人选择对方阵营的第一个存活敌人
+            AssignTargets();
 
             _phase = CombatPhase.PreStarted;
             Log("PreStart完成，Target已确定。");
@@ -135,12 +139,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// 调用方应在 while(!scene.IsFinished) 中循环调用。
         /// </summary>
         public void Tick()
-        {
+        {   
+            mainScene.haslog = false;
             AssertPhase(CombatPhase.Running, nameof(Tick));
-            if (CurrentTick % 50 == 0 && !IsFinished)
-            {
-                Log(string.Format("── 快照 ── {0}Ticks", CurrentTick));
-            }
 
             foreach (var c in Combatants.Values) c.DoManaDraw();
             foreach (var c in Combatants.Values) c.UseCard();
@@ -156,6 +157,8 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public CombatResult Run()
         {
+            // 导出日志
+            if(openLog) mainScene = this;
             // PreStart → Start
             this.PreStart();
             this.Start();
@@ -163,9 +166,6 @@ namespace UnityWorld.Game.Domain.Combat
             // Tick 循环
             while (!this.IsFinished)
                 this.Tick();
-
-            // 导出日志
-            
             // 清理
             this.Cleanup();
 
@@ -191,8 +191,6 @@ namespace UnityWorld.Game.Domain.Combat
                 EventMgr.Instance?.RemoveEvent(eventId, scope, listener);
             _registeredListeners.Clear();
 
-            // 清理 Lua 卡牌环境
-            LuaMgr.Instance?.UnloadAllCardScripts();
 
         }
 
@@ -204,6 +202,24 @@ namespace UnityWorld.Game.Domain.Combat
             if (_phase != expected)
                 throw new InvalidOperationException(
                     $"CombatScene.{methodName} 需要阶段 [{expected}]，当前为 [{_phase}]。");
+        }
+
+        /// <summary>
+        /// 为所有参战者分配 Target：选择对方阵营中第一个存活的敌人。
+        /// 若当前 Target 已阵亡/为空则重新分配。
+        /// </summary>
+        private void AssignTargets()
+        {
+            foreach (var c in Combatants.Values)
+            {
+                if (!c.IsActive) continue;
+                // Target 有效则跳过
+                if (c.Target != null && c.Target.IsActive) continue;
+
+                // 选择对方阵营第一个存活敌人
+                c.Target = Combatants.Values
+                    .FirstOrDefault(e => e.Team != c.Team && e.IsActive);
+            }
         }
 
         /// <summary>
@@ -257,7 +273,7 @@ namespace UnityWorld.Game.Domain.Combat
             }).ToList();
 
             var result = CombatResult.CombatSceneResult(reason,winner,CurrentTick,combatantResults);
-            CombatScene.Log($"\n战斗结束！原因={reason}，胜者={winner}，共{CurrentTick} Tick。");
+            Log($"\n战斗结束！原因={reason}，胜者={winner}，共{CurrentTick} Tick。");
 
             return result;
         }
@@ -275,7 +291,15 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public static void Log(string msg)
         {
-            LogMgr.Dbg(msg);
+            if (openLog)
+            {
+                if (!mainScene.haslog)
+                {
+                    mainScene.haslog = true;
+                    LogMgr.Dbg($"[Tick]{mainScene.CurrentTick}");
+                }
+                LogMgr.Dbg($"[Combat]{msg}");
+            }
         }
         public override void LogAllInfo()
         {

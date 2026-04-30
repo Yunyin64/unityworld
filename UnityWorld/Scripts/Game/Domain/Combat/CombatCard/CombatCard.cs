@@ -28,6 +28,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Tick()
         {
+            
+            if(Phase == CombatCardPhase.Finished) 
+            Phase= CombatCardPhase.WaitResource;
             if(Phase == CombatCardPhase.WaitResource) CheckMana();
             if(Phase == CombatCardPhase.InCD) ResetCD();
 
@@ -51,23 +54,57 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnUse()
         {
-            CombatScene.Log($"[CombatCard] 使用卡牌: {DisplayName}");
+            Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
             //Trigger:触发使用事件
             OnContest();
             if(Phase == CombatCardPhase.Ready){
                 OnApply();
             }
         }
+
         public void OnContest()
         {
-            //执行env["OnContest"]
+            var ctx = new APIContext
+            {
+                SourceCard = this,
+                Caster = Owner,
+                Scene = null
+            };
+            CallLuaHook("OnContest", ctx);
         }
+
         public void OnApply()
         {
-            CombatScene.Log($"[CombatCard] 卡牌生效: {DisplayName}");
-            //执行env["OnApply"]
+            Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
+            var ctx = new APIContext
+            {
+                SourceCard = this,
+                Caster = Owner,
+                Scene = null
+            };
+            CallLuaHook("OnApply", ctx);
             //Trigger:触发结算事件
-            Phase= CombatCardPhase.Finished;
+            Phase = CombatCardPhase.Finished;
+        }
+
+        /// <summary>
+        /// 通用 Lua Hook 调用：从 env 取函数并以 card:hookName(ctx) 方式调用。
+        /// </summary>
+        private void CallLuaHook(string hookName, APIContext ctx)
+        {
+            if (env == null) return;
+
+            var func = env[hookName] as NLua.LuaFunction;
+            if (func == null) return;
+
+            try
+            {
+                func.Call(env, ctx); // card:OnXxx(ctx)
+            }
+            catch (Exception ex)
+            {
+                Log($"Lua {hookName} 异常: {ex.Message}");
+            }
         }
 
 
@@ -79,6 +116,11 @@ namespace UnityWorld.Game.Domain.Combat
         {
              
         }
+        public void Log(string msg)
+        {
+            CombatScene.Log($"[Card|{DisplayName}] {msg}");
+        }
+
 
         public static CombatCard CreateFromData(Card card)
         {

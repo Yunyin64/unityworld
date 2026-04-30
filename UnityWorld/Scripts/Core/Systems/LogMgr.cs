@@ -43,7 +43,7 @@ namespace UnityWorld.Core
                 LogLevel.Error => "ERR",
                 _ => "???"
             };
-            return $"[{Timestamp:HH:mm:ss.fff}][T{GameTick}][{lvl}] {Message}";
+            return $"[{Timestamp.Minute:D2}:{Timestamp.Second:D2}.{Timestamp.Millisecond:D3}] [{lvl}] {Message}";
         }
     }
 
@@ -199,22 +199,6 @@ namespace UnityWorld.Core
                 if (TagBlacklist.Count > 0 && TagBlacklist.Contains(tag)) return;
                 if (TagWhitelist.Count > 0 && !TagWhitelist.Contains(tag)) return;
             }
-
-            // 5) 帧内聚合（完全相同的消息在同一 Tick 只输出一次，计数累加）
-            if (_lastFlushTick == _currentTick)
-            {
-                if (_frameAggregation.TryGetValue(message, out int cnt))
-                {
-                    _frameAggregation[message] = cnt + 1;
-                    return; // 重复，不再输出
-                }
-            }
-            else
-            {
-                FlushAggregation();
-                _lastFlushTick = _currentTick;
-            }
-            _frameAggregation[message] = 1;
 
             // 6) 构造 LogEntry
             var entry = new LogEntry

@@ -11,12 +11,12 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void RemoveCombatCard(CombatCard card)
         {
-            CombatScene.Log($"[CombatNpc:{GetName()}] 移除卡牌: {card.DisplayName}");
+            Log($"[CombatNpc:{GetName()}] 移除卡牌: {card.DisplayName}");
             _changes.Enqueue((ComabtCardDeckChangeType.Remove,card,ComabtCardDisplaceType.None));
         }
         public void AddCombatCard(CombatCard card)
         {
-            CombatScene.Log($"[CombatNpc:{GetName()}] 新增卡牌: {card.DisplayName}");
+            Log($"[CombatNpc:{GetName()}] 新增卡牌: {card.DisplayName}");
             _changes.Enqueue((ComabtCardDeckChangeType.Add,card,ComabtCardDisplaceType.None));
         }
         

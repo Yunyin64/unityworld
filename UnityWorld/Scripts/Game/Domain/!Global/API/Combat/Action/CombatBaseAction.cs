@@ -116,8 +116,7 @@ namespace UnityWorld.Game.Domain
             // 查找目标 NPC
             target.AddBuff(buffId, stacks, duration);
 
-            CombatScene.Log($"  [{target.GetName()}] AddBuff: {buffId} ×{stacks} (duration={duration})");
-        }
+          }
 
         // ── 卡组操作类 ────────────────────────────────────────
 

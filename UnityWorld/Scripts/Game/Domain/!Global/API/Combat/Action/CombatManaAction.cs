@@ -17,7 +17,6 @@ namespace UnityWorld.Game.Domain
 
             ElementType element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
             int maxAmount = ctx.GetValue("MaxAmount", 1);
-            int totalConverted = 0;
 
              var cost = new Dictionary<ElementType, int>();
             if (element.Kind == BaseElementType.None)
@@ -31,7 +30,6 @@ namespace UnityWorld.Game.Domain
             caster.ManaConvert(cost);
 
             
-            CombatScene.Log($"  [{caster.GetName()}] Convert: {element} ×{totalConverted} → Mp={caster.GetMp()}");
             return ctx;
         }
 
@@ -45,7 +43,6 @@ namespace UnityWorld.Game.Domain
             int amount = ctx.GetValue("Amount", 1);
             caster.DrawMana(amount);
 
-            CombatScene.Log($"  [{caster.GetName()}] Draw: -{amount}Mp → 灵元分配");
             return ctx;
         }
 

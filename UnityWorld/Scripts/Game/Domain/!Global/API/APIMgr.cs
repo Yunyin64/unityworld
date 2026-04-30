@@ -145,11 +145,13 @@ namespace UnityWorld.Game.Domain
                     var attr = method.GetCustomAttribute<APIFuncAttribute>();
                     if (attr == null) continue;
 
-                    // 校验方法签名：返回 void，恰好 1 个参数且类型为 ContextBase
+                    // 校验方法签名：恰好 1 个参数且类型为 ContextBase 或其子类，返回 void 或 ContextBase 子类
                     var parameters = method.GetParameters();
-                    if (method.ReturnType != typeof(void) || parameters.Length != 1 || parameters[0].ParameterType != typeof(ContextBase))
+                    bool validReturn = method.ReturnType == typeof(void) || typeof(ContextBase).IsAssignableFrom(method.ReturnType);
+                    bool validParam = parameters.Length == 1 && typeof(ContextBase).IsAssignableFrom(parameters[0].ParameterType);
+                    if (!validReturn || !validParam)
                     {
-                        LogMgr.Warn("[APIMgr] ScanHandlers: 方法 {0}.{1} 签名不匹配（需要 static void Xxx(ContextBase ctx)），已跳过",
+                        LogMgr.Warn("[APIMgr] ScanHandlers: 方法 {0}.{1} 签名不匹配（需要 static [void|ContextBase] Xxx(ContextBase/子类 ctx)），已跳过",
                             type.Name, method.Name);
                         continue;
                     }
@@ -160,8 +162,17 @@ namespace UnityWorld.Game.Domain
                             attr.FuncName, type.Name, method.Name);
                     }
 
-                    // 注册 Handler
-                    var del = (Action<ContextBase>)Delegate.CreateDelegate(typeof(Action<ContextBase>), method);
+                    // 注册 Handler（支持返回值非 void 的方法，用 lambda 包装丢弃返回值）
+                    Action<ContextBase> del;
+                    if (method.ReturnType == typeof(void) && parameters[0].ParameterType == typeof(ContextBase))
+                    {
+                        del = (Action<ContextBase>)Delegate.CreateDelegate(typeof(Action<ContextBase>), method);
+                    }
+                    else
+                    {
+                        var capturedMethod = method;
+                        del = (ctx) => capturedMethod.Invoke(null, new object[] { ctx });
+                    }
                     _handlers[attr.FuncName] = del;
 
                     // 从 Attribute.ParamDefs 解析并注册 API 签名

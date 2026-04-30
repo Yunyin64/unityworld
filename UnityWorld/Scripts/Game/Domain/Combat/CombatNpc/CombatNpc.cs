@@ -165,6 +165,11 @@ namespace UnityWorld.Game.Domain.Combat
              
         }
 
+        public void Log(string msg)
+        {
+            CombatScene.Log($"[Npc|{GetName()}]{msg}");
+        }
+
 
     }
 }

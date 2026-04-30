@@ -8,39 +8,22 @@ namespace UnityWorld.Game.Domain.Combat
         
         /// <summary>
         /// 在 Start 阶段检查并初始化 Lua 卡牌：
-        /// 加载 .lua 脚本 → 标记 IsLuaCard → 应用 Keywords → 注册被动 Hook。
+        /// 加载 .lua 脚本 → env = return 的 card table。
         /// </summary>
         public void InitializeLuaCards()
         {
             var luaMgr = LuaMgr.Instance;
-            if (luaMgr == null) return;
 
-             if (!luaMgr.HasCardScript(DefineId)) return;
-
-                    // 加载 Lua 脚本
-                    env = luaMgr.LoadCardScript(DefineId);
-                    if (env == null) return;
-
-                    // 读取 Lua 中的 Keywords 声明并应用
-                    //ApplyLuaKeywords(npc, cardState, env);
-
-                    // 发现并注册被动 Hook
-                    var hooks = luaMgr.DiscoverHooks(env);
-                    foreach (var hookName in hooks)
-                    {
-                        if (hookName == "OnUse") continue; // OnUse 由框架直接调用
-
-                        if (!LuaMgr.HookToEventId.TryGetValue(hookName, out var eventId))
-                        {
-                            continue;
-                        }
-
-                        var scope = new ScopeKey(Scope.CombatNpc, Owner.Id.ToString());
-                        var listenerKey = $"Lua_{Owner.Id}_{DefineId}_{hookName}";
-
-                        //注册trigger事件todo
-
-                    }
+            // 加载 Lua 脚本，获得独立的 card table
+            env = luaMgr.LoadCardScript(DefineId);
+            if(env == null)
+            {
+                Log($"  Lua 卡牌脚本加载失败: {DefineId}.lua");
+                return;
+            }else{
+                Log($"  Lua 卡牌脚本加载成功: {DefineId}.lua");
+            }
+            // env 为 null 说明没有对应 lua 文件，正常情况
         }
 
         
@@ -68,7 +51,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);
 
-            CombatScene.Log($"  [{Owner.GetName()}] 卡[{DisplayName}] 入槽: {contestData}");
+            Log($"  [{Owner.GetName()}] 卡[{DisplayName}] 入槽: {contestData}");
 
             // 待发槽满 → 由 CombatNpc.ProcessContest() 统一处理挤出与对拼
         }
