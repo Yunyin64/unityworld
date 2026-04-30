@@ -20,7 +20,10 @@ public enum CardType
 
         public enum CultivationPointType
         {
-           Card
+           Card,
+           Modifier,
+           BehaviorCard,
+           Story
         }
 public enum ContestType
 {

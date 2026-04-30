@@ -17,13 +17,13 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public static void RunBasicTest()
         {
-            Console.WriteLine("=== CombatTestRunner.RunBasicTest ===");
+            LogMgr.Dbg("=== CombatTestRunner.RunBasicTest ===");
 
             // ── 创建两个真实 NPC ─────────────────────────────
             var npcMgr = NpcMgr.Instance;
             if (npcMgr == null)
             {
-                Console.WriteLine("[CombatTestRunner] 错误：NpcMgr 未初始化");
+                LogMgr.Dbg("[CombatTestRunner] 错误：NpcMgr 未初始化");
                 return;
             }
 
@@ -39,11 +39,11 @@ namespace UnityWorld.Game.Domain.Combat
             Console.WriteLine($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
 
             // ── 为 NPC 添加功法获得卡组 ──────────────────────
-            CultivationMgr.Instance?.AddCultivation(npcA, "wu_tiger_fist");
-            CultivationMgr.Instance?.AddCultivation(npcA, "wu_stone_body");
+            CultivationMgr.Instance.AddCultivation(npcA, "wu_tiger_fist");
+            CultivationMgr.Instance.AddCultivation(npcA, "wu_stone_body");
 
-            CultivationMgr.Instance?.AddCultivation(npcB, "ling_flame_heart");
-            CultivationMgr.Instance?.AddCultivation(npcB, "hun_frost_mind");
+            CultivationMgr.Instance.AddCultivation(npcB, "ling_flame_heart");
+            CultivationMgr.Instance.AddCultivation(npcB, "hun_frost_mind");
 
             var deckA = npcA.CardData;
             var deckB = npcB.CardData;

@@ -44,6 +44,13 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        public NpcNameData Clone()
+        {
+            var copy = (NpcNameData)MemberwiseClone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
 
         // ── 日志 ────────────────────────────────────
 

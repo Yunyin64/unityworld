@@ -44,12 +44,13 @@ namespace UnityWorld.Game.Domain
                 LogMgr.Err("[CardMgr] 找不到 CardDefine：{0}", cardDefineId);
                 return null;
             }
-
+            var cardid = Soul.NewId();
             var card = new Card
             {
-                Id = Soul.NewId(),
+                Id = cardid,
                 DefineId = cardDefineId,
                 DisplayName = cardDefine.DisplayName,
+                Stats = StatMgr.Instance.CreateBlock(cardid,GetType()),
                 BaseData = new CardBaseData
                 {
                     Size = cardDefine.Size,

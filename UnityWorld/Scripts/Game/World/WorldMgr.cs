@@ -9,7 +9,8 @@ namespace UnityWorld.Game.World
     /// </summary>
     public static class WorldMgr
     {
-        public static List<IDomainMgrBase> _mgrs = new();  // 统一管理列表，方便统一Tick
+        public static List<IDomainMgrBase> _domains = new();  // 统一管理列表，方便统一Tick
+        public static List<IGameplayMgrBase> _gameplays = new();  // 统一gameplay列表，方便统一Tick
 
         // ── 元气系统 ──────────────────────────────────────
 
@@ -30,22 +31,29 @@ namespace UnityWorld.Game.World
         {
             GameDataMgr.Initialize();
             WorldTime.Initialize(seed);
-            _mgrs.Add(new NpcMgr(seed));
-
-            var planeMgr = new PlaneMgr { AuraDaoMgr = AuraDaoMgr };
-            _mgrs.Add(planeMgr);
+            _gameplays.Add(new GlyphMgr(seed));
+            _gameplays.Add(new AuraDaoMgr(seed));
+            _gameplays.Add(new CombatMgr(seed));
+            _gameplays.Add(new CultivationMgr(seed));
+            
+            
+            _domains.Add(new StatMgr(seed));
+            _domains.Add(new NpcMgr(seed));
+            _domains.Add(new PlaneMgr());
 
             // ── 叙事系统 ──────────────────────────────────────
-            _mgrs.Add(new StoryMgr(seed));
-            _mgrs.Add(new BehaviorCardMgr());
-            _mgrs.Add(new CardMgr(seed));
+            _domains.Add(new StoryMgr(seed));
+            _domains.Add(new BehaviorCardMgr());
+            _domains.Add(new CardMgr(seed));
 
-            foreach (var mgr in _mgrs) mgr.Init();  // 无耦合的初始化
+            foreach (var mgr in _domains) mgr.Init();  // 无耦合的初始化
+            foreach (var mgr in _gameplays) mgr.Init();
         }
 
         public static void Start()
         {
-            foreach (var mgr in _mgrs) mgr.Begin();  // 有耦合的初始化
+            foreach (var mgr in _domains) mgr.Begin();  // 有耦合的初始化
+            foreach (var mgr in _gameplays) mgr.Begin();
             
             Console.WriteLine("=== 世界初始化完成 ===\n");
         }
@@ -59,7 +67,8 @@ namespace UnityWorld.Game.World
             // ① 推进世界物理时间
             WorldTime.Advance(deltaTime);
 
-            foreach (var mgr in _mgrs) mgr.Tick(deltaTime);  // 统一驱动所有注册的子系统（如 TraitMgr）
+            foreach (var mgr in _domains) mgr.Tick(deltaTime);  // 统一驱动所有注册的子系统
+            foreach (var mgr in _gameplays) mgr.Tick(deltaTime);
 
             // ② 元气系统：先累积 Modifier 到 CurrentAura，再让天道感知最新状态
             var planeMgr = PlaneMgr.Instance;

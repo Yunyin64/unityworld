@@ -69,7 +69,7 @@ namespace UnityWorld.Game.Domain
                 cost[element] = amount;
             }
 
-            if (caster.TryCostMana(cost)){
+            if (caster.CanAffordMana(cost)){
                 caster.ConsumeMana(cost);
             }
 

@@ -11,9 +11,7 @@ namespace UnityWorld.Game.Domain
 
         public bool IsExtra => Kind == BaseElementType.Extra;
 
-        public string ExtraTypeId => IsExtra ? _extraId : "None";
-
-        private string _extraId = "None";
+        public string ExtraTypeId { get; private set; }
 
         public static Dictionary<ElementType, int> ToDic(Dictionary<string, int> dic)
         {
@@ -36,8 +34,9 @@ namespace UnityWorld.Game.Domain
         public ElementType(BaseElementType kind, string id = "None")
         {
             Kind = kind;
-            _extraId = id;
+            ExtraTypeId = id;
         }
+         public override string ToString() => IsExtra ? ExtraTypeId : Kind.ToString();
 
         public static ElementType GetElementType(string id)
         {

@@ -45,7 +45,14 @@ namespace UnityWorld.Game.Domain
         public bool IsAlive { get; set; } = true;
 
         /// <summary>死亡时的 Tick（null = 活着）</summary>
-        public int DeathTick { get; set; } 
+        public int DeathTick { get; set; }
+
+        public NpcBioData Clone()
+        {
+            var copy = (NpcBioData)MemberwiseClone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
 
         public void Log()
         {

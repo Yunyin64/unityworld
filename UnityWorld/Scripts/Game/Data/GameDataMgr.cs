@@ -34,12 +34,14 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new TriggerDefineMgr(Path.Combine(dataDir, "TriggerDefines.json")));
         _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "ConditionDefines.json")));
         _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
-        _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "CardDefines.json")));
+        _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "Card")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
         _datamgrs.Add(new EventDefineMgr(Path.Combine(dataDir, "EventDefines.json")));
+        _datamgrs.Add(new CultivationDefineMgr(Path.Combine(dataDir, "Practice", "CultivationDefines.json")));
+        _datamgrs.Add(new RealmDefineMgr(Path.Combine(dataDir, "Practice", "RealmDefines.json")));
         // ── 叙事系统 ──────────────────────────────────────────
-        _datamgrs.Add(new OptionDefineMgr(Path.Combine(dataDir, "OptionDefines.json")));
-        _datamgrs.Add(new StoryDefineMgr(Path.Combine(dataDir, "StoryDefines.json")));
+        //_datamgrs.Add(new OptionDefineMgr(Path.Combine(dataDir, "OptionDefines.json")));
+        //_datamgrs.Add(new StoryDefineMgr(Path.Combine(dataDir, "StoryDefines.json")));
         _datamgrs.Add(new BehaviorCardDataMgr(Path.Combine(dataDir, "BehaviorCardDefines.json")));
         // ── NPC 修正 ──────────────────────────────────────────
         _datamgrs.Add(new NpcModifierDefineMgr(Path.Combine(dataDir, "NpcModifierDefines.json")));

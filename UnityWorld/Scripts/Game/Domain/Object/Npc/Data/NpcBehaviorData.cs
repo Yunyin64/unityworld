@@ -20,6 +20,14 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public bool IsIdle => PrimaryBehavior == null;
 
+        public NpcBehaviorData Clone()
+        {
+            var copy = (NpcBehaviorData)MemberwiseClone();
+            copy.SecondaryBehaviors = new List<BehaviorBase>(SecondaryBehaviors);
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
         /// <summary>
         /// 日志输出
         /// </summary>

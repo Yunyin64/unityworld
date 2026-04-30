@@ -19,6 +19,14 @@ namespace UnityWorld.Game.Domain
         /// <summary>是否正在闭关修炼</summary>
         public bool IsInCultivation { get; set; } = false;
 
+        public NpcPraticeData Clone()
+        {
+            var copy = (NpcPraticeData)MemberwiseClone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
+
         public void Log()
         {
             LogMgr.Dbg("┌── PraticeData · 修炼进度 ──────────────────────────");

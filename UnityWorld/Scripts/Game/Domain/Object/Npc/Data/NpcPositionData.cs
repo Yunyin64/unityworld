@@ -16,6 +16,14 @@ namespace UnityWorld.Game.Domain
         /// <summary>当前运动状态</summary>
         public NpcTypes.MoveState MoveState { get; set; } = NpcTypes.MoveState.Idle;
 
+        public NpcPositionData Clone()
+        {
+            var copy = (NpcPositionData)MemberwiseClone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
+
         // ── 日志 ────────────────────────────────────
 
         public void Log()

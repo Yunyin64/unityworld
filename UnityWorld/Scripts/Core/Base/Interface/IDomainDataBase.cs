@@ -5,4 +5,5 @@ using System.Collections;
 public interface IDomainDataBase
 {
         void Log();
+        IDomainDataBase Clone();
 }

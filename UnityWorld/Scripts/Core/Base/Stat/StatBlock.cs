@@ -13,7 +13,7 @@ namespace UnityWorld.Core
     {
         /// <summary>空属性块（只读占位，用于 NPC 尚未注册时）</summary>
         public static readonly StatBlock Empty = new();
-         private readonly Dictionary<string, StatEntry> _stats = new();
+        private readonly Dictionary<string, StatEntry> _stats = new();
 
         /// <summary>
         /// 获取属性最终值

@@ -43,8 +43,6 @@ namespace UnityWorld.Game.Domain.Combat
         public bool IsFinished => _phase == CombatPhase.Finished;
 
         // ── 结果 ──────────────────────────────────────────────
-
-        private CombatResult _result;
         // ── 事件监听追踪（End 时清理）─────────────────────────
         private readonly List<(string eventId, ScopeKey scope, IEventListener listener)> _registeredListeners = [];
 
@@ -66,12 +64,13 @@ namespace UnityWorld.Game.Domain.Combat
 
             MaxTicks = maxTicks;
 
-            var participantList = npcParticipants.ToList();
-            Combatants = participantList
-                .Select(p => CombatNpc.CreateCombatNpc(p.npc))
-                .ToDictionary(c => c.Id, c => c);
-
-            // 快照战前卡组（用于战后识别新增伤势卡）
+            Combatants = new Dictionary<int, CombatNpc>();
+            foreach (var p in npcParticipants)
+            {
+                var combatNpc = CombatNpc.CreateCombatNpc(p.npc);
+                combatNpc.Team = p.team;
+                Combatants[combatNpc.Id] = combatNpc;
+            }
 
 
             _phase = CombatPhase.Initialized;
@@ -138,6 +137,10 @@ namespace UnityWorld.Game.Domain.Combat
         public void Tick()
         {
             AssertPhase(CombatPhase.Running, nameof(Tick));
+            if (CurrentTick % 50 == 0 && !IsFinished)
+            {
+                Log(string.Format("── 快照 ── {0}Ticks", CurrentTick));
+            }
 
             foreach (var c in Combatants.Values) c.DoManaDraw();
             foreach (var c in Combatants.Values) c.UseCard();
@@ -148,14 +151,10 @@ namespace UnityWorld.Game.Domain.Combat
             CheckEndConditions();
 
             // Step 8: 定期快照（每 50 Tick = 5 秒）
-            if (CurrentTick % 50 == 0 && !IsFinished)
-            {
-                Log(string.Format("── 快照 ── {0}Ticks", CurrentTick));
-            }
             CurrentTick++;
             foreach (var c in Combatants.Values) c.Tick();
         }
-        public CombatResult Run(bool needLog = false)
+        public CombatResult Run()
         {
             // PreStart → Start
             this.PreStart();
@@ -170,7 +169,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 清理
             this.Cleanup();
 
-            return _result;
+            return new  CombatResult();
         }
 
         // ══════��═══════════════════════════════════════════════
@@ -276,7 +275,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public static void Log(string msg)
         {
-            
+            LogMgr.Dbg(msg);
         }
         public override void LogAllInfo()
         {

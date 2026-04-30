@@ -12,6 +12,11 @@ namespace UnityWorld.Game.Domain
         /// <summary>持有的物品 ID 列表</summary>
         public List<string> ItemIds { get; set; } = new();
 
+        public IDomainDataBase Clone()
+        {
+            throw new NotImplementedException();
+        }
+
         // ── 日志 ────────────────────────────────────
 
         public void Log()

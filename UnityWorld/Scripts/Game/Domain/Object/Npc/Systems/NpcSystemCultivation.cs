@@ -33,13 +33,8 @@ namespace UnityWorld.Game.Domain
 
             // 创建并注册修行数据
             var data = new NpcCultivationData();
+            data.Affinity = new ElementalAffinity(npc.Soul);
             Register(npc, data);
-
-            // 从 Soul 映射五行亲和
-            data.CalcAffinityFromSoul(npc.Soul);
-
-            // 根据八大属性计算战斗三维
-            data.RecalcCombatStats();
         }
 
         public override void OnTick(Npc npc, float deltaTime)

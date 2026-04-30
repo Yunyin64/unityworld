@@ -17,9 +17,6 @@ namespace UnityWorld.Game.Domain
         /// <summary>主世界（唯一，游戏初始化时创建）</summary>
         public Plane MainPlane { get; private set; }
 
-        /// <summary>天道管理器引用（可选），用于在位面生成完毕后自动拍摄元气快照</summary>
-        public AuraDaoMgr AuraDaoMgr { get; set; }
-
         // ── 初始化 ────────────────────────────────────────
 
         /// <summary>
@@ -51,7 +48,7 @@ namespace UnityWorld.Game.Domain
             }
             var plane = new Plane(id, config);
             _planes[id] = plane;
-            PlaneGenerator.Fill(plane, AuraDaoMgr);   // 根据 Width × Height 填充初始地块，并拍摄原初元气快照
+            PlaneGenerator.Fill(plane, AuraDaoMgr.Instance);   // 根据 Width × Height 填充初始地块，并拍摄原初元气快照
             return plane;
         }
 

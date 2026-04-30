@@ -1,11 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
     /// <summary>
     /// 功法定义数据管理器
-    /// 负责加载 CultivationDefines.json 并提供功法定义查询
+    /// 负责加载 Data/Practice/ 文件夹下所有 JSON 文件并提供功法定义查询
     /// </summary>
     public class CultivationDefineMgr : IDataMgrBase<CultivationDefine>
     {
@@ -18,7 +19,7 @@ namespace UnityWorld.Game.Data
         {
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
+            Converters = { new JsonStringEnumConverter(allowIntegerValues: true) },
         };
 
         private readonly string _filePath;
@@ -35,7 +36,7 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[CultivationDefineMgr] 警告：找不到 {filePath}，功法库为空");
+                LogMgr.Warn("[CultivationDefineMgr] 警告：找不到 {0}，功法库为空", filePath);
                 return;
             }
 
@@ -44,7 +45,7 @@ namespace UnityWorld.Game.Data
 
             _list = list;
             _defines = list.ToDictionary(d => d.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[CultivationDefineMgr] 加载完成：{_defines.Count} 个功法定义");
+            LogMgr.Dbg("[CultivationDefineMgr] 加载完成：{0} 个功法定义", _defines.Count);
         }
 
         /// <summary>根据 ID 获取功法定义，不存在返回 null</summary>

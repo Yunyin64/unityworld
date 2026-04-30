@@ -8,6 +8,15 @@ namespace UnityWorld.Game.Domain
     public class NpcCardData : IDomainDataBase
     {
         public List<Card> AllCards { get; set; } = [];
+
+        public NpcCardData Clone()
+        {
+            var copy = (NpcCardData)MemberwiseClone();
+            copy.AllCards = new List<Card>(AllCards);
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
         // ── 日志 ────────────────────────────────────
 
         public void Log()

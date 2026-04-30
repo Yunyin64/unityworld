@@ -46,10 +46,12 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 foreach (var card in cardDeck)
                 {
-                    CardDeck.Add(CombatCard.CreateFromData(card));
+                    var combatCard = CombatCard.CreateFromData(card);
+                    combatCard.Owner = this;
+                    CardDeck.Add(combatCard);
                 }
             }                                    
-                    
+            CombatScene.Log($"[CombatNpc] InitDeck: {GetName()} 初始化卡组，卡牌数量={CardDeck.Count}");        
         }
 
         public void ProcessContest()
@@ -64,12 +66,12 @@ namespace UnityWorld.Game.Domain.Combat
                     //拼点
                     ResolveContest(Contest, targetContest);
                 }
+                else if (Ticks["Straight"] >= Stats.Get("StraightCD"))
+                {
+                    var Contest = PendingSlot.Dequeue();
+                    Straight(Contest);
+                }
                 else break;
-            }
-            if(Ticks["Straight"] >= Stats.Get("StraightCD"))
-            {
-                var Contest = PendingSlot.Dequeue();
-                Straight(Contest); 
             }
         }
         /// <summary>
@@ -101,7 +103,6 @@ namespace UnityWorld.Game.Domain.Combat
             ctx.Damage = contestData.ContestValue;
             
             }
-
             // 重置来源卡 CD
             contestData.SourceCard.OnApply();
             Ticks["Straight"] = 0;

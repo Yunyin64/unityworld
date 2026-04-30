@@ -54,7 +54,7 @@ using System.Collections;
 
 public abstract class DomainMgrBase<T> : IDomainMgrBase where T:GameEntityBase
 {
-    public Dictionary<int, T> _allEntities { get; set; }
+    public Dictionary<int, T> _allEntities { get; set; } = new();
 
     public void Add(int id,T obj)
     {

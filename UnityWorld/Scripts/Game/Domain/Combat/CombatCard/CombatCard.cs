@@ -51,6 +51,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnUse()
         {
+            CombatScene.Log($"[CombatCard] 使用卡牌: {DisplayName}");
             //Trigger:触发使用事件
             OnContest();
             if(Phase == CombatCardPhase.Ready){
@@ -63,6 +64,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void OnApply()
         {
+            CombatScene.Log($"[CombatCard] 卡牌生效: {DisplayName}");
             //执行env["OnApply"]
             //Trigger:触发结算事件
             Phase= CombatCardPhase.Finished;
@@ -82,6 +84,10 @@ namespace UnityWorld.Game.Domain.Combat
         {
             var combatCard = new CombatCard();
             combatCard.Id = card.Id;
+            combatCard.DefineId = card.DefineId;
+            combatCard.DisplayName = card.DisplayName;
+            combatCard.BaseData = card.BaseData.Clone();
+            combatCard.Stats = StatMgr.Instance.CreateBlock(card.Id, typeof(CombatCard));
             combatCard.Ticks.Add("Main",0);
             combatCard.Ticks.Add("CD",0);
             return combatCard;

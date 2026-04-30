@@ -77,26 +77,26 @@
     "Description": "土属性伤害抗性百分比"
   },
   {
-    "ID": "ManaConvertCost",
-    "DisplayName": "灵元转化数",
+    "ID": "ManaDrawCost",
+    "DisplayName": "灵元抽取数",
     "Type": "Npc",
     "DefaultValue": 5,
     "MinValue": 0,
     "MaxValue": 9999,
     "DisplayFormat": "Integer",
     "Category": "基础",
-    "Description": "每轮灵元转化数量"
+    "Description": "每轮灵元抽取数量"
   },
   {
-    "ID": "ManaConvertCD",
-    "DisplayName": "灵元转化CD",
+    "ID": "ManaDrawCD",
+    "DisplayName": "灵元抽取CD",
     "Type": "Npc",
     "DefaultValue": 5,
     "MinValue": 0.1,
     "MaxValue": 10,
     "DisplayFormat": "Float",
     "Category": "基础",
-    "Description": "灵元转化周期"
+    "Description": "灵元抽取周期"
   },
   {
     "ID": "PendingSlotMax",
@@ -119,5 +119,38 @@
     "DisplayFormat": "Float",
     "Category": "基础",
     "Description": "直击CD"
+  },
+  {
+    "ID": "HpMaxAdj",
+    "DisplayName": "Hp修正",
+    "Type": "Npc",
+    "DefaultValue": 0,
+    "MinValue": -9999,
+    "MaxValue": 9999,
+    "DisplayFormat": "Float",
+    "Category": "基础",
+    "Description": "Hp修正"
+  },
+  {
+    "ID": "MpMaxAdj",
+    "DisplayName": "Mp修正",
+    "Type": "Npc",
+    "DefaultValue": 0,
+    "MinValue": -9999,
+    "MaxValue": 9999,
+    "DisplayFormat": "Float",
+    "Category": "基础",
+    "Description": "Mp修正"
+  },
+  {
+    "ID": "SpMaxAdj",
+    "DisplayName": "SP修正",
+    "Type": "Npc",
+    "DefaultValue": 0,
+    "MinValue": -9999,
+    "MaxValue": 9999,
+    "DisplayFormat": "Float",
+    "Category": "基础",
+    "Description": "SP修正"
   }
 ]

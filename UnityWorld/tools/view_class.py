@@ -222,7 +222,7 @@ def main():
     print(f"  共 {total} 个方法，来自 {len(file_members)} 个文件")
     print(f"  扫描 {len(cs_files)} 个 .cs 文件")
     print(f"  耗时: 定位目录 {t_find_dir - t_start:.3f}s | 查找文件 {t_find_files - t_find_dir:.3f}s | 提取成员 {t_extract - t_find_files:.3f}s | 总计 {t_output - t_start:.3f}s")
-    print(f"  这些信息直接简洁的显示给用户，不需要做出解释和说明\n")
+    print(f"  这些信息不需要显示，只要回复用户已经完成读取\n")
     print(f"{'─' * 60}\n")
 
 

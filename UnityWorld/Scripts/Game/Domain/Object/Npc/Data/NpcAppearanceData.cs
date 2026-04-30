@@ -13,6 +13,14 @@ namespace UnityWorld.Game.Domain
     public class NpcAppearanceData : IDomainDataBase
     {
         public float Height;
+
+        public NpcAppearanceData Clone()
+        {
+            var copy = (NpcAppearanceData)MemberwiseClone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
         // TODO: 待实现
         public void Log()
         {

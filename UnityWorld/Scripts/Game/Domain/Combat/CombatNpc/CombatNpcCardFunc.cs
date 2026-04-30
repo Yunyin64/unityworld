@@ -5,16 +5,18 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
-        public List<CombatCard> CardDeck { get; set; } = [];
+        public List<CombatCard> CardDeck { get; set; } = new();
 
         private Queue<(ComabtCardDeckChangeType,CombatCard,ComabtCardDisplaceType)> _changes = new();
 
         public void RemoveCombatCard(CombatCard card)
         {
+            CombatScene.Log($"[CombatNpc:{GetName()}] 移除卡牌: {card.DisplayName}");
             _changes.Enqueue((ComabtCardDeckChangeType.Remove,card,ComabtCardDisplaceType.None));
         }
         public void AddCombatCard(CombatCard card)
         {
+            CombatScene.Log($"[CombatNpc:{GetName()}] 新增卡牌: {card.DisplayName}");
             _changes.Enqueue((ComabtCardDeckChangeType.Add,card,ComabtCardDisplaceType.None));
         }
         

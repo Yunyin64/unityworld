@@ -32,6 +32,13 @@ namespace UnityWorld.Game.Domain.Combat
         {
             LogMgr.Dbg(ToString());
         }
+        
+        public ContestData Clone()
+        {
+            var copy = (ContestData)MemberwiseClone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
         public DamageType ToDamageType()
         {
             switch (ContestType)

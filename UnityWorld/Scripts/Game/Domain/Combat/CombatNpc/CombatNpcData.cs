@@ -5,10 +5,6 @@ namespace UnityWorld.Game.Domain.Combat
     public partial class CombatNpc
     {
         // ── 战斗 ──────────────────────────────────
-        BaseProperty baseProperty = BaseProperty.Zero;
-        ElementalAffinity elementalAffinity = ElementalAffinity.Zero;
-
-        
         /// <summary>
         /// 战斗内当前数值（与大世界 StatBlock 独立）
         /// </summary>
@@ -19,11 +15,11 @@ namespace UnityWorld.Game.Domain.Combat
         private float Sp { get; set; }
 
         public int GetHp(){return (int)Hp;}
-        public int GetCombatHpMax(){return 0;}
+        public int GetCombatHpMax(){return GetHpMax();}
         public int GetMp(){return (int)Mp;}
-        public int GetCombatMpMax(){return 0;}
+        public int GetCombatMpMax(){return GetMpMax();}
         public int GetSp(){return (int)Sp;}
-        public int GetCombatSpMax(){return 0;}
+        public int GetCombatSpMax(){return GetSpMax();}
 
         public CombatCard GetCardByIndex(int index)
         {
@@ -35,6 +31,7 @@ namespace UnityWorld.Game.Domain.Combat
             //可能要加入护盾上限值，待定
             ShieldValue += val;
             ShieldValue = Math.Clamp(ShieldValue, 0, float.MaxValue);
+            CombatScene.Log($"{GetName()} 的护盾值变更：{val:+0.##;-0.##;0}，当前护盾={ShieldValue:0.##}");
         }
     }
 }

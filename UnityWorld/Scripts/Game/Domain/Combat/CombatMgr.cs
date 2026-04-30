@@ -60,10 +60,15 @@ namespace UnityWorld.Game.Domain
         public CombatResult RunCombat(Npc A, Npc B)
         {
             var combatScene = new CombatScene();
-            combatScenes.Add(A.Id,combatScene);
+            combatScenes.Add(A.Id, combatScene);
 
+            var participants = new[]
+            {
+                (A, CombatTeam.TeamA),
+                (B, CombatTeam.TeamB)
+            };
+            combatScene.Init(participants,600);
             return combatScene.Run();
-
         }
     }
 }

@@ -23,7 +23,7 @@ namespace UnityWorld.Game.Data
 
         /// <summary>冷却回合数</summary>
         [JsonPropertyName("cooldown")]
-        public int Cooldown { get; set; } = 4;
+        public float Cooldown { get; set; } = 4;
 
         /// <summary>卡牌类型（ZhaoShi / FaBao / Wound 等）</summary>
         [JsonPropertyName("cardType")]
@@ -37,11 +37,5 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("effectIds")]
         public List<string> EffectIds { get; set; } = [];
 
-        /// <summary>
-        /// 卡牌的 Tag 列表（重复表示浓度）。
-        /// 可手动填写以标识主题；若为空，系统可从 EffectDefine 中聚合推导。
-        /// </summary>
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = [];
     }
 }

@@ -20,7 +20,7 @@ namespace UnityWorld.Core
         private readonly  Dictionary<string,Dictionary<int, StatBlock>> _Blocks = new();
 
         // ── 构造 ──────────────────────────────────────────────
-        public StatMgr()
+        public StatMgr(int seed = 12345)
         {
             Instance = this;
         }
@@ -60,7 +60,9 @@ namespace UnityWorld.Core
         public StatBlock CreateBlock(int id, Type objectType)
         {
             var block = new StatBlock();
+            if(!_Blocks.ContainsKey(objectType.Name)) _Blocks[objectType.Name] = new();
             _Blocks[objectType.Name][id] = block;
+
             return block;
         }
 

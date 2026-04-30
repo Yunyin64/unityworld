@@ -34,10 +34,20 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public List<string> Tags { get; set; } = [];
 
+        public CardBaseData Clone()
+        {
+            var copy = (CardBaseData)MemberwiseClone();
+            copy.ManaCost = new Dictionary<ElementType, int>(ManaCost);
+            copy.Tags = new List<string>(Tags);
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
 
         // ── IDomainDataBase ───────────────────────────────────
 
         /// <summary>日志输出</summary>
+
         public void Log()
         {
             var mana = ManaCost.Count > 0

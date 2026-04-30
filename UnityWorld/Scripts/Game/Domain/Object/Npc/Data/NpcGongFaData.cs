@@ -13,8 +13,15 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>激活的功法列表</summary>
         public List<CultivationSlot> ActiveSlots { get; set; } = [];
-        
 
+        public NpcGongFaData Clone()
+        {
+            var copy = (NpcGongFaData)MemberwiseClone();
+            copy.AllSlots = new List<CultivationSlot>(AllSlots);
+            copy.ActiveSlots = new List<CultivationSlot>(ActiveSlots);
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
 
         public void Log()
         {

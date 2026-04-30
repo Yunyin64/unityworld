@@ -12,6 +12,11 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcFactionData : IDomainDataBase
     {
+        public IDomainDataBase Clone()
+        {
+            throw new NotImplementedException();
+        }
+
         // TODO: 待实现
         public void Log()
         {

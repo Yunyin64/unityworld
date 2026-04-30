@@ -90,6 +90,15 @@ namespace UnityWorld.Game.Domain
         {
             Jin = 0, Mu = 0, Shui = 0, Huo = 0, Tu = 0
         };
+
+        public ElementalAffinity(SoulData soul)
+        {
+                Shui = soul.FI + soul.FE;
+                Huo = soul.NI + soul.NE;
+                Jin = soul.TI + soul.TE;
+                Mu = soul.SI + soul.SE;
+                Tu = soul.MI + soul.ME;
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -115,46 +124,6 @@ namespace UnityWorld.Game.Domain
         /// <summary>修行基础属性</summary>
         public BaseProperty Properties { get; set; } = BaseProperty.Default;
 
-        // ── 战斗三维 ────────────────────────────────────
-
-        /// <summary>HP 上限</summary>
-        public int HpMax { get; set; } = 10;
-
-        /// <summary>MP 上限</summary>
-        public int MpMax { get; set; } = 30;
-
-        /// <summary>SP 上限（法力）</summary>
-        public int SpMax { get; set; } = 10;
-
-        // ── 战斗三维公式 ────────────────────────────────────
-
-        /// <summary>
-        /// 根据八大属性重算战斗三维
-        /// HpMax = QiXue, MpMax = QiGan * 3, SpMax = ShenShi
-        /// </summary>
-        public void RecalcCombatStats()
-        {
-            HpMax = Properties.QiXue;
-            MpMax = Properties.QiGan * 3;
-            SpMax = Properties.ShenShi;
-        }
-
-        /// <summary>
-        /// 根据 SoulData 认知功能映射五行亲和
-        /// 水=FI+FE, 火=NI+NE, 金=TI+TE, 木=SI+SE, 土=MI+ME
-        /// </summary>
-        public void CalcAffinityFromSoul(SoulData soul)
-        {
-            Affinity = new ElementalAffinity
-            {
-                Shui = soul.FI + soul.FE,
-                Huo = soul.NI + soul.NE,
-                Jin = soul.TI + soul.TE,
-                Mu = soul.SI + soul.SE,
-                Tu = soul.MI + soul.ME
-            };
-        }
-
         // ── 五行亲和 ────────────────────────────────────
 
         /// <summary>五行亲和</summary>
@@ -162,6 +131,16 @@ namespace UnityWorld.Game.Domain
 
         public NpcGongFaData GongFaData { get; set; } = new();
         public NpcPraticeData PracticeData { get; set; } = new();
+
+        public NpcCultivationData Clone()
+        {
+            var copy = (NpcCultivationData)MemberwiseClone();
+            copy.GongFaData = GongFaData.Clone();
+            copy.PracticeData = PracticeData.Clone();
+            return copy;
+        }
+        IDomainDataBase IDomainDataBase.Clone() => Clone();
+
         // ── 日志 ────────────────────────────────────
 
         public void Log()
@@ -172,7 +151,6 @@ namespace UnityWorld.Game.Domain
             LogMgr.Dbg("│  八大属性:      气血={0} 体魄={1} 气感={2} 灵机={3} 神识={4} 悟性={5} 机缘={6} 魅力={7}",
                 Properties.QiXue, Properties.TiPo, Properties.QiGan, Properties.LingJi,
                 Properties.ShenShi, Properties.WuXing, Properties.JiYuan, Properties.MeiLi);
-            LogMgr.Dbg("│  战斗三维:      HP={0} MP={1} SP={2}", HpMax, MpMax, SpMax);
             LogMgr.Dbg("│  五行亲和:      金={0} 木={1} 水={2} 火={3} 土={4}",
                 Affinity.Jin, Affinity.Mu, Affinity.Shui, Affinity.Huo, Affinity.Tu);
             LogMgr.Dbg("│  [=功法数据=]"); GongFaData.Log();
@@ -192,9 +170,9 @@ namespace UnityWorld.Game.Domain
         public int GetWuXing()=>CultivationData.Properties.WuXing;
         public int GetMeiLi()=>CultivationData.Properties.MeiLi;
         public int GetJiYuan()=>CultivationData.Properties.JiYuan;
-        public int GetHpMax() => CultivationData.HpMax;
-        public int GetMpMax() => CultivationData.MpMax;
-        public int GetSpMax() => CultivationData.SpMax;
+        public int GetHpMax() => GetQixue() + (int)Stats.Get("HpMaxAdj");
+        public int GetMpMax() => GetQiGan()*3 + (int)Stats.Get("MpMaxAdj");
+        public int GetSpMax() => GetShenShi() + (int)Stats.Get("SpMaxAdj");
         public ElementalAffinity GetAffinity() => CultivationData.Affinity;
         public NpcGongFaData GongFaData =>CultivationData.GongFaData;
         public NpcPraticeData PracticeData =>CultivationData.PracticeData;

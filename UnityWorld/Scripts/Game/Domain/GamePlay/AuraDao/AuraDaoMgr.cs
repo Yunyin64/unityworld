@@ -13,6 +13,9 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class AuraDaoMgr:IGameplayMgrBase
     {
+        // ── 单例 ─────────────────────────────────────────────
+        /// <summary>全局单例</summary>
+        public static AuraDaoMgr Instance { get; private set; }
         // ── 原初快照 ─────────────────────────────────────
 
         /// <summary>原初元气快照：Key=TileId，Value=自然态 TileAura 深拷贝</summary>
@@ -31,6 +34,11 @@ namespace UnityWorld.Game.Domain
         public string Name => "AuraDaoMgr";
 
         public string Desc => "";
+
+        public AuraDaoMgr(int seed = 12345)
+        {
+            Instance = this;
+        }
 
         // ── 快照 ──────────────────────────────────────────
 
