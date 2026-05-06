@@ -10,6 +10,10 @@
 # UnityWorld 目录本身要放行
 !/UnityWorld/
 
+# common-cli 目录
+!/common-cli/
+!/common-cli/**
+
 # UnityWorld 下的目录白名单
 !/UnityWorld/.codemaker/
 !/UnityWorld/.codemaker/**
