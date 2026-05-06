@@ -25,7 +25,7 @@ namespace UnityWorld.Game.World
         ///   1. 加载外部数据定义（GameDataMgr）
         ///   2. 初始化世界时间
         ///   3. 初始化NPC管理器
-        ///   4. 初始化位面管理器（含主世界，并拍摄原初元气快照）
+        ///   4. 初始化位面管理器
         /// </summary>
         public static void Initialize(int seed = 12345)
         {
