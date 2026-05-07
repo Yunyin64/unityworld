@@ -8,9 +8,9 @@
     "maxPoint": 350,
     "completeness": 1.0,
     "points": [
-      { "threshold": 80, "Type": "Card", "refId": "card_true_yuan_blade" },
+      { "threshold": 80, "Type": "Card", "refId": "card_huo_spear" },
       { "threshold": 160, "Type": "Modifier", "refId": "modifier_foundation_base" },
-      { "threshold": 280, "Type": "Card", "refId": "card_foundation_strike" }
+      { "threshold": 280, "Type": "Card", "refId": "card_jin_heavy_slash" }
     ],
     "coreEffect": {
       "effectId": "effect_breakthrough_ling_2",
@@ -27,9 +27,9 @@
     "maxPoint": 800,
     "completeness": 0.9,
     "points": [
-      { "threshold": 150, "Type": "Card", "refId": "card_golden_light" },
+      { "threshold": 150, "Type": "Card", "refId": "card_huo_flame_slash" },
       { "threshold": 350, "Type": "Modifier", "refId": "modifier_golden_core" },
-      { "threshold": 600, "Type": "Card", "refId": "card_core_explode" }
+      { "threshold": 600, "Type": "Card", "refId": "card_huo_incinerate" }
     ],
     "coreEffect": {
       "effectId": "effect_breakthrough_ling_3",
@@ -47,7 +47,7 @@
     "completeness": 0.9,
     "points": [
       { "threshold": 100, "Type": "Modifier", "refId": "modifier_copper_skin" },
-      { "threshold": 200, "Type": "Card", "refId": "card_defensive_stance" },
+      { "threshold": 200, "Type": "Card", "refId": "card_tu_block" },
       { "threshold": 350, "Type": "Modifier", "refId": "modifier_damage_reduction" }
     ],
     "coreEffect": {
@@ -66,7 +66,7 @@
     "completeness": 0.85,
     "points": [
       { "threshold": 200, "Type": "Modifier", "refId": "modifier_iron_bone" },
-      { "threshold": 450, "Type": "Card", "refId": "card_bone_crush" },
+      { "threshold": 450, "Type": "Card", "refId": "card_tu_strike" },
       { "threshold": 700, "Type": "Modifier", "refId": "modifier_undying_body" }
     ],
     "coreEffect": {
@@ -84,8 +84,8 @@
     "maxPoint": 400,
     "completeness": 0.85,
     "points": [
-      { "threshold": 90, "Type": "Card", "refId": "card_telekinesis_push" },
-      { "threshold": 180, "Type": "Card", "refId": "card_object_control" },
+      { "threshold": 90, "Type": "Card", "refId": "card_shui_freeze" },
+      { "threshold": 180, "Type": "Card", "refId": "card_mu_vulnerable" },
       { "threshold": 300, "Type": "Modifier", "refId": "modifier_soul_power" }
     ],
     "coreEffect": {
@@ -103,9 +103,9 @@
     "maxPoint": 850,
     "completeness": 0.8,
     "points": [
-      { "threshold": 180, "Type": "Card", "refId": "card_soul_walk" },
+      { "threshold": 180, "Type": "Card", "refId": "card_shui_displace" },
       { "threshold": 400, "Type": "Modifier", "refId": "modifier_soul_manifest" },
-      { "threshold": 650, "Type": "Card", "refId": "card_soul_strike" }
+      { "threshold": 650, "Type": "Card", "refId": "card_shui_weakness" }
     ],
     "coreEffect": {
       "effectId": "effect_breakthrough_hun_3",
@@ -123,8 +123,8 @@
     "maxPoint": 120,
     "completeness": 1.0,
     "points": [
-      { "threshold": 30, "Type": "Card", "refId": "card_form_jian_qi" },
-      { "threshold": 60, "Type": "Card", "refId": "card_huo_shot" },
+      { "threshold": 30, "Type": "Card", "refId": "card_huo_shot" },
+      { "threshold": 60, "Type": "Card", "refId": "card_huo_drain" },
       { "threshold": 100, "Type": "Card", "refId": "card_huo_burst" }
     ],
     "coreEffect": {
@@ -142,9 +142,9 @@
     "maxPoint": 120,
     "completeness": 1.0,
     "points": [
-      { "threshold": 30, "Type": "Card", "refId": "card_form_jian_ci" },
+      { "threshold": 30, "Type": "Card", "refId": "card_shui_heal" },
       { "threshold": 60, "Type": "Card", "refId": "card_shui_shield" },
-      { "threshold": 100, "Type": "Card", "refId": "card_shui_heal" }
+      { "threshold": 100, "Type": "Card", "refId": "card_shui_displace" }
     ],
     "coreEffect": {
       "effectId": "effect_ling_spring_art",
@@ -161,8 +161,8 @@
     "maxPoint": 120,
     "completeness": 1.0,
     "points": [
-      { "threshold": 30, "Type": "Card", "refId": "card_form_jian_zhan" },
-      { "threshold": 60, "Type": "Card", "refId": "card_jin_slash" },
+      { "threshold": 30, "Type": "Card", "refId": "card_jin_slash" },
+      { "threshold": 60, "Type": "Card", "refId": "card_jin_needle" },
       { "threshold": 100, "Type": "Card", "refId": "card_jin_armor_break" },
       { "threshold": 110, "Type": "Card", "refId": "card_jin_whirlwind" }
     ],
@@ -182,9 +182,9 @@
     "maxPoint": 180,
     "completeness": 1.0,
     "points": [
-      { "threshold": 50, "Type": "Card", "refId": "card_form_quan_da" },
-      { "threshold": 100, "Type": "Card", "refId": "card_form_quan_feng" },
-      { "threshold": 150, "Type": "Card", "refId": "card_tu_stun" }
+      { "threshold": 50, "Type": "Card", "refId": "card_tu_strike" },
+      { "threshold": 100, "Type": "Card", "refId": "card_tu_stun" },
+      { "threshold": 150, "Type": "Card", "refId": "card_tu_armor" }
     ],
     "coreEffect": {
       "effectId": "effect_wu_tiger_fist",
@@ -201,9 +201,9 @@
     "maxPoint": 180,
     "completeness": 1.0,
     "points": [
-      { "threshold": 50, "Type": "Card", "refId": "card_form_qiang_ci" },
-      { "threshold": 100, "Type": "Card", "refId": "card_form_qiang_sao" },
-      { "threshold": 150, "Type": "Card", "refId": "card_jin_charge" }
+      { "threshold": 50, "Type": "Card", "refId": "card_jin_charge" },
+      { "threshold": 100, "Type": "Card", "refId": "card_jin_armor" },
+      { "threshold": 150, "Type": "Card", "refId": "card_tu_slow" }
     ],
     "coreEffect": {
       "effectId": "effect_wu_iron_spear",
@@ -220,7 +220,7 @@
     "maxPoint": 180,
     "completeness": 1.0,
     "points": [
-      { "threshold": 50, "Type": "Card", "refId": "card_fist_block" },
+      { "threshold": 50, "Type": "Card", "refId": "card_tu_block" },
       { "threshold": 100, "Type": "Card", "refId": "card_tu_armor" },
       { "threshold": 150, "Type": "Card", "refId": "card_jin_armor" }
     ],
@@ -240,7 +240,7 @@
     "maxPoint": 150,
     "completeness": 1.0,
     "points": [
-      { "threshold": 40, "Type": "Card", "refId": "card_form_ci_quan" },
+      { "threshold": 40, "Type": "Card", "refId": "card_shui_freeze" },
       { "threshold": 80, "Type": "Card", "refId": "card_shui_freeze" },
       { "threshold": 120, "Type": "Card", "refId": "card_tu_slow" }
     ],
@@ -259,7 +259,7 @@
     "maxPoint": 150,
     "completeness": 1.0,
     "points": [
-      { "threshold": 40, "Type": "Card", "refId": "card_blade_block" },
+      { "threshold": 40, "Type": "Card", "refId": "card_mu_stab" },
       { "threshold": 80, "Type": "Card", "refId": "card_mu_haste" },
       { "threshold": 120, "Type": "Card", "refId": "card_mu_heal_wound" }
     ],
@@ -278,7 +278,7 @@
     "maxPoint": 150,
     "completeness": 1.0,
     "points": [
-      { "threshold": 40, "Type": "Card", "refId": "card_form_dao_qi" },
+      { "threshold": 40, "Type": "Card", "refId": "card_mu_convert" },
       { "threshold": 80, "Type": "Card", "refId": "card_mu_vulnerable" },
       { "threshold": 120, "Type": "Card", "refId": "card_shui_weakness" }
     ],

@@ -36,11 +36,13 @@ namespace UnityWorld.Game.Domain.Combat
                         CardDeck.Add(card);
                         card.Owner = this;
                         LogMgr.Dbg("[CombatNpc:{0}] 卡组新增卡牌: {1}", card.DisplayName, card.Id);
+                        LogMgr.Dbg("[CombatNpc:{0}] 当前SP: {1}", GetName(), GetSp());
                         break;
 
                     case ComabtCardDeckChangeType.Remove:
                         CardDeck.Remove(card);
                         LogMgr.Dbg("[CombatNpc:{0}] 卡组移除卡牌: {1}", card.DisplayName, card.Id);
+                        LogMgr.Dbg("[CombatNpc:{0}] 当前SP: {1}", GetName(), GetSp());
                         break;
 
                     case ComabtCardDeckChangeType.Displace:
@@ -67,6 +69,7 @@ namespace UnityWorld.Game.Domain.Combat
                         break;
                 }
             }
+            
         }
     }
 }

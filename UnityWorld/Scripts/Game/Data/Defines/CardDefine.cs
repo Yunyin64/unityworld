@@ -37,5 +37,9 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("effectIds")]
         public List<string> EffectIds { get; set; } = [];
 
+        /// <summary>附加卡牌 ID 列表（引用其他 CardDefine 的 ID）</summary>
+        [JsonPropertyName("attachedCardIds")]
+        public List<string> AttachedCardIds { get; set; } = [];
+
     }
 }

@@ -98,6 +98,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 ApplyDamage(damageInfos.Dequeue());
             }
+
         }
 
         /// <summary>
@@ -108,6 +109,12 @@ namespace UnityWorld.Game.Domain.Combat
             var finalval = info.Damage;
             finalval = ApplyShieldAbsorb(info);
             Hp -= finalval;
+            Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
+
+            if (Hp <= 0)
+            {
+                HandleHpZero(info);
+            }
         }
 
         

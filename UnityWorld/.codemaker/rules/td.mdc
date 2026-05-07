@@ -8,3 +8,4 @@ alwaysApply: true
 tools\view_class.py 是看类型的好工具，cd f:\Openclaw\UnityWorld\UnityWorld && python tools\view_class.py Npc
 
 用powershell时不需要cat，这里是windows
+<Nullable>disable</Nullable>

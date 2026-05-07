@@ -1,0 +1,27 @@
+-- ══════════════════════════════════════════════════════════════
+-- 回灵
+-- 立刻抽取3点MP转化为灵元
+-- ══════════════════════════════════════════════════════════════
+
+local card = setmetatable({}, { __index = CardBase })
+
+card.CardData = {
+    Size = 1,
+    Cooldown = 5,
+    CardType = "FaShu",
+    ManaCost = { Huo = 1 },
+}
+
+card.Keywords = {}
+
+function card:OnContest(ctx)
+end
+
+function card:OnApply(ctx)
+    Draw(ctx, 3)
+end
+
+function card:OnTick(ctx)
+end
+
+return card

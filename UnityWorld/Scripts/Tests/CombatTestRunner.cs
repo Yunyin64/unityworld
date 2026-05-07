@@ -39,7 +39,7 @@ namespace UnityWorld.Game.Domain.Combat
             Console.WriteLine($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
 
             // ── 为 NPC 添加功法获得卡组 ──────────────────────
-            CultivationMgr.Instance.AddCultivation(npcA, "wu_tiger_fist");
+            CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
             CultivationMgr.Instance.AddCultivation(npcA, "wu_stone_body");
 
             CultivationMgr.Instance.AddCultivation(npcB, "ling_flame_heart");

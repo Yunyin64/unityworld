@@ -101,6 +101,7 @@ namespace UnityWorld.Game.Domain.Combat
             Log($"  直击: [{attacker.GetName()}]{contestData} → [{target.GetName()}]");
             var ctx = new DamageInfo(contestData);
             ctx.Damage = contestData.ContestValue;
+            AddDamage(ctx);
             
             }
             // 重置来源卡 CD
@@ -243,13 +244,13 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>
         /// HP 清零处理：根据伤害来源选择对应伤势卡，塞入卡组，恢复 50% HP。
         /// </summary>
-        public void HandleHpZero(CombatNpc npc, DamageInfo ctx)
+        public void HandleHpZero( DamageInfo ctx)
         {
             // 根据伤害来源的元素/物理类型选择对应的伤势卡 ID
             string woundCardId = ResolveWoundCardId(ctx);
             AddWound(woundCardId);
             // HP 恢复 50%
-            npc.Hp = npc.GetCombatHpMax() * 0.5f;
+            Hp = GetCombatHpMax() * 0.5f;
          }
         
         public CombatCard AddWound(string woundCardId)

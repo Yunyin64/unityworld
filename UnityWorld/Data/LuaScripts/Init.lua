@@ -55,3 +55,63 @@ SelfDamage = function(ctx, value)
     ctx:Set("DamageValue", tonumber(value))
     API:Execute("SelfDamage", ctx)
 end
+
+-- ── 效果类包装函数 ──────────────────────────────────────────
+
+--- 充能目标卡牌（减少CD）
+--- @param ctx APIContext
+--- @param cards table<CombatCard> 目标卡牌列表
+--- @param reduceTick number 减少的tick数
+Charge = function(ctx, cards, reduceTick)
+    ctx:Set("TargetCard", cards)
+    ctx:Set("ReduceTick", tonumber(reduceTick))
+    API:Execute("Charge", ctx)
+end
+
+--- 破甲：消除对方护盾值
+--- @param ctx APIContext
+--- @param value number 破甲值
+ArmorBreak = function(ctx, value)
+    ctx:Set("BreakValue", tonumber(value))
+    API:Execute("ArmorBreak", ctx)
+end
+
+--- 冻结目标卡牌
+--- @param ctx APIContext
+--- @param card CombatCard 目标卡牌
+--- @param freezeTime number 冻结秒数
+Freeze = function(ctx, card, freezeTime)
+    ctx:Set("TargetCard", card)
+    ctx:Set("FreezeTime", tonumber(freezeTime))
+    API:Execute("Freeze", ctx)
+end
+
+--- 减速目标卡牌
+--- @param ctx APIContext
+Slow = function(ctx)
+    API:Execute("Slow", ctx)
+end
+
+--- 立刻将MP转化为灵元
+--- @param ctx APIContext
+--- @param amount number 转化数量
+Draw = function(ctx, amount)
+    ctx:Set("Amount", tonumber(amount))
+    API:Execute("Draw", ctx)
+end
+
+--- 给目标NPC添加Buff
+--- @param ctx APIContext
+--- @param target CombatNpc 目标NPC
+--- @param buffId string Buff ID
+--- @param stacks number 层数
+--- @param duration number 持续时间（可选，-1为永久）
+AddNpcBuff = function(ctx, target, buffId, stacks, duration)
+    ctx:Set("Target", target)
+    ctx:Set("BuffId", buffId)
+    ctx:Set("Stacks", tonumber(stacks))
+    if duration then
+        ctx:Set("Duration", tonumber(duration))
+    end
+    API:Execute("AddNpcBuff", ctx)
+end

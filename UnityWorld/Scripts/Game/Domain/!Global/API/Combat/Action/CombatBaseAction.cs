@@ -90,9 +90,20 @@ namespace UnityWorld.Game.Domain
         // ── 破甲/护盾类 ──────────────────────────────────────
 
         /// <summary>破甲：消除对方护盾值。参数：BreakValue(Int)</summary>
-        [APIFunc("ArmorBreak", APIType.Action, "消除对方护盾值", Scope.CombatNpc)]
+        [APIFunc("ArmorBreak", APIType.Action, "消除对方护盾值", Scope.CombatNpc, "BreakValue:Int")]
         public static APIContext ArmorBreak( APIContext ctx)
         {
+            var caster = ctx.Caster;
+            if (caster == null) return ctx;
+
+            int breakValue = ctx.GetValue("BreakValue", 0);
+            var target = caster.Target;
+            if (target == null) return ctx;
+
+            float actual = Math.Min(target.ShieldValue, breakValue);
+            if (actual > 0)
+                target.ChangeShield(-actual);
+
             return ctx;
         }
 

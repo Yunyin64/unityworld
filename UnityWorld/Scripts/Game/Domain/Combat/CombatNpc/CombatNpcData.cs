@@ -12,7 +12,7 @@ namespace UnityWorld.Game.Domain.Combat
         public  float ShieldValue { get; private  set; }
         private float Hp { get; set; }
         private float Mp { get; set; }
-        private float Sp { get; set; }
+        private float Sp { get ; set; }
 
         public int GetHp(){return (int)Hp;}
         public int GetCombatHpMax(){return GetHpMax();}

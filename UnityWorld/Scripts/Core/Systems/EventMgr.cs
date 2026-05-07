@@ -15,7 +15,7 @@ namespace UnityWorld.Core
         // ── 单例 ─────────────────────────────────────────────
 
         /// <summary>全局单例，使用前请做空检查</summary>
-        public static EventMgr? Instance { get; private set; }
+        public static EventMgr Instance { get; private set; }
 
         /// <inheritdoc/>
         public string Name => "EventMgr";
