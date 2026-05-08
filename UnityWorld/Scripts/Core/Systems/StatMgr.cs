@@ -62,7 +62,7 @@ namespace UnityWorld.Core
             var block = new StatBlock();
             if(!_Blocks.ContainsKey(objectType.Name)) _Blocks[objectType.Name] = new();
             _Blocks[objectType.Name][id] = block;
-
+            block.InitType(objectType.Name);
             return block;
         }
 

@@ -1,27 +1,5 @@
 [
   {
-    "ID": "reputation",
-    "DisplayName": "声望",
-    "Type": "Npc",
-    "DefaultValue": 0,
-    "MinValue": 0,
-    "MaxValue": 9999,
-    "DisplayFormat": "Integer",
-    "Category": "社会",
-    "Description": "社会影响力，影响 NPC 在社会中的地位"
-  },
-  {
-    "ID": "wealth",
-    "DisplayName": "财富",
-    "Type": "Npc",
-    "DefaultValue": 0,
-    "MinValue": 0,
-    "MaxValue": null,
-    "DisplayFormat": "Integer",
-    "Category": "社会",
-    "Description": "持有金钱量，支持累加操作"
-  },
-  {
     "ID": "resistance_fire",
     "DisplayName": "火抗性",
     "Type": "Npc",
@@ -119,38 +97,5 @@
     "DisplayFormat": "Float",
     "Category": "基础",
     "Description": "直击CD"
-  },
-  {
-    "ID": "HpMaxAdj",
-    "DisplayName": "Hp修正",
-    "Type": "Npc",
-    "DefaultValue": 0,
-    "MinValue": -9999,
-    "MaxValue": 9999,
-    "DisplayFormat": "Float",
-    "Category": "基础",
-    "Description": "Hp修正"
-  },
-  {
-    "ID": "MpMaxAdj",
-    "DisplayName": "Mp修正",
-    "Type": "Npc",
-    "DefaultValue": 0,
-    "MinValue": -9999,
-    "MaxValue": 9999,
-    "DisplayFormat": "Float",
-    "Category": "基础",
-    "Description": "Mp修正"
-  },
-  {
-    "ID": "SpMaxAdj",
-    "DisplayName": "SP修正",
-    "Type": "Npc",
-    "DefaultValue": 0,
-    "MinValue": -9999,
-    "MaxValue": 9999,
-    "DisplayFormat": "Float",
-    "Category": "基础",
-    "Description": "SP修正"
   }
 ]

@@ -1,3 +1,4 @@
+using NCalc;
 using UnityWorld.Game.Data;
 
 namespace UnityWorld.Core
@@ -11,11 +12,11 @@ namespace UnityWorld.Core
     public class StatEntry
     {
         // ── 字段 ─────────────────────────────────────────────
-
+        private readonly  StatBlock _ownerBlock;
         private readonly string _statId;
         private float _addValue;
         private  List<StatModifier> _modifiers = new();
-        private float _cachedFinalValue;
+        private float _cachedFinalValue => (float)_ownerBlock.GetFinalCache()[_statId];
         private bool _isDirty = true;
 
         // ── 属性 ─────────────────────────────────────────────
@@ -51,9 +52,10 @@ namespace UnityWorld.Core
 
         // ── 构造 ────────────────────────────────────────────
 
-        public StatEntry(string statId)
+        public StatEntry(string statId, StatBlock ownerBlock)
         {
             _statId = statId;
+            _ownerBlock = ownerBlock;
             _addValue = 0f;
         }
         public List<StatModifier> GetModifiers() => _modifiers;
@@ -105,6 +107,13 @@ namespace UnityWorld.Core
             // ① 从 Define 读取 DefaultValue
             var define = StatDefineMgr.Instance?.Get(_statId);
             float baseValue = define?.DefaultValue ?? 0f;
+            var formulaStr = define.ExtraBase;
+            if (!string.IsNullOrEmpty(formulaStr))
+            {
+                var expr = StatBlock.GetExpression(formulaStr);
+                expr.Parameters = _ownerBlock.GetFinalCache();
+                baseValue = Convert.ToSingle(expr.Evaluate()) + baseValue;
+            }
 
             // 累积 Modifier
             float flatSum = 0f;
@@ -153,9 +162,8 @@ namespace UnityWorld.Core
             result = MathF.Max(clampMin, MathF.Min(clampMax, result));
 
             // ⑥ Define 的 MinValue/MaxValue 硬夹紧在 StatBlock.Get 中应用
-
-            _cachedFinalValue = result;
             _isDirty = false;
+            _ownerBlock.GetFinalCache()[_statId] = result; // 更新缓存
         }
     }
 }

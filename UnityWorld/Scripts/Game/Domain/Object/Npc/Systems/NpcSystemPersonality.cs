@@ -11,22 +11,6 @@ namespace UnityWorld.Game.Domain
         protected override Dictionary<int, NpcPersonalityData> _dataTable { get; set; } = new();
 
         /// <summary>
-        /// 注册一个 NPC 的性格数据
-        /// </summary>
-        public override void Register(Npc npc, NpcPersonalityData data)
-        {
-            _dataTable[npc.Id] = data;
-        }
-
-        /// <summary>
-        /// 便捷注册：使用默认性格数据
-        /// </summary>
-        public void Register(Npc npc)
-        {
-            Register(npc, new NpcPersonalityData());
-        }
-
-        /// <summary>
         /// NPC 诞生时：创建性格数据，从 Soul 随机生成八维性格值。
         /// <para>
         /// 八维性格均从 [0, 1) 范围内由 Soul.Rng 随机生成，

@@ -1,3 +1,4 @@
+using NCalc;
 using UnityWorld.Game.Data;
 
 namespace UnityWorld.Core
@@ -15,6 +16,32 @@ namespace UnityWorld.Core
         public static readonly StatBlock Empty = new();
         private readonly Dictionary<string, StatEntry> _stats = new();
 
+        private  static Dictionary<string,Expression> _exprCache = new();
+        public static Expression GetExpression(string formulaStr)
+        {
+            if (_exprCache.TryGetValue(formulaStr, out var cachedExpr))
+            {
+                return cachedExpr;
+            }
+            else
+            {
+                var expr = new Expression(formulaStr);
+                _exprCache[formulaStr] = expr;
+                return expr;
+            }
+        }
+        private readonly Dictionary<string, object?> _finalCache = new();
+
+        public Dictionary<string, object?> GetFinalCache() => _finalCache;
+        public void InitType(string Type)
+        {
+            StatDefineMgr.Instance.GetAll().Where(d => d.Type == Type && d.BaseType == StatBaseType.Primary).ToList().ForEach(d =>
+            {
+                var entry = GetOrCreateEntry(d.ID);
+                if( string.IsNullOrEmpty(d.ExtraBase)) 
+                GetFinalCache()[d.ID] = entry.FinalValue; 
+            });
+        }
         /// <summary>
         /// 获取属性最终值
         /// 
@@ -25,7 +52,10 @@ namespace UnityWorld.Core
         public float Get(string statId, float defaultValue = 0f)
         {
             float rawValue;
-
+            var define = StatDefineMgr.Instance?.Get(statId);
+            if(define == null) return defaultValue;
+            
+            
             if (_stats.TryGetValue(statId, out var entry))
             {
                 // 有 Entry：使用其 FinalValue
@@ -34,7 +64,6 @@ namespace UnityWorld.Core
             else
             {
                 // 无 Entry：从 Define 读取 DefaultValue
-                var define = StatDefineMgr.Instance?.Get(statId);
                 rawValue = define?.DefaultValue ?? defaultValue;
             }
 
@@ -47,11 +76,7 @@ namespace UnityWorld.Core
         /// </summary>
         public void AddModifier(string statId, StatModifier modifier)
         {
-            if (!_stats.TryGetValue(statId, out var entry))
-            {
-                entry = new StatEntry(statId);
-                _stats[statId] = entry;
-            }
+            var  entry = GetOrCreateEntry(statId);
             entry.AddModifier(modifier);
         }
 
@@ -85,7 +110,7 @@ namespace UnityWorld.Core
         {
             if (!_stats.TryGetValue(statId, out var entry))
             {
-                entry = new StatEntry(statId);
+                entry = new StatEntry(statId,this);
                 _stats[statId] = entry;
             }
             return entry;
@@ -110,8 +135,7 @@ namespace UnityWorld.Core
         }
 
         /// <summary>创建一份独立的 StatBlock 快照（用于战斗等需要隔离的场景）</summary>
-    public StatBlock Snapshot()
-{
+    public StatBlock Snapshot(){
     var copy = new StatBlock();
     foreach (var (id, entry) in _stats)
     {
