@@ -87,16 +87,16 @@
 ### Requirement: NpcCultivationData 功法槽位（保留已有）
 `NpcCultivationData` SHALL 保留已有的功法槽位相关字段：
 - `CoreCultivationId` (string?)：核心功法定义 ID
-- `CultivationSlots` (List\<CultivationSlot\>)：功法槽位列表
+- `GongFaDatas` (List\<GongFa\>)：功法槽位列表
 - `ActiveSlotIndex` (int)：当前激活的槽位索引
 - `GetCoreSlot()`：获取核心功法槽位
 - `GetActiveSlot()`：获取当前激活的修炼槽位
 
-`CultivationSlot` 类定义保持不变，与 `NpcCultivationData` 一起迁移到 `Npc/Data/NpcCultivationData.cs`。
+`GongFa` 类定义保持不变，与 `NpcCultivationData` 一起迁移到 `Npc/Data/NpcCultivationData.cs`。
 
 #### Scenario: 功法槽位功能不变
 - **WHEN** 通过 CultivationMgr.AddCultivation 添加功法
-- **THEN** NpcCultivationData.CultivationSlots MUST 正确记录功法，GetCoreSlot() MUST 返回核心功法
+- **THEN** NpcCultivationData.GongFaDatas MUST 正确记录功法，GetCoreSlot() MUST 返回核心功法
 
 ### Requirement: NpcSystemPractice 管理 NpcCultivationData
 `NpcSystemPractice` SHALL 提供以下能力：
@@ -117,12 +117,12 @@
 - **THEN** IsLifespanExhausted MUST 返回 true
 
 ### Requirement: NpcCultivationData 独立文件
-`NpcCultivationData` 和 `CultivationSlot` SHALL 定义在 `Scripts/Game/Domain/Object/Npc/Data/NpcCultivationData.cs` 中。
+`NpcCultivationData` 和 `GongFa` SHALL 定义在 `Scripts/Game/Domain/Object/Npc/Data/NpcCultivationData.cs` 中。
 `BaseProperty` struct SHALL 定义在同一文件中。
 `ElementalAffinity` struct SHALL 定义在同一文件中。
 原 `Scripts/Game/Domain/GamePlay/Practice/NpcCultivationData.cs` 的内容 SHALL 迁移至此。
 
 #### Scenario: 文件结构
 - **WHEN** 检查文件系统
-- **THEN** `Npc/Data/NpcCultivationData.cs` MUST 存在且包含 NpcCultivationData、CultivationSlot、BaseProperty、ElementalAffinity
+- **THEN** `Npc/Data/NpcCultivationData.cs` MUST 存在且包含 NpcCultivationData、GongFa、BaseProperty、ElementalAffinity
 - **THEN** 原 `GamePlay/Practice/NpcCultivationData.cs` 内容 MUST 被清空或重定向（不删除文件）

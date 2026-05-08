@@ -15,7 +15,8 @@ namespace UnityWorld.Game.Domain
     {
         public static CardMgr Instance { get; private set; }
 
-        public SoulData Soul { get; set; }        private readonly Rng _rng = new();
+        public SoulData Soul { get; set; }      
+        private readonly Rng _rng = new();
 
         private static readonly JsonSerializerOptions _jsonOpts = new()
         {
@@ -31,24 +32,13 @@ namespace UnityWorld.Game.Domain
         }
 
         // ── 从 Define 实例化 ──────────────────────────────────
-
-        /// <summary>
-        /// 从 CardDefine 实例化一张 Card，加入管理并返回。
-        /// CardDefine → 遍历 EffectIds → 每个 EffectDefine 构造 EffectData → 拼 TagBag。
-        /// </summary>
-        public Card InstantiateFromDefine(string cardDefineId)
+        public Card InstantiateFromDefine(CardDefine cardDefine)
         {
-            var cardDefine = CardDefineMgr.Instance?.Get(cardDefineId);
-            if (cardDefine == null)
-            {
-                LogMgr.Err("[CardMgr] 找不到 CardDefine：{0}", cardDefineId);
-                return null;
-            }
             var cardid = Soul.NewId();
             var card = new Card
             {
                 Id = cardid,
-                DefineId = cardDefineId,
+                DefineId = cardDefine.ID,
                 DisplayName = cardDefine.DisplayName,
                 Stats = StatMgr.Instance.CreateBlock(cardid,GetType()),
                 BaseData = new CardBaseData
@@ -64,6 +54,21 @@ namespace UnityWorld.Game.Domain
 
             Add(card.Id,card);
             return card;
+        }
+
+        /// <summary>
+        /// 从 CardDefine 实例化一张 Card，加入管理并返回。
+        /// CardDefine → 遍历 EffectIds → 每个 EffectDefine 构造 EffectData → 拼 TagBag。
+        /// </summary>
+        public Card InstantiateFromDefine(string cardDefineId)
+        {
+            var cardDefine = CardDefineMgr.Instance?.Get(cardDefineId);
+            if (cardDefine == null)
+            {
+                LogMgr.Err("[CardMgr] 找不到 CardDefine：{0}", cardDefineId);
+                return null;
+            }
+            return InstantiateFromDefine(cardDefine);
         }
 
 

@@ -9,23 +9,23 @@ namespace UnityWorld.Game.Domain
     {// ── 功法槽位 ────────────────────────────────────
 
         /// <summary>持有的功法列表</summary>
-        public List<CultivationSlot> AllSlots { get; set; } = [];
+        public List<GongFa> AllSlots { get; set; } = [];
 
         /// <summary>激活的功法列表</summary>
-        public List<CultivationSlot> ActiveSlots { get; set; } = [];
+        public List<GongFa> ActiveSlots { get; set; } = [];
 
         public NpcGongFaData Clone()
         {
             var copy = (NpcGongFaData)MemberwiseClone();
-            copy.AllSlots = new List<CultivationSlot>(AllSlots);
-            copy.ActiveSlots = new List<CultivationSlot>(ActiveSlots);
+            copy.AllSlots = new List<GongFa>(AllSlots);
+            copy.ActiveSlots = new List<GongFa>(ActiveSlots);
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
         public void Log()
         {
-            LogMgr.Dbg("┌── GongFaData · 功法数据 ──────────────────────────");
+            LogMgr.Dbg("┌── GongFa · 功法数据 ──────────────────────────");
             LogMgr.Dbg("│  持有功法({0}):  [{1}]",
                 AllSlots.Count,
                 AllSlots.ToInfoString());
@@ -39,8 +39,8 @@ namespace UnityWorld.Game.Domain
     public partial class Npc
     {
         
-        public List<CultivationSlot> GetAllSlots() =>GongFaData.AllSlots;
+        public List<GongFa> GetAllSlots() =>GongFa.AllSlots;
         
-        public List<CultivationSlot> GetActiveSlots() =>GongFaData.ActiveSlots;
+        public List<GongFa> GetActiveSlots() =>GongFa.ActiveSlots;
     }
 }

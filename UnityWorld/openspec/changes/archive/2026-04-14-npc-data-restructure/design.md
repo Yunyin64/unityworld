@@ -38,7 +38,7 @@ NpcFactionData       ←→ NpcSystemFaction   （社会身份，TODO）
 
 ### 2. NpcCultivationData 迁移到 Npc/Data/，CultivationMgr 保持原位
 
-**选择**：`NpcCultivationData.cs`（含 `CultivationSlot`）从 `GamePlay/Practice/` 迁移到 `Npc/Data/`。`CultivationMgr` 保留在 `GamePlay/Practice/`。
+**选择**：`NpcCultivationData.cs`（含 `GongFa`）从 `GamePlay/Practice/` 迁移到 `Npc/Data/`。`CultivationMgr` 保留在 `GamePlay/Practice/`。
 
 **原因**：`NpcCultivationData` 是 NPC 实体的运行时数据，逻辑上属于 NPC 领域。`CultivationMgr` 是跨实体的功法业务管理器，保留在 GamePlay 层合理。
 

@@ -53,6 +53,6 @@ public void Log()
 - 访问器的职责是**简化外部调用路径**，让使用者不必了解 Data 的嵌套结构
 - **必须为 Data 类中每一个 public 字段/属性都生成对应的访问器**，不要遗漏
 - 基本值类型/字符串字段 → `Get{Name}()` 方法
-- 子 Data 类型字段 → 属性级别的 getter（如 `public NpcGongFaData GongFaData => CultivationData.GongFaData;`）
+- 子 Data 类型字段 → 属性级别的 getter（如 `public NpcGongFaData GongFa => CultivationData.GongFa;`）
 - struct 类型字段 → 如果 struct 有多个子字段，为每一个子字段也生成独立的 getter
 - 枚举类型字段 → 同样生成 `Get{Name}()` 方法

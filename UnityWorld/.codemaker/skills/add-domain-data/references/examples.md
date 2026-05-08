@@ -97,7 +97,7 @@ namespace UnityWorld.Game.Domain
         public PracticePath Path { get; set; } = PracticePath.None;
         /// <summary>修行基础属性</summary>
         public BaseProperty Properties { get; set; } = BaseProperty.Zero;
-        public NpcGongFaData GongFaData { get; set; } = new();
+        public NpcGongFaData GongFa { get; set; } = new();
         public NpcPraticeData PracticeData { get; set; } = new();
         public void Log() { /* TODO */ }
     }
@@ -106,7 +106,7 @@ namespace UnityWorld.Game.Domain
     {
         public PracticePath GetPath() => CultivationData.Path;
         public int GetQixue() => CultivationData.Properties.QiXue;
-        public NpcGongFaData GongFaData => CultivationData.GongFaData;
+        public NpcGongFaData GongFa => CultivationData.GongFa;
         public NpcPraticeData PracticeData => CultivationData.PracticeData;
     }
 }

@@ -1,5 +1,65 @@
 [
   {
+    "ID": "AffinityHuo",
+    "DisplayName": "火灵气亲和",
+    "Type": "Npc",
+    "BaseType": "Primary",
+    "DefaultValue": 0,
+    "MinValue": 0,
+    "MaxValue": 1000,
+    "DisplayFormat": "Integer",
+    "Category": "基础",
+    "Description": "火灵气亲和度"
+  },
+  {
+    "ID": "AffinityShui",
+    "DisplayName": "水灵气亲和",
+    "Type": "Npc",
+    "BaseType": "Primary",
+    "DefaultValue": 0,
+    "MinValue": 0,
+    "MaxValue": 1000,
+    "DisplayFormat": "Integer",
+    "Category": "基础",
+    "Description": "水灵气亲和度"
+  },
+  {
+    "ID": "AffinityMu",
+    "DisplayName": "木灵气亲和",
+    "Type": "Npc",
+    "BaseType": "Primary",
+    "DefaultValue": 0,
+    "MinValue": 0,
+    "MaxValue": 1000,
+    "DisplayFormat": "Integer",
+    "Category": "基础",
+    "Description": "木灵气亲和度"
+  },
+  {
+    "ID": "AffinityJin",
+    "DisplayName": "金灵气亲和",
+    "Type": "Npc",
+    "BaseType": "Primary",
+    "DefaultValue": 0,
+    "MinValue": 0,
+    "MaxValue": 1000,
+    "DisplayFormat": "Integer",
+    "Category": "基础",
+    "Description": "金灵气亲和度"
+  },
+  {
+    "ID": "AffinityTu",
+    "DisplayName": "土灵气亲和",
+    "Type": "Npc",
+    "BaseType": "Primary",
+    "DefaultValue": 0,
+    "MinValue": 0,
+    "MaxValue": 1000,
+    "DisplayFormat": "Integer",
+    "Category": "基础",
+    "Description": "土灵气亲和度"
+  },
+  {
     "ID": "Reputation",
     "DisplayName": "声望",
     "Type": "Npc",
@@ -30,7 +90,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -42,7 +102,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -54,7 +114,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -66,7 +126,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -78,7 +138,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -90,7 +150,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -102,7 +162,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {
@@ -114,7 +174,7 @@
     "MinValue": 1,
     "MaxValue": 999,
     "DisplayFormat": "Integer",
-    "Category": "Base",
+    "Category": "基础",
     "Description": "基础属性八维"
   },
   {

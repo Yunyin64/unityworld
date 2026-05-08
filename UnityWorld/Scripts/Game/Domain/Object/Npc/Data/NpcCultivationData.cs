@@ -72,7 +72,6 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>五行亲和</summary>
         public ElementalAffinity Affinity { get; set; } = ElementalAffinity.Zero;
-
         public NpcGongFaData GongFaData { get; set; } = new();
         public NpcPraticeData PracticeData { get; set; } = new();
 
@@ -114,8 +113,15 @@ namespace UnityWorld.Game.Domain
         public int GetHpMax() =>  (int)Stats.Get("HpMax");
         public int GetMpMax() =>  (int)Stats.Get("MpMax");
         public int GetSpMax() => (int)Stats.Get("SpMax");
-        public ElementalAffinity GetAffinity() => CultivationData.Affinity;
-        public NpcGongFaData GongFaData =>CultivationData.GongFaData;
+        public ElementalAffinity GetAffinity() => new ElementalAffinity
+        {
+            Jin = CultivationData.Affinity.Jin+(int)Stats.Get("AffinityJin"),
+            Mu = CultivationData.Affinity.Mu+(int)Stats.Get("AffinityMu"),
+            Shui = CultivationData.Affinity.Shui+(int)Stats.Get("AffinityShui"),
+            Huo = CultivationData.Affinity.Huo+(int)Stats.Get("AffinityHuo"),
+            Tu = CultivationData.Affinity.Tu+(int)Stats.Get("AffinityTu")
+        };
+        public NpcGongFaData GongFa =>CultivationData.GongFaData;
         public NpcPraticeData PracticeData =>CultivationData.PracticeData;
     }
 }

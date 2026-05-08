@@ -38,9 +38,6 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void AddCultivation(Npc npc, string defineId, int currentPoint = -1)
         {
-            var data = npc.CultivationData;
-            if (data == null) return;
-
             // 查找功法定义
             var define = CultivationDefineMgr.Instance.Get(defineId);
             if (define == null)
@@ -48,23 +45,14 @@ namespace UnityWorld.Game.Domain
                 LogMgr.Warn("[CultivationMgr] 找不到功法定义：{0}", defineId);
                 return;
             }
-
             // 如果未指定修炼点数，默认为满（maxPoint），即所有节点解锁
             var point = currentPoint < 0 ? define.MaxPoint : currentPoint;
-
-            var slot = new CultivationSlot
+            var slot = new GongFa 
             {
                 DefineId = defineId,
                 CurrentPoint = point
             };
-            data.GongFaData.AllSlots.Add(slot);
-            data.GongFaData.ActiveSlots.Add(slot);
-
-            // 如果当前没有修炼功法，自动设为当前修炼功法
-            if (data.PracticeData.NowCultivationSlot == null)
-            {
-                data.PracticeData.NowCultivationSlot = slot;
-            }
+            npc.AddGongFa(slot);
 
             // 遍历功法节点，对已解锁的 Card 类型节点发牌
             GrantCardsFromCultivation(npc, define, point);
@@ -76,20 +64,10 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void RemoveCultivation(Npc npc, string defineId)
         {
-            var data = npc.CultivationData;
-            if (data == null) return;
 
-            var slot = data.GongFaData.AllSlots.FirstOrDefault(s => s.DefineId == defineId);
+            var slot = npc.GetAllSlots().FirstOrDefault(s => s.DefineId == defineId);
             if (slot == null) return;
-
-            data.GongFaData.AllSlots.Remove(slot);
-            data.GongFaData.ActiveSlots.Remove(slot);
-
-            if (data.PracticeData.NowCultivationSlot == slot)
-            {
-                data.PracticeData.NowCultivationSlot =
-                    data.GongFaData.ActiveSlots.FirstOrDefault();
-            }
+            npc.RemoveGongFa(slot);
 
             LogMgr.Dbg("[CultivationMgr] {0} 失去功法 {1}", npc, defineId);
         }
@@ -100,10 +78,8 @@ namespace UnityWorld.Game.Domain
         /// <returns>实际增加的点数（已满则返回 0）</returns>
         public int AddProgress(Npc npc, int amount)
         {
-            var data = npc.CultivationData;
-            if (data == null) return 0;
 
-            var slot = data.PracticeData.NowCultivationSlot;
+            var slot = npc.GetNowGongFaData();
             if (slot == null) return 0;
 
             var define = CultivationDefineMgr.Instance?.Get(slot.DefineId);
@@ -130,17 +106,15 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public bool SwitchCultivation(Npc npc, string defineId)
         {
-            var data = npc.CultivationData;
-            if (data == null) return false;
 
-            var slot = data.GongFaData.ActiveSlots.FirstOrDefault(s => s.DefineId == defineId);
+            var slot = npc.GetAllSlots().FirstOrDefault(s => s.DefineId == defineId);
             if (slot == null)
             {
                 LogMgr.Warn("[CultivationMgr] {0} 未激活功法 {1}，无法切换", npc, defineId);
                 return false;
             }
 
-            data.PracticeData.NowCultivationSlot = slot;
+            npc.SetNowGongFa(slot);
             return true;
         }
 
@@ -163,8 +137,6 @@ namespace UnityWorld.Game.Domain
             var cardMgr = CardMgr.Instance;
             if (cardMgr == null) return;
 
-            var cardData = npc.CardData;
-            if (cardData == null) return;
 
             foreach (var pt in define.Points)
             {
@@ -172,13 +144,10 @@ namespace UnityWorld.Game.Domain
                 if (pt.Threshold <= oldPoint) continue;
 
                 if (pt.Type == CultivationPointType.Card && !string.IsNullOrEmpty(pt.RefId))
-                {
-                    var card = cardMgr.InstantiateFromDefine(pt.RefId);
-                    if (card != null)
-                    {
-                        cardData.AllCards.Add(card);
-                        LogMgr.Dbg("[CultivationMgr] {0} 功法解锁卡牌 {1}", npc, pt.RefId);
-                    }
+                {  
+                    npc.GainCard(pt.RefId);
+                    LogMgr.Dbg("[CultivationMgr] {0} 功法解锁卡牌 {1}", npc, pt.RefId);
+                    
                 }
                 // 后续扩展：BehaviorCard / Modifier / Story 类型在此追加分支
             }

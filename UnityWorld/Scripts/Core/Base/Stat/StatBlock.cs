@@ -72,6 +72,40 @@ namespace UnityWorld.Core
         }
 
         /// <summary>
+        /// 永久修改属性基础值（仅 Primary 属性）
+        /// 用于升级成长、永久道具、不可逆奖励等场景
+        /// Derived 属性请勿调用此方法（其 Base 由公式驱动）
+        /// </summary>
+        public void AddBase(string statId, float amount)
+        {
+            var define = StatDefineMgr.Instance?.Get(statId);
+            if (define == null) return;
+            if (define.BaseType != StatBaseType.Primary)
+            {
+                LogMgr.Warn("StatBlock", $"尝试对非 Primary 属性 [{statId}] 调用 AddBase，已忽略。Derived 属性请使用公式驱动。");
+                return;
+            }
+            var entry = GetOrCreateEntry(statId);
+            entry.Add(amount);
+        }
+
+        /// <summary>
+        /// 设置属性基础值（仅 Primary 属性）
+        /// </summary>
+        public void SetBase(string statId, float value)
+        {
+            var define = StatDefineMgr.Instance?.Get(statId);
+            if (define == null) return;
+            if (define.BaseType != StatBaseType.Primary)
+            {
+                LogMgr.Warn("StatBlock", $"尝试对非 Primary 属性 [{statId}] 调用 SetBase，已忽略。Derived 属性请使用公式驱动。");
+                return;
+            }
+            var entry = GetOrCreateEntry(statId);
+            entry.SetAdd(value);
+        }
+
+        /// <summary>
         /// 添加修正（惰性创建：不存在该属性时自动创建 Entry）
         /// </summary>
         public void AddModifier(string statId, StatModifier modifier)

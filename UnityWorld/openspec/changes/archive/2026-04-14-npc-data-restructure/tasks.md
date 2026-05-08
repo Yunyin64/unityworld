@@ -2,7 +2,7 @@
 
 - [ ] 1.1 新建 `Npc/Data/NpcBioData.cs`：定义精简后的 NpcBioData 类（Name, Gender, NpcType, AgeAccumulated, BirthTick, BaseMoveSpeed, AppearanceId, IsAlive, DeathTick），含 XML 注释和 TODO 标注
 - [ ] 1.2 新建 `Npc/Data/AppearanceData.cs`：定义 AppearanceData TODO 空类
-- [ ] 1.3 新建 `Npc/Data/NpcCultivationData.cs`：迁移并扩充 NpcCultivationData（含 CultivationSlot），新增 BaseProperty struct、ElementalAffinity struct、LifespanMax、SpiritRoot、IsInCultivation、HpMax/MpMax/SpMax、Get 便捷方法
+- [ ] 1.3 新建 `Npc/Data/NpcCultivationData.cs`：迁移并扩充 NpcCultivationData（含 GongFa），新增 BaseProperty struct、ElementalAffinity struct、LifespanMax、SpiritRoot、IsInCultivation、HpMax/MpMax/SpMax、Get 便捷方法
 - [ ] 1.4 新建 `Npc/Data/NpcFactionData.cs`：定义 NpcFactionData TODO 空类（含注释说明未来字段方向）
 
 ## 2. 清理原文件

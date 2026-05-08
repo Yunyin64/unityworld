@@ -7,11 +7,17 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcCardData : IDomainDataBase
     {
-        public List<Card> AllCards { get; set; } = [];
+        public List<int> AllCardIds { get; set; } = new();
+        public List<Card> AllCards { get; set; } = new();
 
+        public NpcCardData()
+        {
+            
+        }
         public NpcCardData Clone()
         {
             var copy = (NpcCardData)MemberwiseClone();
+            copy.AllCardIds = new List<int>(AllCardIds);
             copy.AllCards = new List<Card>(AllCards);
             return copy;
         }
@@ -29,5 +35,6 @@ namespace UnityWorld.Game.Domain
     public partial class Npc
     {
         public List<Card> GetAllCards() => CardData.AllCards;
+        public List<int> GetAllCardIds() => CardData.AllCardIds;
     }
 }

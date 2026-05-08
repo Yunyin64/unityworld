@@ -5,14 +5,15 @@ namespace UnityWorld.Game.Domain
     /// <summary>
     /// 修炼槽位：NPC 持有的功法实例
     /// </summary>
-    public class CultivationSlot:GameEntityBase
+    public class GongFa:IFormDefine<CultivationDefine>
     {
+        public string DisplayName { get; set; } = "";
+
         /// <summary>功法定义 ID</summary>
         public string DefineId { get; set; } = "";
 
         /// <summary>当前修炼点数</summary>
         public int CurrentPoint { get; set; } = 0;
-
         /// <summary>
         /// 获取已解锁的修炼节点
         /// </summary>
@@ -53,10 +54,6 @@ namespace UnityWorld.Game.Domain
 
         public override string ToString() => $"({DefineId})";
 
-        public override void LogAllInfo()
-        {
-            
-        }
     }
 
 }

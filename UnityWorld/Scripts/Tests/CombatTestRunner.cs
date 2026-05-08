@@ -45,8 +45,6 @@ namespace UnityWorld.Game.Domain.Combat
             CultivationMgr.Instance.AddCultivation(npcB, "ling_flame_heart");
             CultivationMgr.Instance.AddCultivation(npcB, "hun_frost_mind");
 
-            var deckA = npcA.CardData;
-            var deckB = npcB.CardData;
 
 
             // ── 发起战斗 ─────────────────────────────────────

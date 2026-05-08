@@ -14,11 +14,11 @@ namespace UnityWorld.Game.Domain
             Soul = new SoulData(guid);
             Stats = StatMgr.Instance.CreateBlock(Id,GetType());
         }
-        public NpcBioData BioData           => NpcMgr.Instance.BioSystem.GetData(Id);
-        public NpcBehaviorData BehaviorData     => NpcMgr.Instance.BehaviorSystem.GetData(Id);
-        public NpcCultivationData CultivationData           => NpcMgr.Instance.CultivationSystem.GetData(Id);
-        public NpcCardData CardData           => NpcMgr.Instance.CardSystem.GetData(Id);
-        public NpcPersonalityData PersonalityData           => NpcMgr.Instance.PersonalitySystem.GetData(Id);
+        protected NpcBioData BioData           => NpcMgr.Instance.BioSystem.GetData(Id);
+        protected NpcBehaviorData BehaviorData     => NpcMgr.Instance.BehaviorSystem.GetData(Id);
+        protected NpcCultivationData CultivationData           => NpcMgr.Instance.CultivationSystem.GetData(Id);
+        protected NpcCardData CardData           => NpcMgr.Instance.CardSystem.GetData(Id);
+        protected NpcPersonalityData PersonalityData           => NpcMgr.Instance.PersonalitySystem.GetData(Id);
          
         public SoulData Soul {get;set;}
         

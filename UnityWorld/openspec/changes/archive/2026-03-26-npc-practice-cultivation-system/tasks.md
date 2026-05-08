@@ -19,8 +19,8 @@
 
 ## 4. CultivationMgr 运行时骨架
 
-- [x] 4.1 创建 `NpcCultivationData` 类（在 Practice/ 目录）：含 Path、CurrentRealmLevel、RealmProgress、CoreCultivationId、CultivationSlots(List\<CultivationSlot\>)、ActiveSlotIndex
-- [x] 4.2 创建 `CultivationSlot` 类：含 DefineId、CurrentPoint、IsCore、GetUnlockedPoints() 方法
+- [x] 4.1 创建 `NpcCultivationData` 类（在 Practice/ 目录）：含 Path、CurrentRealmLevel、RealmProgress、CoreCultivationId、GongFaDatas(List\<GongFa\>)、ActiveSlotIndex
+- [x] 4.2 创建 `GongFa` 类：含 DefineId、CurrentPoint、IsCore、GetUnlockedPoints() 方法
 - [x] 4.3 创建 `Scripts/Game/Domain/GamePlay/Practice/CultivationMgr.cs`：实现 IDomainMgrBase，含单例 Instance、NPC 修炼数据字典、Register/GetNpcData/GetNpcPath/GetNpcRealmLevel/GetNpcCoreSlot 方法
 - [x] 4.4 CultivationMgr 的 Init/Begin/Tick/End 等生命周期方法保留占位（Tick 不实现逻辑）
 

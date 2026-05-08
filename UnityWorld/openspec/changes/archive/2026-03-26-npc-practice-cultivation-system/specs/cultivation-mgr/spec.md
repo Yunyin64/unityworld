@@ -13,15 +13,15 @@ CultivationMgr SHALL 管理每个 NPC 的修炼运行时数据（`NpcCultivation
 - `CurrentRealmLevel`（int）：当前境界等级
 - `RealmProgress`（int）：当前境界进度累计值
 - `CoreCultivationId`（string?）：核心功法的 Define ID
-- `CultivationSlots`（List\<CultivationSlot\>）：所有装备功法槽位（含核心）
+- `GongFaDatas`（List\<GongFa\>）：所有装备功法槽位（含核心）
 - `ActiveSlotIndex`（int）：当前正在修炼的功法槽位索引（AI 决策）
 
 #### Scenario: NPC 注册修炼数据
 - **WHEN** 调用 `CultivationMgr.Register(int npcId, PracticePath path, string coreCultivationId)`
 - **THEN** 系统 SHALL 为该 NPC 创建运行时修炼数据，道途为指定值，核心功法为指定 ID
 
-### Requirement: CultivationSlot 功法槽位
-系统 SHALL 提供 `CultivationSlot` 类，表示 NPC 持有的单本功法运行时状态，包含：
+### Requirement: GongFa 功法槽位
+系统 SHALL 提供 `GongFa` 类，表示 NPC 持有的单本功法运行时状态，包含：
 - `DefineId`（string）：对应的 CultivationDefine ID
 - `CurrentPoint`（int）：当前修炼点数
 - `IsCore`（bool）：是否为核心功法

@@ -1,3 +1,5 @@
+using UnityWorld.Game.Data;
+
 namespace UnityWorld.Game.Domain
 {
     /// <summary>
@@ -16,9 +18,21 @@ namespace UnityWorld.Game.Domain
             Register(npc, new NpcCardData());
         }
 
+        public void GainCard(NpcCardData data, string cardDefineId)
+        {
+            var card = CardMgr.Instance.InstantiateFromDefine(cardDefineId);
+            data.AllCardIds.Add(card.Id);
+            data.AllCards.Add(card);
+        }
+
         public override void OnTick(Npc npc, float deltaTime)
         {
             // TODO: 卡牌系统逻辑
         }
+    }
+
+    public partial class Npc
+    {
+        public void GainCard(string cardDefineId) => NpcMgr.Instance.CardSystem.GainCard(CardData, cardDefineId);
     }
 }
