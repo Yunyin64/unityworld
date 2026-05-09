@@ -12,9 +12,7 @@
         "Value": 5.0,
         "ValuePerStack": 2.0
       }
-    ],
-    "TriggerIds": [],
-    "ImplId": ""
+    ]
   },
   {
     "ID": "combat_debuff_burn",
@@ -22,8 +20,6 @@
     "Duration": 5.0,
     "MaxStack": 5,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "TriggerIds": [],
-    "ImplId": "burn"
+    "StatModifiers": []
   }
 ]

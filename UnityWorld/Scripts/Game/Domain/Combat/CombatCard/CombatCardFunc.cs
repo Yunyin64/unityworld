@@ -51,7 +51,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);
 
-            Log($"  [{Owner.GetName()}] 卡[{DisplayName}] 入槽: {contestData}");
+            Log($"  入槽: {contestData}  [{Owner.GetName()}] ");
 
             // 待发槽满 → 由 CombatNpc.ProcessContest() 统一处理挤出与对拼
         }

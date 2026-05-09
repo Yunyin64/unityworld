@@ -56,7 +56,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 简化格式：CardName|拼点类型|元素|数值
             string cardName = SourceCard?.DisplayName ?? ContestType.ToString();
             string element = Element.Equals(ElementType.None) ? "无" : Element.ToString();
-            return $"ContestData{cardName}|{ContestType}|{element}|{ContestValue:F0}";
+            return $"{cardName}|{ContestType}|{element}|{ContestValue:F0}";
         }
     }
 }

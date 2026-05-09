@@ -37,5 +37,9 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("attachedCardIds")]
         public List<string> AttachedCardIds { get; set; } = [];
 
+        /// <summary>关键词列表（如 Passive、OnHit 等，决定卡牌运行模式）</summary>
+        [JsonPropertyName("keywords")]
+        public List<string> Keywords { get; set; } = [];
+
     }
 }

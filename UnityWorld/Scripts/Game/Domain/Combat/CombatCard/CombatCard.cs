@@ -16,19 +16,32 @@ namespace UnityWorld.Game.Domain.Combat
         {
             InitializeLuaCards();
             //执行env的CardData覆写和keyword的应用
-            
+            RunKeywordHooks("OnPreStart");
         }
 
         public void Start()
         {
             Phase = CombatCardPhase.WaitResource;
-
-            //处理card的被动、关键词这些逻辑
+            RunKeywordHooks("OnStart");
         }
 
         public void Tick()
         {
-            
+            RunKeywordHooks("OnTick");
+
+            // 被动卡：仅调用 OnPassiveTick hook，跳过 CD 循环
+            if (Phase == CombatCardPhase.Passive)
+            {
+                CallLuaHook("OnPassiveTick", new APIContext
+                {
+                    SourceCard = this,
+                    Caster = Owner,
+                    Scene = null
+                });
+                Ticks["Main"]++;
+                return;
+            }
+
             if(Phase == CombatCardPhase.Finished) 
             Phase= CombatCardPhase.WaitResource;
             if(Phase == CombatCardPhase.WaitResource) CheckMana();
@@ -107,10 +120,66 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>
+        /// 设置卡牌 Phase（供 Lua 调用）。
+        /// 将字符串解析为 CombatCardPhase 枚举，解析失败时输出错误日志且不改变 Phase。
+        /// </summary>
+        public void SetPhase(string phaseName)
+        {
+            if (Enum.TryParse<CombatCardPhase>(phaseName, out var phase))
+            {
+                Phase = phase;
+            }
+            else
+            {
+                Log($"SetPhase 失败：无法解析 '{phaseName}' 为 CombatCardPhase");
+            }
+        }
+
+        /// <summary>
+        /// 遍历卡牌 Keywords 列表，查 LuaMgr 注册表调用对应 hook 函数。
+        /// keyword 未注册 → 报错日志；keyword 存在但无对应 hook → 静默跳过。
+        /// </summary>
+        private void RunKeywordHooks(string hookName)
+        {
+            var keywords = BaseData.Keywords;
+            if (keywords == null || keywords.Count == 0) return;
+
+            var luaMgr = LuaMgr.Instance;
+            if (luaMgr == null) return;
+
+            foreach (var kw in keywords)
+            {
+                var kwTable = luaMgr.GetKeyword(kw);
+                if (kwTable == null)
+                {
+                    Log($"Keyword '{kw}' 未注册");
+                    continue;
+                }
+
+                var func = kwTable[hookName] as NLua.LuaFunction;
+                if (func == null) continue; // hook 不存在，静默跳过
+
+                try
+                {
+                    func.Call(this, new APIContext
+                    {
+                        SourceCard = this,
+                        Caster = Owner,
+                        Scene = null
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Log($"Keyword '{kw}' hook '{hookName}' 异常: {ex.Message}");
+                }
+            }
+        }
+
 
         public void End()
         {
-             
+            RunKeywordHooks("OnEnd");
         }
         public void Cleanup()
         {

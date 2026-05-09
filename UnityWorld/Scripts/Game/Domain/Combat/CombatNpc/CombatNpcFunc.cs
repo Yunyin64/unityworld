@@ -90,17 +90,17 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 float shieldGain = contestData.ContestValue;
                 attacker.ChangeShield(shieldGain);
-                Log($"  溢出: [{attacker.GetName()}]{contestData} 叠甲+{shieldGain:F0}，当前Shield={attacker.ShieldValue:F0}");
+                Log($"  溢出: {contestData} 叠甲+{shieldGain:F0}，当前Shield={attacker.ShieldValue:F0}");
             }
 
             // ── Block 溢出：防值消失，不造成伤害，不触发攻击事件 ─────────
             if (contestData.ContestType == ContestType.Block)
             {
-                Log($"  溢出: [{attacker.GetName()}]{contestData} 防值溢出消失");
+                Log($"  溢出: {contestData} 防值溢出消失");
             }
             if (contestData.IsAttackType)
             {
-            Log($"  直击: [{attacker.GetName()}]{contestData} → [{target.GetName()}]");
+            Log($"  直击: {contestData} → [{target.GetName()}]");
             var ctx = new DamageInfo(contestData);
             ctx.Damage = contestData.ContestValue;
             ctx.TargetNpc.AddDamage(ctx);

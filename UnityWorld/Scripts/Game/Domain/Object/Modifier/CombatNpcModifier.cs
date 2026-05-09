@@ -20,13 +20,6 @@ namespace UnityWorld.Game.Domain
 
         // ── C. 触发机制 ─────────────────────────────────────
 
-        /// <summary>触发器定义 ID 列表（复用卡牌 TCA 体系，注册到 EventMgr）</summary>
-        public List<string> TriggerIds { get; set; } = new();
-
-        // ── D. 特殊实现 ─────────────────────────────────────
-
-        /// <summary>特殊实现标识（外部注册处理器查找键，如 "burn"、"transform"）</summary>
-        public string ImplId { get; set; } = "";
         public List<StatModifierEntry> StatModifiers { get ; set ; }
         public int MaxStack { get  ; set  ; }
         public int CurrentStack { get  ; set  ; }
@@ -49,8 +42,6 @@ namespace UnityWorld.Game.Domain
                 CurrentStack = 1,
                 RefreshOnStack = source.RefreshOnStack,
                 StatModifiers = source.StatModifiers,
-                TriggerIds = source.TriggerIds.ToList(),
-                ImplId = source.ImplId,
             };
     }
 

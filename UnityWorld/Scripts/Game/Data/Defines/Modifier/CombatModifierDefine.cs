@@ -36,17 +36,6 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("StatModifiers")]
         public List<StatModifierEntry> StatModifiers { get; set; } = new();
 
-        // ── C. 触发机制 ──────────────────────────────────────
-
-        /// <summary>触发器定义 ID 列表（复用卡牌 TCA 体系，注册到 EventMgr）</summary>
-        [JsonPropertyName("TriggerIds")]
-        public List<string> TriggerIds { get; set; } = new();
-
-        // ── D. 特殊实现 ──────────────────────────────────────
-
-        /// <summary>特殊实现标识（外部注册处理器查找键，如 "burn"、"stun"、"transform"）</summary>
-        [JsonPropertyName("ImplId")]
-        public string ImplId { get; set; } = "";
 
     }
 }

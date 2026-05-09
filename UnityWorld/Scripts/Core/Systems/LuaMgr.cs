@@ -34,6 +34,9 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public static readonly Dictionary<string, string> HookToEventId = new();
 
+        /// <summary>Keyword 注册表：keyword 名称 → 对应 Lua 脚本返回的 table</summary>
+        private Dictionary<string, LuaTable> _keywordRegistry = new();
+
         // ── 构造 ────────────────────────────────────────────────
 
         /// <summary>
@@ -61,6 +64,9 @@ namespace UnityWorld.Game.Domain
             // 加载 Init.lua（定义 CardBase、Attack 等全局函数）
             LoadInitScript();
 
+            // 加载 Keyword 注册表
+            LoadKeywords();
+
             LogMgr.Dbg("[LuaMgr] 初始化完成，Lua State 已创建");
         }
 
@@ -83,6 +89,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void End()
         {
+            _keywordRegistry.Clear();
             _luaState?.Dispose();
             _luaState = null;
             Instance = null;
@@ -181,6 +188,83 @@ namespace UnityWorld.Game.Domain
                 LogMgr.Err("[LuaMgr] LoadCardScript '{0}' 失败: {1}", cardId, ex.Message);
                 return null;
             }
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  Keyword 注册表
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 加载 Keyword 索引文件并逐个加载 keyword Lua 脚本，缓存到注册表。
+        /// 索引文件路径：Data/LuaScripts/Keywords/Keyword.lua
+        /// </summary>
+        private void LoadKeywords()
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var keywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
+            var indexPath = Path.Combine(keywordsDir, "Keyword.lua");
+
+            if (!File.Exists(indexPath))
+            {
+                LogMgr.Warn("[LuaMgr] Keywords/Keyword.lua 不存在: {0}，跳过 Keyword 加载", indexPath);
+                return;
+            }
+
+            try
+            {
+                var results = _luaState.DoFile(indexPath);
+                if (results == null || results.Length == 0 || results[0] is not LuaTable indexTable)
+                {
+                    LogMgr.Warn("[LuaMgr] Keywords/Keyword.lua 未返回 table");
+                    return;
+                }
+
+                foreach (var key in indexTable.Keys)
+                {
+                    var kwName = key.ToString();
+                    var kwRelPath = indexTable[key]?.ToString();
+                    if (string.IsNullOrEmpty(kwRelPath)) continue;
+
+                    var kwFilePath = Path.Combine(keywordsDir, $"{kwRelPath}.lua");
+                    if (!File.Exists(kwFilePath))
+                    {
+                        LogMgr.Err("[LuaMgr] Keyword 脚本不存在: {0} -> {1}", kwName, kwFilePath);
+                        continue;
+                    }
+
+                    try
+                    {
+                        var kwResults = _luaState.DoFile(kwFilePath);
+                        if (kwResults != null && kwResults.Length > 0 && kwResults[0] is LuaTable kwTable)
+                        {
+                            _keywordRegistry[kwName] = kwTable;
+                            LogMgr.Dbg("[LuaMgr] Keyword 加载成功: {0}", kwName);
+                        }
+                        else
+                        {
+                            LogMgr.Warn("[LuaMgr] Keyword '{0}' 脚本未返回 table", kwName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogMgr.Err("[LuaMgr] Keyword '{0}' 加载失败: {1}", kwName, ex.Message);
+                    }
+                }
+
+                LogMgr.Dbg("[LuaMgr] Keyword 注册表加载完成，共 {0} 个", _keywordRegistry.Count);
+            }
+            catch (Exception ex)
+            {
+                LogMgr.Err("[LuaMgr] Keywords/Keyword.lua 加载失败: {0}", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 查询 Keyword 注册表，返回对应的 LuaTable；未找到返回 null。
+        /// </summary>
+        public LuaTable GetKeyword(string name)
+        {
+            return _keywordRegistry.TryGetValue(name, out var table) ? table : null;
         }
 
     }

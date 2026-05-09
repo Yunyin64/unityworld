@@ -34,11 +34,15 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public List<string> Tags { get; set; } = [];
 
+        /// <summary>关键词列表（如 Passive 等，决定卡牌运行模式）</summary>
+        public List<string> Keywords { get; set; } = [];
+
         public CardBaseData Clone()
         {
             var copy = (CardBaseData)MemberwiseClone();
             copy.ManaCost = new Dictionary<ElementType, int>(ManaCost);
             copy.Tags = new List<string>(Tags);
+            copy.Keywords = new List<string>(Keywords);
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();
