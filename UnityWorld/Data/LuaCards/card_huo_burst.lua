@@ -20,8 +20,10 @@ end
 function card:OnApply(ctx)
     -- 对自身所有卡牌充能 10 tick（1s）
     local owner = ctx.Caster
-    local allCards = owner:GetAllCards()
-    Charge(ctx, allCards, 10)
+    local con,allCards = AllCard(ctx, owner)
+    if con then
+        Charge(ctx, allCards, 10)
+    end
 end
 
 function card:OnTick(ctx)

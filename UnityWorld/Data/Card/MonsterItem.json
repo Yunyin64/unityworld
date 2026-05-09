@@ -1,0 +1,138 @@
+[
+  {
+    "ID": "card_monster_langya",
+    "DisplayName": "狼牙",
+    "Desc": "锋利的狼牙，带着野兽的凶性",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "狼"
+    ]
+  },
+  {
+    "ID": "card_monster_shoupi",
+    "DisplayName": "兽皮",
+    "Desc": "厚实的兽皮，可用于防护",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "狼"
+    ]
+  },
+  {
+    "ID": "card_monster_lizhao",
+    "DisplayName": "利爪",
+    "Desc": "锐利的兽爪，闪烁着寒光",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "狼"
+    ]
+  },
+  {
+    "ID": "card_monster_sheya",
+    "DisplayName": "蛇牙",
+    "Desc": "尖细的蛇牙，残留着微量毒液",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "蛇"
+    ]
+  },
+  {
+    "ID": "card_monster_shepi",
+    "DisplayName": "蛇皮",
+    "Desc": "光滑的蛇皮，韧性极佳",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "蛇"
+    ]
+  },
+  {
+    "ID": "card_monster_shedan",
+    "DisplayName": "蛇胆",
+    "Desc": "珍贵的蛇胆，药用价值极高",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "蛇"
+    ]
+  },
+  {
+    "ID": "card_monster_niaoyu",
+    "DisplayName": "鸟羽",
+    "Desc": "轻盈的鸟羽，随风飘荡",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "鸟"
+    ]
+  },
+  {
+    "ID": "card_monster_niaohui",
+    "DisplayName": "鸟喙",
+    "Desc": "坚硬的鸟喙，啄击力惊人",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "鸟"
+    ]
+  },
+  {
+    "ID": "card_monster_yingyan",
+    "DisplayName": "鹰眼",
+    "Desc": "锐利的鹰眼，蕴含着洞察之力",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "CardType": "Item",
+    "ManaCost": {},
+    "AttachedCardIds": [],
+    "Tags": [
+      "怪物素材",
+      "鸟",
+      "鹰"
+    ]
+  }
+]

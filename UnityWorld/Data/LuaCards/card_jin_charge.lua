@@ -21,10 +21,9 @@ function card:OnApply(ctx)
     -- 找到自身在卡组中的位置，对上方那张卡充能
     local self_card = ctx.SourceCard
     local owner = ctx.Caster
-    local idx = self_card:GetDeckIndex()
-    if idx > 0 then
-        local above = owner:GetCardByIndex(idx - 1)
-        Charge(ctx, { above }, 10)
+    local con,above = AdjacentCards(ctx, self_card, "Above")
+    if con then
+        Charge(ctx, above, 10)
     end
 end
 

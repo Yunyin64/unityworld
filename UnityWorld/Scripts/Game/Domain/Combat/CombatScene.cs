@@ -273,7 +273,7 @@ namespace UnityWorld.Game.Domain.Combat
             }).ToList();
 
             var result = CombatResult.CombatSceneResult(reason,winner,CurrentTick,combatantResults);
-            Log($"\n战斗结束！原因={reason}，胜者={winner}，共{CurrentTick} Tick。");
+            Log($"\n战斗结束！原因={reason}，胜者={survivors.First().GetName()}，共{CurrentTick} Tick。");
 
             return result;
         }

@@ -5,10 +5,24 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
-        public List<CombatCard> CardDeck { get; set; } = new();
+        protected List<CombatCard> CardDeck { get; set; } = new();
 
         private Queue<(ComabtCardDeckChangeType,CombatCard,ComabtCardDisplaceType)> _changes = new();
 
+        public List<CombatCard> GetCardDeck()
+        {
+            return CardDeck;
+        }
+
+        public CombatCard GetCardByIndex(int index)
+        {
+            return CardDeck[index];
+        }
+
+        public int GetIndexByCard(CombatCard card)
+        {
+            return CardDeck.IndexOf(card);
+        }
         public void RemoveCombatCard(CombatCard card)
         {
             Log($"[CombatNpc:{GetName()}] 移除卡牌: {card.DisplayName}");

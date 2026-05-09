@@ -18,14 +18,12 @@ function card:OnContest(ctx)
 end
 
 function card:OnApply(ctx)
-    -- 找敌方一张正在CD中的随机卡牌，冻结1 tick
+    -- 找敌方一张正在CD中的随机卡牌，冻结10 tick
     local target = ctx.Caster.Target
-    if target == nil then return end
-    local cdCards = target:GetCardsInCD()
-    if cdCards == nil or cdCards.Count == 0 then return end
-    local idx = math.random(0, cdCards.Count - 1)
-    local targetCard = cdCards[idx]
-    Freeze(ctx, targetCard, 1)
+    local con,targetCard = RandomCardInCD(ctx, target)
+    if con then
+        Freeze(ctx, targetCard, 10)
+    end
 end
 
 function card:OnTick(ctx)

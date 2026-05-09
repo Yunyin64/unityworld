@@ -24,11 +24,6 @@ namespace UnityWorld.Game.Domain.Combat
             return  sp;}
         public int GetCombatSpMax(){return GetSpMax();}
 
-        public CombatCard GetCardByIndex(int index)
-        {
-            return CardDeck[index];
-        }
-
         public void ChangeShield(float val)
         {
             //可能要加入护盾上限值，待定

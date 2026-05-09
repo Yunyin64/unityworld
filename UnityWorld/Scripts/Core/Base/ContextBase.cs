@@ -29,6 +29,10 @@ public class ContextBase
             public T Get<T>(string key) where T : class
                 => _causes.TryGetValue(key, out var v) ? v as T : null;
 
+            /// <summary>获取一个因果项（非泛型，Lua 友好），不存在返回 null</summary>
+            public object GetObject(string key)
+                => _causes.TryGetValue(key, out var v) ? v : null;
+
             /// <summary>获取一个因果项（值类型），不存在返回 defaultValue。支持 Lua number（double/long）到 int/float 等的自动转换</summary>
             public T GetValue<T>(string key, T defaultValue = default) where T : struct
             {
