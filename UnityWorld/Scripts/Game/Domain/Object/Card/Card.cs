@@ -20,8 +20,6 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>基础属性数据（简单不变属性）</summary>
         public CardBaseData BaseData { get; set; } = new();
-        
-        public GongFa GongFaData { get; set; } = null;
 
         // ── 日志 ──────────────────────────────────────────────
 

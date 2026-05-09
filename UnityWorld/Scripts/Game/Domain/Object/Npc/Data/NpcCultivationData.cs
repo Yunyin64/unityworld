@@ -115,11 +115,11 @@ namespace UnityWorld.Game.Domain
         public int GetSpMax() => (int)Stats.Get("SpMax");
         public ElementalAffinity GetAffinity() => new ElementalAffinity
         {
-            Jin = CultivationData.Affinity.Jin+(int)Stats.Get("AffinityJin"),
-            Mu = CultivationData.Affinity.Mu+(int)Stats.Get("AffinityMu"),
-            Shui = CultivationData.Affinity.Shui+(int)Stats.Get("AffinityShui"),
-            Huo = CultivationData.Affinity.Huo+(int)Stats.Get("AffinityHuo"),
-            Tu = CultivationData.Affinity.Tu+(int)Stats.Get("AffinityTu")
+            Jin = (int)Stats.Get("AffinityJin"),
+            Mu = (int)Stats.Get("AffinityMu"),
+            Shui = (int)Stats.Get("AffinityShui"),
+            Huo = (int)Stats.Get("AffinityHuo"),
+            Tu = (int)Stats.Get("AffinityTu")
         };
         public NpcGongFaData GongFa =>CultivationData.GongFaData;
         public NpcPraticeData PracticeData =>CultivationData.PracticeData;

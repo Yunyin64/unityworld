@@ -25,6 +25,16 @@ namespace UnityWorld.Game.Domain
             data.AllCards.Add(card);
         }
 
+        public int  GetAllCardSize(NpcCardData data)
+        {
+            int size = 0;
+            foreach (var card in data.AllCards)
+            {
+                size += card.GetSize(); 
+            }
+            return size;
+        }
+
         public override void OnTick(Npc npc, float deltaTime)
         {
             // TODO: 卡牌系统逻辑
@@ -34,5 +44,6 @@ namespace UnityWorld.Game.Domain
     public partial class Npc
     {
         public void GainCard(string cardDefineId) => NpcMgr.Instance.CardSystem.GainCard(CardData, cardDefineId);
+        public int GetAllCardSize() => NpcMgr.Instance.CardSystem.GetAllCardSize(CardData);
     }
 }

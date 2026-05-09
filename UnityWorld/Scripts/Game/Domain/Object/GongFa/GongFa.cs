@@ -52,8 +52,14 @@ namespace UnityWorld.Game.Domain
         }
 
 
-        public override string ToString() => $"({DefineId})";
+        public override string ToString() => $"({DisplayName}:{DefineId})";
 
+    }
+
+    public partial class Card
+    {
+        public GongFa GongFaData { get; set; } = null;
+        public bool IsGongFaCard => GongFaData != null;
     }
 
 }

@@ -106,14 +106,12 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public bool SwitchCultivation(Npc npc, string defineId)
         {
-
             var slot = npc.GetAllSlots().FirstOrDefault(s => s.DefineId == defineId);
             if (slot == null)
             {
                 LogMgr.Warn("[CultivationMgr] {0} 未激活功法 {1}，无法切换", npc, defineId);
                 return false;
             }
-
             npc.SetNowGongFa(slot);
             return true;
         }

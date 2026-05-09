@@ -28,6 +28,7 @@ namespace UnityWorld.Game.Domain.Combat
         public static CombatNpc CreateCombatNpc(Npc npc)
         {
             CombatNpc combatNpc = new CombatNpc(npc.Id);
+            combatNpc.Stats = npc.Stats.Snapshot();
             combatNpc.Owner = npc;
             combatNpc.Ticks.Add("Main",0);
             combatNpc.Ticks.Add("ManaDraw",0);
@@ -89,7 +90,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public CombatNpc(int id) : base(id)
         {
-            Stats = StatMgr.Instance.CreateBlock(Id,GetType());
+            
         }
 
         public void DealDamage()

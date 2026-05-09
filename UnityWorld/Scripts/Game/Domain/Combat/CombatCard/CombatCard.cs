@@ -54,7 +54,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnUse()
         {
-            Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
+            //Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
             //Trigger:触发使用事件
             OnContest();
             if(Phase == CombatCardPhase.Ready){
@@ -75,7 +75,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnApply()
         {
-            Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
+            //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
             var ctx = new APIContext
             {
                 SourceCard = this,

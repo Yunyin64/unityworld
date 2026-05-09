@@ -36,7 +36,9 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void CheckDefeated()
         {
-            if (GetSp() > GetSpMax()) Status = CombatantStatus.Defeated;
+            int sp = GetSp();
+            int spMax = GetSpMax();
+            if (sp > spMax) Status = CombatantStatus.Defeated;
         }
 
         public void InitDeck()
@@ -51,7 +53,7 @@ namespace UnityWorld.Game.Domain.Combat
                     CardDeck.Add(combatCard);
                 }
             }                                    
-            Log($"初始化卡组，卡牌数量={CardDeck.Count}");        
+            Log($"初始化卡组，卡牌数量={CardDeck.Count}, 当前SP={GetSp()}");        
         }
 
         public void ProcessContest()
@@ -66,7 +68,7 @@ namespace UnityWorld.Game.Domain.Combat
                     //拼点
                     ResolveContest(Contest, targetContest);
                 }
-                else if (Ticks["Straight"] >= Stats.Get("StraightCD"))
+                else if (Ticks["Straight"] >= Stats.Get("StraightCD")*10)
                 {
                     var Contest = PendingSlot.Dequeue();
                     Straight(Contest);
@@ -101,7 +103,7 @@ namespace UnityWorld.Game.Domain.Combat
             Log($"  直击: [{attacker.GetName()}]{contestData} → [{target.GetName()}]");
             var ctx = new DamageInfo(contestData);
             ctx.Damage = contestData.ContestValue;
-            AddDamage(ctx);
+            ctx.TargetNpc.AddDamage(ctx);
             
             }
             // 重置来源卡 CD
@@ -164,7 +166,7 @@ namespace UnityWorld.Game.Domain.Combat
                 winnerContest = contestB; loserContest = contestA;
             }
             winner.ContestWin(ret,winnerContest, loserContest);
-            loser.ContestWin(ret,winnerContest, loserContest);
+            loser.ContestLose(ret,winnerContest, loserContest);
             
             Ticks["Straight"] = 0;
             
@@ -193,7 +195,7 @@ namespace UnityWorld.Game.Domain.Combat
                     dmg.Damage = win.ContestValue - lose.ContestValue;
                 }
                 //加入伤害结算列表
-                AddDamage(dmg);
+                dmg.TargetNpc.AddDamage(dmg);
             }
             else if (win.ContestType == ContestType.Shield)
             {

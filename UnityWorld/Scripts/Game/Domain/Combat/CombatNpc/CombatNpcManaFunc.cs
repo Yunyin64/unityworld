@@ -116,7 +116,7 @@ namespace UnityWorld.Game.Domain.Combat
                 }
             }
             //Trigger:触发消耗灵元事件
-            Log($"ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
+            //Log($"ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
             return totalConsumed;
         }
         public void RecoverMana(int amount)

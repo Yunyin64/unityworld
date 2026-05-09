@@ -36,5 +36,7 @@ namespace UnityWorld.Game.Domain
     {
         public List<Card> GetAllCards() => CardData.AllCards;
         public List<int> GetAllCardIds() => CardData.AllCardIds;
+
+        
     }
 }

@@ -178,6 +178,7 @@ namespace UnityWorld.Core
         foreach (var mod in entry.GetModifiers())  newEntry.AddModifier(mod);
         newEntry.SetAdd(entry.AddValue);
     }
+    foreach (var kv in _finalCache) copy.GetFinalCache()[kv.Key] = kv.Value;
     return copy;
 }
     }

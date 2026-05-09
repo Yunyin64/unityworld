@@ -70,6 +70,7 @@ namespace UnityWorld.Game.Domain
     public partial class Card
     {
         public float GetCooldown() => BaseData.Cooldown;
+        public int GetSize() => BaseData.Size;
 
         public Dictionary<ElementType, int> GetManaCost() => BaseData.ManaCost;
     }
