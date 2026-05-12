@@ -142,11 +142,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void PreStart()
         {
-            // 从大世界 Npc 读取 HP/SP/MP
-            Hp = GetCombatHpMax();
-            Mp = GetCombatMpMax();
-            Sp = GetCombatSpMax();
-           // 2. 从 Npc 读取卡组，实例化 CardDeck
+           // 从 Npc 读取卡组，实例化 CardDeck
            InitDeck();
             foreach (var card in CardDeck)
             {
@@ -162,6 +158,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 card.Start();
             }
+            InitData();
         }
 
 

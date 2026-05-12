@@ -116,6 +116,24 @@ AddNpcBuff = function(ctx, target, buffId, stacks, duration)
     API:Execute("AddNpcBuff", ctx)
 end
 
+--- 给施法者添加永久属性修正（轻量级，不走Define）
+--- @param ctx APIContext
+--- @param statId string 属性ID（如 "HpMax", "Atk", "Def"）
+--- @param value number 修正值
+--- @param modifierType string 修正类型（可选，默认"Flat"，可选"Percent"/"Override"/"ClampMax"/"ClampMin"）
+--- @param sourceId string 来源标识（可选，用于后续移除）
+AddStatBuff = function(ctx, statId, value, modifierType, sourceId)
+    ctx:Set("StatId", statId)
+    ctx:Set("Value", tonumber(value))
+    if modifierType then
+        ctx:Set("ModifierType", modifierType)
+    end
+    if sourceId then
+        ctx:Set("SourceId", sourceId)
+    end
+    API:Execute("AddStatBuff", ctx)
+end
+
 -- ── 条件/查询类包装函数 ──────────────────────────────────────
 
 --- 获得目标所有卡牌

@@ -129,6 +129,33 @@ namespace UnityWorld.Game.Domain
 
           }
 
+        // ── 轻量属性修正类 ──────────────────────────────────────
+
+        /// <summary>给施法者添加永久属性修正。参数：StatId(String), Value(Float), ?ModifierType(String), ?SourceId(String)</summary>
+        [APIFunc("AddStatBuff", APIType.Action, "给施法者添加永久属性修正", Scope.CombatNpc, "StatId:String", "Value:Float", "?ModifierType:String", "?SourceId:String")]
+        public static APIContext AddStatBuff(APIContext ctx)
+        {
+            var caster = ctx.Caster;
+            if (caster == null) return ctx;
+
+            string statId = ctx.GetValue("StatId", "");
+            float value = ctx.GetValue("Value", 0f);
+            string modifierType = ctx.GetValue("ModifierType", "Flat");
+            string sourceId = ctx.GetValue("SourceId", "");
+
+            
+            if (!Enum.TryParse<ModifierType>(modifierType, true, out var type))
+            {
+                LogMgr.Warn($"[StatBuff] 无法解析 ModifierType: '{modifierType}'，已忽略");
+                return ctx;
+            }
+
+            if (string.IsNullOrEmpty(statId)) return ctx;
+
+            caster.AddStatBuff(statId, value, type, string.IsNullOrEmpty(sourceId) ? null : sourceId);
+            return ctx;
+        }
+
         // ── 卡组操作类 ────────────────────────────────────────
 
         /// <summary>移除己方一张伤势卡。参数：SizeList(String)</summary>

@@ -31,5 +31,11 @@ namespace UnityWorld.Game.Domain.Combat
             ShieldValue = Math.Clamp(ShieldValue, 0, float.MaxValue);
             Log($"护盾值变更：{val:+0.##;-0.##;0}，当前护盾={ShieldValue:0.##}");
         }
+        public void InitData()
+        {
+            // 从大世界 Npc 读取 HP/SP/MP
+            Hp = GetCombatHpMax();
+            Mp = GetCombatMpMax();
+        }
     }
 }
