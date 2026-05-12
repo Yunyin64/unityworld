@@ -6,4 +6,10 @@ function Passive.OnPreStart(card, ctx)
     card:SetPhase("Passive")
 end
 
-return Passive
+
+
+function Passive.OnStart(card, ctx)
+    card:OnApply()
+end
+
+LuaMgr:RegisterKeyword("Passive", Passive)

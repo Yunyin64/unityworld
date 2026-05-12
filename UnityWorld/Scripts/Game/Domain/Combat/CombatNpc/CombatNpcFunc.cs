@@ -6,13 +6,10 @@ namespace UnityWorld.Game.Domain.Combat
     public partial class CombatNpc
     {
         
-        public List<CombatCard> GetReadyCards()
+        
+        public List<CombatCard> GetCards(CombatCardPhase phase)
         {
-            return CardDeck.Where(c => c.Phase == CombatCardPhase.Ready).ToList();
-        }
-         public List<CombatCard> GetExpiredCards()
-        {
-            return CardDeck.Where(c => c.Phase == CombatCardPhase.IsExpired).ToList();
+            return CardDeck.Where(c => c.GetPhase() == phase).ToList();
         }
         
 
@@ -21,12 +18,6 @@ namespace UnityWorld.Game.Domain.Combat
             
         }
 
-        public void AddBuff(string buffId, int stacks = 1, float duration = -1f)
-        {
-            var define = CombatNpcModifierDefineMgr.Instance.Get(buffId);
-            var buff = CombatNpcModifier.CreateModifier(define);
-            Buffs.Add(buff);
-        }
         /// <summary>
         /// 应用治疗，不超过初始HP上限。
         /// </summary>

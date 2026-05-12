@@ -45,6 +45,9 @@ namespace UnityWorld.Game.Domain.Combat
                 SourceCard = this
             };
 
+            // Modifier 修正拼点数值
+            Owner.ModifyContest(contestData);
+
             // 入槽即切换阶段，防止下一 Tick 再次被收集
             Phase = CombatCardPhase.InPending;
 

@@ -53,6 +53,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void Tick()
         {
             CDTick();
+            ModifierTick();
             foreach (var card in CardDeck)
             {
                 card.Tick();
@@ -70,7 +71,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void UseCard()
         {
-            var readyCards = GetReadyCards();   
+            var readyCards = GetCards( CombatCardPhase.Ready);   
             foreach (var card in readyCards)
             {
                 card.OnUse();
@@ -84,7 +85,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public CombatNpc Target { get; set; } = null;
 
-        public List<CombatNpcModifier> Buffs { get; set; } = new();
+        public List<CombatNpcModifier> Modifiers { get; set; } = new();
 
         // ── 构造 ──────────────────────────────────────────────
 

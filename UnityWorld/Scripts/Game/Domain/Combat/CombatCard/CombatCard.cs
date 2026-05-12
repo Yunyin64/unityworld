@@ -8,7 +8,7 @@ namespace UnityWorld.Game.Domain.Combat
     {
         public LuaTable env { get; set; }
         public CombatNpc Owner;    
-        public CombatCardPhase Phase = CombatCardPhase.WaitResource;
+        private CombatCardPhase Phase = CombatCardPhase.WaitResource;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
         
 
@@ -21,29 +21,15 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Start()
         {
-            Phase = CombatCardPhase.WaitResource;
+            SetPhase(CombatCardPhase.WaitResource);
             RunKeywordHooks("OnStart");
         }
 
         public void Tick()
         {
             RunKeywordHooks("OnTick");
-
-            // 被动卡：仅调用 OnPassiveTick hook，跳过 CD 循环
-            if (Phase == CombatCardPhase.Passive)
-            {
-                CallLuaHook("OnPassiveTick", new APIContext
-                {
-                    SourceCard = this,
-                    Caster = Owner,
-                    Scene = null
-                });
-                Ticks["Main"]++;
-                return;
-            }
-
-            if(Phase == CombatCardPhase.Finished) 
-            Phase= CombatCardPhase.WaitResource;
+            if (Phase == CombatCardPhase.Passive){}
+            if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.WaitResource);
             if(Phase == CombatCardPhase.WaitResource) CheckMana();
             if(Phase == CombatCardPhase.InCD) ResetCD();
 
@@ -77,28 +63,31 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnContest()
         {
-            var ctx = new APIContext
-            {
-                SourceCard = this,
-                Caster = Owner,
-                Scene = null
-            };
-            CallLuaHook("OnContest", ctx);
+            CallLuaHook("OnContest");
         }
 
         public void OnApply()
         {
             //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
-            var ctx = new APIContext
-            {
-                SourceCard = this,
-                Caster = Owner,
-                Scene = null
-            };
-            CallLuaHook("OnApply", ctx);
+            CallLuaHook("OnApply");
             //Trigger:触发结算事件
-            Phase = CombatCardPhase.Finished;
+            SetPhase(CombatCardPhase.Finished);
         }
+
+        /// <summary>
+        /// 创建当前卡牌的默认 APIContext。
+        /// </summary>
+        private APIContext CreateCtx() => new APIContext
+        {
+            SourceCard = this,
+            Caster = Owner,
+            Scene = null
+        };
+
+        /// <summary>
+        /// 通用 Lua Hook 调用（使用默认 ctx）。
+        /// </summary>
+        private void CallLuaHook(string hookName) => CallLuaHook(hookName, CreateCtx());
 
         /// <summary>
         /// 通用 Lua Hook 调用：从 env 取函数并以 card:hookName(ctx) 方式调用。
@@ -119,6 +108,10 @@ namespace UnityWorld.Game.Domain.Combat
                 Log($"Lua {hookName} 异常: {ex.Message}");
             }
         }
+        
+        
+        public CombatCardPhase GetPhase() => Phase;
+        public void SetPhase(CombatCardPhase phase) => Phase = phase;
 
         /// <summary>
         /// 设置卡牌 Phase（供 Lua 调用）。
@@ -128,7 +121,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             if (Enum.TryParse<CombatCardPhase>(phaseName, out var phase))
             {
-                Phase = phase;
+                SetPhase(phase);
             }
             else
             {
@@ -162,12 +155,7 @@ namespace UnityWorld.Game.Domain.Combat
 
                 try
                 {
-                    func.Call(this, new APIContext
-                    {
-                        SourceCard = this,
-                        Caster = Owner,
-                        Scene = null
-                    });
+                    func.Call(this, CreateCtx());
                 }
                 catch (Exception ex)
                 {

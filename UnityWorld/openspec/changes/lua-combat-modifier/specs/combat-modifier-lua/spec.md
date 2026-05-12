@@ -22,7 +22,7 @@ CombatNpcModifier SHALL 提供 `CallLuaHook(string hookName, CombatNpc npc)` 方
 - **WHEN** modifier.env 包含 `OnTick` 函数，调用 `CallLuaHook("OnTick", npc)`
 - **THEN** 执行 `env.OnTick(mod, npc)`
 
-#### Scenario: env 为 null（纯数值 Buff）
+#### Scenario: env 为 null（纯数值 Modifier）
 - **WHEN** modifier.env 为 null，调用 `CallLuaHook("OnTick", npc)`
 - **THEN** 静默跳过，不报错
 
@@ -34,76 +34,76 @@ CombatNpcModifier SHALL 提供 `CallLuaHook(string hookName, CombatNpc npc)` 方
 - **WHEN** hook 函数执行时抛出 Lua 异常
 - **THEN** 捕获异常，输出错误日志，战斗继续正常运行
 
-### Requirement: AddBuff 支持 Lua 加载与叠层
-CombatNpc.AddBuff(defineId, stacks) SHALL 执行以下流程：
-1. 查找 Buffs 列表中是否已有同 DefineId 的 Modifier
-2. 若无：从 Define 创建实例 → 通过 LuaMgr 加载 Lua env → 调用 OnApply hook → 加入 Buffs 列表
+### Requirement: AddModifier 支持 Lua 加载与叠层
+CombatNpc.AddModifier(defineId, stacks) SHALL 执行以下流程：
+1. 查找 Modifiers 列表中是否已有同 DefineId 的 Modifier
+2. 若无：从 Define 创建实例 → 通过 LuaMgr 加载 Lua env → 调用 OnApply hook → 加入 Modifiers 列表
 3. 若有：执行叠层逻辑（CurrentStack += stacks，受 MaxStack 限制；RefreshOnStack 时重置 RemainingTime）→ 调用 OnStack hook
 
-#### Scenario: 首次添加 Buff 触发 OnApply
-- **WHEN** CombatNpc 的 Buffs 中没有 DefineId="Burn" 的 Modifier，调用 AddBuff("Burn")
-- **THEN** 创建 CombatNpcModifier 实例，加载 Burn.lua 为 env，调用 env.OnApply(mod, npc)，加入 Buffs
+#### Scenario: 首次添加 Modifier 触发 OnApply
+- **WHEN** CombatNpc 的 Modifiers 中没有 DefineId="Burn" 的 Modifier，调用 AddModifier("Burn")
+- **THEN** 创建 CombatNpcModifier 实例，加载 Burn.lua 为 env，调用 env.OnApply(mod, npc)，加入 Modifiers
 
-#### Scenario: 首次添加无 Lua 脚本的纯数值 Buff
-- **WHEN** 调用 AddBuff("AtkUp") 且 AtkUp.lua 不存在
-- **THEN** 创建 CombatNpcModifier 实例，env 为 null，正常加入 Buffs，StatModifiers 正常生效
+#### Scenario: 首次添加无 Lua 脚本的纯数值 Modifier
+- **WHEN** 调用 AddModifier("AtkUp") 且 AtkUp.lua 不存在
+- **THEN** 创建 CombatNpcModifier 实例，env 为 null，正常加入 Modifiers，StatModifiers 正常生效
 
 #### Scenario: 重复添加同 DefineId 触发叠层
-- **WHEN** Buffs 中已有 DefineId="Poison" 且 CurrentStack=1、MaxStack=5，调用 AddBuff("Poison", 2)
+- **WHEN** Modifiers 中已有 DefineId="Poison" 且 CurrentStack=1、MaxStack=5，调用 AddModifier("Poison", 2)
 - **THEN** CurrentStack 变为 3，调用 env.OnStack(mod, npc)，不创建新实例
 
 #### Scenario: 叠层达到 MaxStack 上限
-- **WHEN** Buffs 中已有 DefineId="Burn" 且 CurrentStack=4、MaxStack=5，调用 AddBuff("Burn", 3)
+- **WHEN** Modifiers 中已有 DefineId="Burn" 且 CurrentStack=4、MaxStack=5，调用 AddModifier("Burn", 3)
 - **THEN** CurrentStack 变为 5（不超过 MaxStack），调用 env.OnStack
 
 #### Scenario: MaxStack=0 表示无上限
-- **WHEN** MaxStack=0 且 CurrentStack=100，调用 AddBuff 再叠 50 层
+- **WHEN** MaxStack=0 且 CurrentStack=100，调用 AddModifier 再叠 50 层
 - **THEN** CurrentStack 变为 150
 
 #### Scenario: RefreshOnStack 刷新持续时间
-- **WHEN** 已有 Buff 的 RefreshOnStack=true、Duration=100、RemainingTime=30，触发叠层
+- **WHEN** 已有 Modifier 的 RefreshOnStack=true、Duration=100、RemainingTime=30，触发叠层
 - **THEN** RemainingTime 重置为 100
 
-### Requirement: BuffTick 每战斗 Tick 驱动 Buff 生命周期
-CombatNpc SHALL 在每个战斗 Tick 中调用 BuffTick()。BuffTick SHALL 遍历 Buffs 列表，对每个 Buff 调用 OnTick hook，然后对有限时 Buff（Duration > 0）衰减 RemainingTime。过期 Buff SHALL 调用 OnRemove hook 后从列表移除。遍历中 SHALL 使用 toRemove 临时列表收集待移除 Buff，遍历结束后批量移除。
+### Requirement: ModifierTick 每战斗 Tick 驱动 Modifier 生命周期
+CombatNpc SHALL 在每个战斗 Tick 中调用 ModifierTick()。ModifierTick SHALL 遍历 Modifiers 列表，对每个 Modifier 调用 OnTick hook，然后对有限时 Modifier（Duration > 0）衰减 RemainingTime。过期 Modifier SHALL 调用 OnRemove hook 后从列表移除。遍历中 SHALL 使用 toRemove 临时列表收集待移除 Modifier，遍历结束后批量移除。
 
 #### Scenario: 正常 Tick 调用 OnTick
-- **WHEN** Buffs 中有一个 env 包含 OnTick 的 Buff，执行 BuffTick()
+- **WHEN** Modifiers 中有一个 env 包含 OnTick 的 Modifier，执行 ModifierTick()
 - **THEN** 调用 env.OnTick(mod, npc)
 
-#### Scenario: 有限时 Buff 衰减
-- **WHEN** Duration=10、RemainingTime=3 的 Buff 经过一次 BuffTick()
+#### Scenario: 有限时 Modifier 衰减
+- **WHEN** Duration=10、RemainingTime=3 的 Modifier 经过一次 ModifierTick()
 - **THEN** RemainingTime 变为 2
 
-#### Scenario: Buff 过期后调用 OnRemove 并移除
-- **WHEN** RemainingTime=1 的 Buff 经过 BuffTick()，RemainingTime 衰减到 0
-- **THEN** 调用 env.OnRemove(mod, npc)，该 Buff 从 Buffs 列表中移除
+#### Scenario: Modifier 过期后调用 OnRemove 并移除
+- **WHEN** RemainingTime=1 的 Modifier 经过 ModifierTick()，RemainingTime 衰减到 0
+- **THEN** 调用 env.OnRemove(mod, npc)，该 Modifier 从 Modifiers 列表中移除
 
-#### Scenario: 永久 Buff 不衰减
-- **WHEN** Duration=-1 的 Buff 经过 BuffTick()
-- **THEN** RemainingTime 不变，Buff 不被移除
+#### Scenario: 永久 Modifier 不衰减
+- **WHEN** Duration=-1 的 Modifier 经过 ModifierTick()
+- **THEN** RemainingTime 不变，Modifier 不被移除
 
 #### Scenario: 不直接在遍历中修改集合
-- **WHEN** BuffTick 遍历时有 2 个 Buff 过期
+- **WHEN** ModifierTick 遍历时有 2 个 Modifier 过期
 - **THEN** 先收集到 toRemove 列表，遍历结束后批量调用 OnRemove 并移除
 
-### Requirement: RemoveBuff 支持主动移除
-CombatNpc SHALL 提供 `RemoveBuff(string defineId)` 方法，查找 Buffs 中 DefineId 匹配的 Modifier，调用 OnRemove hook 后移除。未找到时静默跳过。
+### Requirement: RemoveModifier 支持主动移除
+CombatNpc SHALL 提供 `RemoveModifier(string defineId)` 方法，查找 Modifiers 中 DefineId 匹配的 Modifier，调用 OnRemove hook 后移除。未找到时静默跳过。
 
-#### Scenario: 主动移除已有 Buff
-- **WHEN** Buffs 中有 DefineId="Shield" 的 Modifier，调用 RemoveBuff("Shield")
-- **THEN** 调用 env.OnRemove(mod, npc)，从 Buffs 列表中移除
+#### Scenario: 主动移除已有 Modifier
+- **WHEN** Modifiers 中有 DefineId="Shield" 的 Modifier，调用 RemoveModifier("Shield")
+- **THEN** 调用 env.OnRemove(mod, npc)，从 Modifiers 列表中移除
 
-#### Scenario: 移除不存在的 Buff
-- **WHEN** Buffs 中没有 DefineId="Shield"，调用 RemoveBuff("Shield")
+#### Scenario: 移除不存在的 Modifier
+- **WHEN** Modifiers 中没有 DefineId="Shield"，调用 RemoveModifier("Shield")
 - **THEN** 无任何操作，不报错
 
-### Requirement: CombatNpc.Tick 接入 BuffTick
-CombatNpc.Tick() SHALL 在每个战斗 Tick 中调用 BuffTick()，使 Buff 生命周期与战斗主循环同步。
+### Requirement: CombatNpc.Tick 接入 ModifierTick
+CombatNpc.Tick() SHALL 在每个战斗 Tick 中调用 ModifierTick()，使 Modifier 生命周期与战斗主循环同步。
 
-#### Scenario: Tick 中 BuffTick 被调用
+#### Scenario: Tick 中 ModifierTick 被调用
 - **WHEN** CombatNpc.Tick() 执行
-- **THEN** BuffTick() 被调用，所有 Buff 的 OnTick 被执行
+- **THEN** ModifierTick() 被调用，所有 Modifier 的 OnTick 被执行
 
 ### Requirement: CombatModifiers Lua 脚本约定
 `Data/LuaScripts/CombatModifiers/` 目录下的 Lua 脚本 SHALL return 一个 table，可包含以下 hook 函数（均为可选）：
@@ -118,4 +118,4 @@ CombatNpc.Tick() SHALL 在每个战斗 Tick 中调用 BuffTick()，使 Buff 生�
 
 #### Scenario: 空 table 脚本
 - **WHEN** Lua 脚本 return 空 table（无任何 hook）
-- **THEN** env 正常赋值，所有 hook 调用静默跳过，Buff 仅靠 StatModifiers 生效
+- **THEN** env 正常赋值，所有 hook 调用静默跳过，Modifier 仅靠 StatModifiers 生效

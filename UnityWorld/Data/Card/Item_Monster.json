@@ -2,13 +2,14 @@
   {
     "ID": "card_monster_langya",
     "DisplayName": "狼牙",
-    "Desc": "锋利的狼牙，带着野兽的凶性",
+    "Desc": "被动：获得一层刺击强化",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
     "CardType": "Item",
     "ManaCost": {},
     "AttachedCardIds": [],
+    "Keywords": ["Passive"],
     "Tags": [
       "怪物素材",
       "狼"

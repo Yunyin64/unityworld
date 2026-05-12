@@ -125,7 +125,7 @@ namespace UnityWorld.Game.Domain
             if (string.IsNullOrEmpty(buffId)) return;
 
             // 查找目标 NPC
-            target.AddBuff(buffId, stacks, duration);
+            target.AddModifier(buffId, stacks);
 
           }
 

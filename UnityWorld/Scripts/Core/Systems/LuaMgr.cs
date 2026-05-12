@@ -23,6 +23,9 @@ namespace UnityWorld.Game.Domain
         /// <summary>Lua 卡牌脚本目录路径</summary>
         private readonly string _luaCardsDir;
 
+        /// <summary>Lua 战斗 Modifier 脚本目录路径</summary>
+        private readonly string _luaCombatModifiersDir;
+
         /// <summary>Lua 初始化脚本路径</summary>
         private readonly string _luaInitPath;
 
@@ -34,8 +37,11 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public static readonly Dictionary<string, string> HookToEventId = new();
 
-        /// <summary>Keyword 注册表：keyword 名称 → 对应 Lua 脚本返回的 table</summary>
+        /// <summary>Keyword 注册表：keyword 名称 → 对应 Lua table</summary>
         private Dictionary<string, LuaTable> _keywordRegistry = new();
+
+        /// <summary>Keyword 脚本目录路径</summary>
+        private readonly string _luaKeywordsDir;
 
         // ── 构造 ────────────────────────────────────────────────
 
@@ -47,6 +53,8 @@ namespace UnityWorld.Game.Domain
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             _luaCardsDir = luaCardsDir ?? Path.Combine(baseDir, "Data", "LuaCards");
+            _luaCombatModifiersDir = Path.Combine(baseDir, "Data", "LuaScripts", "CombatModifiers");
+            _luaKeywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
             _luaInitPath = Path.Combine(baseDir, "Data", "LuaScripts", "Init.lua");
             Instance = this;
         }
@@ -54,18 +62,21 @@ namespace UnityWorld.Game.Domain
         // ── 生命周期 ────────────────────────────────────────────
 
         /// <summary>
-        /// 初始化：创建 Lua State，加载 Init.lua。
+        /// 初始化：创建 Lua State，加载 Init.lua，执行 Keyword 脚本。
         /// </summary>
         public void Init()
         {
             _luaState = new Lua();
             _luaState.LoadCLRPackage();
 
+            // 注入 LuaMgr 实例，供 Lua 脚本调用 RegisterKeyword 等方法
+            _luaState["LuaMgr"] = this;
+
             // 加载 Init.lua（定义 CardBase、Attack 等全局函数）
             LoadInitScript();
 
-            // 加载 Keyword 注册表
-            LoadKeywords();
+            // 扫描并执行 Keywords/ 目录下所有 Lua 脚本（脚本内自注册）
+            LoadKeywordScripts();
 
             LogMgr.Dbg("[LuaMgr] 初始化完成，Lua State 已创建");
         }
@@ -125,6 +136,9 @@ namespace UnityWorld.Game.Domain
                 if (APIMgr.Instance != null)
                     _luaState["API"] = APIMgr.Instance;
 
+                // 注入枚举常量表，供 Modifier/Card Lua 脚本使用
+                RegisterEnumTables();
+
                 _luaState.DoFile(_luaInitPath);
                 LogMgr.Dbg("[LuaMgr] Init.lua 加载成功");
             }
@@ -132,6 +146,27 @@ namespace UnityWorld.Game.Domain
             {
                 LogMgr.Err("[LuaMgr] Init.lua 加载失败: {0}", ex.Message);
             }
+        }
+
+        /// <summary>
+        /// 将 C# 枚举注册为 Lua 全局 table（如 DamageType.Ci、ElementType.Jin）。
+        /// </summary>
+        private void RegisterEnumTables()
+        {
+            // DamageType
+            _luaState.NewTable("DamageType");
+            foreach (DamageType val in Enum.GetValues(typeof(DamageType)))
+                _luaState.GetTable("DamageType")[val.ToString()] = val;
+
+            // ElementType
+            _luaState.NewTable("ElementType");
+            foreach (BaseElementType val in Enum.GetValues(typeof(BaseElementType)))
+                _luaState.GetTable("ElementType")[val.ToString()] = val;
+
+            // ContestType
+            _luaState.NewTable("ContestType");
+            foreach (ContestType val in Enum.GetValues(typeof(ContestType)))
+                _luaState.GetTable("ContestType")[val.ToString()] = val;
         }
 
         // ══════════════════════════════════════════════════════════
@@ -195,68 +230,52 @@ namespace UnityWorld.Game.Domain
         // ══════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 加载 Keyword 索引文件并逐个加载 keyword Lua 脚本，缓存到注册表。
-        /// 索引文件路径：Data/LuaScripts/Keywords/Keyword.lua
+        /// 扫描 Keywords/ 目录下所有 .lua 文件并执行。
+        /// 每个脚本内部负责调用 LuaMgr:RegisterKeyword(name, table) 完成自注册。
         /// </summary>
-        private void LoadKeywords()
+        private void LoadKeywordScripts()
         {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var keywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
-            var indexPath = Path.Combine(keywordsDir, "Keyword.lua");
-
-            if (!File.Exists(indexPath))
+            if (!Directory.Exists(_luaKeywordsDir))
             {
-                LogMgr.Warn("[LuaMgr] Keywords/Keyword.lua 不存在: {0}，跳过 Keyword 加载", indexPath);
+                LogMgr.Warn("[LuaMgr] Keywords 目录不存在: {0}，跳过 Keyword 加载", _luaKeywordsDir);
                 return;
             }
 
-            try
+            var files = Directory.GetFiles(_luaKeywordsDir, "*.lua");
+            foreach (var filePath in files)
             {
-                var results = _luaState.DoFile(indexPath);
-                if (results == null || results.Length == 0 || results[0] is not LuaTable indexTable)
+                try
                 {
-                    LogMgr.Warn("[LuaMgr] Keywords/Keyword.lua 未返回 table");
-                    return;
+                    _luaState.DoFile(filePath);
                 }
-
-                foreach (var key in indexTable.Keys)
+                catch (Exception ex)
                 {
-                    var kwName = key.ToString();
-                    var kwRelPath = indexTable[key]?.ToString();
-                    if (string.IsNullOrEmpty(kwRelPath)) continue;
-
-                    var kwFilePath = Path.Combine(keywordsDir, $"{kwRelPath}.lua");
-                    if (!File.Exists(kwFilePath))
-                    {
-                        LogMgr.Err("[LuaMgr] Keyword 脚本不存在: {0} -> {1}", kwName, kwFilePath);
-                        continue;
-                    }
-
-                    try
-                    {
-                        var kwResults = _luaState.DoFile(kwFilePath);
-                        if (kwResults != null && kwResults.Length > 0 && kwResults[0] is LuaTable kwTable)
-                        {
-                            _keywordRegistry[kwName] = kwTable;
-                            LogMgr.Dbg("[LuaMgr] Keyword 加载成功: {0}", kwName);
-                        }
-                        else
-                        {
-                            LogMgr.Warn("[LuaMgr] Keyword '{0}' 脚本未返回 table", kwName);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        LogMgr.Err("[LuaMgr] Keyword '{0}' 加载失败: {1}", kwName, ex.Message);
-                    }
+                    LogMgr.Err("[LuaMgr] Keyword 脚本执行失败: {0} -> {1}", Path.GetFileName(filePath), ex.Message);
                 }
-
-                LogMgr.Dbg("[LuaMgr] Keyword 注册表加载完成，共 {0} 个", _keywordRegistry.Count);
             }
-            catch (Exception ex)
+
+            LogMgr.Dbg("[LuaMgr] Keyword 脚本扫描完成，已注册 {0} 个", _keywordRegistry.Count);
+        }
+
+        /// <summary>
+        /// 注册一个 Keyword（供 Lua 脚本调用）。
+        /// Lua 用法：LuaMgr:RegisterKeyword("Passive", table)
+        /// </summary>
+        public void RegisterKeyword(string name, LuaTable table)
+        {
+            if (string.IsNullOrEmpty(name))
             {
-                LogMgr.Err("[LuaMgr] Keywords/Keyword.lua 加载失败: {0}", ex.Message);
+                LogMgr.Err("[LuaMgr] RegisterKeyword: name 不能为空");
+                return;
             }
+            if (table == null)
+            {
+                LogMgr.Err("[LuaMgr] RegisterKeyword: '{0}' 的 table 为 null", name);
+                return;
+            }
+
+            _keywordRegistry[name] = table;
+            LogMgr.Dbg("[LuaMgr] Keyword 注册成功: {0}", name);
         }
 
         /// <summary>
@@ -265,6 +284,51 @@ namespace UnityWorld.Game.Domain
         public LuaTable GetKeyword(string name)
         {
             return _keywordRegistry.TryGetValue(name, out var table) ? table : null;
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  战斗 Modifier 脚本加载
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 加载战斗 Modifier Lua 脚本，每次调用返回独立的 LuaTable（不缓存）。
+        /// 脚本路径：Data/LuaScripts/CombatModifiers/{defineId}.lua
+        /// </summary>
+        /// <param name="defineId">Modifier Define ID（如 "Burn"）</param>
+        /// <returns>脚本 return 的 table，文件不存在或加载失败返回 null</returns>
+        public LuaTable LoadModifierScript(string defineId)
+        {
+            if (_luaState == null)
+            {
+                LogMgr.Err("[LuaMgr] LoadModifierScript: Lua State 未初始化");
+                return null;
+            }
+
+            var filePath = Path.Combine(_luaCombatModifiersDir, $"{defineId}.lua");
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+
+            try
+            {
+                var results = _luaState.DoFile(filePath);
+
+                if (results != null && results.Length > 0 && results[0] is LuaTable modTable)
+                {
+                    return modTable;
+                }
+                else
+                {
+                    LogMgr.Warn("[LuaMgr] LoadModifierScript '{0}': 脚本未 return table", defineId);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMgr.Err("[LuaMgr] LoadModifierScript '{0}' 失败: {1}", defineId, ex.Message);
+                return null;
+            }
         }
 
     }
