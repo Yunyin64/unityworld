@@ -11,9 +11,6 @@ namespace UnityWorld.Game.Domain
     {
         // ── 卡牌类型 ──────────────────────────────────────────
 
-        /// <summary>卡牌类型（招式/法术/丹药/阵法/神通/伤势等）</summary>
-        public CardType CardType { get; set; } = CardType.ZhaoShi;
-
         // ── 体量与节奏 ────────────────────────────────────────
 
         /// <summary>卡牌体量（占用 SP 的大小）</summary>
@@ -37,6 +34,11 @@ namespace UnityWorld.Game.Domain
         /// <summary>关键词列表（如 Passive 等，决定卡牌运行模式）</summary>
         public List<string> Keywords { get; set; } = [];
 
+        public void InitKeywords()
+        {
+            
+        }
+
         public CardBaseData Clone()
         {
             var copy = (CardBaseData)MemberwiseClone();
@@ -58,7 +60,6 @@ namespace UnityWorld.Game.Domain
                 ? string.Join(",", ManaCost.Select(kv => $"{kv.Key}:{kv.Value}"))
                 : "无";
             LogMgr.Dbg("┌── BaseData · 基础属性 ──────────────────────");
-            LogMgr.Dbg("│  类型:    {0}", CardType);
             LogMgr.Dbg("│  体量:    {0}", Size);
             LogMgr.Dbg("│  冷却:    {0:F1}s", Cooldown);
             LogMgr.Dbg("│  灵元:    {0}", mana);
@@ -77,6 +78,41 @@ namespace UnityWorld.Game.Domain
         public int GetSize() => BaseData.Size;
 
         public Dictionary<ElementType, int> GetManaCost() => BaseData.ManaCost;
+        
+        public List<string> GetKeywords() => BaseData.Keywords;
+
+        public List<string> GetTags() => BaseData.Tags;
+        
+        public bool HasKeyword(string keyword) => BaseData.Keywords.Contains(keyword);
+        /// <summary>
+        /// 获取卡牌的主元素类型：取灵元消耗中数量最大的元素；若有多个并列最大则返回Mix；无消耗返回None
+        /// </summary>
+        public ElementType GetElementType()
+        {
+            var manaCost = GetManaCost();
+            if (manaCost == null || manaCost.Count == 0)
+                return ElementType.None;
+
+            int maxVal = -1;
+            ElementType maxType = ElementType.None;
+            bool tied = false;
+
+            foreach (var kv in manaCost)
+            {
+                if (kv.Value > maxVal)
+                {
+                    maxVal = kv.Value;
+                    maxType = kv.Key;
+                    tied = false;
+                }
+                else if (kv.Value == maxVal)
+                {
+                    tied = true;
+                }
+            }
+
+            return tied ? ElementType.Mix : maxType;
+        }
     }
     
 }

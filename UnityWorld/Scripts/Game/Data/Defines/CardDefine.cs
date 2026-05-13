@@ -25,10 +25,6 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("cooldown")]
         public float Cooldown { get; set; } = 4;
 
-        /// <summary>卡牌类型（ZhaoShi / FaBao / Wound 等）</summary>
-        [JsonPropertyName("cardType")]
-        public string CardType { get; set; } = "ZhaoShi";
-
         /// <summary>灵元消耗（元素名 → 数量）</summary>
         [JsonPropertyName("manaCost")]
         public Dictionary<string, int> ManaCost { get; set; } = new();

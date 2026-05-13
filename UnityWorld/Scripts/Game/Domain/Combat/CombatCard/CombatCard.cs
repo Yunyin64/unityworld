@@ -135,7 +135,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         private void RunKeywordHooks(string hookName)
         {
-            var keywords = BaseData.Keywords;
+            var keywords = GetKeywords();
             if (keywords == null || keywords.Count == 0) return;
 
             var luaMgr = LuaMgr.Instance;

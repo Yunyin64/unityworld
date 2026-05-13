@@ -73,7 +73,7 @@ namespace UnityWorld.Game.Domain.Combat
         private static List<Card> DrawRandomCards(Rng rng, CardDefineList pool, int count)
         {
             // 过滤掉伤势卡（CardType == Wound 或 Tags 包含"伤势"）
-            var filteredPool = pool.Where(c => c.CardType != "Wound" );
+            var filteredPool = pool.Where(c => c.Keywords.Contains("Wound"));
 
             // 复制池子避免修改原列表
             var shuffled = filteredPool.ToList();

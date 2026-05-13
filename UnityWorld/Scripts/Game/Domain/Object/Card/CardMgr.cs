@@ -45,7 +45,6 @@ namespace UnityWorld.Game.Domain
                 {
                     Size = cardDefine.Size,
                     Cooldown = cardDefine.Cooldown,
-                    CardType = Enum.TryParse<CardType>(cardDefine.CardType, out var ct) ? ct : CardType.ZhaoShi,
                     ManaCost = ElementType.ToDic(cardDefine.ManaCost),
                 },
             };

@@ -6,7 +6,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 4,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -20,7 +20,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 4,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -34,7 +34,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 4,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -48,7 +48,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 4,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -62,7 +62,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 6,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -76,7 +76,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 6,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -90,7 +90,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 6,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -104,7 +104,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 6,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -118,7 +118,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 6,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",
@@ -132,7 +132,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 5,
-    "CardType": "Wound",
+    "Keywords": ["Wound"],
     "ManaCost": {}, 
     "Tags": [
       "伤势",

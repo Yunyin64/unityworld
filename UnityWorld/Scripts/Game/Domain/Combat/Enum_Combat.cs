@@ -31,15 +31,6 @@ namespace UnityWorld.Game.Domain.Combat
             Random
         }
 
-    public enum CardType
-    {
-        FaShu,
-        ZhaoShi, 
-        FaBao ,
-        Wound,
-        Item,
-        ShenTong
-    }
     public enum CombatCardPhase
     {
         WaitResource,

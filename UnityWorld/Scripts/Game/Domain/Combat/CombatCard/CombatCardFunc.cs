@@ -49,7 +49,7 @@ namespace UnityWorld.Game.Domain.Combat
             Owner.ModifyContest(contestData);
 
             // 入槽即切换阶段，防止下一 Tick 再次被收集
-            Phase = CombatCardPhase.InPending;
+            SetPhase(CombatCardPhase.InPending);
 
             // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);

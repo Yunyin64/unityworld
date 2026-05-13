@@ -29,6 +29,7 @@ namespace UnityWorld.Game.Domain
         public static ElementType Shui = new ElementType(BaseElementType.Shui,"Shui");
         public static ElementType Huo = new ElementType(BaseElementType.Huo,"Huo");
         public static ElementType Tu = new ElementType(BaseElementType.Tu,"Tu");
+        public static ElementType Mix = new ElementType(BaseElementType.Extra,"Mix");
 
         
         public ElementType(BaseElementType kind, string id = "None")

@@ -272,11 +272,11 @@ namespace UnityWorld.Game.Domain.Combat
             Func<CardDefine, bool> func = c => true;
             if(ctx.Damage > GetTiPo())
             {
-               func = c => c.CardType == CardType.Wound.ToString() && c.Size == 2;
+               func = c => c.Keywords.Contains("Wound") && c.Size == 2;
             }
             else
             {
-               func = c => c.CardType == CardType.Wound.ToString() && c.Size == 1;
+               func = c => c.Keywords.Contains("Wound") && c.Size == 1;
             }
             var woundCards = CardDefineMgr.Instance?.Query(func).ToList();
             if(woundCards.Count > 0)

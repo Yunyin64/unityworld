@@ -88,5 +88,6 @@ namespace UnityWorld.Game.Domain.Combat
             return 10*GetCooldown()+ Stats.Get("CDTickAdj");
         }
 
+        
     }
 }

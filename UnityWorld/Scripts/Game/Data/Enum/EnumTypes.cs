@@ -8,16 +8,6 @@ public enum PracticePath
     Ling,
     Hun
 }
-public enum CardType
-{
-    ZhaoShi,
-    FaShu,
-    FaBao,
-    Hun,
-    Wound
-}
-
-
         public enum CultivationPointType
         {
            Card,

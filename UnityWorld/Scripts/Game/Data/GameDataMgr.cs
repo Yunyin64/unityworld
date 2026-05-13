@@ -47,6 +47,8 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new NpcModifierDefineMgr(Path.Combine(dataDir, "NpcModifierDefines.json")));
         // ── Stat 定义（按 Type 分文件存放在 Data/Stat/ 文件夹下）────
         _datamgrs.Add(new StatDefineMgr(Path.Combine(dataDir, "Stat")));
+        // ── 装备定义（按类别分文件存放在 Data/Equip/ 文件夹下）────
+        _datamgrs.Add(new EquipDefineMgr(Path.Combine(dataDir, "Equip")));
 
             Instance = this;
         }

@@ -1,16 +1,15 @@
 [
   {
     "ID": "card_fabao_changjian",
-    "DisplayName": "长剑",
+    "DisplayName": "精铁长剑",
     "Desc": "基础武器",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 5,
-    "CardType": "FaBao",
-    "ManaCost": {}, 
-    "AttachedCardIds": [
-      "card_form_jian_zhan"
-    ],
+    "Keywords": ["FaBao"],
+    "ManaCost": {
+      "Jin": 1
+    }, 
     "Tags": [
       "武器",
       "攻击",
