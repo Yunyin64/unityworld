@@ -47,15 +47,23 @@ namespace UnityWorld.Game.Domain
             }
             // 如果未指定修炼点数，默认为满（maxPoint），即所有节点解锁
             var point = currentPoint < 0 ? define.MaxPoint : currentPoint;
-            var slot = new GongFa 
-            {
-                DefineId = defineId,
-                CurrentPoint = point
-            };
-            npc.AddGongFa(slot);
 
             // 遍历功法节点，对已解锁的 Card 类型节点发牌
             GrantCardsFromCultivation(npc, define, point);
+
+            
+            Card card = CardMgr.Instance.InstantiateFromDefine(defineId);
+
+
+            // 通过 Npc 同步索引
+            npc.GainCard(card);
+            npc.AddGongFa(slot);
+
+            // 如果当前没有修炼功法，设为当前
+            if (npc.GetNowGongFaData() == null)
+            {
+                npc.SetNowGongFa(slot);
+            }
         }
 
         /// <summary>
@@ -64,10 +72,14 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void RemoveCultivation(Npc npc, string defineId)
         {
-
             var slot = npc.GetAllSlots().FirstOrDefault(s => s.DefineId == defineId);
             if (slot == null) return;
+
+            // 通过 Npc 同步索引
             npc.RemoveGongFa(slot);
+
+            // 从 GongFaMgr 全局表移除
+            GongFaMgr.Instance?.Remove(slot.Id);
 
             LogMgr.Dbg("[CultivationMgr] {0} 失去功法 {1}", npc, defineId);
         }
@@ -144,7 +156,7 @@ namespace UnityWorld.Game.Domain
                 if (pt.Type == CultivationPointType.Card && !string.IsNullOrEmpty(pt.RefId))
                 {  
                     npc.GainCard(pt.RefId);
-                    LogMgr.Dbg("[CultivationMgr] {0} 功法解锁卡牌 {1}", npc, pt.RefId);
+                    LogMgr.Dbg("[CultivationMgr] {0} {1}功法解锁卡牌 {2}", npc, define.ID,pt.RefId);
                     
                 }
                 // 后续扩展：BehaviorCard / Modifier / Story 类型在此追加分支

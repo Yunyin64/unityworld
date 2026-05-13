@@ -1,0 +1,46 @@
+[
+  {
+    "ID": "ling_golden_blade",
+    "DisplayName": "金锋剑典",
+    "Desc": "灵修金锐流功法，以金之锋锐斩破一切。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": ["GongFa", "Passive"],
+    "ManaCost": {},
+    "Tags": ["灵修", "金锐", "剑典", "破甲"]
+  },
+  {
+    "ID": "wu_stone_body",
+    "DisplayName": "磐石体",
+    "Desc": "武修防御流功法，身如磐石，坚不可摧。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": ["GongFa", "Passive"],
+    "ManaCost": {},
+    "Tags": ["武修", "防御", "磐石", "护甲"]
+  },
+  {
+    "ID": "ling_flame_heart",
+    "DisplayName": "烈焰心法",
+    "Desc": "灵修火攻流功法，以烈焰之力焚尽万敌。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": ["GongFa", "Passive"],
+    "ManaCost": {},
+    "Tags": ["灵修", "火攻", "烈焰", "剑气"]
+  },
+  {
+    "ID": "hun_frost_mind",
+    "DisplayName": "寒冰心经",
+    "Desc": "魂修控制流功法，以冰寒之力冻结敌手行动。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": ["GongFa", "Passive"],
+    "ManaCost": {},
+    "Tags": ["魂修", "控制", "寒冰", "冻结"]
+  }
+]

@@ -188,7 +188,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         /// <param name="cardId">卡牌 Define ID（如 "card_form_quan_da"）</param>
         /// <returns>脚本 return 的 card table，加载失败返回 null</returns>
-        public LuaTable LoadCardScript(string cardId)
+        public LuaTable LoadCardScript(CardDefine define)
         {
             if (_luaState == null)
             {
@@ -196,10 +196,10 @@ namespace UnityWorld.Game.Domain
                 return null;
             }
 
-            var filePath = Path.Combine(_luaCardsDir, $"{cardId}.lua");
+            var filePath = Path.Combine(_luaCardsDir, $"{define.ID}.lua");
             if (!File.Exists(filePath))
             {
-                LogMgr.Dbg("[LuaMgr] LoadCardScript: 找不到脚本文件 {0}.lua", cardId);
+                LogMgr.Dbg("[LuaMgr] LoadCardScript: 找不到脚本文件 {0}.lua", define.ID);
                 return null;
             }
 
@@ -209,18 +209,18 @@ namespace UnityWorld.Game.Domain
 
                 if (results != null && results.Length > 0 && results[0] is LuaTable cardTable)
                 {
-                    LogMgr.Dbg("[LuaMgr] 加载卡牌脚本成功: {0}", cardId);
+                    LogMgr.Dbg("[LuaMgr] {0}加载成功: {1}", define.DisplayName,define.ID);
                     return cardTable;
                 }
                 else
                 {
-                    LogMgr.Warn("[LuaMgr] LoadCardScript '{0}': 脚本未 return table", cardId);
+                    LogMgr.Warn("[LuaMgr] LoadCardScript '{0}': 脚本未 return table", define.ID);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogMgr.Err("[LuaMgr] LoadCardScript '{0}' 失败: {1}", cardId, ex.Message);
+                LogMgr.Err("[LuaMgr] LoadCardScript '{0}' 失败: {1}", define.ID, ex.Message);
                 return null;
             }
         }

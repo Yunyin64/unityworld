@@ -48,6 +48,8 @@ namespace UnityWorld.Game.World
             _domains.Add(new StoryMgr(seed));
             _domains.Add(new BehaviorCardMgr());
             _domains.Add(new CardMgr(seed));
+            _domains.Add(new GongFaMgr(seed));
+            _domains.Add(new EquipMgr());
 
             foreach (var mgr in _domains) mgr.Init();  // 无耦合的初始化
             foreach (var mgr in _gameplays) mgr.Init();

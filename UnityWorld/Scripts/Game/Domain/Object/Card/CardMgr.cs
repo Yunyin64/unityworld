@@ -15,6 +15,10 @@ namespace UnityWorld.Game.Domain
     {
         public static CardMgr Instance { get; private set; }
 
+        // ── 子系统 ────────────────────────────────────────
+        public CardSystemGongFa GongFaSystem { get; } = new();
+        public CardSystemEquip EquipSystem { get; } = new();
+
         public SoulData Soul { get; set; }      
         private readonly Rng _rng = new();
 
@@ -50,6 +54,10 @@ namespace UnityWorld.Game.Domain
             };
             // 若 CardDefine 手配了额外 Tags，追加进来
             card.BaseData.Tags.AddRange(cardDefine.Tags);
+            if (card.HasKeyword("GongFa"))
+            {
+                GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
+            }
 
             Add(card.Id,card);
             return card;

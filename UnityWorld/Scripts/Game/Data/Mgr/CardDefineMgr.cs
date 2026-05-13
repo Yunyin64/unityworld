@@ -85,7 +85,7 @@ namespace UnityWorld.Game.Data
                 _cards.Count, jsonFiles.Length);
         }
 
-        public CardDefine? Get(string id)
+        public CardDefine Get(string id)
             => _cards.TryGetValue(id, out var t) ? t : null;
 
         public IEnumerable<CardDefine> GetAll() => _cards.Values;

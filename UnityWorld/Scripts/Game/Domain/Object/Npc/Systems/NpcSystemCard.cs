@@ -21,6 +21,11 @@ namespace UnityWorld.Game.Domain
         public void GainCard(NpcCardData data, string cardDefineId)
         {
             var card = CardMgr.Instance.InstantiateFromDefine(cardDefineId);
+            GainCard(data, card);
+        }
+        
+        public void GainCard(NpcCardData data, Card card)
+        {
             data.AllCardIds.Add(card.Id);
             data.AllCards.Add(card);
         }
@@ -44,6 +49,7 @@ namespace UnityWorld.Game.Domain
     public partial class Npc
     {
         public void GainCard(string cardDefineId) => NpcMgr.Instance.CardSystem.GainCard(CardData, cardDefineId);
+        public void GainCard(Card card) => NpcMgr.Instance.CardSystem.GainCard(CardData, card);
         public int GetAllCardSize() => NpcMgr.Instance.CardSystem.GetAllCardSize(CardData);
     }
 }

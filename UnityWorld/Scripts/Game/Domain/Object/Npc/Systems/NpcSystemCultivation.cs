@@ -23,27 +23,29 @@ namespace UnityWorld.Game.Domain
             => GetCultivation(npc.Id);
 
 
-        public void AddGongFa(NpcCultivationData data, GongFa  gongFa)
+        /// <summary>为 NPC 添加一个功法（通过 GongFa 实例，使用 gongFa.Id 操作索引）</summary>
+        public void AddGongFa(NpcCultivationData data, GongFa gongFa)
         {
-            data.GongFaData.AllSlots.Add(gongFa);
-            data.GongFaData.ActiveSlots.Add(gongFa);
+            data.GongFaData.AllSlotCardIds.Add(gongFa.Id);
+            data.GongFaData.ActiveSlotCardIds.Add(gongFa.Id);
         }
 
-        
-        public void RemoveGongFa(NpcCultivationData data, GongFa  gongFa)
+        /// <summary>为 NPC 移除一个功法（通过 GongFa 实例，使用 gongFa.Id 操作索引）</summary>
+        public void RemoveGongFa(NpcCultivationData data, GongFa gongFa)
         {
-            data.GongFaData.AllSlots.Remove(gongFa);
-            data.GongFaData.ActiveSlots.Remove(gongFa);
+            data.GongFaData.AllSlotCardIds.Remove(gongFa.Id);
+            data.GongFaData.ActiveSlotCardIds.Remove(gongFa.Id);
         }
 
+        /// <summary>设置 NPC 当前修炼的功法（通过 GongFa 实例）</summary>
         public void SetNowGongFa(NpcCultivationData data, GongFa gongFa)
         {
-            if (!data.GongFaData.ActiveSlots.Contains(gongFa))
+            if (!data.GongFaData.ActiveSlotCardIds.Contains(gongFa.Id))
             {
                 LogMgr.Warn("[NpcSystemCultivation] 无法设定当前功法 {0}，因为它未激活", gongFa.DefineId);
                 return;
             }
-            data.PracticeData.NowGongFaData = gongFa;
+            data.PracticeData.NowGongFaCardId = gongFa.Id;
         }
         /// <summary>
         /// NPC 诞生时：创建修行数据，根据 Soul 计算五行亲和，根据八大属性计算战斗三维
@@ -71,8 +73,13 @@ namespace UnityWorld.Game.Domain
 
     public partial class Npc
     {
-        public void AddGongFa( GongFa gongFa) => NpcMgr.Instance.CultivationSystem.AddGongFa(CultivationData, gongFa);
-        public void RemoveGongFa( GongFa gongFa) => NpcMgr.Instance.CultivationSystem.RemoveGongFa(CultivationData, gongFa);
-        public void SetNowGongFa( GongFa gongFa) => NpcMgr.Instance.CultivationSystem.SetNowGongFa(CultivationData, gongFa);
+        /// <summary>添加功法（接收 GongFa 实例）</summary>
+        public void AddGongFa(GongFa gongFa) => NpcMgr.Instance.CultivationSystem.AddGongFa(CultivationData, gongFa);
+
+        /// <summary>移除功法（接收 GongFa 实例）</summary>
+        public void RemoveGongFa(GongFa gongFa) => NpcMgr.Instance.CultivationSystem.RemoveGongFa(CultivationData, gongFa);
+
+        /// <summary>设置当前修炼功法（接收 GongFa 实例）</summary>
+        public void SetNowGongFa(GongFa gongFa) => NpcMgr.Instance.CultivationSystem.SetNowGongFa(CultivationData, gongFa);
     }
 }

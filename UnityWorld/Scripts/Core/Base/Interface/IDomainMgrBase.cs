@@ -60,6 +60,11 @@ public abstract class DomainMgrBase<T> : IDomainMgrBase where T:GameEntityBase
     {
         _allEntities[id] = obj;
     }
+
+    public void Remove(int id)
+    {
+        _allEntities.Remove(id);
+    }
     public T GetById(int id)
             => _allEntities.TryGetValue(id, out var npc) ? npc : null;
 

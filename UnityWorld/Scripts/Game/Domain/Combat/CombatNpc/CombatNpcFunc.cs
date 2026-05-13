@@ -44,7 +44,7 @@ namespace UnityWorld.Game.Domain.Combat
                     CardDeck.Add(combatCard);
                 }
             }                                    
-            Log($"初始化卡组，卡牌数量={CardDeck.Count}, 当前SP={GetSp()}");        
+            Log($"初始化卡组，卡牌={CardDeck.ToInfoString()}, 当前SP={GetSp()}");        
         }
 
         public void ProcessContest()

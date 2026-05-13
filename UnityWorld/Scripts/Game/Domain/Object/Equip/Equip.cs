@@ -7,8 +7,11 @@ namespace UnityWorld.Game.Domain
     /// Define 只是模板（Base 值），Equip 是最终生效的运行时对象。
     /// 字段去掉 Base 后缀，表示可被 Modifier 等机制修改的最终值。
     /// </summary>
-    public class Equip : IFormDefine<EquipDefine>
+    public class Equip : GameEntityBase, IFormDefine<EquipDefine>
     {
+        /// <summary>实例 ID（= 所属 Card.Id）</summary>
+        public int Id { get; set; }
+
         /// <summary>关联的 EquipDefine ID</summary>
         public string DefineId { get; set; } = "";
 
@@ -50,6 +53,12 @@ namespace UnityWorld.Game.Domain
                 FormList = new List<string>(define.FormListBase),
             };
         }
+
+        public override void LogAllInfo()
+        {
+           
+        }
+
 
         public override string ToString() => $"[Equip:{DefineId}] {DisplayName} Atk={Attack} Def={Defend} Spd={Speed}";
     }

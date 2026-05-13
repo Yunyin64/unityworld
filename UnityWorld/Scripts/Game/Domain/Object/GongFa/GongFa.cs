@@ -5,8 +5,11 @@ namespace UnityWorld.Game.Domain
     /// <summary>
     /// 修炼槽位：NPC 持有的功法实例
     /// </summary>
-    public class GongFa:IFormDefine<CultivationDefine>
+    public class GongFa:GameEntityBase, IFormDefine<CultivationDefine>
     {
+        /// <summary>实例 ID（= 所属 Card.Id）</summary>
+        public int Id { get; set; }
+
         public string DisplayName { get; set; } = "";
 
         /// <summary>功法定义 ID</summary>
@@ -54,12 +57,10 @@ namespace UnityWorld.Game.Domain
 
         public override string ToString() => $"({DisplayName}:{DefineId})";
 
-    }
-
-    public partial class Card
-    {
-        public GongFa GongFaData { get; set; } = null;
-        public bool IsGongFaCard => GongFaData != null;
+        public override void LogAllInfo()
+        {
+            
+        }
     }
 
 }

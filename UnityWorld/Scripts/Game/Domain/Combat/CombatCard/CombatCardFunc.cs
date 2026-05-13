@@ -1,5 +1,6 @@
 using NLua;
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain.Combat
 {
@@ -15,14 +16,7 @@ namespace UnityWorld.Game.Domain.Combat
             var luaMgr = LuaMgr.Instance;
 
             // 加载 Lua 脚本，获得独立的 card table
-            env = luaMgr.LoadCardScript(DefineId);
-            if(env == null)
-            {
-                Log($"  Lua 卡牌脚本加载失败: {DefineId}.lua");
-                return;
-            }else{
-                Log($"  Lua 卡牌脚本加载成功: {DefineId}.lua");
-            }
+            env = luaMgr.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
             // env 为 null 说明没有对应 lua 文件，正常情况
         }
 
