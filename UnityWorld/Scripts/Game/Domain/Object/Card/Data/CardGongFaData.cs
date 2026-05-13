@@ -54,5 +54,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>是否为功法卡</summary>
         public bool IsGongFaCard => GongFaMgr.Instance?.GetById(Id) != null;
+
+        public GongFa GetGongFa() => GongFaData.GetGongFa();
     }
 }

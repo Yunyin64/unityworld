@@ -28,6 +28,11 @@ namespace UnityWorld.Game.Domain
         {
             data.GongFaData.AllSlotCardIds.Add(gongFa.Id);
             data.GongFaData.ActiveSlotCardIds.Add(gongFa.Id);
+            // 如果当前没有修炼功法，设为当前
+            if (data.PracticeData.GetNowGongFa() == null)
+            {
+                data.PracticeData.NowGongFaCardId = gongFa.Id;
+            }
         }
 
         /// <summary>为 NPC 移除一个功法（通过 GongFa 实例，使用 gongFa.Id 操作索引）</summary>

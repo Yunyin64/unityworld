@@ -48,22 +48,13 @@ namespace UnityWorld.Game.Domain
             // 如果未指定修炼点数，默认为满（maxPoint），即所有节点解锁
             var point = currentPoint < 0 ? define.MaxPoint : currentPoint;
 
+            var card = npc.GainCard(defineId);
+            var gongfa = GongFaMgr.Instance.InstantiateFromDefine(card.Id, define);
+            npc.AddGongFa(gongfa);
+            gongfa.CurrentPoint = point;
             // 遍历功法节点，对已解锁的 Card 类型节点发牌
             GrantCardsFromCultivation(npc, define, point);
 
-            
-            Card card = CardMgr.Instance.InstantiateFromDefine(defineId);
-
-
-            // 通过 Npc 同步索引
-            npc.GainCard(card);
-            npc.AddGongFa(slot);
-
-            // 如果当前没有修炼功法，设为当前
-            if (npc.GetNowGongFaData() == null)
-            {
-                npc.SetNowGongFa(slot);
-            }
         }
 
         /// <summary>

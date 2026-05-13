@@ -15,12 +15,6 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>卡牌显示名称（用于日志/UI，优先使用此字段）</summary>
         public string DisplayName { get; set; } = "";
-
-        // ── 数据委托 ──────────────────────────────────────────
-
-        /// <summary>基础属性数据（简单不变属性）</summary>
-        public CardBaseData BaseData { get; set; } = new();
-
         // ── 日志 ──────────────────────────────────────────────
 
 

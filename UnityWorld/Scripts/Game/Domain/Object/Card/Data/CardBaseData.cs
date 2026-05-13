@@ -74,6 +74,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public partial class Card
     {
+        public CardBaseData BaseData => CardMgr.Instance.DataSystem.GetData(Id);
         public float GetCooldown() => BaseData.Cooldown;
         public int GetSize() => BaseData.Size;
 

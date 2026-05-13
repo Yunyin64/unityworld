@@ -16,6 +16,7 @@ namespace UnityWorld.Game.Domain
         public static CardMgr Instance { get; private set; }
 
         // ── 子系统 ────────────────────────────────────────
+        public CardSystemData DataSystem { get; } = new();
         public CardSystemGongFa GongFaSystem { get; } = new();
         public CardSystemEquip EquipSystem { get; } = new();
 
@@ -45,19 +46,16 @@ namespace UnityWorld.Game.Domain
                 DefineId = cardDefine.ID,
                 DisplayName = cardDefine.DisplayName,
                 Stats = StatMgr.Instance.CreateBlock(cardid,GetType()),
-                BaseData = new CardBaseData
+            };
+            DataSystem.Register(card, new CardBaseData
                 {
                     Size = cardDefine.Size,
                     Cooldown = cardDefine.Cooldown,
                     ManaCost = ElementType.ToDic(cardDefine.ManaCost),
-                },
-            };
-            // 若 CardDefine 手配了额外 Tags，追加进来
-            card.BaseData.Tags.AddRange(cardDefine.Tags);
-            if (card.HasKeyword("GongFa"))
-            {
-                GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
-            }
+                    Tags = cardDefine.Tags,
+                });
+            GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
+            EquipSystem.Register(card, new CardEquipData { CardId = card.Id });
 
             Add(card.Id,card);
             return card;

@@ -47,18 +47,20 @@ namespace UnityWorld.Game.Domain
 
         public override IEnumerator Load() { yield break; }
 
-        public GongFa InstantiateFromDefine(CultivationDefine define)
+        public GongFa InstantiateFromDefine(int id,CultivationDefine define)
         {
             // 创建 GongFa 实例，Id = card.Id
             var slot = new GongFa
             {
-                Id = card.Id,
-                DefineId = defineId,
+                Id = id,
+                DefineId = define.ID,
                 DisplayName = define.DisplayName,
-                CurrentPoint = point
+                CurrentPoint = 0
             };
             // 注册到 GongFaMgr 全局表
             GongFaMgr.Instance?.Add(slot.Id, slot);
+
+            return  slot;
         }
         /// <summary>日志输出</summary>
         public void Log()
