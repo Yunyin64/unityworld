@@ -12,10 +12,6 @@
       { "threshold": 160, "Type": "Modifier", "refId": "modifier_foundation_base" },
       { "threshold": 280, "Type": "Card", "refId": "card_jin_heavy_slash" }
     ],
-    "coreEffect": {
-      "effectId": "effect_breakthrough_ling_2",
-      "Desc": "突破至筑基期，真元凝聚成基"
-    },
     "Tags": ["灵修", "筑基", "真元", "道基"]
   },
   {
@@ -31,10 +27,6 @@
       { "threshold": 350, "Type": "Modifier", "refId": "modifier_golden_core" },
       { "threshold": 600, "Type": "Card", "refId": "card_huo_incinerate" }
     ],
-    "coreEffect": {
-      "effectId": "effect_breakthrough_ling_3",
-      "Desc": "突破至金丹期，结丹成婴"
-    },
     "Tags": ["灵修", "金丹", "大道", "长生"]
   },
   {
@@ -50,10 +42,6 @@
       { "threshold": 200, "Type": "Card", "refId": "card_tu_block" },
       { "threshold": 350, "Type": "Modifier", "refId": "modifier_damage_reduction" }
     ],
-    "coreEffect": {
-      "effectId": "effect_breakthrough_wu_2",
-      "Desc": "突破至铜皮期，刀枪不入"
-    },
     "Tags": ["武修", "铜皮", "防御", "金刚"]
   },
   {
@@ -69,10 +57,6 @@
       { "threshold": 450, "Type": "Card", "refId": "card_tu_strike" },
       { "threshold": 700, "Type": "Modifier", "refId": "modifier_undying_body" }
     ],
-    "coreEffect": {
-      "effectId": "effect_breakthrough_wu_3",
-      "Desc": "突破至铁骨期，金刚不坏"
-    },
     "Tags": ["武修", "铁骨", "不灭", "金刚不坏"]
   },
   {
@@ -88,10 +72,6 @@
       { "threshold": 180, "Type": "Card", "refId": "card_mu_vulnerable" },
       { "threshold": 300, "Type": "Modifier", "refId": "modifier_soul_power" }
     ],
-    "coreEffect": {
-      "effectId": "effect_breakthrough_hun_2",
-      "Desc": "突破至御物期，念动物行"
-    },
     "Tags": ["魂修", "御物", "念力", "操纵"]
   },
   {
@@ -107,10 +87,6 @@
       { "threshold": 400, "Type": "Modifier", "refId": "modifier_soul_manifest" },
       { "threshold": 650, "Type": "Card", "refId": "card_shui_weakness" }
     ],
-    "coreEffect": {
-      "effectId": "effect_breakthrough_hun_3",
-      "Desc": "突破至显化期，神魂离体"
-    },
     "Tags": ["魂修", "显化", "神魂离体", "千里杀人"]
   },
 
@@ -127,10 +103,6 @@
       { "threshold": 60, "Type": "Card", "refId": "card_huo_drain" },
       { "threshold": 100, "Type": "Card", "refId": "card_huo_burst" }
     ],
-    "coreEffect": {
-      "effectId": "effect_ling_flame_heart",
-      "Desc": "掌握烈焰心法，火系法术威力提升"
-    },
     "Tags": ["灵修", "火攻", "烈焰", "剑气"]
   },
   {
@@ -146,10 +118,6 @@
       { "threshold": 60, "Type": "Card", "refId": "card_shui_shield" },
       { "threshold": 100, "Type": "Card", "refId": "card_shui_displace" }
     ],
-    "coreEffect": {
-      "effectId": "effect_ling_spring_art",
-      "Desc": "掌握清泉诀，水系防御与回复能力提升"
-    },
     "Tags": ["灵修", "水守", "清泉", "防御"]
   },
   {
@@ -166,10 +134,6 @@
       { "threshold": 100, "Type": "Card", "refId": "card_jin_armor_break" },
       { "threshold": 110, "Type": "Card", "refId": "card_jin_whirlwind" }
     ],
-    "coreEffect": {
-      "effectId": "effect_ling_golden_blade",
-      "Desc": "掌握金锋剑典，金系斩击与破甲能力提升"
-    },
     "Tags": ["灵修", "金锐", "剑典", "破甲"]
   },
 
@@ -186,10 +150,6 @@
       { "threshold": 100, "Type": "Card", "refId": "card_tu_stun" },
       { "threshold": 150, "Type": "Card", "refId": "card_tu_armor" }
     ],
-    "coreEffect": {
-      "effectId": "effect_wu_tiger_fist",
-      "Desc": "掌握猛虎拳经，拳术威力与控制能力提升"
-    },
     "Tags": ["武修", "拳术", "猛虎", "控制"]
   },
   {
@@ -205,10 +165,6 @@
       { "threshold": 100, "Type": "Card", "refId": "card_jin_armor" },
       { "threshold": 150, "Type": "Card", "refId": "card_tu_slow" }
     ],
-    "coreEffect": {
-      "effectId": "effect_wu_iron_spear",
-      "Desc": "掌握铁枪谱，枪术精准与突进能力提升"
-    },
     "Tags": ["武修", "枪术", "铁枪", "突进"]
   },
   {
@@ -224,10 +180,6 @@
       { "threshold": 100, "Type": "Card", "refId": "card_tu_armor" },
       { "threshold": 150, "Type": "Card", "refId": "card_jin_armor" }
     ],
-    "coreEffect": {
-      "effectId": "effect_wu_stone_body",
-      "Desc": "掌握磐石体，防御与护甲能力大幅提升"
-    },
     "Tags": ["武修", "防御", "磐石", "护甲"]
   },
 
@@ -244,10 +196,6 @@
       { "threshold": 80, "Type": "Card", "refId": "card_shui_freeze" },
       { "threshold": 120, "Type": "Card", "refId": "card_tu_slow" }
     ],
-    "coreEffect": {
-      "effectId": "effect_hun_frost_mind",
-      "Desc": "掌握寒冰心经，冻结与减速控制能力提升"
-    },
     "Tags": ["魂修", "控制", "寒冰", "冻结"]
   },
   {
@@ -263,10 +211,6 @@
       { "threshold": 80, "Type": "Card", "refId": "card_mu_haste" },
       { "threshold": 120, "Type": "Card", "refId": "card_mu_heal_wound" }
     ],
-    "coreEffect": {
-      "effectId": "effect_hun_vitality_art",
-      "Desc": "掌握生机诀，增益与祛伤能力提升"
-    },
     "Tags": ["魂修", "辅助", "生机", "增益"]
   },
   {
@@ -282,10 +226,6 @@
       { "threshold": 80, "Type": "Card", "refId": "card_mu_vulnerable" },
       { "threshold": 120, "Type": "Card", "refId": "card_shui_weakness" }
     ],
-    "coreEffect": {
-      "effectId": "effect_hun_soul_erode",
-      "Desc": "掌握蚀魂术，易伤与虚弱削弱能力提升"
-    },
     "Tags": ["魂修", "削弱", "蚀魂", "虚弱"]
   }
 ]

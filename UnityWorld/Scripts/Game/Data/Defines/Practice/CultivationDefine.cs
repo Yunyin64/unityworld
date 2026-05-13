@@ -15,17 +15,6 @@ namespace UnityWorld.Game.Data
         public string RefId { get; set; } = "";
     }
 
-    /// <summary>
-    /// 功法核心效果定义
-    /// </summary>
-    public class CultivationCoreEffect
-    {
-        /// <summary>效果 ID（效果系统的引用，占位）</summary>
-        public string EffectId { get; set; } = "";
-
-        /// <summary>效果描述</summary>
-        public string Desc { get; set; } = "";
-    }
 
     /// <summary>
     /// 功法定义：包含道途类型、境界等级、修炼节点序列、核心效果
@@ -49,9 +38,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>修炼节点序列</summary>
         public CultivationPointDefine[] Points { get; set; } = [];
-
-        /// <summary>功法核心效果（修炼完成时触发）</summary>
-        public CultivationCoreEffect? CoreEffect { get; set; }
 
         /// <summary>功法相关 Tag（用于匹配和分类）</summary>
         public string[] Tags { get; set; } = [];

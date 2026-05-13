@@ -185,7 +185,6 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.Id = card.Id;
             combatCard.DefineId = card.DefineId;
             combatCard.DisplayName = card.DisplayName;
-            combatCard.BaseData = card.BaseData.Clone();
             combatCard.Stats = StatMgr.Instance.CreateBlock(card.Id, typeof(CombatCard));
             combatCard.Ticks.Add("Main",0);
             combatCard.Ticks.Add("CD",0);
