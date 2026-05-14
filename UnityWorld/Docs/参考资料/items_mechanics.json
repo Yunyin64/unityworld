@@ -1,9 +1,9 @@
-﻿[
+[
   {
     "name_cn": "地下商街",
     "size": "Large / 大型",
     "type": "Item / 物品",
-    "cooldown": 7000,
+    "cooldown": 7200,
     "starting_tier": "Gold / 黄金",
     "skills": [
       {

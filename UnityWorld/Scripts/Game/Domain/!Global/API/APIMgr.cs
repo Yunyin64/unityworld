@@ -1,5 +1,7 @@
 using System.Collections;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using UnityWorld.Game.Data;
 using UnityWorld.Core;
 
@@ -13,7 +15,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class APIMgr : IDomainMgrBase
     {
-        public static APIMgr? Instance { get; private set; }
+        public static APIMgr Instance { get; private set; }
         public string Name => "APIMgr";
         public string Desc => "API函数注册表：管理所有Action函数签名定义与执行委托";
 
@@ -46,7 +48,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>
         /// 按函数名查询 API 定义，不存在返回 null
         /// </summary>
-        public API? Get(string funcName)
+        public API Get(string funcName)
         {
             return _apis.TryGetValue(funcName, out var api) ? api : null;
         }
@@ -271,6 +273,126 @@ namespace UnityWorld.Game.Domain
                     LogMgr.Dbg("    Handler-only: {0}", funcName);
                 }
             }
+        }
+
+        // ── TriggerDefineMgr 引用 ──────────────────────────────
+
+        /// <summary>
+        /// 获取 TriggerDefineMgr 单例
+        /// </summary>
+        public TriggerDefineMgr TriggerDefs => TriggerDefineMgr.Instance!;
+
+        // ── 输出文档 ──────────────────────────────────────────────
+
+        /// <summary>
+        /// 将当前已加载的 TriggerDefine、API Condition、API Action 输出为 Markdown 参考文档。
+        /// </summary>
+        /// <param name="outputDir">输出目录路径，默认为 tag-design-assist/docs 目录</param>
+        public void ExportDoc(string outputDir = @"F:\Openclaw\UnityWorld\UnityWorld\.codemaker\skills\tag-design-assist\docs")
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("# API 参考");
+            sb.AppendLine();
+            sb.AppendLine($"> 自动生成时间，共 {_apis.Count} 个API，{TriggerDefs?.GetAll().Count() ?? 0} 个Trigger");
+            sb.AppendLine();
+
+            // ── Trigger 部分 ──
+            sb.AppendLine("## Trigger（触发条件）");
+            sb.AppendLine();
+            sb.AppendLine("| ID | 描述 | Score | Weight | Tags | ConflictTags |");
+            sb.AppendLine("|---|---|---|---|---|---|");
+
+            if (TriggerDefs != null)
+            {
+                foreach (var t in TriggerDefs.GetAll())
+                {
+                    string tags = t.Tags.Count > 0 ? string.Join(", ", t.Tags) : "-";
+                    string conflicts = t.ConflictTags.Count > 0 ? string.Join(", ", t.ConflictTags) : "-";
+                    sb.AppendLine($"| {t.ID} | {t.Desc} | {t.Score} | {t.Weight} | {tags} | {conflicts} |");
+                }
+            }
+
+            sb.AppendLine();
+
+            // ── Condition 部分 ──
+            sb.AppendLine("## Condition（条件函数）");
+            sb.AppendLine();
+            sb.AppendLine("| 函数名 | 描述 | 参数 |");
+            sb.AppendLine("|---|---|---|");
+
+            foreach (var api in _apis.Values)
+            {
+                var attr = api.Method?.GetCustomAttribute<APIFuncAttribute>();
+                if (attr == null || attr.ApiType != APIType.Condition) continue;
+
+                string paramStr = FormatParams(api.ParamsList);
+                sb.AppendLine($"| {api.FuncName} | {api.Desc} | {paramStr} |");
+            }
+
+            sb.AppendLine();
+
+            // ── Action 部分 ──
+            sb.AppendLine("## Action（动作函数）");
+            sb.AppendLine();
+            sb.AppendLine("| 函数名 | 描述 | 参数 |");
+            sb.AppendLine("|---|---|---|");
+
+            foreach (var api in _apis.Values)
+            {
+                var attr = api.Method?.GetCustomAttribute<APIFuncAttribute>();
+                if (attr == null || attr.ApiType != APIType.Action) continue;
+
+                string paramStr = FormatParams(api.ParamsList);
+                sb.AppendLine($"| {api.FuncName} | {api.Desc} | {paramStr} |");
+            }
+
+            sb.AppendLine();
+
+            // ── 其他（未分类） ──
+            var otherApis = _apis.Values.Where(a =>
+            {
+                var at = a.Method?.GetCustomAttribute<APIFuncAttribute>();
+                return at == null || (at.ApiType != APIType.Condition && at.ApiType != APIType.Action);
+            }).ToList();
+
+            if (otherApis.Count > 0)
+            {
+                sb.AppendLine("## Other（其他/未分类）");
+                sb.AppendLine();
+                sb.AppendLine("| 函数名 | 描述 | 参数 |");
+                sb.AppendLine("|---|---|---|");
+
+                foreach (var api in otherApis)
+                {
+                    string paramStr = FormatParams(api.ParamsList);
+                    sb.AppendLine($"| {api.FuncName} | {api.Desc} | {paramStr} |");
+                }
+
+                sb.AppendLine();
+            }
+
+            // ── 写入文件 ──
+            if (!Directory.Exists(outputDir))
+            {
+                Directory.CreateDirectory(outputDir);
+            }
+
+            string filePath = Path.Combine(outputDir, "API参考.md");
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            LogMgr.Dbg("[APIMgr] ExportDoc 完成，已输出到: {0}", filePath);
+        }
+
+        /// <summary>
+        /// 格式化参数列表为可读字符串
+        /// </summary>
+        private static string FormatParams(List<Param> paramsList)
+        {
+            if (paramsList.Count == 0) return "-";
+            return string.Join(", ", paramsList.Select(p =>
+            {
+                string opt = p.IsOptional ? "?" : "";
+                return $"{opt}{p.Name}:{p.Type}";
+            }));
         }
 
     }

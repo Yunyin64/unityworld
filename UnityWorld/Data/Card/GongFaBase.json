@@ -2,13 +2,21 @@
   {
     "ID": "ling_golden_blade",
     "DisplayName": "金锋剑典",
-    "Desc": "灵修金锐流功法，以金之锋锐斩破一切。",
+    "Desc": "灵修金锐流功法，以金之锋锐斩破一切.",
     "Rarity": 1,
     "Size": 0,
     "Cooldown": 0,
-    "Keywords": ["GongFa", "Passive"],
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
     "ManaCost": {},
-    "Tags": ["灵修", "金锐", "剑典", "破甲"]
+    "Tags": [
+      "灵修",
+      "金锐",
+      "剑典",
+      "破甲"
+    ]
   },
   {
     "ID": "wu_stone_body",
@@ -17,9 +25,17 @@
     "Rarity": 1,
     "Size": 0,
     "Cooldown": 0,
-    "Keywords": ["GongFa", "Passive"],
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
     "ManaCost": {},
-    "Tags": ["武修", "防御", "磐石", "护甲"]
+    "Tags": [
+      "武修",
+      "防御",
+      "磐石",
+      "护甲"
+    ]
   },
   {
     "ID": "ling_flame_heart",
@@ -28,9 +44,17 @@
     "Rarity": 1,
     "Size": 0,
     "Cooldown": 0,
-    "Keywords": ["GongFa", "Passive"],
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
     "ManaCost": {},
-    "Tags": ["灵修", "火攻", "烈焰", "剑气"]
+    "Tags": [
+      "灵修",
+      "火攻",
+      "烈焰",
+      "剑气"
+    ]
   },
   {
     "ID": "hun_frost_mind",
@@ -39,8 +63,16 @@
     "Rarity": 1,
     "Size": 0,
     "Cooldown": 0,
-    "Keywords": ["GongFa", "Passive"],
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
     "ManaCost": {},
-    "Tags": ["魂修", "控制", "寒冰", "冻结"]
+    "Tags": [
+      "魂修",
+      "控制",
+      "寒冰",
+      "冻结"
+    ]
   }
 ]
