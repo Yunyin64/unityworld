@@ -11,7 +11,7 @@ namespace UnityWorld.Game.Domain.Combat
         private int AmountMax { get; set; } = -1;
         public int GetAmountMax()
         {
-            if(IsAmount)  return AmountMax + (int)Stats.Get("AmountMaxAdd");
+            if(IsAmount)  return AmountMax + (int)GetStat("AmountMaxAdd");
             return -1;
         }
         /// <summary>
@@ -77,7 +77,7 @@ namespace UnityWorld.Game.Domain.Combat
             CombatManaCost.Clear();
             foreach (var kv in GetManaCost())
             {
-                var final = Math.Max(0, kv.Value + (int)Stats.Get($"ManaAdj_{kv.Key}"));
+                var final = Math.Max(0, kv.Value + (int)GetStat($"ManaAdj_{kv.Key}"));
                 if (final > 0) CombatManaCost[kv.Key] = final;
             }
             return CombatManaCost;
@@ -85,7 +85,7 @@ namespace UnityWorld.Game.Domain.Combat
         public int GetDeckIndex() => Owner?.GetCardDeck().IndexOf(this) ?? -1;
         public float GetCDMax()
         {
-            return 10*GetCooldown()+ Stats.Get("CDTickAdj");
+            return 10*GetCooldown() + GetStat("CDTickAdj");
         }
 
         

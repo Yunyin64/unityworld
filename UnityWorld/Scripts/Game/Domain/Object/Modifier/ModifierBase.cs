@@ -26,13 +26,12 @@ namespace UnityWorld.Game.Domain
     
         /// <summary>叠加时是否刷新 Duration</summary>
         bool RefreshOnStack { get; set; }
-
-        /// <summary>
-        /// 是否已过期：Duration == -1 时永不过期；否则 RemainingTime &lt;= 0 时过期
-        /// </summary>
-        public bool IsExpired => Duration > 0 && RemainingTime <= 0f;
-
         public List<StatModifierEntry> StatModifiers { get; set; }
 
     }
+    public static class IModifierBaseExt
+    {   
+        public static bool IsExpired(this IModifierBase self) => self.Duration > 0 && self.RemainingTime <= 0f;
+    }
+    
 }

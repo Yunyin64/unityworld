@@ -25,7 +25,7 @@ namespace UnityWorld.Game.Domain
         public StackReduceType StackReduceType { get ; set ; }
         public bool isExpired => RemainingTime >= Duration && CurrentStack == 0;
 
-        public static CardModifier CDSpeed(string id,int stack, float speed)
+        public static CardModifier CDSpeed(string id,int speed)
         {
             return new CardModifier()
             {
@@ -33,7 +33,7 @@ namespace UnityWorld.Game.Domain
                 Duration = -1,
                 RemainingTime = -1,
                 MaxStack = 1,
-                CurrentStack = 1,
+                CurrentStack = speed,
                 RefreshOnStack = false,
                 StatModifiers = new List<StatModifierEntry>()
                 {

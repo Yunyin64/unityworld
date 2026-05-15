@@ -9,6 +9,23 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public partial class CombatNpc
     {
+        private List<CombatNpcModifier> Modifiers { get; set; } = new();
+
+
+        public List<CombatNpcModifier> GetAllModifiers()
+        {
+            return Modifiers.Where(m => !m.IsExpired()).ToList();
+        }
+
+        /// <summary>
+        /// 创建当前 CombatNpc 的 Modifier 调用上下文。
+        /// </summary>
+        private APIContext CreateModifierCtx(CombatNpcModifier mod) => new APIContext
+        {
+            Caster = this,
+            Scene = Scene,
+        };
+
         // ══════════════════════════════════════════════════════════
         //  AddModifier
         // ══════════════════════════════════════════════════════════
@@ -40,7 +57,7 @@ namespace UnityWorld.Game.Domain.Combat
             var modifier = CombatNpcModifier.CreateModifier(define);
 
             // 调用 OnApply hook
-            modifier.CallLuaHook("OnApply", this);
+            modifier.CallLuaHook("OnApply", modifier.env, CreateModifierCtx(modifier));
 
             Modifiers.Add(modifier);
             Log($"[Modifier] 添加: {defineId} (Stack={modifier.CurrentStack}, Duration={modifier.Duration})");
@@ -68,7 +85,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
 
             // 调用 OnStack hook
-            modifier.CallLuaHook("OnStack", this);
+            modifier.CallLuaHook("OnStack", modifier.env, CreateModifierCtx(modifier));
 
             Log($"[Modifier] 叠层: {modifier.DefineId} (Stack={modifier.CurrentStack})");
         }
@@ -88,8 +105,9 @@ namespace UnityWorld.Game.Domain.Combat
 
             foreach (var mod in Modifiers)
             {
+                
                 // 调用 OnTick hook
-                mod.CallLuaHook("OnTick", this);
+                mod.CallLuaHook("OnTick", mod.env, CreateModifierCtx(mod));
 
                 // 衰减有限时 Modifier
                 if (mod.Duration > 0)
@@ -105,7 +123,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 批量移除过期 Modifier
             foreach (var mod in toRemove)
             {
-                mod.CallLuaHook("OnRemove", this);
+                mod.CallLuaHook("OnRemove", mod.env, CreateModifierCtx(mod));
                 Modifiers.Remove(mod);
                 Log($"[Modifier] 过期移除: {mod.DefineId}");
             }
@@ -117,7 +135,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>
         /// 拼点修正管线：构建 ContestData 后、入槽前，遍历 Modifier 调用 ModifyContest hook。
-        /// hook 签名：ModifyContest(env, npc, contestData)
+        /// hook 签名：ModifyContest(env, ctx)，ctx.ContestData 携带拼点数据。
         /// </summary>
         public void ModifyContest(ContestData contestData)
         {
@@ -125,7 +143,8 @@ namespace UnityWorld.Game.Domain.Combat
 
             foreach (var mod in Modifiers)
             {
-                mod.CallLuaHook("ModifyContest", this, contestData);
+                var ctx = CreateModifierCtx(mod);
+                mod.CallLuaHook("ModifyContest", mod.env, ctx, contestData);
             }
         }
 
@@ -142,7 +161,7 @@ namespace UnityWorld.Game.Domain.Combat
             var modifier = Modifiers.FirstOrDefault(m => m.DefineId == defineId);
             if (modifier == null) return;
 
-            modifier.CallLuaHook("OnRemove", this);
+            modifier.CallLuaHook("OnRemove", modifier.env, CreateModifierCtx(modifier));
             Modifiers.Remove(modifier);
             Log($"[Modifier] 主动移除: {defineId}");
         }

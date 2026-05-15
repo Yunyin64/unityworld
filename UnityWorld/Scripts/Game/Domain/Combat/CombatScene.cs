@@ -71,6 +71,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 var combatNpc = CombatNpc.CreateCombatNpc(p.npc);
                 combatNpc.Team = p.team;
+                combatNpc.Scene = this;
                 Combatants[combatNpc.Id] = combatNpc;
             }
 
@@ -128,6 +129,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
             _phase = CombatPhase.Running;
             Log("战斗开始！");
+            foreach (var c in Combatants.Values) c.DoManaDraw(true);
         }
 
         // ══════════════════════════════════════════════════════
@@ -142,7 +144,6 @@ namespace UnityWorld.Game.Domain.Combat
         {   
             mainScene.haslog = false;
             AssertPhase(CombatPhase.Running, nameof(Tick));
-
             foreach (var c in Combatants.Values) c.DoManaDraw();
             foreach (var c in Combatants.Values) c.UseCard();
             foreach (var c in Combatants.Values) c.ProcessContest();
@@ -151,7 +152,6 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var c in Combatants.Values) c.CheckDefeated();
             CheckEndConditions();
 
-            // Step 8: 定期快照（每 50 Tick = 5 秒）
             CurrentTick++;
             foreach (var c in Combatants.Values) c.Tick();
         }
@@ -300,6 +300,46 @@ namespace UnityWorld.Game.Domain.Combat
                 }
                 LogMgr.Dbg($"[Combat]{msg}");
             }
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  Modifier Stat Hook 收集
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 遍历全场所有存活 Npc 的所有 Modifier，
+        /// 对含有 OnModifierStat{statId} hook 的 Modifier 调用 Lua 函数，
+        /// 累加返回值作为光环/被动贡献。
+        /// </summary>
+        /// <param name="caller">读属性的对象（CombatNpc 或 CombatCard）</param>
+        /// <param name="statId">属性名（如 "Atk"、"CD"）</param>
+        /// <returns>所有命中 Modifier 的贡献总和</returns>
+        public float CollectModifierStat(object caller, string statId)
+        {
+            float sum = 0f;
+            var hookName = "OnModifierStat" + statId;
+
+            foreach (var npc in Combatants.Values)
+            {
+                if (!npc.IsActive) continue;
+                foreach (var mod in npc.GetAllModifiers())
+                {
+                    if (!mod.HasHook(hookName)) continue;
+
+                    try
+                    {
+                        var result = mod.CallLuaHookWithReturn<double>(hookName, mod.env, caller);
+                        sum += (float)result;
+                    }
+                    catch (System.Exception ex)
+                    {
+                        LogMgr.Err("[CombatScene] CollectModifierStat '{0}' hook '{1}' 异常: {2}",
+                            mod.DefineId, hookName, ex.Message);
+                    }
+                }
+            }
+
+            return sum;
         }
         public override void LogAllInfo()
         {

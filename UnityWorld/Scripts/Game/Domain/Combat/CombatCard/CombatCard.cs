@@ -7,9 +7,11 @@ namespace UnityWorld.Game.Domain.Combat
     public partial class CombatCard : Card,ICombatEntity,ILuaBindable
     {
         public LuaTable env { get; set; }
+        public Dictionary<string, LuaFunction> LuaHooks { get; set; } = new();
         public CombatNpc Owner;    
         private CombatCardPhase Phase = CombatCardPhase.WaitResource;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
+        public CombatScene Scene { get ; set ; }
         
 
         public void PreStart()
@@ -31,15 +33,18 @@ namespace UnityWorld.Game.Domain.Combat
             if (Phase == CombatCardPhase.Passive){}
             if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.WaitResource);
             if(Phase == CombatCardPhase.WaitResource) CheckMana();
-            if(Phase == CombatCardPhase.InCD) ResetCD();
 
-            //执行env["OnTick"]
+            if(Phase == CombatCardPhase.InCD)
+            {
+                CDTick();
+                ResetCD();
+            }
+            this.CallLuaHook("OnTick", env, CreateCtx());
             Ticks["Main"]++;
-            CDTick();
         }
         public void CDTick()
         {
-            var TickSpeed = Stats.Get("CDSpeed");
+            var TickSpeed = GetStat("CDSpeed");
             var CDadd = 1f;
             if(TickSpeed > 0) CDadd = CDadd*(1+TickSpeed/10);
             if(TickSpeed < 0)
@@ -63,13 +68,13 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnContest()
         {
-            CallLuaHook("OnContest");
+            this.CallLuaHook("OnContest", env, CreateCtx());
         }
 
         public void OnApply()
         {
             //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
-            CallLuaHook("OnApply");
+            this.CallLuaHook("OnApply", env, CreateCtx());
             //Trigger:触发结算事件
             SetPhase(CombatCardPhase.Finished);
         }
@@ -81,33 +86,8 @@ namespace UnityWorld.Game.Domain.Combat
         {
             SourceCard = this,
             Caster = Owner,
-            Scene = null
+            Scene = Owner?.Scene
         };
-
-        /// <summary>
-        /// 通用 Lua Hook 调用（使用默认 ctx）。
-        /// </summary>
-        private void CallLuaHook(string hookName) => CallLuaHook(hookName, CreateCtx());
-
-        /// <summary>
-        /// 通用 Lua Hook 调用：从 env 取函数并以 card:hookName(ctx) 方式调用。
-        /// </summary>
-        private void CallLuaHook(string hookName, APIContext ctx)
-        {
-            if (env == null) return;
-
-            var func = env[hookName] as NLua.LuaFunction;
-            if (func == null) return;
-
-            try
-            {
-                func.Call(env, ctx); // card:OnXxx(ctx)
-            }
-            catch (Exception ex)
-            {
-                Log($"Lua {hookName} 异常: {ex.Message}");
-            }
-        }
         
         
         public CombatCardPhase GetPhase() => Phase;
@@ -189,6 +169,18 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.Ticks.Add("Main",0);
             combatCard.Ticks.Add("CD",0);
             return combatCard;
+        }
+
+        /// <summary>
+        /// 获取属性最终值（含全场 Modifier OnModifierStat hook 贡献）。
+        /// hook 内部读属性应使用 Stats.Get()（裸值）避免递归。
+        /// </summary>
+        public override float GetStat(string statId)
+        {
+            float val = base.GetStat(statId);
+            if (Owner?.Scene != null)
+                val += Owner.Scene.CollectModifierStat(this, statId);
+            return val;
         }
 
 

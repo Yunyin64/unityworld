@@ -50,7 +50,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void ProcessContest()
         {
             var target = Target;
-            while (PendingSlot.Count > Stats.Get("PendingSlotMax"))
+            while (PendingSlot.Count > GetStat("PendingSlotMax"))
             {
                 if(target.PendingSlot.Count > 0)
                 {
@@ -59,7 +59,7 @@ namespace UnityWorld.Game.Domain.Combat
                     //拼点
                     ResolveContest(Contest, targetContest);
                 }
-                else if (Ticks["Straight"] >= Stats.Get("StraightCD")*10)
+                else if (Ticks["Straight"] >= GetStat("StraightCD")*10)
                 {
                     var Contest = PendingSlot.Dequeue();
                     Straight(Contest);

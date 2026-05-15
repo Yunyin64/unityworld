@@ -9,15 +9,14 @@ namespace UnityWorld.Game.Domain.Combat
         
         /// <summary>
         /// 在 Start 阶段检查并初始化 Lua 卡牌：
-        /// 加载 .lua 脚本 → env = return 的 card table。
+        /// 加载 .lua 脚本 → env = return 的 card table → 预扫描 LuaHooks。
         /// </summary>
         public void InitializeLuaCards()
         {
-            var luaMgr = LuaMgr.Instance;
-
             // 加载 Lua 脚本，获得独立的 card table
-            env = luaMgr.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
-            // env 为 null 说明没有对应 lua 文件，正常情况
+            env = LuaMgr.Instance.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
+            // 预扫描 Lua 函数缓存
+            LuaHooks = LuaMgr.ScanLuaHooks(env);
         }
 
         
@@ -70,8 +69,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void CheckMana()
         {
             var cost = GetCombatManaCost();
-            if (cost.Count == 0 || Owner.TryCostMana(cost))
-            Phase = CombatCardPhase.InCD;
+            if (cost.Count == 0 || Owner.TryCostMana(cost)) Phase = CombatCardPhase.InCD;
         }
         public void Charge(int Tick)
         {

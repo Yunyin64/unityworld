@@ -13,15 +13,22 @@ namespace UnityWorld.Game.Domain.Combat
             }
             return canAfford;
         }
-        public void DoManaDraw()
+        public void DoManaDraw(bool noCheck = false)
         {
             if (Mp <= 0f) return;
-            int ManaDrawCD = (int)(Stats.Get("ManaDrawCD")*10);
-            if(Ticks["ManaDraw"] >= ManaDrawCD || Ticks["Main"] == 0)
+            if (noCheck)
+            {
+                DrawMana((int)GetStat("ManaDrawCost"));
+            }
+            else
+            {
+            int ManaDrawCD = (int)(GetStat("ManaDrawCD")*10);
+            if(Ticks["ManaDraw"] >= ManaDrawCD )
             {
                 Ticks["ManaDraw"] = 0;
-                DrawMana((int)Stats.Get("ManaDrawCost"));
+                DrawMana((int)GetStat("ManaDrawCost"));
             } 
+            }
           }
 
         public void DrawMana(int costvalue)

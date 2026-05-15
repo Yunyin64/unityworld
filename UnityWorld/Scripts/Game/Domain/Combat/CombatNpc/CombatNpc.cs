@@ -15,6 +15,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         public  Npc Owner{get;private set;}
 
+        /// <summary>所属战斗场景引用</summary>
+        public CombatScene Scene { get; set; }
+
         // ── 战斗状态 ──────────────────────────────────────────
 
         /// <summary>当前战斗状态（行动中/已阵亡/逃跑/跳过）</summary>
@@ -58,8 +61,6 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 card.Tick();
             }
-
-            
         }
 
         private void CDTick()
@@ -85,13 +86,25 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public CombatNpc Target { get; set; } = null;
 
-        public List<CombatNpcModifier> Modifiers { get; set; } = new();
 
         // ── 构造 ──────────────────────────────────────────────
 
         public CombatNpc(int id) : base(id)
         {
             
+        }
+
+        /// <summary>
+        /// 获取属性最终值（含全场 Modifier OnModifierStat hook 贡献）。
+        /// 战斗内需要光环/被动效果生效的属性读取使用此方法。
+        /// hook 内部读属性应使用 Stats.Get()（裸值）避免递归。
+        /// </summary>
+        public override float GetStat(string statId)
+        {
+            float val = base.GetStat(statId);
+            if (Scene != null)
+                val += Scene.CollectModifierStat(this, statId);
+            return val;
         }
 
         public void DealDamage()
@@ -137,7 +150,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public override string ToString()
         {
-            return "";       
+            return  string.Format("Npc[{0}{1}]",Id,GetName());   
         }
 
         public void PreStart()
@@ -175,6 +188,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             CombatScene.Log($"[Npc|{GetName()}]{msg}");
         }
+
 
 
     }

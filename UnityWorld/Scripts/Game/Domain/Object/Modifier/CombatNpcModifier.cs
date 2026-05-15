@@ -17,45 +17,12 @@ namespace UnityWorld.Game.Domain
         public float Duration { get  ; set  ; }
         public float RemainingTime { get  ; set  ; }
         public LuaTable env { get  ; set  ; }
+        public Dictionary<string, LuaFunction> LuaHooks { get ; set ; } = new();
 
         public List<StatModifierEntry> StatModifiers { get ; set ; }
         public int MaxStack { get  ; set  ; }
         public int CurrentStack { get  ; set  ; }
         public bool RefreshOnStack { get  ; set  ; }
-
-        // ── Lua Hook 调用 ──────────────────────────────────────────
-
-        /// <summary>
-        /// 调用 env 中的 Lua Hook 函数。
-        /// env 为 null 或 hook 不存在时静默跳过，异常时输出错误日志不中断。
-        /// 支持传入额外参数（如 DamageInfo），Lua 签名：hookName(env, npc, ...)
-        /// </summary>
-        public void CallLuaHook(string hookName, CombatNpc npc, params object[] extraArgs)
-        {
-            if (env == null) return;
-
-            var func = env[hookName] as LuaFunction;
-            if (func == null) return;
-
-            try
-            {
-                // 同步运行时状态到 Lua env
-                env["CurrentStack"] = CurrentStack;
-
-                // 构建参数列表：env, npc, ...extraArgs
-                var args = new object[2 + extraArgs.Length];
-                args[0] = env;
-                args[1] = npc;
-                for (int i = 0; i < extraArgs.Length; i++)
-                    args[2 + i] = extraArgs[i];
-
-                func.Call(args);
-            }
-            catch (System.Exception ex)
-            {
-                LogMgr.Err("[CombatNpcModifier] '{0}' hook '{1}' 异常: {2}", DefineId, hookName, ex.Message);
-            }
-        }
 
         // ── 工厂方法 ──────────────────────────────────────────
 
@@ -76,11 +43,12 @@ namespace UnityWorld.Game.Domain
                 StatModifiers = source.StatModifiers,
             };
 
-            // 加载 Lua env（按约定路径，不存在则为 null）
+            // 加载 Lua env 并预扫描 hooks
             var luaMgr = LuaMgr.Instance;
             if (luaMgr != null)
             {
                 buff.env = luaMgr.LoadModifierScript(source.ID);
+                buff.LuaHooks = LuaMgr.ScanLuaHooks(buff.env);
             }
 
             return buff;

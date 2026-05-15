@@ -209,7 +209,6 @@ namespace UnityWorld.Game.Domain
 
                 if (results != null && results.Length > 0 && results[0] is LuaTable cardTable)
                 {
-                    LogMgr.Dbg("[LuaMgr] {0}加载成功: {1}", define.DisplayName,define.ID);
                     return cardTable;
                 }
                 else
@@ -329,6 +328,27 @@ namespace UnityWorld.Game.Domain
                 LogMgr.Err("[LuaMgr] LoadModifierScript '{0}' 失败: {1}", defineId, ex.Message);
                 return null;
             }
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  LuaHooks 预扫描
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 扫描 LuaTable 中所有函数引用，返回 hookName → LuaFunction 字典。
+        /// 供 ILuaBindable 实现者在加载 env 后调用，将结果赋给 LuaHooks。
+        /// env 为 null 时返回空字典。
+        /// </summary>
+        public static Dictionary<string, LuaFunction> ScanLuaHooks(LuaTable env)
+        {
+            var hooks = new Dictionary<string, LuaFunction>();
+            if (env == null) return hooks;
+            foreach (var key in env.Keys)
+            {
+                if (key is string s && env[s] is LuaFunction func)
+                    hooks[s] = func;
+            }
+            return hooks;
         }
 
     }

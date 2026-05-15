@@ -15,10 +15,6 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("score")]
         public int Score { get; set; } = 0;
 
-        /// <summary>Tag列表（这里不可重复）</summary>
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = [];
-
         /// <summary>冲突Tag列表（含这些Tag的节点不能与本节点同处一个Effect）</summary>
         [JsonPropertyName("conflictTags")]
         public List<string> ConflictTags { get; set; } = [];
