@@ -5,13 +5,21 @@ namespace UnityWorld.Game.Domain.Combat
 {
     /// <summary>
     /// CombatNpc 的 Modifier 管理逻辑（partial）：
-    /// AddModifier / ModifierTick / RemoveModifier
+    /// AddModifier / ModifierTick / RemoveModifier / EventMgr 触发器集成
     /// </summary>
     public partial class CombatNpc
     {
         private List<CombatNpcModifier> Modifiers { get; set; } = new();
 
+        /// <summary>
+        /// 触发器事件监听者：接收 EventMgr 广播，处理 RemoveTriggerId 匹配的 Modifier。
+        /// </summary>
+        private DelegateEventListener _modifierTriggerListener;
 
+        /// <summary>当前已注册监听的 triggerId 集合（用于避免重复注册和正确注销）</summary>
+        private Dictionary<string, int> _triggerRefCounts = new();
+
+        /// <summary>返回所有未过期的 Modifier</summary>
         public List<CombatNpcModifier> GetAllModifiers()
         {
             return Modifiers.Where(m => !m.IsExpired()).ToList();
@@ -25,6 +33,60 @@ namespace UnityWorld.Game.Domain.Combat
             Caster = this,
             Scene = Scene,
         };
+
+        /// <summary>
+        /// 获取当前 CombatNpc 的事件 ScopeKey。
+        /// </summary>
+        private ScopeKey GetModifierScope() => new ScopeKey(Scope.CombatNpc, Id.ToString());
+
+        /// <summary>
+        /// 初始化 Modifier 触发器监听者。应在 CombatNpc 初始化时调用。
+        /// </summary>
+        private void InitModifierTriggerListener()
+        {
+            _modifierTriggerListener = new DelegateEventListener(OnModifierTriggerEvent);
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  触发器事件响应
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// EventMgr 触发器回调：遍历 Modifiers，处理 RemoveTriggerId 匹配的 Modifier。
+        /// </summary>
+        private void OnModifierTriggerEvent(string eventId, ScopeKey scope, object args)
+        {
+            if (Modifiers.Count == 0) return;
+
+            var toRemove = new List<CombatNpcModifier>();
+
+            foreach (var mod in Modifiers)
+            {
+                if (string.IsNullOrEmpty(mod.RemoveTriggerId)) continue;
+                if (mod.RemoveTriggerId != eventId) continue;
+
+                if (mod.ExpirePolicy == ExpirePolicy.TriggerBased)
+                {
+                    // TriggerBased：直接标记移除
+                    toRemove.Add(mod);
+                }
+                else
+                {
+                    // 其他策略：减层，然后检查是否过期
+                    mod.ReduceStack(1);
+                    if (mod.IsExpired())
+                    {
+                        toRemove.Add(mod);
+                    }
+                }
+            }
+
+            foreach (var mod in toRemove)
+            {
+                DoRemoveModifier(mod);
+                Log($"[Modifier] 触发器移除: {mod.DefineId} (trigger={eventId})");
+            }
+        }
 
         // ══════════════════════════════════════════════════════════
         //  AddModifier
@@ -60,29 +122,19 @@ namespace UnityWorld.Game.Domain.Combat
             modifier.CallLuaHook("OnApply", modifier.env, CreateModifierCtx(modifier));
 
             Modifiers.Add(modifier);
-            Log($"[Modifier] 添加: {defineId} (Stack={modifier.CurrentStack}, Duration={modifier.Duration})");
+
+            // 注册触发器事件监听
+            RegisterTriggerEvent(modifier);
+
+            Log($"[Modifier] 添加: {defineId} (Stack={modifier.CurrentStack}, Duration={modifier.Duration}, Expire={modifier.ExpirePolicy})");
         }
 
         /// <summary>
-        /// 叠层逻辑：累加 CurrentStack，受 MaxStack 限制；RefreshOnStack 时重置时间。
+        /// 叠层逻辑：使用统一的 AddStack 扩展方法，含 MaxStack 限制和 RefreshOnStack。
         /// </summary>
         private void StackModifier(CombatNpcModifier modifier, int stacks)
         {
-            int newStack = modifier.CurrentStack + stacks;
-
-            // MaxStack 限制（0 = 无上限）
-            if (modifier.MaxStack > 0 && newStack > modifier.MaxStack)
-            {
-                newStack = modifier.MaxStack;
-            }
-
-            modifier.CurrentStack = newStack;
-
-            // RefreshOnStack：重置 RemainingTime
-            if (modifier.RefreshOnStack && modifier.Duration > 0)
-            {
-                modifier.RemainingTime = modifier.Duration;
-            }
+            modifier.AddStack(stacks);
 
             // 调用 OnStack hook
             modifier.CallLuaHook("OnStack", modifier.env, CreateModifierCtx(modifier));
@@ -105,7 +157,6 @@ namespace UnityWorld.Game.Domain.Combat
 
             foreach (var mod in Modifiers)
             {
-                
                 // 调用 OnTick hook
                 mod.CallLuaHook("OnTick", mod.env, CreateModifierCtx(mod));
 
@@ -113,18 +164,19 @@ namespace UnityWorld.Game.Domain.Combat
                 if (mod.Duration > 0)
                 {
                     mod.RemainingTime -= 1;
-                    if (mod.RemainingTime <= 0)
-                    {
-                        toRemove.Add(mod);
-                    }
+                }
+
+                // 统一过期判定
+                if (mod.IsExpired())
+                {
+                    toRemove.Add(mod);
                 }
             }
 
             // 批量移除过期 Modifier
             foreach (var mod in toRemove)
             {
-                mod.CallLuaHook("OnRemove", mod.env, CreateModifierCtx(mod));
-                Modifiers.Remove(mod);
+                DoRemoveModifier(mod);
                 Log($"[Modifier] 过期移除: {mod.DefineId}");
             }
         }
@@ -148,7 +200,6 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
-
         // ══════════════════════════════════════════════════════════
         //  RemoveModifier
         // ══════════════════════════════════════════════════════════
@@ -161,9 +212,74 @@ namespace UnityWorld.Game.Domain.Combat
             var modifier = Modifiers.FirstOrDefault(m => m.DefineId == defineId);
             if (modifier == null) return;
 
-            modifier.CallLuaHook("OnRemove", modifier.env, CreateModifierCtx(modifier));
-            Modifiers.Remove(modifier);
+            DoRemoveModifier(modifier);
             Log($"[Modifier] 主动移除: {defineId}");
+        }
+
+        /// <summary>
+        /// 内部统一移除逻辑：调用 OnRemove hook → 注销触发器监听 → 从列表移除。
+        /// </summary>
+        private void DoRemoveModifier(CombatNpcModifier modifier)
+        {
+            modifier.CallLuaHook("OnRemove", modifier.env, CreateModifierCtx(modifier));
+            UnregisterTriggerEvent(modifier);
+            Modifiers.Remove(modifier);
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  触发器事件注册/注销
+        // ══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 为 Modifier 的 RemoveTriggerId 注册 EventMgr 监听。
+        /// 使用引用计数避免同一 triggerId 重复注册。
+        /// </summary>
+        private void RegisterTriggerEvent(CombatNpcModifier modifier)
+        {
+            if (string.IsNullOrEmpty(modifier.RemoveTriggerId)) return;
+
+            var triggerId = modifier.RemoveTriggerId;
+            if (_modifierTriggerListener == null) InitModifierTriggerListener();
+
+            if (_triggerRefCounts.TryGetValue(triggerId, out int count))
+            {
+                _triggerRefCounts[triggerId] = count + 1;
+            }
+            else
+            {
+                _triggerRefCounts[triggerId] = 1;
+                EventMgr.Instance?.RegisterEvent(
+                    $"CombatNpc:{Id}:Modifier",
+                    triggerId,
+                    GetModifierScope(),
+                    _modifierTriggerListener);
+            }
+        }
+
+        /// <summary>
+        /// 注销 Modifier 的 RemoveTriggerId 监听。
+        /// 引用计数归零时才真正从 EventMgr 注销。
+        /// </summary>
+        private void UnregisterTriggerEvent(CombatNpcModifier modifier)
+        {
+            if (string.IsNullOrEmpty(modifier.RemoveTriggerId)) return;
+
+            var triggerId = modifier.RemoveTriggerId;
+            if (!_triggerRefCounts.TryGetValue(triggerId, out int count)) return;
+
+            count--;
+            if (count <= 0)
+            {
+                _triggerRefCounts.Remove(triggerId);
+                EventMgr.Instance?.RemoveEvent(
+                    triggerId,
+                    GetModifierScope(),
+                    _modifierTriggerListener);
+            }
+            else
+            {
+                _triggerRefCounts[triggerId] = count;
+            }
         }
     }
 }

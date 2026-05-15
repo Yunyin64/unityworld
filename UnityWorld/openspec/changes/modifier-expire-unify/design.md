@@ -84,13 +84,25 @@ public static bool IsExpired(this IModifierBase self) => self.ExpirePolicy switc
 
 `TriggerBased` 返回 false 是因为它不靠 Tick 末尾的轮询检查——引擎在事件广播时直接移除该 Modifier。
 
-### 5. RemoveTriggerId 的广播机制
+### 5. 触发器响应接入 EventMgr 事件总线
 
-事件点广播 triggerId 时的处理流程：
-1. 遍历目标实体身上所有 Modifier
-2. `modifier.RemoveTriggerId == triggerId` 的：
-   - 如果 `ExpirePolicy == TriggerBased`：直接标记移除
-   - 否则：调 `ReduceStack(1)`，后续由正常 IsExpired 检查清理
+**决策**：不自建 `BroadcastRemoveTrigger` 方法，而是接入已有的 `EventMgr` 事件总线。
+
+**为什么不用自建广播？**
+- 事件广播侧（CombatCard.OnApply、CombatNpc.ApplyDamage 等）不应知道 Modifier 的存在
+- EventMgr 已具备 Scope 分层、延迟操作保护、悬空清理等能力，不需要重复造
+- 新增事件点时零改动——只要有人往 EventMgr 广播了事件，Modifier 系统自动响应
+
+**实现方式**：
+- Modifier 持有者（CombatNpc 等）内部维护一个 `DelegateEventListener`（_modifierTriggerListener）
+- `AddModifier` 时：若 `RemoveTriggerId` 非空，调用 `EventMgr.RegisterEvent` 注册监听
+- `RemoveModifier` 时：若 `RemoveTriggerId` 非空，调用 `EventMgr.RemoveEvent` 注销监听
+- `_modifierTriggerListener.OnEvent()` 内部处理：
+  1. 遍历身上所有 Modifier
+  2. `modifier.RemoveTriggerId == eventId` 的：
+     - `ExpirePolicy == TriggerBased`：直接标记移除
+     - 其他：调 `ReduceStack(1)`
+  3. 立即检查 `IsExpired()`，过期的加入 toRemove 列表批量移除
 
 ### 6. ReduceStack / AddStack 作为扩展方法
 

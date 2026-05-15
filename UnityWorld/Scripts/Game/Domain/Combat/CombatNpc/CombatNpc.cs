@@ -126,6 +126,9 @@ namespace UnityWorld.Game.Domain.Combat
             Hp -= finalval;
             Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
 
+            // 广播受击事件，供 Modifier 触发器响应
+            EventMgr.Instance?.TriggerEvent("OnDamage", info,(Scope.CombatNpc, Id.ToString()));
+
             if (Hp <= 0)
             {
                 HandleHpZero(info);

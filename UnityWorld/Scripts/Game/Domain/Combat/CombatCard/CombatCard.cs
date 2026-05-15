@@ -75,7 +75,12 @@ namespace UnityWorld.Game.Domain.Combat
         {
             //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
             this.CallLuaHook("OnApply", env, CreateCtx());
-            //Trigger:触发结算事件
+
+            // 广播卡牌使用事件，供 Modifier 触发器响应
+            EventMgr.Instance?.TriggerEvent("OnApply", this,
+                (Scope.CombatNpc, Owner?.Id.ToString() ?? ""),
+                (Scope.CombatCard, Id.ToString()));
+
             SetPhase(CombatCardPhase.Finished);
         }
 

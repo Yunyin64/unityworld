@@ -39,7 +39,7 @@ namespace UnityWorld.Game.Domain
                         modifier.RemainingTime -= deltaTime;
 
                     // 标记过期
-                    if (modifier.IsExpired)
+                    if (modifier.IsExpired())
                     {
                         toRemove ??= new List<(Tile, TileModifier)>();
                         toRemove.Add((tile, modifier));

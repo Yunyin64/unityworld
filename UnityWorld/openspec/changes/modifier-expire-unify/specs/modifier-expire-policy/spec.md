@@ -84,22 +84,46 @@
 - **WHEN** RefreshOnStack 为 true，Duration 为 30，RemainingTime 为 10，调用 AddStack(1)
 - **THEN** RemainingTime 重置为 30
 
-### Requirement: 触发器广播移除机制
-当引擎在事件点广播 triggerId 时，SHALL 遍历目标实体的所有 Modifier：
-- 若 `modifier.RemoveTriggerId == triggerId` 且 `ExpirePolicy == TriggerBased`：直接标记移除
-- 若 `modifier.RemoveTriggerId == triggerId` 且 `ExpirePolicy != TriggerBased`：调用 `ReduceStack(1)`
+### Requirement: 触发器响应通过 EventMgr 事件总线驱动
+Modifier 的触发器移除机制 SHALL 接入已有的 `EventMgr` 事件总线，而非自建广播方法。具体：
+- Modifier 持有者（CombatNpc 等）SHALL 在内部维护一个 `IEventListener` 实例（_modifierTriggerListener），负责处理所有 Modifier 的触发器响应
+- `AddModifier` 时，若 Modifier 的 `RemoveTriggerId` 非空，SHALL 通过 `EventMgr.RegisterEvent` 注册监听该事件
+- `RemoveModifier` 时，若 Modifier 的 `RemoveTriggerId` 非空，SHALL 通过 `EventMgr.RemoveEvent` 注销监听
+- 事件广播侧（如 CombatCard.OnApply、CombatNpc.ApplyDamage）只需照常调用 `EventMgr.TriggerEvent`，不需要感知 Modifier 的存在
+
+#### Scenario: AddModifier 自动注册事件监听
+- **WHEN** 向 CombatNpc 添加一个 RemoveTriggerId 为 "OnUse" 的 Modifier
+- **THEN** EventMgr 中 MUST 存在该 CombatNpc scope 下对 "OnUse" 事件的监听注册
+
+#### Scenario: RemoveModifier 自动注销事件监听
+- **WHEN** 从 CombatNpc 移除一个 RemoveTriggerId 为 "OnUse" 的 Modifier，且该 NPC 上不再有其他监听 "OnUse" 的 Modifier
+- **THEN** EventMgr 中该 scope 下对 "OnUse" 事件的监听 MUST 被注销
+
+#### Scenario: 事件广播侧无需感知 Modifier
+- **WHEN** CombatCard.OnApply() 执行卡牌使用逻辑
+- **THEN** 该方法只需调用 `EventMgr.TriggerEvent("OnUse", ...)`，MUST NOT 直接调用任何 Modifier 管理方法
+
+### Requirement: 触发器事件响应逻辑
+当 `_modifierTriggerListener` 收到事件回调时，SHALL 遍历持有者身上的所有 Modifier：
+- 若 `modifier.RemoveTriggerId == eventId` 且 `ExpirePolicy == TriggerBased`：直接标记移除
+- 若 `modifier.RemoveTriggerId == eventId` 且 `ExpirePolicy != TriggerBased`：调用 `ReduceStack(1)`
+- 标记移除和 ReduceStack 后 SHALL 立即检查 `IsExpired()`，过期的加入 toRemove 列表，事件处理结束后批量移除
 
 #### Scenario: TriggerBased 直接移除
-- **WHEN** CardModifier 的 ExpirePolicy 为 TriggerBased，RemoveTriggerId 为 "OnUse"，卡牌使用时广播 "OnUse"
+- **WHEN** CardModifier 的 ExpirePolicy 为 TriggerBased，RemoveTriggerId 为 "OnUse"，EventMgr 广播 "OnUse" 事件
 - **THEN** 该 CardModifier 被直接移除
 
 #### Scenario: StackBased 配合触发器减层
-- **WHEN** CombatNpcModifier 的 ExpirePolicy 为 StackBased，RemoveTriggerId 为 "OnHit"，CurrentStack 为 3，NPC 受击时广播 "OnHit"
+- **WHEN** CombatNpcModifier 的 ExpirePolicy 为 StackBased，RemoveTriggerId 为 "OnHit"，CurrentStack 为 3，EventMgr 广播 "OnHit" 事件
 - **THEN** CurrentStack 减为 2，Modifier 未被移除
 
 #### Scenario: StackBased 触发器减至零过期
-- **WHEN** CombatNpcModifier 的 ExpirePolicy 为 StackBased，RemoveTriggerId 为 "OnHit"，CurrentStack 为 1，NPC 受击时广播 "OnHit"
+- **WHEN** CombatNpcModifier 的 ExpirePolicy 为 StackBased，RemoveTriggerId 为 "OnHit"，CurrentStack 为 1，EventMgr 广播 "OnHit" 事件
 - **THEN** CurrentStack 减为 0，Modifier 在过期检查时被移除
+
+#### Scenario: 同一 NPC 多个 Modifier 监听同一事件
+- **WHEN** CombatNpc 上有两个 Modifier 都设置 RemoveTriggerId 为 "OnHit"，EventMgr 广播 "OnHit" 事件
+- **THEN** 两个 Modifier 都 SHALL 被触发响应（各自独立 ReduceStack 或移除）
 
 ### Requirement: 子类不得遮蔽 IsExpired
 所有 `IModifierBase` 实现类 MUST NOT 声明自定义的 `IsExpired` 字段或属性。过期判定 MUST 统一通过 `IModifierBaseExt.IsExpired()` 扩展方法。

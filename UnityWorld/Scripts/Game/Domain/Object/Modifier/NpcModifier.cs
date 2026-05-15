@@ -21,5 +21,7 @@ namespace UnityWorld.Game.Domain
         public int MaxStack { get  ; set  ; }
         public int CurrentStack { get  ; set  ; }
         public bool RefreshOnStack { get  ; set  ; }
+        public ExpirePolicy ExpirePolicy { get  ; set  ; }
+        public string RemoveTriggerId { get  ; set  ; }
     }
 }

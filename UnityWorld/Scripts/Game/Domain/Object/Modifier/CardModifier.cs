@@ -2,15 +2,8 @@ using UnityWorld.Core;
 
 namespace UnityWorld.Game.Domain
 {
-    public enum StackReduceType
-    {
-        Tick,
-        Stack,
-        OnUse
-    }
-
     /// <summary>
-    /// 卡牌修正
+    /// 卡牌修正：纯数值修正容器，无 Lua 脚本行为。
     /// </summary>
     public class CardModifier : IModifierBase
     {
@@ -22,8 +15,8 @@ namespace UnityWorld.Game.Domain
         public int CurrentStack { get  ; set  ; }
         public bool RefreshOnStack { get  ; set  ; }
         public List<StatModifierEntry> StatModifiers { get ; set ; }
-        public StackReduceType StackReduceType { get ; set ; }
-        public bool isExpired => RemainingTime >= Duration && CurrentStack == 0;
+        public ExpirePolicy ExpirePolicy { get  ; set  ; }
+        public string RemoveTriggerId { get  ; set  ; }
 
         public static CardModifier CDSpeed(string id,int speed)
         {
@@ -35,6 +28,7 @@ namespace UnityWorld.Game.Domain
                 MaxStack = 1,
                 CurrentStack = speed,
                 RefreshOnStack = false,
+                ExpirePolicy = ExpirePolicy.Never,
                 StatModifiers = new List<StatModifierEntry>()
                 {
                     new StatModifierEntry()

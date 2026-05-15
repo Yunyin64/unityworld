@@ -30,6 +30,14 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("RefreshOnStack")]
         public bool RefreshOnStack { get; set; } = true;
 
+        /// <summary>过期策略（默认 TimeBased）</summary>
+        [JsonPropertyName("ExpirePolicy")]
+        public ExpirePolicy ExpirePolicy { get; set; } = ExpirePolicy.TimeBased;
+
+        /// <summary>移除触发器 ID，引用 TriggerDefine.ID。为空表示不响应触发器事件。</summary>
+        [JsonPropertyName("RemoveTriggerId")]
+        public string RemoveTriggerId { get; set; } = "";
+
         // ── B. 数值修正 ──────────────────────────────────────
 
         /// <summary>对 StatBlock 的修正列表（Apply 时添加，Remove 时撤销）</summary>

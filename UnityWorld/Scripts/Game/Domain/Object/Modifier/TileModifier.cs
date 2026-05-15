@@ -18,8 +18,8 @@ namespace UnityWorld.Game.Domain
         public int MaxStack { get  ; set  ; }
         public int CurrentStack { get  ; set  ; }
         public bool RefreshOnStack { get  ; set  ; }
-        
-        public bool IsExpired = false;
+        public ExpirePolicy ExpirePolicy { get  ; set  ; }
+        public string RemoveTriggerId { get  ; set  ; }
 
         public TileModifier(string id, string sourceId, TileAura auraData, float duration = -1f)   
         {

@@ -23,6 +23,8 @@ namespace UnityWorld.Game.Domain
         public int MaxStack { get  ; set  ; }
         public int CurrentStack { get  ; set  ; }
         public bool RefreshOnStack { get  ; set  ; }
+        public ExpirePolicy ExpirePolicy { get  ; set  ; }
+        public string RemoveTriggerId { get  ; set  ; }
 
         // ── 工厂方法 ──────────────────────────────────────────
 
@@ -41,6 +43,8 @@ namespace UnityWorld.Game.Domain
                 CurrentStack = 1,
                 RefreshOnStack = source.RefreshOnStack,
                 StatModifiers = source.StatModifiers,
+                ExpirePolicy = source.ExpirePolicy,
+                RemoveTriggerId = source.RemoveTriggerId,
             };
 
             // 加载 Lua env 并预扫描 hooks
