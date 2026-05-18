@@ -34,7 +34,7 @@
 
 ### Decision 2: LuaHooks / ScanLuaHooks / CallLuaHook 提升到 ILuaBindable 层
 
-**选择**: `ILuaBindable` 接口扩展，包含 `LuaHooks` 字典、`ScanLuaHooks()`、`HasHook()`、`CallLuaHook()`、`CallLuaHookWithReturn<T>()`。所有实现者（`CombatNpcModifier`、`CombatCard`、`NpcModifier`）创建时调用 `ScanLuaHooks()`。
+**选择**: `ILuaBindable` 接口扩展，包含 `LuaHooks` 字典、`ScanLuaHooks()`、`HasHook()`、`CallLuaHook<bool>()`、`CallLuaHookWithReturn<T>()`。所有实现者（`CombatNpcModifier`、`CombatCard`、`NpcModifier`）创建时调用 `ScanLuaHooks()`。
 
 **替代方案**: 仅在 `CombatNpcModifier` 上实现
 

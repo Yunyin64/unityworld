@@ -16,18 +16,18 @@ LuaMgr SHALL 提供 `LoadModifierScript(string defineId)` 方法。该方法 SHA
 - **THEN** 返回两个不同引用的 LuaTable，修改其中一个不影响另一个
 
 ### Requirement: CombatNpcModifier 支持 Lua Hook 调用
-CombatNpcModifier SHALL 提供 `CallLuaHook(string hookName, CombatNpc npc)` 方法。该方法 SHALL 从 `env` 中取出名为 hookName 的 LuaFunction 并以 `(mod, npc)` 参数调用。env 为 null 或 hook 函数不存在时 SHALL 静默跳过。Lua 执行异常时 SHALL 捕获并输出错误日志，不中断战斗流程。
+CombatNpcModifier SHALL 提供 `CallLuaHook<bool>(string hookName, CombatNpc npc)` 方法。该方法 SHALL 从 `env` 中取出名为 hookName 的 LuaFunction 并以 `(mod, npc)` 参数调用。env 为 null 或 hook 函数不存在时 SHALL 静默跳过。Lua 执行异常时 SHALL 捕获并输出错误日志，不中断战斗流程。
 
 #### Scenario: env 存在且 hook 存在
-- **WHEN** modifier.env 包含 `OnTick` 函数，调用 `CallLuaHook("OnTick", npc)`
+- **WHEN** modifier.env 包含 `OnTick` 函数，调用 `CallLuaHook<bool>("OnTick", npc)`
 - **THEN** 执行 `env.OnTick(mod, npc)`
 
 #### Scenario: env 为 null（纯数值 Modifier）
-- **WHEN** modifier.env 为 null，调用 `CallLuaHook("OnTick", npc)`
+- **WHEN** modifier.env 为 null，调用 `CallLuaHook<bool>("OnTick", npc)`
 - **THEN** 静默跳过，不报错
 
 #### Scenario: hook 函数不存在
-- **WHEN** modifier.env 存在但不包含 `OnStack` 函数，调用 `CallLuaHook("OnStack", npc)`
+- **WHEN** modifier.env 存在但不包含 `OnStack` 函数，调用 `CallLuaHook<bool>("OnStack", npc)`
 - **THEN** 静默跳过，不报错
 
 #### Scenario: Lua 执行异常

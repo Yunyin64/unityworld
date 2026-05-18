@@ -328,7 +328,7 @@ namespace UnityWorld.Game.Domain.Combat
 
                     try
                     {
-                        var result = mod.CallLuaHookWithReturn<double>(hookName, mod.env, caller);
+                        var result = mod.CallLuaHook<double>(hookName, mod.env, caller);
                         sum += (float)result;
                     }
                     catch (System.Exception ex)

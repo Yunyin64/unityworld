@@ -18,7 +18,7 @@
 - [x] 3.2 在 `CombatCard` 中新增 `RunKeywordHooks(string hookName)` 私有方法：遍历 Keywords 列表，查 LuaMgr 注册表，调用对应 hook 函数（hook 不存在静默跳过，keyword 未注册报错）
 - [x] 3.3 在 `CombatCard.PreStart()` 中 InitializeLuaCards 之后调用 `RunKeywordHooks("OnPreStart")`
 - [x] 3.4 在 `CombatCard.Start()` 中调用 `RunKeywordHooks("OnStart")`
-- [x] 3.5 修改 `CombatCard.Tick()`：开头调用 `RunKeywordHooks("OnTick")`，然后判断 `Phase == Passive` 时调用 `CallLuaHook("OnPassiveTick", ctx)` 并 return，跳过 CD 循环
+- [x] 3.5 修改 `CombatCard.Tick()`：开头调用 `RunKeywordHooks("OnTick")`，然后判断 `Phase == Passive` 时调用 `CallLuaHook<bool>("OnPassiveTick", ctx)` 并 return，跳过 CD 循环
 - [x] 3.6 在 `CombatCard.End()` 中调用 `RunKeywordHooks("OnEnd")`
 
 ## 4. Lua 脚本

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -44,8 +45,18 @@ namespace UnityWorld.Game.Data
         }
 
         /// <summary>按 ID 查询，不存在返回 null</summary>
-        public CombatNpcModifierDefine? Get(string id)
-            => _defines.TryGetValue(id, out var d) ? d : null;
+        public CombatNpcModifierDefine Get(string id)
+        {
+            if (_defines.ContainsKey(id))
+            {
+                return _defines[id];
+            }
+            else
+            {
+                LogMgr.Warn($"Define不存在:{id}");
+                return null;
+            }
+        }
 
         /// <summary>获取全部定义</summary>
         public IEnumerable<CombatNpcModifierDefine> GetAll() => _defines.Values;

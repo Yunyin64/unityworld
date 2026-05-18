@@ -22,7 +22,7 @@
 - [ ] 3.4 确保 CombatCard 拥有 BaseData 副本（不共享大世界 Card 的 BaseData 引用）
 - [ ] 3.5 新增 `OnUse(ActionContext ctx)` 实例方法：IsLuaCard 时调 _luaTable["OnUse"]
 - [ ] 3.6 新增 `OnTick(ActionContext ctx)` 实例方法：IsLuaCard 时调 _luaTable["OnTick"]
-- [ ] 3.7 新增通用 `CallLuaHook(string hookName, ActionContext ctx)` 方法供其他 OnXxx 复用
+- [ ] 3.7 新增通用 `CallLuaHook<bool>(string hookName, ActionContext ctx)` 方法供其他 OnXxx 复用
 - [ ] 3.8 新增 Trigger 钩子扫描与 EventMgr 注册逻辑
 
 ## 4. 删除 LuaBridge

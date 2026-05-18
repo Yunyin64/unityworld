@@ -12,6 +12,8 @@ public interface ILuaBindable
 
     /// <summary>预扫描的 Lua 函数缓存：hookName → LuaFunction</summary>
     public Dictionary<string, LuaFunction> LuaHooks { get; set; }
+    /// <summary>当前帧Hook的使用情况</summary>
+    public HashSet<string> HookUse { get; set; }
 }
 
 /// <summary>
@@ -62,34 +64,16 @@ public static class LuaBindableExtensions
         }
     }
 
-    /// <summary>
-    /// 调用指定名称的 Lua hook 函数（无返回值），参数自由传入。
-    /// hook 不存在时静默跳过。
-    /// </summary>
-    public static void CallLuaHook(this ILuaBindable self, string hookName, params object[] args)
-    {
-        var func = self.GetHookFunc(hookName);
-        if (func == null) return;
-
-        try
-        {
-            func.Call(args);
-        }
-        catch (System.Exception ex)
-        {
-            UnityWorld.Core.LogMgr.Err("[ILuaBindable] hook '{0}' 异常: {1}", hookName, ex.Message);
-        }
-    }
 
     /// <summary>
     /// 调用指定名称的 Lua hook 函数并返回结果。
     /// hook 不存在或返回值为空时返回 default(T)。
     /// </summary>
-    public static T CallLuaHookWithReturn<T>(this ILuaBindable self, string hookName, params object[] args)
+    public static T CallLuaHook<T>(this ILuaBindable self, string hookName, params object[] args)
     {
         var func = self.GetHookFunc(hookName);
         if (func == null) return default;
-
+        //这里要用下HookUse，确保同来源Hook一个Tick只能用一次
         try
         {
             var results = func.Call(args);

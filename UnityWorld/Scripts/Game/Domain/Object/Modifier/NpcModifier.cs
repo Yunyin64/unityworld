@@ -18,6 +18,7 @@ namespace UnityWorld.Game.Domain
         public List<StatModifierEntry> StatModifiers { get ; set ; }
         public LuaTable env { get  ; set  ; }
         public Dictionary<string, LuaFunction> LuaHooks { get ; set ; } = new();
+        public HashSet<string> HookUse { get ; set ; } = new();
         public int MaxStack { get  ; set  ; }
         public int CurrentStack { get  ; set  ; }
         public bool RefreshOnStack { get  ; set  ; }

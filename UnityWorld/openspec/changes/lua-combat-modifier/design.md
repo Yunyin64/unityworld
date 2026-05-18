@@ -1,6 +1,6 @@
 ## Context
 
-CombatCard 已有完整的 Lua 驱动生命周期：`InitializeLuaCards()` 加载脚本 → `CallLuaHook()` 在 PreStart/Start/Tick/End 调用 Lua 函数。CombatNpcModifier 虽实现了 `ILuaBindable`（有 `env` 属性），但从未被赋值或使用。战斗 Modifier 目前只是挂在 `CombatNpc.Modifiers` 列表上的死数据，没有 Tick 衰减、没有行为逻辑。
+CombatCard 已有完整的 Lua 驱动生命周期：`InitializeLuaCards()` 加载脚本 → `CallLuaHook<bool>()` 在 PreStart/Start/Tick/End 调用 Lua 函数。CombatNpcModifier 虽实现了 `ILuaBindable`（有 `env` 属性），但从未被赋值或使用。战斗 Modifier 目前只是挂在 `CombatNpc.Modifiers` 列表上的死数据，没有 Tick 衰减、没有行为逻辑。
 
 现有代码约束：
 - LuaMgr 共享单一 `Lua _luaState`，所有 DoFile 在同一全局环境中执行

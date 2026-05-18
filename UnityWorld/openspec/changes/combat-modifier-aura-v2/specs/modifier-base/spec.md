@@ -21,9 +21,9 @@
 `CombatNpcModifier` 现有的 `CallLuaHook` 方法 SHALL 迁移到 `ILuaBindable` 层（通过接口默认实现或基类）。迁移后 `CombatNpcModifier` 删除自身的 `CallLuaHook` 实现，改为调用 `ILuaBindable` 层的统一实现。`CombatNpcModifierFunc` 等现有调用方无需修改签名，行为不变。
 
 #### Scenario: 迁移后现有 hook 调用行为不变
-- **WHEN** `CombatNpcModifierFunc.ModifierTick` 调用 `mod.CallLuaHook("OnTick", this)`
+- **WHEN** `CombatNpcModifierFunc.ModifierTick` 调用 `mod.CallLuaHook<bool>("OnTick", this)`
 - **THEN** 行为与迁移前完全一致
 
 #### Scenario: CombatCard 也可使用 CallLuaHook
-- **WHEN** `CombatCard` 实现 `ILuaBindable`，调用 `CallLuaHook("OnUse", ...)`
+- **WHEN** `CombatCard` 实现 `ILuaBindable`，调用 `CallLuaHook<bool>("OnUse", ...)`
 - **THEN** 通过 `ILuaBindable` 层的统一实现调用 Lua 函数

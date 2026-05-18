@@ -5,7 +5,7 @@
 
 ## 2. CombatNpcModifier：Lua Hook 调用
 
-- [x] 2.1 在 `CombatNpcModifier` 中新增 `CallLuaHook(string hookName, CombatNpc npc)` 方法：从 env 取 LuaFunction 调用 `(mod, npc)`，env 为 null 或 hook 不存在时静默跳过，异常时 catch 并输出错误日志
+- [x] 2.1 在 `CombatNpcModifier` 中新增 `CallLuaHook<bool>(string hookName, CombatNpc npc)` 方法：从 env 取 LuaFunction 调用 `(mod, npc)`，env 为 null 或 hook 不存在时静默跳过，异常时 catch 并输出错误日志
 
 ## 3. CombatNpcModifierFunc.cs：Modifier 管理 partial
 

@@ -70,7 +70,7 @@ return {
 Tick():
   keyword hooks (OnTick)        ← 所有卡都走
   if Phase == Passive:
-    CallLuaHook("OnPassiveTick") ← 可选，卡自身 Lua 定义
+    CallLuaHook<bool>("OnPassiveTick") ← 可选，卡自身 Lua 定义
     return                       ← 跳过 CD 循环
   ... 原有 CD 循环逻辑 ...
 ```

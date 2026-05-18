@@ -3,7 +3,7 @@
 - [x] 1.1 `ILuaBindable` 新增 `Dictionary<string, LuaFunction> LuaHooks { get; set; }` 属性
 - [x] 1.2 `ILuaBindable` 新增 `ScanLuaHooks()` 方法（默认接口实现或扩展方法）：遍历 env.Keys，缓存所有 string→LuaFunction 映射到 LuaHooks；env 为 null 时初始化空字典
 - [x] 1.3 `ILuaBindable` 新增 `HasHook(string hookName)` 方法：`LuaHooks.ContainsKey`
-- [x] 1.4 `ILuaBindable` 新增 `CallLuaHook(string hookName, params object[] args)` 方法：UseLuaHooksCache 为 true 时查 LuaHooks 字典，false 时走老路径 env[hookName]
+- [x] 1.4 `ILuaBindable` 新增 `CallLuaHook<bool>(string hookName, params object[] args)` 方法：UseLuaHooksCache 为 true 时查 LuaHooks 字典，false 时走老路径 env[hookName]
 - [x] 1.5 `ILuaBindable` 新增 `CallLuaHookWithReturn<T>(string hookName, params object[] args)` 方法：同上但返回 Lua 返回值
 - [x] 1.6 新增静态配置 `LuaBindableConfig.UseLuaHooksCache = true`（全局开关）
 

@@ -4,7 +4,7 @@
 `ILuaBindable` 接口 SHALL 扩展为包含以下成员（通过默认接口实现或扩展方法均可，推荐改为带默认实现的接口或提取基类 `LuaBindableBase`）：
 - `Dictionary<string, LuaFunction> LuaHooks`：缓存 env 中所有函数引用
 - `void ScanLuaHooks()`：遍历 env.Keys，将所有 `string → LuaFunction` 映射写入 LuaHooks
-- `void CallLuaHook(string hookName, params object[] args)`：通过 LuaHooks 查找并调用 hook
+- `void CallLuaHook<bool>(string hookName, params object[] args)`：通过 LuaHooks 查找并调用 hook
 - `bool HasHook(string hookName)`：通过 `LuaHooks.ContainsKey` 判定
 
 所有实现 `ILuaBindable` 的类型（`CombatNpcModifier`、`NpcModifier`、`CombatCard` 等）的 LuaHooks SHALL 在 `LuaMgr` 加载脚本时（`LoadModifierScript`、`LoadCardScript`）完成扫描填充，不在各实现者的构造/创建方法中手动调用。
@@ -44,11 +44,11 @@
 该开关对所有 `ILuaBindable` 实现者生效。
 
 #### Scenario: 开关为 true 时走缓存路径
-- **WHEN** `UseLuaHooksCache = true`，调用 `CallLuaHook("OnTick", ...)`
+- **WHEN** `UseLuaHooksCache = true`，调用 `CallLuaHook<bool>("OnTick", ...)`
 - **THEN** 通过 `LuaHooks.TryGetValue("OnTick")` 获取函数，不访问 env
 
 #### Scenario: 开关为 false 时走老路径
-- **WHEN** `UseLuaHooksCache = false`，调用 `CallLuaHook("OnTick", ...)`
+- **WHEN** `UseLuaHooksCache = false`，调用 `CallLuaHook<bool>("OnTick", ...)`
 - **THEN** 通过 `env["OnTick"] as LuaFunction` 获取函数
 
 #### Scenario: 开关可运行时切换

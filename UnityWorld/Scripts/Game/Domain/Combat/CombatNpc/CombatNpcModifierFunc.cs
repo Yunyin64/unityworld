@@ -110,17 +110,11 @@ namespace UnityWorld.Game.Domain.Combat
 
             // 首次添加：从 Define 创建实例
             var define = CombatNpcModifierDefineMgr.Instance.Get(defineId);
-            if (define == null)
-            {
-                Log($"[Modifier] Define 不存在: {defineId}");
-                return;
-            }
+            if (define == null) return;
 
             var modifier = CombatNpcModifier.CreateModifier(define);
-
-            // 调用 OnApply hook
-            modifier.CallLuaHook("OnApply", modifier.env, CreateModifierCtx(modifier));
-
+            modifier.Owner = this;
+            modifier.CallLuaHook<bool>("OnApply", modifier.env, CreateModifierCtx(modifier));
             Modifiers.Add(modifier);
 
             // 注册触发器事件监听
@@ -137,7 +131,7 @@ namespace UnityWorld.Game.Domain.Combat
             modifier.AddStack(stacks);
 
             // 调用 OnStack hook
-            modifier.CallLuaHook("OnStack", modifier.env, CreateModifierCtx(modifier));
+            modifier.CallLuaHook<bool>("OnStack", modifier.env, CreateModifierCtx(modifier));
 
             Log($"[Modifier] 叠层: {modifier.DefineId} (Stack={modifier.CurrentStack})");
         }
@@ -152,27 +146,11 @@ namespace UnityWorld.Game.Domain.Combat
         public void ModifierTick()
         {
             if (Modifiers.Count == 0) return;
-
-            var toRemove = new List<CombatNpcModifier>();
-
             foreach (var mod in Modifiers)
             {
-                // 调用 OnTick hook
-                mod.CallLuaHook("OnTick", mod.env, CreateModifierCtx(mod));
-
-                // 衰减有限时 Modifier
-                if (mod.Duration > 0)
-                {
-                    mod.RemainingTime -= 1;
-                }
-
-                // 统一过期判定
-                if (mod.IsExpired())
-                {
-                    toRemove.Add(mod);
-                }
+                mod.Tick();
             }
-
+            var toRemove =  Modifiers.Where(c => c.IsExpired()).ToList();
             // 批量移除过期 Modifier
             foreach (var mod in toRemove)
             {
@@ -196,7 +174,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var mod in Modifiers)
             {
                 var ctx = CreateModifierCtx(mod);
-                mod.CallLuaHook("ModifyContest", mod.env, ctx, contestData);
+                mod.CallLuaHook<bool>("ModifyContest", mod.env, ctx, contestData);
             }
         }
 
@@ -221,7 +199,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         private void DoRemoveModifier(CombatNpcModifier modifier)
         {
-            modifier.CallLuaHook("OnRemove", modifier.env, CreateModifierCtx(modifier));
+            modifier.CallLuaHook<bool>("OnRemove", modifier.env, CreateModifierCtx(modifier));
             UnregisterTriggerEvent(modifier);
             Modifiers.Remove(modifier);
         }

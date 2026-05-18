@@ -52,7 +52,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>正常行动中</summary>
         Active,
 
-        /// <summary>已被击败（HP归零）</summary>
+        /// <summary>已被击败</summary>
         Defeated,
 
         /// <summary>已逃离战场</summary>

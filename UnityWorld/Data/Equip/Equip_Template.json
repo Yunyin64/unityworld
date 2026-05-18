@@ -2,10 +2,10 @@
   {
     "ID": "short_sword",
     "DisplayName": "短剑",
-    "Tags": ["weapon", "sword"],
+    "Tags": ["剑", "武器","轻"],
     "Size": 1,
-    "AttackBase": 3,
-    "DefendBase": 0,
+    "AttackBase": 2,
+    "DefendBase": 1,
     "SpeedBase": 3,
     "AmountBase": 3,
     "FormListBase": ["card_form_jian_qi"]
@@ -13,10 +13,10 @@
   {
     "ID": "long_sword",
     "DisplayName": "长剑",
-    "Tags": ["weapon", "sword"],
+    "Tags": ["剑", "武器","标准"],
     "Size": 2,
-    "AttackBase": 5,
-    "DefendBase": 1,
+    "AttackBase": 4,
+    "DefendBase": 3,
     "SpeedBase": 5,
     "AmountBase": 3,
     "FormListBase": [ "card_form_jian_ci", "card_form_jian_qi"]
@@ -24,10 +24,10 @@
   {
     "ID": "great_sword",
     "DisplayName": "巨剑",
-    "Tags": ["weapon", "sword"],
+    "Tags": ["剑", "武器","重"],
     "Size": 3,
-    "AttackBase": 9,
-    "DefendBase": 2,
+    "AttackBase": 8,
+    "DefendBase": 5,
     "SpeedBase": 8,
     "AmountBase": 3,
     "FormListBase": ["card_form_jian_zhan", "card_form_jian_ci", "card_form_jian_qi"]

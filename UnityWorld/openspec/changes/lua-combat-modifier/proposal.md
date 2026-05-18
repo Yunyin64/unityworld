@@ -5,7 +5,7 @@ CombatNpcModifier 已实现 ILuaBindable 接口，拥有 `env` 属性，但当�
 ## What Changes
 
 - LuaMgr 新增 `LoadModifierScript(defineId)` 方法，按约定路径 `Data/LuaScripts/CombatModifiers/{defineId}.lua` 加载脚本，每次调用返回独立 LuaTable（不缓存）
-- CombatNpcModifier 新增 `CallLuaHook(hookName, npc)` 方法，从 env 取函数并调用
+- CombatNpcModifier 新增 `CallLuaHook<bool>(hookName, npc)` 方法，从 env 取函数并调用
 - CombatNpc 新增 partial 文件 `CombatNpcModifierFunc.cs`，包含：
   - `AddModifier()`：查重叠层 + Lua env 加载 + 调用 OnApply/OnStack
   - `ModifierTick()`：遍历 Modifiers、调用 OnTick、衰减 RemainingTime、移除过期 Modifier 并调用 OnRemove

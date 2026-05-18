@@ -9,7 +9,7 @@
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
-    }, 
+    },
     "Tags": [
       "土",
       "打",
@@ -24,7 +24,7 @@
     "Size": 1,
     "Cooldown": 3,
     "CardType": "FaShu",
-    "ManaCost": {}, 
+    "ManaCost": {},
     "Tags": [
       "土",
       "防御",
@@ -41,7 +41,7 @@
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
-    }, 
+    },
     "Tags": [
       "土",
       "控制",
@@ -58,7 +58,7 @@
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
-    }, 
+    },
     "Tags": [
       "土",
       "防御",
@@ -75,7 +75,7 @@
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
-    }, 
+    },
     "Tags": [
       "土",
       "控制",

@@ -8,28 +8,27 @@ namespace UnityWorld.Game.Domain.Combat
     {
         public LuaTable env { get; set; }
         public Dictionary<string, LuaFunction> LuaHooks { get; set; } = new();
+        public HashSet<string> HookUse { get; set; } = new();
         public CombatNpc Owner;    
         private CombatCardPhase Phase = CombatCardPhase.WaitResource;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
         public CombatScene Scene { get ; set ; }
-        
 
         public void PreStart()
         {
             InitializeLuaCards();
             //执行env的CardData覆写和keyword的应用
-            RunKeywordHooks("OnPreStart");
+            CallLua("OnPreStart");
         }
 
         public void Start()
         {
             SetPhase(CombatCardPhase.WaitResource);
-            RunKeywordHooks("OnStart");
+            CallLua("OnStart");
         }
 
         public void Tick()
         {
-            RunKeywordHooks("OnTick");
             if (Phase == CombatCardPhase.Passive){}
             if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.WaitResource);
             if(Phase == CombatCardPhase.WaitResource) CheckMana();
@@ -39,8 +38,10 @@ namespace UnityWorld.Game.Domain.Combat
                 CDTick();
                 ResetCD();
             }
-            this.CallLuaHook("OnTick", env, CreateCtx());
+            CallLua("OnTick");
+            HookUse.Clear();
             Ticks["Main"]++;
+
         }
         public void CDTick()
         {
@@ -68,13 +69,13 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void OnContest()
         {
-            this.CallLuaHook("OnContest", env, CreateCtx());
+            CallLua("OnContest");
         }
 
         public void OnApply()
         {
             //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
-            this.CallLuaHook("OnApply", env, CreateCtx());
+            CallLua("OnApply");
 
             // 广播卡牌使用事件，供 Modifier 触发器响应
             EventMgr.Instance?.TriggerEvent("OnApply", this,
@@ -149,10 +150,15 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        public void CallLua(string hookName)
+        {
+            this.CallLuaHook<bool>(hookName, env, CreateCtx());
+            RunKeywordHooks(hookName);
+        }
 
         public void End()
         {
-            RunKeywordHooks("OnEnd");
+            
         }
         public void Cleanup()
         {
