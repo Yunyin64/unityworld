@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[ConditionDefineMgr] 警告：找不到 {filePath}，Condition库为空");
+                LogMgr.Dbg($"[ConditionDefineMgr] 警告：找不到 {filePath}，Condition库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<ConditionDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _conditions = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[ConditionDefineMgr] 加载完成：{_conditions.Count} 个Condition定义");
+            LogMgr.Dbg($"[ConditionDefineMgr] 加载完成：{_conditions.Count} 个Condition定义");
         }
 
         public ConditionDefine? Get(string id)

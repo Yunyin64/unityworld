@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Data
@@ -34,13 +35,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[SocialRoleMgr] 警告：找不到 {filePath}，角色库为空");
+                LogMgr.Dbg($"[SocialRoleMgr] 警告：找不到 {filePath}，角色库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<SocialRoleDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _roles = list.ToDictionary(r => r.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[SocialRoleMgr] 加载完成：{_roles.Count} 个社会角色定义");
+            LogMgr.Dbg($"[SocialRoleMgr] 加载完成：{_roles.Count} 个社会角色定义");
         }
 
         /// <summary>获取角色定义，不存在返回 null</summary>

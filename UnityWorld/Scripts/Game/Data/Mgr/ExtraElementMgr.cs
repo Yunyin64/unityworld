@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[CardDefineMgr] 警告：找不到 {filePath}，Card模板库为空");
+                LogMgr.Dbg($"[CardDefineMgr] 警告：找不到 {filePath}，Card模板库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<ExtraElementDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _elements = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[CardDefineMgr] 加载完成：{_elements.Count} 个Card模板定义");
+            LogMgr.Dbg($"[CardDefineMgr] 加载完成：{_elements.Count} 个Card模板定义");
         }
 
         public ExtraElementDefine? Get(string id)

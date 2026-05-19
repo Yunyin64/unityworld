@@ -1,5 +1,6 @@
 
 using System.Collections;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Domain
 {
@@ -28,7 +29,7 @@ namespace UnityWorld.Game.Domain
             Instance  = this;
             MainPlane = CreatePlane(PlaneConfig.ForMainPlane("主世界"));
             
-            Console.WriteLine("主世界大小：{0}×{1}", MainPlane.Width, MainPlane.Height);
+            LogMgr.Dbg("主世界大小：{0}×{1}", MainPlane.Width, MainPlane.Height);
         }
 
         // ── 创建 ─────────────────────────────────────────

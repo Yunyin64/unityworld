@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[ActionDefineMgr] 警告：找不到 {filePath}，Action库为空");
+                LogMgr.Dbg($"[ActionDefineMgr] 警告：找不到 {filePath}，Action库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<ActionDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _actions = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[ActionDefineMgr] 加载完成：{_actions.Count} 个Action定义");
+            LogMgr.Dbg($"[ActionDefineMgr] 加载完成：{_actions.Count} 个Action定义");
         }
 
         public ActionDefine? Get(string id)

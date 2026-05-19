@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[TriggerDefineMgr] 警告：找不到 {filePath}，Trigger库为空");
+                LogMgr.Dbg($"[TriggerDefineMgr] 警告：找不到 {filePath}，Trigger库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<TriggerDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _triggers = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[TriggerDefineMgr] 加载完成：{_triggers.Count} 个Trigger定义");
+            LogMgr.Dbg($"[TriggerDefineMgr] 加载完成：{_triggers.Count} 个Trigger定义");
         }
 
         public TriggerDefine? Get(string id)

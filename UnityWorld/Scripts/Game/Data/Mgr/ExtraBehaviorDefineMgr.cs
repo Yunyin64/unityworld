@@ -33,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[ExtraBehaviorDefineMgr] 警告：找不到 {filePath}，行为拓展库为空");
+                LogMgr.Dbg($"[ExtraBehaviorDefineMgr] 警告：找不到 {filePath}，行为拓展库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<ExtraBehaviorDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _data = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[ExtraBehaviorDefineMgr] 加载完成：{_data.Count} 个行为拓展定义");
+            LogMgr.Dbg($"[ExtraBehaviorDefineMgr] 加载完成：{_data.Count} 个行为拓展定义");
         }
 
         /// <summary>

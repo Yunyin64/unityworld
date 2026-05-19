@@ -35,13 +35,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[CombatNpcModifierDefineMgr] 警告：找不到 {filePath}，战斗修正定义库为空");
+                LogMgr.Dbg($"[CombatNpcModifierDefineMgr] 警告：找不到 {filePath}，战斗修正定义库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<CombatNpcModifierDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? new();
             _defines = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[CombatNpcModifierDefineMgr] 加载完成：{_defines.Count} 个战斗修正定义");
+            LogMgr.Dbg($"[CombatNpcModifierDefineMgr] 加载完成：{_defines.Count} 个战斗修正定义");
         }
 
         /// <summary>按 ID 查询，不存在返回 null</summary>

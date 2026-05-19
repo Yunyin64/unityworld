@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -34,7 +35,7 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[PlaneDefineMgr] 警告：找不到 {filePath}，位面定义库为空");
+                LogMgr.Dbg($"[PlaneDefineMgr] 警告：找不到 {filePath}，位面定义库为空");
                 return;
             }
 
@@ -42,7 +43,7 @@ namespace UnityWorld.Game.Data
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
 
             _defines = list.ToDictionary(d => d.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[PlaneDefineMgr] 加载完成：{_defines.Count} 个位面定义");
+            LogMgr.Dbg($"[PlaneDefineMgr] 加载完成：{_defines.Count} 个位面定义");
         }
 
         /// <summary>根据 DefineId 获取位面定义，不存在返回 null</summary>

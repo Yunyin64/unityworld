@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[EffectDefineMgr] 警告：找不到 {filePath}，Effect定义库为空");
+                LogMgr.Dbg($"[EffectDefineMgr] 警告：找不到 {filePath}，Effect定义库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<EffectDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _effects = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[EffectDefineMgr] 加载完成：{_effects.Count} 个Effect定义");
+            LogMgr.Dbg($"[EffectDefineMgr] 加载完成：{_effects.Count} 个Effect定义");
         }
 
         public EffectDefine? Get(string id)

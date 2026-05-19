@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[TraitDefineMgr] 警告：找不到 {filePath}，特质库为空");
+                LogMgr.Dbg($"[TraitDefineMgr] 警告：找不到 {filePath}，特质库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<TraitDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _traits = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[TraitDefineMgr] 加载完成：{_traits.Count} 个特质定义");
+            LogMgr.Dbg($"[TraitDefineMgr] 加载完成：{_traits.Count} 个特质定义");
         }
 
         /// <summary>获取特质定义，不存在返回 null</summary>

@@ -37,8 +37,8 @@ namespace UnityWorld.Game.Domain.Combat
             ctxB.Set("Path", PracticePath.Ling);
             var npcB = npcMgr.Birth(ctxB);
 
-            Console.WriteLine($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
-            Console.WriteLine($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
+            LogMgr.Dbg($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
+            LogMgr.Dbg($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
 
             // ── 为 NPC 添加功法获得卡组 ──────────────────────
             CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
@@ -53,14 +53,14 @@ namespace UnityWorld.Game.Domain.Combat
             var result = CombatMgr.Instance.RunCombat(npcA, npcB);
 
 
-            Console.WriteLine($"\n=== 战斗结束 ===");
+            LogMgr.Dbg($"\n=== 战斗结束 ===");
             if (result != null)
             {
-                Console.WriteLine($"  结束原因: {result.GetValue("EndReason")}");
-                Console.WriteLine($"  胜方: {result.GetValue("WinnerTeam")}");
-                Console.WriteLine($"  总 Tick: {result.GetValue("TotalTicks")}");
+                LogMgr.Dbg($"  结束原因: {result.GetValue("EndReason")}");
+                LogMgr.Dbg($"  胜方: {result.GetValue("WinnerTeam")}");
+                LogMgr.Dbg($"  总 Tick: {result.GetValue("TotalTicks")}");
             }
-            Console.WriteLine("=== 测试完成 ===");
+            LogMgr.Dbg("=== 测试完成 ===");
         }
 
         // ══════════════════════════════════════════════════════
@@ -97,7 +97,7 @@ namespace UnityWorld.Game.Domain.Combat
                 }
                 else
                 {
-                    Console.WriteLine($"[CombatTestRunner] 警告：无法实例化卡牌 {define.ID}，跳过");
+                    LogMgr.Dbg($"[CombatTestRunner] 警告：无法实例化卡牌 {define.ID}，跳过");
                 }
             }
 
@@ -109,7 +109,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             // 调试：确认 CardDefineMgr 状态
             var cdm = CardDefineMgr.Instance;
-            Console.WriteLine($"[DEBUG] CardDefineMgr.Instance null? {cdm == null}, Contains({defineId})={cdm?.Contains(defineId)}, Count={cdm?.GetAll().Count()}");
+            LogMgr.Dbg($"[DEBUG] CardDefineMgr.Instance null? {cdm == null}, Contains({defineId})={cdm?.Contains(defineId)}, Count={cdm?.GetAll().Count()}");
             var card = CardMgr.Instance?.InstantiateFromDefine(defineId);
             if (card != null)
             {
@@ -117,7 +117,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
             else
             {
-                Console.WriteLine($"[CombatTestRunner] 警告：无法实例化卡牌 {defineId}，跳过");
+                LogMgr.Dbg($"[CombatTestRunner] 警告：无法实例化卡牌 {defineId}，跳过");
             }
         }
     }

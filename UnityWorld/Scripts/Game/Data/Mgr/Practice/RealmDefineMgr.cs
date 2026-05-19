@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -35,7 +36,7 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[RealmDefineMgr] 警告：找不到 {filePath}，境界库为空");
+                LogMgr.Dbg($"[RealmDefineMgr] 警告：找不到 {filePath}，境界库为空");
                 return;
             }
 
@@ -44,7 +45,7 @@ namespace UnityWorld.Game.Data
 
             _list = list;
             _defines = list.ToDictionary(d => d.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[RealmDefineMgr] 加载完成：{_defines.Count} 个境界定义");
+            LogMgr.Dbg($"[RealmDefineMgr] 加载完成：{_defines.Count} 个境界定义");
         }
 
         /// <summary>根据 ID 获取境界定义，不存在返回 null</summary>

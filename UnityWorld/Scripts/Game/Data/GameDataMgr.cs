@@ -1,3 +1,4 @@
+using UnityWorld.Core;
 using UnityWorld.Game.Domain;
 
 namespace UnityWorld.Game.Data
@@ -66,7 +67,7 @@ namespace UnityWorld.Game.Data
             {
                 mgr.Load();
             }
-            Console.WriteLine("[GameDataMgr] 所有数据加载完成");
+            LogMgr.Dbg("[GameDataMgr] 所有数据加载完成");
         }
     }
 }

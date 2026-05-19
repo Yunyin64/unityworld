@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -32,13 +33,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[TagDefineMgr] 警告：找不到 {filePath}，Tag库为空");
+                LogMgr.Dbg($"[TagDefineMgr] 警告：找不到 {filePath}，Tag库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<TagDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? [];
             _tags = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[TagDefineMgr] 加载完成：{_tags.Count} 个Tag定义");
+            LogMgr.Dbg($"[TagDefineMgr] 加载完成：{_tags.Count} 个Tag定义");
         }
 
         public TagDefine? Get(string id)

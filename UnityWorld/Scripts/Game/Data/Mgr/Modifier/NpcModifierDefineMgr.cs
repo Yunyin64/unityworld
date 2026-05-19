@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -34,13 +35,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[NpcModifierDefineMgr] 警告：找不到 {filePath}，NPC修正定义库为空");
+                LogMgr.Dbg($"[NpcModifierDefineMgr] 警告：找不到 {filePath}，NPC修正定义库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<NpcModifierDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? new();
             _defines = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[NpcModifierDefineMgr] 加载完成：{_defines.Count} 个NPC修正定义");
+            LogMgr.Dbg($"[NpcModifierDefineMgr] 加载完成：{_defines.Count} 个NPC修正定义");
         }
 
         /// <summary>按 ID 查询，不存在返回 null</summary>

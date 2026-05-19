@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
@@ -34,13 +35,13 @@ namespace UnityWorld.Game.Data
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"[LandMarkDefineMgr] 警告：找不到 {filePath}，地标定义库为空");
+                LogMgr.Dbg($"[LandMarkDefineMgr] 警告：找不到 {filePath}，地标定义库为空");
                 return;
             }
             var list = JsonSerializer.Deserialize<List<LandMarkDefine>>(
                 File.ReadAllText(filePath), _jsonOpts) ?? new();
             _defines = list.ToDictionary(t => t.ID, StringComparer.OrdinalIgnoreCase);
-            Console.WriteLine($"[LandMarkDefineMgr] 加载完成：{_defines.Count} 个地标定义");
+            LogMgr.Dbg($"[LandMarkDefineMgr] 加载完成：{_defines.Count} 个地标定义");
         }
 
         /// <summary>按 ID 查询，不存在返回 null</summary>

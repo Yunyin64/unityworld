@@ -60,7 +60,7 @@ namespace UnityWorld.Game.World
             foreach (var mgr in _domains) mgr.Begin();  // 有耦合的初始化
             foreach (var mgr in _gameplays) mgr.Begin();
             
-            Console.WriteLine("=== 世界初始化完成 ===\n");
+            LogMgr.Dbg("=== 世界初始化完成 ===\n");
         }
 
         /// <summary>

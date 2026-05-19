@@ -17,7 +17,7 @@
     "Size": 2,
     "AttackBase": 4,
     "DefendBase": 3,
-    "SpeedBase": 5,
+    "SpeedBase": 5, 
     "AmountBase": 3,
     "FormListBase": [ "card_form_jian_ci", "card_form_jian_qi"]
   },
