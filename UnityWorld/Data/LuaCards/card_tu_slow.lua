@@ -20,7 +20,7 @@ function card:Apply(ctx)
     local target = ctx.Caster.Target
     local con, targetCard = RandomCardInCD(ctx, target)
     if con then
-        Slow(ctx, targetCard, 1)
+        Slow(ctx, targetCard, 10)
     end
 end
 

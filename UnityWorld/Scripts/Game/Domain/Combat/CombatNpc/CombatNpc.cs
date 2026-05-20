@@ -123,11 +123,13 @@ namespace UnityWorld.Game.Domain.Combat
         {
             var finalval = info.Damage;
             finalval = ApplyShieldAbsorb(info);
-            Hp -= finalval;
-            Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
-
-            // 广播受击事件，供 Modifier 触发器响应
-            EventMgr.Instance?.TriggerEvent("OnDamage", info,(Scope.CombatNpc, Id.ToString()));
+            if(finalval > 0)
+            {
+                Hp -= finalval;
+                Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
+                // 广播受击事件，供 Modifier 触发器响应
+                Scene.TriggerCombatEvent("OnDamage" , new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene }, this);
+            }
 
             if (Hp <= 0)
             {
@@ -145,7 +147,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (ShieldValue <= 0 || damage <= 0) return damage;
 
             float absorbed = Math.Min(ShieldValue, damage);
-            ShieldValue -= absorbed;
+            ChangeShield(-absorbed);
             float remaining = damage - absorbed;
             return remaining;
         }

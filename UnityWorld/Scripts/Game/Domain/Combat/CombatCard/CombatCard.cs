@@ -38,6 +38,7 @@ namespace UnityWorld.Game.Domain.Combat
                 CDTick();
                 ResetCD();
             }
+            CardModifierTick();
             CallLua("OnTick");
             HookUse.Clear();
             Ticks["Main"]++;
@@ -190,6 +191,9 @@ namespace UnityWorld.Game.Domain.Combat
         public override float GetStat(string statId)
         {
             float val = base.GetStat(statId);
+            // CardModifier 贡献
+            val += GetCardModifierStat(statId);
+            // 全场 NpcModifier 的 OnModifierStat hook 贡献
             if (Owner?.Scene != null)
                 val += Owner.Scene.CollectModifierStat(this, statId);
             return val;

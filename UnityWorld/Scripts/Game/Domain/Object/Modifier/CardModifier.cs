@@ -48,8 +48,8 @@ namespace UnityWorld.Game.Domain
             return new CardModifier()
             {
                 Id = id,
-                Duration = -1,
-                RemainingTime = -1,
+                Duration = time,
+                RemainingTime = time,
                 MaxStack = 1,
                 CurrentStack = 1,
                 RefreshOnStack = false,
@@ -60,7 +60,7 @@ namespace UnityWorld.Game.Domain
                     {
                         StatId = "CDSpeed",
                         Type = ModifierType.ClampMax,
-                        Value = 0,
+                        Value = -100,
                     }
                 }
 

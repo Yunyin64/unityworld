@@ -79,9 +79,5 @@ namespace UnityWorld.Game.Domain.Combat
             Ticks["CD"] = Math.Min(Ticks["CD"]+Tick,GetCDMax());
             Log($"  [{Owner.GetName()}] 充能: {old} +{Tick}-> {Ticks["CD"]} | {GetCDMax()}  ");
         }
-        public void AddCardBuff(CardModifier modifier)
-        {
-            
-        }
     }
 }
