@@ -20,7 +20,7 @@ namespace UnityWorld.Game.Domain.Combat
     ///   while (!scene.IsFinished) scene.Tick();
     ///   var result = scene.GetResult();
     /// </summary>
-    public partial class CombatScene:GameEntityBase
+    public partial class CombatScene:GameEntityBase,ISoulBase
     {
 
         // ── 参战者 ────────────────────────────────────────────
@@ -46,6 +46,8 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>战斗是否已结束</summary>
         public bool IsFinished => _phase == CombatPhase.Finished;
 
+        public SoulData Soul { get; private set; }
+
         // ── 结果 ──────────────────────────────────────────────
         // ── 事件监听追踪（End 时清理）─────────────────────────
         private readonly List<(string eventId, ScopeKey scope, IEventListener listener)> _registeredListeners = [];
@@ -60,7 +62,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         /// <param name="npcParticipants">大世界 Npc + 阵营列表</param>
         /// <param name="maxTicks">Tick上限，默认100</param>
-        public void Init(  IEnumerable<(Npc npc, CombatTeam team)> npcParticipants,  int maxTicks = 100)
+        public void Init( int guid, IEnumerable<(Npc npc, CombatTeam team)> npcParticipants,  int maxTicks = 100)
         {
             AssertPhase(CombatPhase.Idle, nameof(Init));
 
@@ -75,7 +77,7 @@ namespace UnityWorld.Game.Domain.Combat
                 Combatants[combatNpc.Id] = combatNpc;
             }
 
-
+            Soul = new SoulData(guid);
             _phase = CombatPhase.Initialized;
         }
 
@@ -279,15 +281,51 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         
+        // ══════════════════════════════════════════════════════════
+        //  战斗事件触发（双通道）
+        // ══════════════════════════════════════════════════════════
+
         /// <summary>
-        /// 触发战斗域事件（通过 EventMgr）。
+        /// 触发战斗域事件（双通道）：
+        /// 1. ILuaBindable 通道：遍历全场卡牌和 Modifier，有对应 hook 则调用
+        /// 2. EventMgr 通道：广播给 C# 系统监听者
         /// </summary>
-        public  static void TriggerCombatEvent(string eventId, CombatNpc npc, object args)
+        /// <param name="eventId">事件ID，同时也是 Lua hook 名（如 "OnAttack"）</param>
+        /// <param name="ctx">事件上下文</param>
+        /// <param name="source">事件来源 NPC</param>
+        public void TriggerCombatEvent(string eventId, APIContext ctx, CombatNpc source)
         {
+            // 通道1：ILuaBindable hook 分发
+            DispatchHookToAll(eventId, ctx);
+
+            // 通道2：EventMgr 广播
             EventMgr.Instance?.TriggerEvent(
                 eventId,
-                args,
-                (Scope.CombatNpc, npc.Id.ToString()));
+                ctx,
+                (Scope.CombatNpc, source.Id.ToString()));
+        }
+
+        /// <summary>
+        /// 遍历全场所有卡牌和 Modifier，对声明了指定 hook 的对象调用 Lua。
+        /// </summary>
+        private void DispatchHookToAll(string hookName, APIContext ctx)
+        {
+            foreach (var npc in Combatants.Values)
+            {
+                // 卡牌
+                foreach (var card in npc.GetCardDeck())
+                {
+                    if (card.HasHook(hookName))
+                        card.CallLua(hookName,ctx);
+                }
+
+                // Modifier
+                foreach (var mod in npc.GetAllModifiers())
+                {
+                    if (mod.HasHook(hookName))
+                        mod.CallLuaHook<bool>(hookName, mod.env, ctx);
+                }
+            }
         }
         public static void Log(string msg)
         {

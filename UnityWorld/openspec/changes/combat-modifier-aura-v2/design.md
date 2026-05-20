@@ -41,7 +41,7 @@
 **理由**: 
 - 避免每次两步（env 取值 + as 转型）
 - 判断"有没有某 hook"变成 `ContainsKey`，O(1) 且不涉及 Lua 跨语言
-- 适用于所有 hook（OnTick、OnApply 等），不仅限于 OnModifierStat
+- 适用于所有 hook（OnTick、Apply 等），不仅限于 OnModifierStat
 - 放在接口层，所有 Lua 绑定对象统一受益，不需要每个类自己实现一遍
 
 ### Decision 3: 保留老路径开关

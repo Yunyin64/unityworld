@@ -13,6 +13,7 @@ namespace UnityWorld.Game.Domain
         public static APIContext Convert(APIContext ctx)
         {
             var caster = ctx.Caster;
+            var Scene = ctx.Scene;
             if (caster == null) return ctx;
 
             ElementType element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
@@ -21,7 +22,25 @@ namespace UnityWorld.Game.Domain
              var cost = new Dictionary<ElementType, int>();
             if (element.Kind == BaseElementType.None)
             {
-                //如果是None，就转化随机npc剩下的灵元
+                // None：从所有有余量的元素中随机凑满 MaxAmount
+                var keys = caster.ManaPool.Where(kv => kv.Value > 0).Select(kv => kv.Key).ToList();
+                int left = maxAmount;
+                while (left > 0 && keys.Count > 0)
+                {
+                    int idx = Scene.Soul.Random(0, keys.Count);
+                    var key = keys[idx];
+                    int available = caster.GetManaCount(key) - (cost.TryGetValue(key, out var used) ? used : 0);
+                    if (available <= 0)
+                    {
+                        keys.RemoveAt(idx);
+                        continue;
+                    }
+                    if (!cost.ContainsKey(key)) cost[key] = 0;
+                    cost[key]++;
+                    left--;
+                    if (cost[key] >= caster.GetManaCount(key))
+                        keys.RemoveAt(idx);
+                }
             }
             else
             {
@@ -50,7 +69,8 @@ namespace UnityWorld.Game.Domain
         [APIFunc("ReduceMana", APIType.Action, "减少自身指定元素的灵元", Scope.CombatNpc, "Element:String", "Amount:Int")]
         public static APIContext ReduceMana( APIContext ctx)
         {
-            var caster = ctx.Get<CombatNpc>("Caster");
+            var caster = ctx.Caster;
+            var Scene = ctx.Scene;
             if (caster == null) return ctx;
 
             ElementType element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
@@ -59,7 +79,25 @@ namespace UnityWorld.Game.Domain
             var cost = new Dictionary<ElementType, int>();
             if (element.Kind == BaseElementType.None)
             {
-                //如果是None，就减少随机npc剩下的灵元
+                // None：从所有有余量的元素中随机凑满 amount
+                var keys = caster.ManaPool.Where(kv => kv.Value > 0).Select(kv => kv.Key).ToList();
+                int left = amount;
+                while (left > 0 && keys.Count > 0)
+                {
+                    int idx = Scene.Soul.Random(0, keys.Count);
+                    var key = keys[idx];
+                    int available = caster.GetManaCount(key) - (cost.TryGetValue(key, out var used) ? used : 0);
+                    if (available <= 0)
+                    {
+                        keys.RemoveAt(idx);
+                        continue;
+                    }
+                    if (!cost.ContainsKey(key)) cost[key] = 0;
+                    cost[key]++;
+                    left--;
+                    if (cost[key] >= caster.GetManaCount(key))
+                        keys.RemoveAt(idx);
+                }
             }
             else
             {

@@ -56,7 +56,7 @@
 - [x] 4.8 调整明显不合理的数值（CD/攻击/盾/防/HP/SP），确保战斗不会一瞬秒杀也不会无限拖延
 - [x] 4.9 🔄回填(Day2)：实现 Action 执行器（ActionResolver）——至少支持 Heal(N)→恢复HP、SelfDamage(N)→自伤，使效果卡和伤势卡真正生效
 - [x] 4.10 🔄回填(Day2)：CombatCardFlowHandler.ResolveEffectCard 接入 Action 执行器——效果卡 CD 满时遍历 EffectData.Actions 调用执行器，替换纯日志占位
-- [x] 4.11 🔄回填(Day2)：实现对拼后续结算——拼完后执行 OnUse Effect 中非拼点的 Action（如 AddPoison），检查 OnContestWin/OnContestLose Trigger 的 Effect
+- [x] 4.11 🔄回填(Day2)：实现对拼后续结算——拼完后执行 OnUse Effect 中非拼点的 Action（如 AddPoison），检查 ContestWin/ContestLose Trigger 的 Effect
 - [x] 4.12 🔄回填(Day2)：DamageInfo.CreateInjurySelfDamage 接入 ActionData——从伤势卡的 ActionData 中读取 SelfDamage 值，替换 ⏳ 占位
 - [x] 4.13 实现 Condition 选择器模式——Condition 运行时不仅返回 bool，还可以向 ActionContext 写入选择结果（如 TargetCardId）。需要在 Condition 判定流程中支持：根据 conditionId 执行对应硬编码逻辑，选择结果写入共享 context 供后续 Action 读取
 - [x] 4.14 实现 `cond_random_enemy_card_in_cd` 判定逻辑——从敌方 CombatNpc 的 CombatCardState 列表中筛选正在 CD 中的卡（currentCdTick < Cooldown），随机选一张，将其 CardId 写入 context 的 `TargetCardId` key。若无可选卡牌则返回 false，整个 Effect 不触发

@@ -1,6 +1,6 @@
 ﻿[
   {
-    "ID": "trigger_on_use",
+    "ID": "OnUse",
     "DisplayName": "使用时",
     "desc": "使用时触发",
     "score": 0,
@@ -9,16 +9,16 @@
     "weight": 1
   },
   {
-    "ID": "trigger_on_attack",
+    "ID": "OnAttack",
     "DisplayName": "攻击时",
-    "desc": "攻击时触发",
+    "desc": "己方攻击拼点赢时触发",
     "score": 0,
     "tags": ["主动", "攻击"],
     "conflictTags": [],
     "weight": 0
   },
   {
-    "ID": "trigger_on_burn",
+    "ID": "OnBurn",
     "DisplayName": "燃烧触发",
     "desc": "敌人触发燃烧时",
     "score": -3,
@@ -27,7 +27,7 @@
     "weight": 1
   },
   {
-    "ID": "trigger_on_death",
+    "ID": "OnDeath",
     "DisplayName": "死亡触发",
     "desc": "敌人死亡时触发",
     "score": -4,

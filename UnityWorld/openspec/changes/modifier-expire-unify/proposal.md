@@ -34,4 +34,4 @@
 - `Scripts/Game/Data/Defines/Modifier/CombatModifierDefine.cs` — 新增配置字段
 - `Scripts/Game/Data/Defines/Modifier/NpcModifierDefine.cs` — 新增配置字段
 - `Scripts/Game/Domain/Combat/CombatNpc/CombatNpcModifierFunc.cs` — ModifierTick 和 GetAllModifiers 修复
-- `Scripts/Game/Domain/Combat/CombatCard/CombatCard.cs` — OnApply 中广播 RemoveTrigger
+- `Scripts/Game/Domain/Combat/CombatCard/CombatCard.cs` — Apply 中广播 RemoveTrigger

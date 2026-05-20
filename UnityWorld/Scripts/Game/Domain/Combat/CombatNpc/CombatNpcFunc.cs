@@ -23,7 +23,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void ApplyHeal(float amount)
         {
-            
+            var val = Math.Min(amount, GetHpMax() - Hp);
+            EventMgr.Instance.TriggerEvent("OnHeal", val, (Scope.CombatNpc, Id.ToString()));
+            Hp += val;
         }
         public void CheckDefeated()
         {
@@ -63,6 +65,7 @@ namespace UnityWorld.Game.Domain.Combat
                 {
                     var Contest = PendingSlot.Dequeue();
                     Straight(Contest);
+                    
                 }
                 else break;
             }
@@ -92,13 +95,17 @@ namespace UnityWorld.Game.Domain.Combat
             if (contestData.IsAttackType)
             {
             Log($"  直击: {contestData} → [{target.GetName()}]");
+            
+            // ── 赢家触发 OnAttack ────────────────────────
+            Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene }, this);
+
             var ctx = new DamageInfo(contestData);
             ctx.Damage = contestData.ContestValue;
             ctx.TargetNpc.AddDamage(ctx);
             
             }
             // 重置来源卡 CD
-            contestData.SourceCard.OnApply();
+            contestData.SourceCard.Apply();
             Ticks["Straight"] = 0;
             return ret;
         }
@@ -161,8 +168,8 @@ namespace UnityWorld.Game.Domain.Combat
             
             Ticks["Straight"] = 0;
             
-            contestA.SourceCard.OnApply();
-            contestB.SourceCard.OnApply();
+            contestA.SourceCard.Apply();
+            contestB.SourceCard.Apply();
             
             return ret;
         }
@@ -185,6 +192,9 @@ namespace UnityWorld.Game.Domain.Combat
                     //差值
                     dmg.Damage = win.ContestValue - lose.ContestValue;
                 }
+            // ── 赢家触发 OnAttack ────────────────────────
+            Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = win.SourceCard, Scene = Scene }, this);
+
                 //加入伤害结算列表
                 dmg.TargetNpc.AddDamage(dmg);
             }
@@ -202,8 +212,6 @@ namespace UnityWorld.Game.Domain.Combat
                 Log($"防卡胜，差值消失");
             }
             
-            // ── 赢家触发 trigger_on_attack ────────────────────────
-
             // ── 触发 trigger_on_contest_win / lose ────────────
             // ── 赢家通吃额外触发 Straight  ──────────
             return ctx;
@@ -281,7 +289,7 @@ namespace UnityWorld.Game.Domain.Combat
             var woundCards = CardDefineMgr.Instance?.Query(func).ToList();
             if(woundCards.Count > 0)
             {
-                return woundCards[Soul.Random(0,woundCards.Count)].ID;
+                return woundCards[Scene.Soul.Random(0,woundCards.Count)].ID;
             }
             
             

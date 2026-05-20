@@ -87,7 +87,7 @@
     非拼点的 Action      │                            │
     现在触发！           │                            │
     如 AddPoison(1)      │                            │
-  → OnContestWin/Lose   │                            │
+  → ContestWin/Lose   │                            │
     的 Effect 检查触发   │                            │
                         │                            │
   后处理（Keyword 介入点 ④）                          │

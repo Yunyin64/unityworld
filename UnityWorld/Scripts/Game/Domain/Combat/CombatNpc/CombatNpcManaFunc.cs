@@ -50,7 +50,7 @@ namespace UnityWorld.Game.Domain.Combat
 
                 for (int i = 0; i < weights.Length; i++)
                     {
-                        int roll = Soul.Random(0, totalWeight);
+                        int roll = Scene.Soul.Random(0, totalWeight);
                         int cumulative = 0;
                         var chosen = weights[0].Key;
                         foreach (var w in weights)

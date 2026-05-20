@@ -97,7 +97,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         /// <param name="defineId">CombatNpcModifierDefine ID</param>
         /// <param name="stacks">叠加层数（默认 1）</param>
-        public void AddModifier(string defineId, int stacks = 1)
+        public void AddModifier(string defineId, int stacks = 1,float duration = -1)
         {
             // 查重：是否已有同 DefineId 的 Modifier
             var existing = Modifiers.FirstOrDefault(m => m.DefineId == defineId);
@@ -114,7 +114,9 @@ namespace UnityWorld.Game.Domain.Combat
 
             var modifier = CombatNpcModifier.CreateModifier(define);
             modifier.Owner = this;
-            modifier.CallLuaHook<bool>("OnApply", modifier.env, CreateModifierCtx(modifier));
+            modifier.CurrentStack = stacks;
+            modifier.Duration = duration;
+            modifier.CallLuaHook<bool>("Apply", modifier.env, CreateModifierCtx(modifier));
             Modifiers.Add(modifier);
 
             // 注册触发器事件监听

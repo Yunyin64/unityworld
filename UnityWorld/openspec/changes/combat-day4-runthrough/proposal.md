@@ -9,7 +9,7 @@ combat-system-v3 的 Day1~Day3 已完成战斗框架重构、卡牌数据适配�
 - 实现 `cond_random_enemy_card_in_cd` 选择器：从敌方 CD 中的卡随机选一张写入 TargetCardId
 - 实现 `Freeze` APIFunc Handler：暂停目标卡牌 CD 计时若干 tick
 - CombatCardState 新增 frozen 计数器（FrozenTicks），TickCd 时跳过冻结中的卡
-- 补齐对拼后续结算：拼完后执行 OnUse Effect 中非拼点 Action，检查 OnContestWin/OnContestLose Trigger
+- 补齐对拼后续结算：拼完后执行 OnUse Effect 中非拼点 Action，检查 ContestWin/ContestLose Trigger
 - 补齐 DamageInfo.CreateInjurySelfDamage：从伤势卡 ActionData 读取 SelfDamage 值（确认走 EffectCard 路径即可）
 - 首轮数值调参：根据战斗日志调整 CD/攻击/盾/防/HP/SP，确保战斗时长合理
 
@@ -18,7 +18,7 @@ combat-system-v3 的 Day1~Day3 已完成战斗框架重构、卡牌数据适配�
 ### New Capabilities
 - `combat-condition-selector`: Condition 运行时选择器模式——Condition 不仅返回 bool，还可向 ActionContext 写入选择结果（如 TargetCardId），后续 Action 从 context 读取
 - `combat-freeze`: 冻结机制——标记卡牌暂停 CD 计时器若干 tick
-- `combat-contest-followup`: 对拼后续结算——拼完后执行非拼点 Action 和 OnContestWin/OnContestLose Trigger
+- `combat-contest-followup`: 对拼后续结算——拼完后执行非拼点 Action 和 ContestWin/ContestLose Trigger
 
 ### Modified Capabilities
 - `combat-tick-engine`: Tick 主循环中 TickCd 需跳过 frozen 状态的卡；对拼结算后需触发后续 Effect 链

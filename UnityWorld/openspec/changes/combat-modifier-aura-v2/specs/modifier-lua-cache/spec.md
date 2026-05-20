@@ -10,7 +10,7 @@
 所有实现 `ILuaBindable` 的类型（`CombatNpcModifier`、`NpcModifier`、`CombatCard` 等）的 LuaHooks SHALL 在 `LuaMgr` 加载脚本时（`LoadModifierScript`、`LoadCardScript`）完成扫描填充，不在各实现者的构造/创建方法中手动调用。
 
 #### Scenario: CombatNpcModifier 创建时缓存所有 Lua 函数
-- **WHEN** CombatNpcModifier 的 Lua env 定义了 `OnApply`、`OnTick`、`OnModifierStatAtk` 三个函数
+- **WHEN** CombatNpcModifier 的 Lua env 定义了 `Apply`、`OnTick`、`OnModifierStatAtk` 三个函数
 - **THEN** `LuaHooks` 包含这三个 key，对应的 LuaFunction 引用不为 null
 
 #### Scenario: CombatCard 创建时缓存所有 Lua 函数

@@ -47,8 +47,8 @@ NLua 1.7.8 已在项目依赖中，LuaEventListener stub 已存在，IEventListe
 |---|---|---|
 | `OnUse` | 框架主动调用 | 无需注册 |
 | `OnAttack` | EventMgr 事件 | `trigger_on_attack` |
-| `OnContestWin` | EventMgr 事件 | `trigger_on_contest_win` |
-| `OnContestLose` | EventMgr 事件 | `trigger_on_contest_lose` |
+| `ContestWin` | EventMgr 事件 | `trigger_on_contest_win` |
+| `ContestLose` | EventMgr 事件 | `trigger_on_contest_lose` |
 | `OnDominate` | EventMgr 事件 | `trigger_on_dominate` |
 | `OnDominated` | EventMgr 事件 | `trigger_on_dominated` |
 | `OnHitBody` | EventMgr 事件 | `trigger_on_hit_body` |

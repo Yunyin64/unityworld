@@ -216,14 +216,7 @@ namespace UnityWorld.Game.Domain
                 string paramName = cleaned.Substring(0, colonIdx);
                 string typeStr = cleaned.Substring(colonIdx + 1);
 
-                if (!Enum.TryParse<Param_TYPE>(typeStr, true, out var paramType))
-                {
-                    LogMgr.Warn("[APIMgr] ParseApiFromAttribute: FuncName '{0}' 的参数类型 '{1}' 无法识别（支持 Int/Float/String/Bool），已跳过",
-                        attr.FuncName, typeStr);
-                    continue;
-                }
-
-                paramsList.Add(new Param { Type = paramType, Name = paramName, IsOptional = isOptional });
+                paramsList.Add(new Param { Type = typeStr, Name = paramName, IsOptional = isOptional });
             }
 
             return new API(attr.FuncName, attr.Desc, paramsList);

@@ -32,4 +32,4 @@
 - [x] 5.1 在 `CombatNpcModifierFunc` 中新增 `DelegateEventListener` 字段 `_modifierTriggerListener`，OnEvent 内遍历 Modifiers 处理 RemoveTriggerId 匹配（TriggerBased 直接移除，其他 ReduceStack + IsExpired 检查）
 - [x] 5.2 `AddModifier` 中：若 Modifier 的 RemoveTriggerId 非空，调用 `EventMgr.RegisterEvent` 注册该事件的监听
 - [x] 5.3 `RemoveModifier` 及过期移除逻辑中：若 Modifier 的 RemoveTriggerId 非空，调用 `EventMgr.RemoveEvent` 注销该事件的监听
-- [x] 5.4 确认 `CombatCard.OnApply()` 和 `CombatNpc.ApplyDamage()` 等事件点已通过 `EventMgr.TriggerEvent` 广播对应事件（如 "OnUse"、"OnHit"），若未广播则补上
+- [x] 5.4 确认 `CombatCard.Apply()` 和 `CombatNpc.ApplyDamage()` 等事件点已通过 `EventMgr.TriggerEvent` 广播对应事件（如 "OnUse"、"OnHit"），若未广播则补上

@@ -81,8 +81,8 @@
     OnLowHp         HP低于阈值时
     OnTick          每N Tick持续触发（如中毒）
     OnStart         战斗开始时（被动光环）
-    OnContestWin    对拼赢时
-    OnContestLose   对拼输时
+    ContestWin    对拼赢时
+    ContestLose   对拼输时
     ...更多
 
   ── Condition（条件）────────────────────────────────────
@@ -126,7 +126,7 @@
 
     复合卡（拼赢回血）：
       Effect[0]: Trigger=OnUse, Actions=[Attack("Huo","Zhan",3)]
-      Effect[1]: Trigger=OnContestWin, Actions=[Heal(2)]
+      Effect[1]: Trigger=ContestWin, Actions=[Heal(2)]
 
 ---
 

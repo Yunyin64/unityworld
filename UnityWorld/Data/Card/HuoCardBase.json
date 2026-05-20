@@ -5,7 +5,7 @@
     "Desc": "火系射击，造成5点火射伤害",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
+    "Cooldown": 60,
     "CardType": "FaShu",
     "ManaCost": {
       "Huo": 1
@@ -22,7 +22,7 @@
     "Desc": "立刻抽取3点MP转化为灵元",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {
       "Huo": 1
@@ -39,7 +39,7 @@
     "Desc": "全卡加速1s",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 10,
+    "Cooldown": 100,
     "CardType": "FaShu",
     "ManaCost": {
       "Huo": 2
@@ -56,7 +56,7 @@
     "Desc": "火系刺击，造成8点火刺伤害",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 15,
+    "Cooldown": 150,
     "CardType": "FaShu",
     "ManaCost": {
       "Huo": 1
@@ -73,7 +73,7 @@
     "Desc": "给自己加1层燃烧，抽取1灵元",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 2,
+    "Cooldown": 20,
     "CardType": "FaShu",
     "ManaCost": {}, 
     "Tags": [
@@ -88,7 +88,7 @@
     "Desc": "4点火斩，击中本体则施加1燃烧",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {
       "Huo": 1
@@ -106,7 +106,7 @@
     "Desc": "转化1点木灵元回蓝1",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "FaShu",
     "ManaCost": {}, 
     "Tags": [

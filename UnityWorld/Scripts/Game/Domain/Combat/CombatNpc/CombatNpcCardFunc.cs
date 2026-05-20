@@ -25,12 +25,10 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void RemoveCombatCard(CombatCard card)
         {
-            Log($"[CombatNpc:{GetName()}] 移除卡牌: {card.DisplayName}");
             _changes.Enqueue((ComabtCardDeckChangeType.Remove,card,ComabtCardDisplaceType.None));
         }
         public void AddCombatCard(CombatCard card)
         {
-            Log($"[CombatNpc:{GetName()}] 新增卡牌: {card.DisplayName}");
             _changes.Enqueue((ComabtCardDeckChangeType.Add,card,ComabtCardDisplaceType.None));
         }
         
@@ -49,14 +47,14 @@ namespace UnityWorld.Game.Domain.Combat
                     case ComabtCardDeckChangeType.Add:
                         CardDeck.Add(card);
                         card.Owner = this;
-                        LogMgr.Dbg("[CombatNpc:{0}] 卡组新增卡牌: {1}", card.DisplayName, card.Id);
+                        LogMgr.Dbg("[CombatNpc:{0}] 卡组新增卡牌: {1}",GetName(), card.DisplayName);
                         LogMgr.Dbg("[CombatNpc:{0}] 当前SP: {1}", GetName(), GetSp());
                         break;
 
                     case ComabtCardDeckChangeType.Remove:
                         CardDeck.Remove(card);
-                        LogMgr.Dbg("[CombatNpc:{0}] 卡组移除卡牌: {1}", card.DisplayName, card.Id);
-                        LogMgr.Dbg("[CombatNpc:{0}] 当前SP: {1}", GetName(), GetSp());
+                        LogMgr.Dbg("卡组移除卡牌: {1}", GetName(), card.DisplayName);
+                        LogMgr.Dbg(" 当前SP: {1}", GetName(), GetSp());
                         break;
 
                     case ComabtCardDeckChangeType.Displace:
@@ -71,7 +69,7 @@ namespace UnityWorld.Game.Domain.Combat
                                 break;
                             case ComabtCardDisplaceType.Random:
                                 var idx = CardDeck.Count > 0
-                                    ? Soul.Random(0, CardDeck.Count + 1)
+                                    ? Scene.Soul.Random(0, CardDeck.Count + 1)
                                     : 0;
                                 CardDeck.Insert(idx, card);
                                 break;

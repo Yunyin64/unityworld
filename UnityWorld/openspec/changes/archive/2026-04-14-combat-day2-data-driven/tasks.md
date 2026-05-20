@@ -110,7 +110,7 @@
 
 - [ ] 16.5 【Day4】实现 Action 执行器（ActionResolver）：至少能执行 Heal(N)→实际恢复 HP、SelfDamage(N)→实际自伤，使效果卡和伤势卡真正生效
 - [ ] 16.6 【Day4】CombatCardFlowHandler.ResolveEffectCard 接入 Action 执行器：效果卡 CD 满时遍历 EffectData.Actions 调用执行器，替换当前的纯日志占位
-- [ ] 16.7 【Day4】实现对拼后续结算：拼完后执行 OnUse Effect 中非拼点的 Action（如 AddPoison），检查 OnContestWin/OnContestLose Trigger 的 Effect
+- [ ] 16.7 【Day4】实现对拼后续结算：拼完后执行 OnUse Effect 中非拼点的 Action（如 AddPoison），检查 ContestWin/ContestLose Trigger 的 Effect
 - [ ] 16.8 【Day4】DamageInfo.CreateInjurySelfDamage 接入 ActionData：从伤势卡的 ActionData 中读取 SelfDamage 值，替换当前的 ⏳ 占位
 
 ### → 回填到 Day 5（战斗Log与NPC接通）

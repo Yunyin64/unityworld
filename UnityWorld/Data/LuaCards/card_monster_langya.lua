@@ -14,7 +14,7 @@ card.CardData = {
 
 card.Keywords = { "Passive" }
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
     AddNpcBuff(ctx, ctx.Caster, "CiDmgFlat", 1)
 end
 

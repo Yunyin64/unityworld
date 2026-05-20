@@ -1,6 +1,8 @@
+using UnityWorld.Core;
+
 public class ContextBase
         {
-            private readonly Dictionary<string, object> _causes = new();
+            protected readonly Dictionary<string, object> _causes = new();
 
             /// <summary>设置一个因果项</summary>
             public ContextBase Set<T>(string key, T value)
@@ -57,7 +59,7 @@ public class ContextBase
             /// <summary>获取所有因果项的键（调试用）</summary>
             public IEnumerable<string> Keys => _causes.Keys;
 
-            public string LogAllInfo()
+            public virtual string LogAllInfo()
             {
                 var sb = new System.Text.StringBuilder();
                 sb.AppendLine("ContextBase:");
@@ -65,6 +67,8 @@ public class ContextBase
                 {
                     sb.AppendLine($"  {kvp.Key}: {kvp.Value}");
                 }
+
+                LogMgr.Dbg(sb.ToString());
                 return sb.ToString();
             }
         }

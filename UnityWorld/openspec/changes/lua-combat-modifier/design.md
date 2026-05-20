@@ -10,7 +10,7 @@ CombatCard 已有完整的 Lua 驱动生命周期：`InitializeLuaCards()` 加�
 ## Goals / Non-Goals
 
 **Goals:**
-- CombatNpcModifier 支持独立 Lua env，生命周期 Hook：OnApply / OnTick / OnStack / OnRemove
+- CombatNpcModifier 支持独立 Lua env，生命周期 Hook：Apply / OnTick / OnStack / OnRemove
 - AddModifier 支持同 ID 叠层（CurrentStack + MaxStack + RefreshOnStack 逻辑）
 - ModifierTick 每战斗 Tick 遍历所有 Modifier，调用 OnTick，衰减 Duration，移除过期 Modifier
 - Lua 脚本按约定路径加载：DefineId → `CombatModifiers/{DefineId}.lua`

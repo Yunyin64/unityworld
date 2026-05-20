@@ -15,6 +15,8 @@ namespace UnityWorld.Game.Domain.Combat
         {
             // 加载 Lua 脚本，获得独立的 card table
             env = LuaMgr.Instance.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
+            // 注入 C# 卡牌实例引用，供 Lua 通过 self._self 访问
+            if (env != null) env["_self"] = this;
             // 预扫描 Lua 函数缓存
             LuaHooks = LuaMgr.ScanLuaHooks(env);
         }
@@ -73,9 +75,11 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void Charge(int Tick)
         {
-            Ticks["CD"] += Tick;
+            var old = Ticks["CD"];
+            Ticks["CD"] = Math.Min(Ticks["CD"]+Tick,GetCDMax());
+            Log($"  [{Owner.GetName()}] 充能: {old} +{Tick}-> {Ticks["CD"]} | {GetCDMax()}  ");
         }
-        public void AddCardBuff()
+        public void AddCardBuff(CardModifier modifier)
         {
             
         }

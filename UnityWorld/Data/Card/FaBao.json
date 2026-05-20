@@ -5,7 +5,7 @@
     "Desc": "基础武器",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "Keywords": ["FaBao"],
     "ManaCost": {
       "Jin": 1

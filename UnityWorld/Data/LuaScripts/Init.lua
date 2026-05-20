@@ -10,6 +10,16 @@
 -- ── CardBase 元表 ────────────────────────────────────────────
 CardBase = {}
 
+--- 获取自身 C# CombatCard 实例
+function CardBase:Self()
+    return self._self
+end
+
+--- 获取自身所属 CombatNpc
+function CardBase:Owner()
+    return self._self.Owner
+end
+
 -- ── 拼点类包装函数 ──────────────────────────────────────────
 
 --- 攻击拼点：造成伤害
@@ -88,8 +98,22 @@ end
 
 --- 减速目标卡牌
 --- @param ctx APIContext
-Slow = function(ctx)
+--- @param card CombatCard 目标卡牌
+--- @param stack number 减速层数
+Slow = function(ctx, card, stack)
+    ctx:Set("TargetCard", card)
+    ctx:Set("Stack", tonumber(stack))
     API:Execute("Slow", ctx)
+end
+
+--- 加速目标卡牌
+--- @param ctx APIContext
+--- @param card CombatCard 目标卡牌
+--- @param stack number 加速层数
+Haste = function(ctx, card, stack)
+    ctx:Set("TargetCard", card)
+    ctx:Set("Stack", tonumber(stack))
+    API:Execute("Haste", ctx)
 end
 
 --- 立刻将MP转化为灵元
@@ -166,4 +190,62 @@ AdjacentCards = function(ctx, target, direction)
     ctx:Set("Direction", direction)
     API:Execute("AdjacentCards", ctx)
     return ctx:GetObject("Ret"), ctx:GetObject("Result")
+end
+
+-- ── 卡组操作类包装函数 ──────────────────────────────────────
+
+--- 移除目标随机一张伤势卡
+--- @param ctx APIContext
+--- @param target CombatNpc 目标NPC
+--- @param size number 伤势卡体量
+--- @param exact boolean 是否精确匹配Size（可选，默认true）
+RemoveRandomWound = function(ctx, target, size, exact)
+    ctx:Set("Target", target)
+    ctx:Set("Size", tonumber(size))
+    if exact ~= nil then
+        ctx:Set("Exact", exact)
+    end
+    API:Execute("RemoveRandomWound", ctx)
+end
+
+--- 位移目标卡牌到指定位置
+--- @param ctx APIContext
+--- @param card CombatCard 目标卡牌
+--- @param position string 位置（"First"/"Last"/"Random"）
+Displace = function(ctx, card, position)
+    ctx:Set("TargetCard", card)
+    ctx:Set("Position", position)
+    API:Execute("Displace", ctx)
+end
+
+--- 灵元转化回蓝条MP
+--- @param ctx APIContext
+--- @param element string 元素类型（"None"为随机凑满）
+--- @param maxAmount number 最大转化数量
+Convert = function(ctx, element, maxAmount)
+    ctx:Set("Element", element)
+    ctx:Set("MaxAmount", tonumber(maxAmount))
+    API:Execute("Convert", ctx)
+end
+
+--- 减少自身指定元素的灵元
+--- @param ctx APIContext
+--- @param element string 元素类型（"None"为随机消耗）
+--- @param amount number 减少数量
+ReduceMana = function(ctx, element, amount)
+    ctx:Set("Element", element)
+    ctx:Set("Amount", tonumber(amount))
+    API:Execute("ReduceMana", ctx)
+end
+
+--- 给目标卡牌添加永久属性修正
+--- @param ctx APIContext
+--- @param card CombatCard 目标卡牌
+--- @param statId string 属性ID（如 "ManaAdj_Jin", "CDTickAdj"）
+--- @param value number 修正值
+AddCardStatBuff = function(ctx, card, statId, value)
+    ctx:Set("TargetCard", card)
+    ctx:Set("StatId", statId)
+    ctx:Set("Value", tonumber(value))
+    API:Execute("AddCardStatBuff", ctx)
 end

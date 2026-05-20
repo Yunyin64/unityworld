@@ -11,7 +11,7 @@
 ## Goals / Non-Goals
 
 **Goals:**
-- 跑通 Init.lua → 卡牌脚本加载 → OnContest/OnApply Lua 调用 → APIMgr.Execute 的完整管线
+- 跑通 Init.lua → 卡牌脚本加载 → Contest/Apply Lua 调用 → APIMgr.Execute 的完整管线
 - 多卡实例互不污染
 - Lua 脚本作者可用简洁语法调用战斗 API
 
@@ -37,7 +37,7 @@ C# 侧构造 `APIContext { SourceCard=this, Caster=Owner, Scene=null }`，作为
 
 ### 3. env 存储方案：env = Lua 脚本 return 的 card table
 
-不存隔离环境表。`LoadCardScript` 执行脚本后捕获 `return` 值，直接作为 `env`。调用时 `env["OnContest"]` 即可取到函数。
+不存隔离环境表。`LoadCardScript` 执行脚本后捕获 `return` 值，直接作为 `env`。调用时 `env["Contest"]` 即可取到函数。
 
 **理由：** 简单直接，card table 上就挂着所有 Hook 函数。
 

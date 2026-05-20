@@ -5,7 +5,7 @@
     "Desc": "木系刺击，造成4点木刺伤害",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "FaShu",
     "ManaCost": {
       "Mu": 1
@@ -22,7 +22,7 @@
     "Desc": "将至多1个任意灵元转化回蓝条MP",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 12,
+    "Cooldown": 120,
     "CardType": "FaShu",
     "ManaCost": {}, 
     "Tags": [
@@ -37,7 +37,7 @@
     "Desc": "加速上方一张卡（CD累计速率提升100%），可叠加",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {
       "Mu": 1
@@ -54,7 +54,7 @@
     "Desc": "给敌方施加1层易伤，下次受到伤害时额外承受伤害",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "FaShu",
     "ManaCost": {
       "Mu": 1
@@ -71,7 +71,7 @@
     "Desc": "移除己方随机一张Size为1的伤势卡",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 15,
+    "Cooldown": 150,
     "CardType": "FaShu",
     "ManaCost": {
       "Mu": 2

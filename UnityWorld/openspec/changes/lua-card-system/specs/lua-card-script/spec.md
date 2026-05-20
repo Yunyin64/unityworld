@@ -33,14 +33,14 @@ Lua 脚本 SHALL 定义 `function CombatCard:OnUse(ctx)` 作为卡牌使用时�
 - **THEN** 框架调用其 OnUse(ctx)，ctx 中包含 Caster/Target/SelfCardId
 
 ### Requirement: 被动 Hook 函数
-Lua 脚本 MAY 定义被动 Hook 函数（OnAttack/OnContestWin/OnContestLose/OnDominate/OnDominated/OnHitBody/OnAfterCardUse），框架自动注册为事件监听。
+Lua 脚本 MAY 定义被动 Hook 函数（OnAttack/ContestWin/ContestLose/OnDominate/OnDominated/OnHitBody/OnAfterCardUse），框架自动注册为事件监听。
 
 #### Scenario: OnAttack 被动触发
 - **WHEN** 卡牌所属 NPC 发起攻击且 EventMgr 触发 trigger_on_attack
 - **THEN** 该卡牌的 OnAttack(ctx) 被调用
 
 #### Scenario: 多个被动 Hook 共存
-- **WHEN** .lua 同时定义 OnAttack 和 OnContestWin
+- **WHEN** .lua 同时定义 OnAttack 和 ContestWin
 - **THEN** 两个 Hook 分别注册到对应事件，互不干扰
 
 ### Requirement: self 绑定

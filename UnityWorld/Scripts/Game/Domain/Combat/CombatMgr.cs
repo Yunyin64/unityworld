@@ -67,7 +67,7 @@ namespace UnityWorld.Game.Domain
                 (A, CombatTeam.TeamA),
                 (B, CombatTeam.TeamB)
             };
-            combatScene.Init(participants,600);
+            combatScene.Init(12345,participants,600);
             return combatScene.Run();
         }
     }

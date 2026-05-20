@@ -71,8 +71,5 @@ namespace UnityWorld.Core
 
         /// <summary>修正值</summary>
         public float Value { get; set; }
-
-        /// <summary>每层叠加值（默认 0 表示不按层叠加，仅使用 Value）</summary>
-        public float ValuePerStack { get; set; }
     }
 }

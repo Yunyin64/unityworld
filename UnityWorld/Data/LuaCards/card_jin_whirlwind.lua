@@ -1,6 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
 -- 回旋斩
--- 3点物理斩击，每触发一次攻击卡为自己充能1s（10 tick）
+-- 3点物理斩击，己方每次攻击赢时为自己充能10 tick
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -14,14 +14,19 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
     Attack(ctx, "Jin", "Zhan", 3)
 end
 
-function card:OnApply(ctx)
-    -- 每次触发攻击后，为自己充能 1s（10 tick）
-    local self_card = ctx.SourceCard
-    Charge(ctx, { self_card }, 10)
+function card:Apply(ctx)
+end
+
+function card:OnAttack(ctx)
+    -- 己方攻击赢时，为自己充能 10 tick
+    local self_card = self:Self()
+    if ctx.Caster == self:Owner() then
+        Charge(ctx,self_card , 10)
+    end
 end
 
 function card:OnTick(ctx)

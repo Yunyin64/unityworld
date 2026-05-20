@@ -113,7 +113,7 @@
 - [x] 12.4 验证 Tick 循环（CD 递增 + Frozen 跳过 + Slow/Haste 速率调整）
 - [x] 12.5 验证待发槽入槽 / 溢出直击 / 对拼
 - [x] 12.6 验证对拼结算（攻vs攻、攻vs盾、攻vs防）+ Shield 机制
-- [x] 12.7 验证对拼后续 OnUse 非拼点 Action + OnContestWin/Lose Trigger
+- [x] 12.7 验证对拼后续 OnUse 非拼点 Action + ContestWin/Lose Trigger
 - [x] 12.8 验证 HP清零 → 伤势卡生成 → SP溢出判负
 - [x] 12.9 验证 Mana 转化 → 灵元消耗 → 法术卡启动
 - [x] 12.10 验证效果卡直接结算（Condition 门控 + Freeze/Charge/Convert/Draw 等）

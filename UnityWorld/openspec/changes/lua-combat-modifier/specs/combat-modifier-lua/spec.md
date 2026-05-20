@@ -37,12 +37,12 @@ CombatNpcModifier SHALL 提供 `CallLuaHook<bool>(string hookName, CombatNpc npc
 ### Requirement: AddModifier 支持 Lua 加载与叠层
 CombatNpc.AddModifier(defineId, stacks) SHALL 执行以下流程：
 1. 查找 Modifiers 列表中是否已有同 DefineId 的 Modifier
-2. 若无：从 Define 创建实例 → 通过 LuaMgr 加载 Lua env → 调用 OnApply hook → 加入 Modifiers 列表
+2. 若无：从 Define 创建实例 → 通过 LuaMgr 加载 Lua env → 调用 Apply hook → 加入 Modifiers 列表
 3. 若有：执行叠层逻辑（CurrentStack += stacks，受 MaxStack 限制；RefreshOnStack 时重置 RemainingTime）→ 调用 OnStack hook
 
-#### Scenario: 首次添加 Modifier 触发 OnApply
+#### Scenario: 首次添加 Modifier 触发 Apply
 - **WHEN** CombatNpc 的 Modifiers 中没有 DefineId="Burn" 的 Modifier，调用 AddModifier("Burn")
-- **THEN** 创建 CombatNpcModifier 实例，加载 Burn.lua 为 env，调用 env.OnApply(mod, npc)，加入 Modifiers
+- **THEN** 创建 CombatNpcModifier 实例，加载 Burn.lua 为 env，调用 env.Apply(mod, npc)，加入 Modifiers
 
 #### Scenario: 首次添加无 Lua 脚本的纯数值 Modifier
 - **WHEN** 调用 AddModifier("AtkUp") 且 AtkUp.lua 不存在
@@ -107,14 +107,14 @@ CombatNpc.Tick() SHALL 在每个战斗 Tick 中调用 ModifierTick()，使 Modif
 
 ### Requirement: CombatModifiers Lua 脚本约定
 `Data/LuaScripts/CombatModifiers/` 目录下的 Lua 脚本 SHALL return 一个 table，可包含以下 hook 函数（均为可选）：
-- `OnApply(mod, npc)` — 首次挂载
+- `Apply(mod, npc)` — 首次挂载
 - `OnTick(mod, npc)` — 每战斗 Tick
 - `OnStack(mod, npc)` — 叠层时
 - `OnRemove(mod, npc)` — 移除时
 
 #### Scenario: 最小有效 Modifier 脚本
-- **WHEN** Lua 脚本仅定义 OnApply，不定义其他 hook
-- **THEN** OnApply 正常调用，其他 hook 静默跳过
+- **WHEN** Lua 脚本仅定义 Apply，不定义其他 hook
+- **THEN** Apply 正常调用，其他 hook 静默跳过
 
 #### Scenario: 空 table 脚本
 - **WHEN** Lua 脚本 return 空 table（无任何 hook）

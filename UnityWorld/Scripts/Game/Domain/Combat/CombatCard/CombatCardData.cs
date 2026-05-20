@@ -85,7 +85,7 @@ namespace UnityWorld.Game.Domain.Combat
         public int GetDeckIndex() => Owner?.GetCardDeck().IndexOf(this) ?? -1;
         public float GetCDMax()
         {
-            return 10*GetCooldown() + GetStat("CDTickAdj");
+            return GetCooldown() + GetStat("CDTickAdj");
         }
 
         

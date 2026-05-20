@@ -12,8 +12,8 @@ CombatCardState.TickCd() SHALL 在 FrozenTicks > 0 时不递增 CurrentCdTick，
 - **THEN** CurrentCdTick 递增 1，返回是否已就绪
 
 ### Requirement: 对拼结算后触发后续 Effect 链
-CombatScene.ProcessSlotResults SHALL 在对拼结算完成后，通过 CombatContestHandler 触发双方卡牌的后续 Effect（OnUse 非拼点 Action + OnContestWin/OnContestLose Trigger）。
+CombatScene.ProcessSlotResults SHALL 在对拼结算完成后，通过 CombatContestHandler 触发双方卡牌的后续 Effect（OnUse 非拼点 Action + ContestWin/ContestLose Trigger）。
 
 #### Scenario: 对拼结算完成后执行后续
 - **WHEN** 对拼结算返回 ContestResult（非平局）
-- **THEN** 赢家卡的 OnContestWin Effect 被执行，输家卡的 OnContestLose Effect 被执行，双方 OnUse 非拼点 Action 被执行
+- **THEN** 赢家卡的 ContestWin Effect 被执行，输家卡的 ContestLose Effect 被执行，双方 OnUse 非拼点 Action 被执行

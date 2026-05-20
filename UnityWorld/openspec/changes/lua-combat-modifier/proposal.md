@@ -7,7 +7,7 @@ CombatNpcModifier 已实现 ILuaBindable 接口，拥有 `env` 属性，但当�
 - LuaMgr 新增 `LoadModifierScript(defineId)` 方法，按约定路径 `Data/LuaScripts/CombatModifiers/{defineId}.lua` 加载脚本，每次调用返回独立 LuaTable（不缓存）
 - CombatNpcModifier 新增 `CallLuaHook<bool>(hookName, npc)` 方法，从 env 取函数并调用
 - CombatNpc 新增 partial 文件 `CombatNpcModifierFunc.cs`，包含：
-  - `AddModifier()`：查重叠层 + Lua env 加载 + 调用 OnApply/OnStack
+  - `AddModifier()`：查重叠层 + Lua env 加载 + 调用 Apply/OnStack
   - `ModifierTick()`：遍历 Modifiers、调用 OnTick、衰减 RemainingTime、移除过期 Modifier 并调用 OnRemove
   - `RemoveModifier(id)`：主动移除并调用 OnRemove
 - CombatNpc.Buffs 重命名为 Modifiers
@@ -17,7 +17,7 @@ CombatNpcModifier 已实现 ILuaBindable 接口，拥有 `env` 属性，但当�
 ## Capabilities
 
 ### New Capabilities
-- `combat-modifier-lua`: CombatNpcModifier 的 Lua 脚本驱动生命周期管线（加载、OnApply、OnTick、OnStack、OnRemove）
+- `combat-modifier-lua`: CombatNpcModifier 的 Lua 脚本驱动生命周期管线（加载、Apply、OnTick、OnStack、OnRemove）
 
 ### Modified Capabilities
 - `modifier-base`: IModifierBase 的叠层规则需要在 spec 层面补充（叠层判定、MaxStack、RefreshOnStack 的行为契约）

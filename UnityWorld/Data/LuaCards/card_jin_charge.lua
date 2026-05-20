@@ -14,10 +14,10 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
 end
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
     -- 找到自身在卡组中的位置，对上方那张卡充能
     local self_card = ctx.SourceCard
     local owner = ctx.Caster

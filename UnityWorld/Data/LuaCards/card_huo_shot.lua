@@ -14,11 +14,11 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
     Attack(ctx, "Huo", "SheJi", 5)
 end
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
 end
 
 function card:OnTick(ctx)

@@ -14,10 +14,10 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
 end
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
     ArmorBreak(ctx, 5)
 end
 

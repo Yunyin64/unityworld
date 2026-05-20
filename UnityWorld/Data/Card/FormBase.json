@@ -21,7 +21,7 @@
     "Desc": "基础剑招，造成3点<武器>刺伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4.5,
+    "Cooldown": 45,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -37,7 +37,7 @@
     "Desc": "基础剑招，造成3点<武器>射伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5.5,
+    "Cooldown": 55,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -53,7 +53,7 @@
     "Desc": "基础刀招，造成4点<武器>斩伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
+    "Cooldown": 60,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -69,7 +69,7 @@
     "Desc": "基础刀招，造成4点<武器>射伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6.5,
+    "Cooldown": 65,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -85,7 +85,7 @@
     "Desc": "基础刀招，造成3点<武器>打伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5.5,
+    "Cooldown": 55,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -101,7 +101,7 @@
     "Desc": "基础拳招，造成2点<武器>打伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -117,7 +117,7 @@
     "Desc": "基础拳招，造成2点<武器>射伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4.5,
+    "Cooldown": 45,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -133,7 +133,7 @@
     "Desc": "基础拳招，造成2点<武器>刺伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 3.5,
+    "Cooldown": 35,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -149,7 +149,7 @@
     "Desc": "基础枪招，造成4点<武器>刺伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
+    "Cooldown": 60,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -165,7 +165,7 @@
     "Desc": "基础枪招，造成3点<武器>斩伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -181,7 +181,7 @@
     "Desc": "基础枪招，造成4点<武器>打伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 7,
+    "Cooldown": 70,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -197,7 +197,7 @@
     "Desc": "格挡<武器>点",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 3,
+    "Cooldown": 30,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [
@@ -213,7 +213,7 @@
     "Desc": "格挡<武器>点",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "ZhaoShi",
     "ManaCost": {}, 
     "Tags": [

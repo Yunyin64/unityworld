@@ -26,20 +26,67 @@ namespace UnityWorld.Game.Domain
                 Duration = -1,
                 RemainingTime = -1,
                 MaxStack = 1,
-                CurrentStack = speed,
+                CurrentStack = 1,
                 RefreshOnStack = false,
-                ExpirePolicy = ExpirePolicy.Never,
+                ExpirePolicy = ExpirePolicy.TriggerBased,
+                RemoveTriggerId = "被使用",
                 StatModifiers = new List<StatModifierEntry>()
                 {
                     new StatModifierEntry()
                     {
                         StatId = "CDSpeed",
                         Type = ModifierType.Flat,
-                        Value = 1,
-                        ValuePerStack = 1
+                        Value = speed,
                     }
                 }
 
+            };
+        }
+
+        public static CardModifier Freeze(string id,int time)
+        {
+            return new CardModifier()
+            {
+                Id = id,
+                Duration = -1,
+                RemainingTime = -1,
+                MaxStack = 1,
+                CurrentStack = 1,
+                RefreshOnStack = false,
+                ExpirePolicy = ExpirePolicy.TimeBased,
+                StatModifiers = new List<StatModifierEntry>()
+                {
+                    new StatModifierEntry()
+                    {
+                        StatId = "CDSpeed",
+                        Type = ModifierType.ClampMax,
+                        Value = 0,
+                    }
+                }
+
+            };
+        }
+
+        public static CardModifier StatBuff(string id, string statId, float value)
+        {
+            return new CardModifier()
+            {
+                Id = id,
+                Duration = -1,
+                RemainingTime = -1,
+                MaxStack = 1,
+                CurrentStack = 1,
+                RefreshOnStack = false,
+                ExpirePolicy = ExpirePolicy.Never,
+                StatModifiers = new List<StatModifierEntry>()
+                {
+                    new StatModifierEntry()
+                    {
+                        StatId = statId,
+                        Type = ModifierType.Flat,
+                        Value = value,
+                    }
+                }
             };
         }
     }

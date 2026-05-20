@@ -89,7 +89,7 @@ public static bool IsExpired(this IModifierBase self) => self.ExpirePolicy switc
 **决策**：不自建 `BroadcastRemoveTrigger` 方法，而是接入已有的 `EventMgr` 事件总线。
 
 **为什么不用自建广播？**
-- 事件广播侧（CombatCard.OnApply、CombatNpc.ApplyDamage 等）不应知道 Modifier 的存在
+- 事件广播侧（CombatCard.Apply、CombatNpc.ApplyDamage 等）不应知道 Modifier 的存在
 - EventMgr 已具备 Scope 分层、延迟操作保护、悬空清理等能力，不需要重复造
 - 新增事件点时零改动——只要有人往 EventMgr 广播了事件，Modifier 系统自动响应
 

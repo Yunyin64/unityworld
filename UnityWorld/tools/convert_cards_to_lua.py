@@ -27,8 +27,8 @@ CONDITION_FILE = DATA_DIR / "ConditionDefines.json"
 TRIGGER_TO_HOOK = {
     "trigger_on_use": "OnUse",
     "trigger_on_attack": "OnAttack",
-    "trigger_on_contest_win": "OnContestWin",
-    "trigger_on_contest_lose": "OnContestLose",
+    "trigger_on_contest_win": "ContestWin",
+    "trigger_on_contest_lose": "ContestLose",
     "trigger_on_dominate": "OnDominate",
     "trigger_on_dominated": "OnDominated",
     "trigger_on_hit_body": "OnHitBody",

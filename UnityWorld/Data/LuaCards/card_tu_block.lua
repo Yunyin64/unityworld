@@ -14,14 +14,9 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
     Block(ctx, 4)
 end
 
-function card:OnApply(ctx)
-end
-
-function card:OnTick(ctx)
-end
 
 return card

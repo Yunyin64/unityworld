@@ -62,7 +62,7 @@ TCA 从"被解释执行的 DSL"升级为"被编译成 Lua 的 DSL"
 ### 3.1 每个 Define 携带 lua_template
 
 ```
-TriggerDefine → 决定生成哪个函数名（OnUse / OnAttack / OnContestWin）
+TriggerDefine → 决定生成哪个函数名（OnUse / OnAttack / ContestWin）
 ConditionDefine → 生成 if 判断 或 目标选择代码
 ActionDefine → 生成具体执行调用
 ```
@@ -150,8 +150,8 @@ end
 |--------|---------|------|
 | `OnUse` | 主动调用 | CD 就绪时框架直接 call |
 | `OnAttack` | 事件驱动 | 攻击时（注册到 EventMgr） |
-| `OnContestWin` | 事件驱动 | 拼点赢时 |
-| `OnContestLose` | 事件驱动 | 拼点输时 |
+| `ContestWin` | 事件驱动 | 拼点赢时 |
+| `ContestLose` | 事件驱动 | 拼点输时 |
 | `OnDominate` | 事件驱动 | 赢家通吃时 |
 | `OnDominated` | 事件驱动 | 被通吃时 |
 | `OnHitBody` | 事件驱动 | 命中造成伤害时 |

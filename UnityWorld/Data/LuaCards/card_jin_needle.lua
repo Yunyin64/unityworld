@@ -14,20 +14,15 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
     Attack(ctx, "Jin", "Ci", 1)
 end
 
-function card:OnApply(ctx)
-    -- 击中本体（造成伤害生效）→ 下次 ManaCost 减 1
-    -- 通过 Stat 修改器临时降低金元消耗
+function card:Apply(ctx)
+    -- 拼点赢了 → 自身下次金元素消耗 -1（永久叠加）
     local self_card = ctx.SourceCard
-    if self_card then
-        self_card.Stats:Add("ManaAdj_Jin", -1)
-    end
+    AddCardStatBuff(ctx, self_card, "ManaAdj_Jin", -1)
 end
 
-function card:OnTick(ctx)
-end
 
 return card

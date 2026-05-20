@@ -65,7 +65,7 @@ namespace UnityWorld.Game.Domain
         [APIFunc("Heal", APIType.Action, "恢复战斗中HP", Scope.CombatNpc,"HealValue:Int")]
         public static APIContext Heal( APIContext ctx)
         {
-            var caster = ctx.Get<CombatNpc>("Caster");
+            var caster = ctx.Caster;
             if (caster == null) return ctx;
             int healValue = ctx.GetValue("HealValue", 0);
             caster.ApplyHeal(healValue);
@@ -76,7 +76,7 @@ namespace UnityWorld.Game.Domain
         [APIFunc("SelfDamage", APIType.Action, "自伤", Scope.CombatNpc, "DamageValue:Int")]
         public static APIContext SelfDamage( APIContext ctx)
         {
-            var caster = ctx.Get<CombatNpc>("Caster");
+            var caster = ctx.Caster;
             if (caster == null) return ctx;
             int damageValue = ctx.GetValue("DamageValue", 0);
             var dmg = new DamageInfo();
@@ -125,19 +125,21 @@ namespace UnityWorld.Game.Domain
             if (string.IsNullOrEmpty(buffId)) return;
 
             // 查找目标 NPC
-            target.AddModifier(buffId, stacks);
+            target.AddModifier(buffId, stacks,duration);
 
           }
 
         // ── 轻量属性修正类 ──────────────────────────────────────
 
         /// <summary>给施法者添加永久属性修正。参数：StatId(String), Value(Float), ?ModifierType(String), ?SourceId(String)</summary>
-        [APIFunc("AddStatBuff", APIType.Action, "给施法者添加永久属性修正", Scope.CombatNpc, "StatId:String", "Value:Float", "?ModifierType:String", "?SourceId:String")]
+        [APIFunc("AddStatBuff", APIType.Action, "给施法者添加永久属性修正", Scope.CombatNpc, "Target:CombatNpc","StatId:String", "Value:Float", "?ModifierType:String", "?SourceId:String")]
         public static APIContext AddStatBuff(APIContext ctx)
         {
             var caster = ctx.Caster;
             if (caster == null) return ctx;
 
+
+            CombatNpc target = ctx.Get<CombatNpc>("Target");
             string statId = ctx.GetValue("StatId", "");
             float value = ctx.GetValue("Value", 0f);
             string modifierType = ctx.GetValue("ModifierType", "Flat");
@@ -152,23 +154,53 @@ namespace UnityWorld.Game.Domain
 
             if (string.IsNullOrEmpty(statId)) return ctx;
 
-            caster.AddStatBuff(statId, value, type, string.IsNullOrEmpty(sourceId) ? null : sourceId);
+            target.AddStatBuff(statId, value, type, string.IsNullOrEmpty(sourceId) ? null : sourceId);
             return ctx;
         }
 
         // ── 卡组操作类 ────────────────────────────────────────
 
-        /// <summary>移除己方一张伤势卡。参数：SizeList(String)</summary>
-        [APIFunc("RemoveWound", APIType.Action, "移除己方一张伤势卡", Scope.CombatNpc)]
-        public static APIContext RemoveWound( APIContext ctx)
+        /// <summary>移除目标随机一张伤势卡（按体量筛选）。参数：Target(CombatNpc), Size(Int), ?Exact(Bool)</summary>
+        [APIFunc("RemoveRandomWound", APIType.Action, "移除目标随机一张伤势卡", Scope.CombatNpc, "Target:CombatNpc", "Size:Int", "?Exact:Bool")]
+        public static APIContext RemoveRandomWound(APIContext ctx)
         {
-            return ctx;}
+            var target = ctx.Get<CombatNpc>("Target");
+            if (target == null) return ctx;
 
-        /// <summary>位移目标卡牌到指定位置。参数：TargetCardId(String), Position(String)</summary>
-        /// 估计会因为在tick中处理Card位置而报错，到时候看看
-        [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.CombatCard)]
-        public static APIContext Displace( APIContext ctx)
+            int size = ctx.GetValue("Size", 1);
+            bool exact = ctx.GetValue("Exact", true);
+
+            var deck = target.GetCardDeck();
+            var wounds = deck.Where(c => c.HasKeyword("Wound") && (exact ? c.GetSize() == size : c.GetSize() <= size)).ToList();
+            if (wounds.Count == 0) return ctx;
+
+            var picked = wounds[target.Scene.Soul.Random(0, wounds.Count)];
+            target.RemoveCombatCard(picked);
+            LogMgr.Dbg("[RemoveRandomWound] {0} 移除伤势卡: {1} (Size:{2})", target.GetName(), picked.DisplayName, picked.GetSize());
+
+            return ctx;
+        }
+
+        /// <summary>位移目标卡牌到指定位置。参数：TargetCard(CombatCard), Position(String: First/Last/Random)</summary>
+        [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.CombatCard, "TargetCard:CombatCard", "Position:String")]
+        public static APIContext Displace(APIContext ctx)
         {
+            var caster = ctx.Caster;
+            if (caster == null) return ctx;
+
+            var card = ctx.Get<CombatCard>("TargetCard");
+            if (card == null) return ctx;
+
+            string posStr = ctx.GetValue("Position", "Random");
+            if (!Enum.TryParse<ComabtCardDisplaceType>(posStr, true, out var pos))
+                pos = ComabtCardDisplaceType.Random;
+
+            var owner = card.Owner;
+            if (owner == null) return ctx;
+
+            owner.DisplaceCombatCard(card, pos);
+            LogMgr.Dbg("[Displace] {0} 的卡牌 {1} 位移至 {2}", owner.GetName(), card.DisplayName, pos);
+
             return ctx;
         }
 

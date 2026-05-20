@@ -5,7 +5,7 @@
     "Desc": "金系斩击，造成2点金斩伤害",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 2,
+    "Cooldown": 20,
     "CardType": "FaShu",
     "ManaCost": {
       "Jin": 1
@@ -22,7 +22,7 @@
     "Desc": "充能上方卡牌，使其CD减少1 tick",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {}, 
     "Tags": [
@@ -37,7 +37,7 @@
     "Desc": "金系重斩，造成6点金斩伤害",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "FaShu",
     "ManaCost": {
       "Jin": 1
@@ -54,7 +54,7 @@
     "Desc": "3点物理斩击，每触发一次攻击卡为自己充能1s",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 8,
+    "Cooldown": 80,
     "CardType": "FaShu",
     "ManaCost": {}, 
     "Tags": [
@@ -70,7 +70,7 @@
     "Desc": "消除对方5点护盾值",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {}, 
     "Tags": [
@@ -84,7 +84,7 @@
     "Desc": "展开12点金系护盾",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 8,
+    "Cooldown": 80,
     "CardType": "FaShu",
     "ManaCost": {
       "Jin": 2
@@ -101,7 +101,7 @@
     "Desc": "1点金刺，击中本体则下次manaCost减1",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 2,
+    "Cooldown": 20,
     "CardType": "FaShu",
     "ManaCost": {
       "Jin": 1

@@ -19,12 +19,12 @@ card.Keywords = {}
 -- ── OnXxx 函数 ────────────────────────────────────────
 
 --- 使用时构造拼点
-function card:OnContest(ctx)
+function card:Contest(ctx)
     Attack(ctx, "Wu", "Da", 2)
 end
 
 --- 生效时
-function card:OnApply(ctx)
+function card:Apply(ctx)
 end
 
 --- 每帧逻辑

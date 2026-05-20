@@ -9,7 +9,7 @@ combat-system-v3 Day1~Day3 已搭建完成：
 当前缺口：
 1. **从未跑过一场战斗** — 没有测试入口，所有逻辑未经验证
 2. **Condition 无运行时执行** — EffectData.ConditionId 有值但无处检查
-3. **对拼只做数值比较** — 拼完后不执行 OnUse 非拼点 Action，也不检查 OnContestWin/OnContestLose Trigger
+3. **对拼只做数值比较** — 拼完后不执行 OnUse 非拼点 Action，也不检查 ContestWin/ContestLose Trigger
 4. **Freeze 机制未实现** — APIMgr 注册了签名，但无 [APIFunc] Handler，CombatCardState 也没有 frozen 状态
 5. **DamageInfo.CreateInjurySelfDamage 仍是占位** — 不过伤势卡实际走的是 EffectCard 路径（CD 满→SelfDamage Action），CreateInjurySelfDamage 可能已不需要
 
@@ -19,7 +19,7 @@ combat-system-v3 Day1~Day3 已搭建完成：
 - 让一场 2v2 或 1v1 战斗能从 Init→PreStart→Start→Tick 循环→结果，完整跑通
 - Condition 选择器模式可用，至少支持 `cond_random_enemy_card_in_cd` 和 `cond_card_above`
 - Freeze 机制可用（冻结卡牌暂停 CD）
-- 对拼后续结算可用（执行非拼点 Action + OnContestWin/OnContestLose）
+- 对拼后续结算可用（执行非拼点 Action + ContestWin/ContestLose）
 - 战斗日志可读，能辅助判断数值是否合理
 - 首轮数值粗调，确保战斗不会 1 Tick 秒杀也不会 100 Tick 还不结束
 
@@ -79,6 +79,6 @@ combat-system-v3 Day1~Day3 已搭建完成：
 ## Risks / Trade-offs
 
 - **[Condition 硬编码不可扩展]** 每加一个 Condition 要改 switch → 可接受，数量少；后续如果 Condition 爆发增长再考虑反射
-- **[对拼后续结算可能递归]** OnContestWin 的 Action 如果又触发对拼→无限递归 → 本期 OnContestWin/OnContestLose 的 Effect 不允许含拼点类 Action，由数据约束保证
+- **[对拼后续结算可能递归]** ContestWin 的 Action 如果又触发对拼→无限递归 → 本期 ContestWin/ContestLose 的 Effect 不允许含拼点类 Action，由数据约束保证
 - **[数值首调靠人工]** 没有自动化平衡工具 → 可接受，先跑通，后续用日志统计
 - **[测试覆盖不足]** 只有一个手动测试入口 → 可接受，Day4 目标是跑通不是测试覆盖

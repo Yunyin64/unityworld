@@ -89,7 +89,7 @@ Modifier 的触发器移除机制 SHALL 接入已有的 `EventMgr` 事件总线�
 - Modifier 持有者（CombatNpc 等）SHALL 在内部维护一个 `IEventListener` 实例（_modifierTriggerListener），负责处理所有 Modifier 的触发器响应
 - `AddModifier` 时，若 Modifier 的 `RemoveTriggerId` 非空，SHALL 通过 `EventMgr.RegisterEvent` 注册监听该事件
 - `RemoveModifier` 时，若 Modifier 的 `RemoveTriggerId` 非空，SHALL 通过 `EventMgr.RemoveEvent` 注销监听
-- 事件广播侧（如 CombatCard.OnApply、CombatNpc.ApplyDamage）只需照常调用 `EventMgr.TriggerEvent`，不需要感知 Modifier 的存在
+- 事件广播侧（如 CombatCard.Apply、CombatNpc.ApplyDamage）只需照常调用 `EventMgr.TriggerEvent`，不需要感知 Modifier 的存在
 
 #### Scenario: AddModifier 自动注册事件监听
 - **WHEN** 向 CombatNpc 添加一个 RemoveTriggerId 为 "OnUse" 的 Modifier
@@ -100,7 +100,7 @@ Modifier 的触发器移除机制 SHALL 接入已有的 `EventMgr` 事件总线�
 - **THEN** EventMgr 中该 scope 下对 "OnUse" 事件的监听 MUST 被注销
 
 #### Scenario: 事件广播侧无需感知 Modifier
-- **WHEN** CombatCard.OnApply() 执行卡牌使用逻辑
+- **WHEN** CombatCard.Apply() 执行卡牌使用逻辑
 - **THEN** 该方法只需调用 `EventMgr.TriggerEvent("OnUse", ...)`，MUST NOT 直接调用任何 Modifier 管理方法
 
 ### Requirement: 触发器事件响应逻辑

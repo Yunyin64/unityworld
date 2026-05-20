@@ -39,24 +39,24 @@ CombatCard.InitializeLuaCards() SHALL 调用 LuaMgr.LoadCardScript(DefineId)，�
 
 ---
 
-### Requirement: OnContest 调用 Lua
-CombatCard.OnContest() SHALL 构造 APIContext（SourceCard=this, Caster=Owner, Scene=null），从 env 取 OnContest 函数并以 `card:OnContest(ctx)` 方式调用。
+### Requirement: Contest 调用 Lua
+CombatCard.Contest() SHALL 构造 APIContext（SourceCard=this, Caster=Owner, Scene=null），从 env 取 Contest 函数并以 `card:Contest(ctx)` 方式调用。
 
-#### Scenario: env 有 OnContest 函数
-- **WHEN** env["OnContest"] 是 LuaFunction
+#### Scenario: env 有 Contest 函数
+- **WHEN** env["Contest"] 是 LuaFunction
 - **THEN** 以 env 为 self、APIContext 为参数调用该函数
 
-#### Scenario: env 为 null 或无 OnContest
-- **WHEN** env 为 null 或 env["OnContest"] 不存在
+#### Scenario: env 为 null 或无 Contest
+- **WHEN** env 为 null 或 env["Contest"] 不存在
 - **THEN** 跳过 Lua 调用，不报错
 
 ---
 
-### Requirement: OnApply 调用 Lua
-CombatCard.OnApply() SHALL 构造 APIContext 并调用 env 中的 OnApply 函数，然后将 Phase 设为 Finished。
+### Requirement: Apply 调用 Lua
+CombatCard.Apply() SHALL 构造 APIContext 并调用 env 中的 Apply 函数，然后将 Phase 设为 Finished。
 
-#### Scenario: Lua OnApply 正常执行
-- **WHEN** env["OnApply"] 存在
+#### Scenario: Lua Apply 正常执行
+- **WHEN** env["Apply"] 存在
 - **THEN** 调用 Lua 函数后 Phase 变为 Finished
 
 ---

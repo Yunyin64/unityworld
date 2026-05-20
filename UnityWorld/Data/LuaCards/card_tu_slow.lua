@@ -14,21 +14,15 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
-end
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
     -- 减速敌方随机一张卡
     local target = ctx.Caster.Target
-    if target == nil then return end
-    local allCards = target:GetAllCards()
-    if allCards == nil or allCards.Count == 0 then return end
-    local idx = math.random(0, allCards.Count - 1)
-    local targetCard = allCards[idx]
-    Slow(ctx)
+    local con, targetCard = RandomCardInCD(ctx, target)
+    if con then
+        Slow(ctx, targetCard, 1)
+    end
 end
 
-function card:OnTick(ctx)
-end
 
 return card

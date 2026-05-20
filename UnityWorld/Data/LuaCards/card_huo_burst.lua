@@ -14,10 +14,10 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
 end
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
     -- 对自身所有卡牌充能 10 tick（1s）
     local owner = ctx.Caster
     local con,allCards = AllCard(ctx, owner)

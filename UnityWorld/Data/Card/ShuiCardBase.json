@@ -5,7 +5,7 @@
     "Desc": "回复2点HP",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 3,
+    "Cooldown": 30,
     "CardType": "FaShu",
     "ManaCost": {
       "Shui": 1
@@ -21,7 +21,7 @@
     "Desc": "展开水系6点护盾",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {
       "Shui": 1
@@ -38,7 +38,7 @@
     "Desc": "冻结敌方随机一张正在CD中的卡牌，暂停其CD 1 tick",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 3,
+    "Cooldown": 30,
     "CardType": "FaShu",
     "ManaCost": {
       "Shui": 1
@@ -55,7 +55,7 @@
     "Desc": "给敌方施加1层虚弱，下次出手拼点数值降低",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
+    "Cooldown": 40,
     "CardType": "FaShu",
     "ManaCost": {
       "Shui": 1
@@ -72,7 +72,7 @@
     "Desc": "将敌方最上方的卡牌移到最下方，打乱对手节奏",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 10,
+    "Cooldown": 100,
     "CardType": "FaShu",
     "ManaCost": {
       "Shui": 2

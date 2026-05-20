@@ -61,24 +61,24 @@ namespace UnityWorld.Game.Domain.Combat
         {
             //Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
             //Trigger:触发使用事件
-            OnContest();
+            Contest();
             if(Phase == CombatCardPhase.Ready){
-                OnApply();
+                Apply();
             }
         }
 
-        public void OnContest()
+        public void Contest()
         {
-            CallLua("OnContest");
+            CallLua("Contest");
         }
 
-        public void OnApply()
+        public void Apply()
         {
             //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
-            CallLua("OnApply");
+            CallLua("Apply");
 
             // 广播卡牌使用事件，供 Modifier 触发器响应
-            EventMgr.Instance?.TriggerEvent("OnApply", this,
+            EventMgr.Instance?.TriggerEvent("Apply", this,
                 (Scope.CombatNpc, Owner?.Id.ToString() ?? ""),
                 (Scope.CombatCard, Id.ToString()));
 
@@ -150,9 +150,10 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
-        public void CallLua(string hookName)
+        public void CallLua(string hookName,APIContext eventCtx = null)
         {
-            this.CallLuaHook<bool>(hookName, env, CreateCtx());
+            if(eventCtx == null) eventCtx = CreateCtx();
+            this.CallLuaHook<bool>(hookName, env, eventCtx);
             RunKeywordHooks(hookName);
         }
 

@@ -5,7 +5,7 @@
     "Desc": "土系打击，造成3点土打伤害",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 3,
+    "Cooldown": 30,
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
@@ -22,7 +22,7 @@
     "Desc": "土系格挡4点",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 3,
+    "Cooldown": 30,
     "CardType": "FaShu",
     "ManaCost": {},
     "Tags": [
@@ -37,7 +37,7 @@
     "Desc": "减速敌方随机一张卡（CD累计速率降低50%），可叠加",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
@@ -54,7 +54,7 @@
     "Desc": "给自身添加1层护甲，受到伤害时先减去护甲值",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1
@@ -71,7 +71,7 @@
     "Desc": "给敌方施加眩晕0.5秒，眩晕期间敌方所有卡CD停止推进",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 8,
+    "Cooldown": 80,
     "CardType": "FaShu",
     "ManaCost": {
       "Tu": 1

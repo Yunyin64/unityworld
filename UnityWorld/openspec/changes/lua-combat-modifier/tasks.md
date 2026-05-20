@@ -10,7 +10,7 @@
 ## 3. CombatNpcModifierFunc.cs：Modifier 管理 partial
 
 - [x] 3.1 新建 `Scripts/Game/Domain/Combat/CombatNpc/CombatNpcModifierFunc.cs` 文件，声明为 `partial class CombatNpc`
-- [x] 3.2 实现 `AddModifier(string defineId, int stacks = 1)`：查重叠层逻辑（CurrentStack/MaxStack/RefreshOnStack）+ LuaMgr.LoadModifierScript 加载 env + 调用 OnApply 或 OnStack hook
+- [x] 3.2 实现 `AddModifier(string defineId, int stacks = 1)`：查重叠层逻辑（CurrentStack/MaxStack/RefreshOnStack）+ LuaMgr.LoadModifierScript 加载 env + 调用 Apply 或 OnStack hook
 - [x] 3.3 实现 `ModifierTick()` 方法：遍历 Modifiers 调用 OnTick，衰减有限时 Modifier 的 RemainingTime，用 toRemove 临时列表收集过期 Modifier，遍历结束后批量调用 OnRemove 并移除
 - [x] 3.4 实现 `RemoveModifier(string defineId)` 方法：查找匹配 Modifier，调用 OnRemove 后移除，未找到时静默跳过
 

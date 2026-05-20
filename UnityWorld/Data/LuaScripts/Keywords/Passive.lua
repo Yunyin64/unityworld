@@ -9,7 +9,7 @@ end
 
 
 function Passive.OnStart(card, ctx)
-    card:OnApply()
+    card:Apply()
 end
 
 LuaMgr:RegisterKeyword("Passive", Passive)

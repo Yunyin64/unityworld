@@ -14,10 +14,10 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:OnContest(ctx)
+function card:Contest(ctx)
 end
 
-function card:OnApply(ctx)
+function card:Apply(ctx)
     -- 找敌方一张正在CD中的随机卡牌，冻结10 tick
     local target = ctx.Caster.Target
     local con,targetCard = RandomCardInCD(ctx, target)
