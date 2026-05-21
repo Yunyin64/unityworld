@@ -82,23 +82,51 @@ namespace UnityWorld.Game.Domain.Combat
         // ══════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 累计所有 CardModifier 对指定属性的贡献值。
+        /// 累计所有 CardModifier 对指定属性的贡献，按 ModifierType 分层计算。
+        /// 计算顺序：Flat → Percent → ClampMin → ClampMax → Override
         /// </summary>
-        public float GetCardModifierStat(string statId)
+        public float ApplyCardModifierStat(string statId, float baseValue)
         {
-            float total = 0f;
+            float flat = 0f;
+            float percent = 0f;
+            float? clampMax = null;
+            float? clampMin = null;
+            float? overrideVal = null;
+
             foreach (var mod in CardModifiers)
             {
                 if (mod.StatModifiers == null) continue;
                 foreach (var entry in mod.StatModifiers)
                 {
-                    if (entry.StatId == statId)
+                    if (entry.StatId != statId) continue;
+                    float val = entry.Value * mod.CurrentStack;
+                    switch (entry.Type)
                     {
-                        total += entry.Value * mod.CurrentStack;
+                        case ModifierType.Flat:
+                            flat += val;
+                            break;
+                        case ModifierType.Percent:
+                            percent += val;
+                            break;
+                        case ModifierType.ClampMax:
+                            clampMax = clampMax.HasValue ? Math.Min(clampMax.Value, val) : val;
+                            break;
+                        case ModifierType.ClampMin:
+                            clampMin = clampMin.HasValue ? Math.Max(clampMin.Value, val) : val;
+                            break;
+                        case ModifierType.Override:
+                            overrideVal = val;
+                            break;
                     }
                 }
             }
-            return total;
+
+            if (overrideVal.HasValue) return overrideVal.Value;
+
+            float result = (baseValue + flat) * (1f + percent);
+            if (clampMin.HasValue) result = Math.Max(result, clampMin.Value);
+            if (clampMax.HasValue) result = Math.Min(result, clampMax.Value);
+            return result;
         }
     }
 }

@@ -191,11 +191,11 @@ namespace UnityWorld.Game.Domain.Combat
         public override float GetStat(string statId)
         {
             float val = base.GetStat(statId);
-            // CardModifier 贡献
-            val += GetCardModifierStat(statId);
             // 全场 NpcModifier 的 OnModifierStat hook 贡献
             if (Owner?.Scene != null)
                 val += Owner.Scene.CollectModifierStat(this, statId);
+            // CardModifier 贡献（含 Flat/Percent/ClampMax/ClampMin/Override）
+            val = ApplyCardModifierStat(statId, val);
             return val;
         }
 
