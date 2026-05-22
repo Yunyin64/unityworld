@@ -6,15 +6,36 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "Keywords": ["FaBao"],
+    "Keywords": [
+      "FaBao"
+    ],
     "ManaCost": {
       "Jin": 1
-    }, 
+    },
     "Tags": [
       "武器",
       "攻击",
       "斩",
       "剑"
+    ]
+  },
+  {
+    "ID": "card_fabao_kaijia",
+    "DisplayName": "铠甲",
+    "Desc": "基础防具，抵御外力",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 60,
+    "Keywords": [
+      "FaBao"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "Tags": [
+      "武器",
+      "防御",
+      "护甲"
     ]
   }
 ]

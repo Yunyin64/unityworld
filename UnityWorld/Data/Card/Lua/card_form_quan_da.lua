@@ -23,12 +23,5 @@ function card:Contest(ctx)
     Attack(ctx, "Wu", "Da", 2)
 end
 
---- 生效时
-function card:Apply(ctx)
-end
-
---- 每帧逻辑
-function card:OnTick(ctx)
-end
 
 return card

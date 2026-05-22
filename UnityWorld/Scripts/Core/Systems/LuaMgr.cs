@@ -52,7 +52,7 @@ namespace UnityWorld.Game.Domain
         public LuaMgr(string? luaCardsDir = null)
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            _luaCardsDir = luaCardsDir ?? Path.Combine(baseDir, "Data", "LuaCards");
+            _luaCardsDir = luaCardsDir ?? Path.Combine(baseDir, "Data", "Card","Lua");
             _luaCombatModifiersDir = Path.Combine(baseDir, "Data", "LuaScripts", "CombatModifiers");
             _luaKeywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
             _luaInitPath = Path.Combine(baseDir, "Data", "LuaScripts", "Init.lua");
