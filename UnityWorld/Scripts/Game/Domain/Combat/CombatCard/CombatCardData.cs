@@ -82,7 +82,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
             return CombatManaCost;
         }
-        public int GetDeckIndex() => Owner?.GetCardDeck().IndexOf(this) ?? -1;
+        public int GetDeckIndex() => Owner?.GetField().IndexOf(this) ?? -1;
         public float GetCDMax()
         {
             return GetCooldown() + GetStat("CDTickAdj");

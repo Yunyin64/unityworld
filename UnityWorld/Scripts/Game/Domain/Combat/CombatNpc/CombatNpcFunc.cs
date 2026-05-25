@@ -9,7 +9,7 @@ namespace UnityWorld.Game.Domain.Combat
         
         public List<CombatCard> GetCards(CombatCardPhase phase)
         {
-            return CardDeck.Where(c => c.GetPhase() == phase).ToList();
+            return Field.Where(c => c.GetPhase() == phase).ToList();
         }
         
 
@@ -36,17 +36,31 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void InitDeck()
         {
-            var cardDeck = Owner.GetAllCards();
-            if (cardDeck != null && cardDeck.Count > 0)
+            var fieldIds = Owner.GetFieldIds();
+            var reserveIds = Owner.GetReserveIds();
+            var allCards = Owner.GetAllCards();
+
+            // Field → Field（运转池）
+            foreach (var cardId in fieldIds)
             {
-                foreach (var card in cardDeck)
-                {
-                    var combatCard = CombatCard.CreateFromData(card);
-                    combatCard.Owner = this;
-                    CardDeck.Add(combatCard);
-                }
-            }                                    
-            Log($"初始化卡组，卡牌={CardDeck.ToInfoString()}, 当前SP={GetSp()}");        
+                var card = allCards.Find(c => c.Id == cardId);
+                if (card == null) continue;
+                var combatCard = CombatCard.CreateFromData(card);
+                combatCard.Owner = this;
+                Field.Add(combatCard);
+            }
+
+            // Reserve → Reserve 池（候补）
+            foreach (var cardId in reserveIds)
+            {
+                var card = allCards.Find(c => c.Id == cardId);
+                if (card == null) continue;
+                var combatCard = CombatCard.CreateFromData(card);
+                combatCard.Owner = this;
+                Reserve.Add(combatCard);
+            }
+
+            Log($"初始化卡组，运转池={Field.ToInfoString()}, Reserve={Reserve.Count}张, 当前SP={GetSp()}");
         }
 
         public void ProcessContest()

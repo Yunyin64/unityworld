@@ -17,11 +17,15 @@ namespace UnityWorld.Game.Domain.Combat
         Finished,
     }
 
-        public enum ComabtCardDeckChangeType
+        public enum ComabtFieldChangeType
         {
             Displace,
             Remove,
-            Add
+            Add,
+            /// <summary>从 Reserve 部署到 Field</summary>
+            Deploy,
+            /// <summary>从 Field 召回到 Reserve</summary>
+            Recall
         }
         public enum ComabtCardDisplaceType
         {

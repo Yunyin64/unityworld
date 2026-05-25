@@ -150,7 +150,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var c in Combatants.Values) c.UseCard();
             foreach (var c in Combatants.Values) c.ProcessContest();
             foreach (var c in Combatants.Values) c.DealDamage();
-            foreach (var c in Combatants.Values) c.DealCardDeckChange();
+            foreach (var c in Combatants.Values) c.DealFieldChange();
             foreach (var c in Combatants.Values) c.CheckDefeated();
             CheckEndConditions();
 
@@ -313,7 +313,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var npc in Combatants.Values)
             {
                 // 卡牌
-                foreach (var card in npc.GetCardDeck())
+                foreach (var card in npc.GetField())
                 {
                     if (card.HasHook(hookName))
                         card.CallLua(hookName,ctx);

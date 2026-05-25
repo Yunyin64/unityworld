@@ -170,7 +170,7 @@ namespace UnityWorld.Game.Domain
             int size = ctx.GetValue("Size", 1);
             bool exact = ctx.GetValue("Exact", true);
 
-            var deck = target.GetCardDeck();
+            var deck = target.GetField();
             var wounds = deck.Where(c => c.HasKeyword("Wound") && (exact ? c.GetSize() == size : c.GetSize() <= size)).ToList();
             if (wounds.Count == 0) return ctx;
 

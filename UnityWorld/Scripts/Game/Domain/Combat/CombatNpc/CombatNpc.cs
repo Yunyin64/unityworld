@@ -57,7 +57,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             CDTick();
             ModifierTick();
-            foreach (var card in CardDeck)
+            foreach (var card in Field)
             {
                 card.Tick();
             }
@@ -160,9 +160,14 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void PreStart()
         {
-           // 从 Npc 读取卡组，实例化 CardDeck
+           // 从 Npc 读取卡组，实例化 Field
            InitDeck();
-            foreach (var card in CardDeck)
+            foreach (var card in Field)
+            {
+                card.PreStart();
+            }
+            // Reserve 中的卡也执行 PreStart（初始化 Lua env），但不执行 Start
+            foreach (var card in Reserve)
             {
                 card.PreStart();
             }
@@ -172,7 +177,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Start()
         {
-            foreach (var card in CardDeck)
+            foreach (var card in Field)
             {
                 card.Start();
             }

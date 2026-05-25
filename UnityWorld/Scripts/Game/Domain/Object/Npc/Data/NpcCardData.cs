@@ -10,6 +10,12 @@ namespace UnityWorld.Game.Domain
         public List<int> AllCardIds { get; set; } = new();
         public List<Card> AllCards { get; set; } = new();
 
+        /// <summary>运转池：战斗中直接装载的卡 Id 列表</summary>
+        public List<int> Field { get; set; } = new();
+
+        /// <summary>候补池：战斗中需要 Deploy 才能上场的卡 Id 列表</summary>
+        public List<int> Reserve { get; set; } = new();
+
         public NpcCardData()
         {
             
@@ -19,6 +25,8 @@ namespace UnityWorld.Game.Domain
             var copy = (NpcCardData)MemberwiseClone();
             copy.AllCardIds = new List<int>(AllCardIds);
             copy.AllCards = new List<Card>(AllCards);
+            copy.Field = new List<int>(Field);
+            copy.Reserve = new List<int>(Reserve);
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();
@@ -27,7 +35,9 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            // TODO: 由 DomainData Log 技能补全
+            LogMgr.Dbg("│  AllCards: {0}", AllCards.Count);
+            LogMgr.Dbg("│  Field: [{0}]", string.Join(", ", Field));
+            LogMgr.Dbg("│  Reserve: [{0}]", string.Join(", ", Reserve));
         }
 
     }
@@ -37,6 +47,10 @@ namespace UnityWorld.Game.Domain
         public List<Card> GetAllCards() => CardData.AllCards;
         public List<int> GetAllCardIds() => CardData.AllCardIds;
 
-        
+        /// <summary>获取运转池卡 Id 列表</summary>
+        public List<int> GetFieldIds() => CardData.Field;
+
+        /// <summary>获取候补池卡 Id 列表</summary>
+        public List<int> GetReserveIds() => CardData.Reserve;
     }
 }

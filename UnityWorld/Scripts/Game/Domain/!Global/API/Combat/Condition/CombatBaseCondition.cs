@@ -12,7 +12,7 @@ namespace UnityWorld.Game.Domain
         {
             var caster = ctx.Caster;
             var target = ctx.Get<CombatNpc>("Target");
-            var cards = target.GetCardDeck();
+            var cards = target.GetField();
             ctx.Set<List<CombatCard>>("Result", cards);
             ctx.Set<bool>("Ret",true);
 
@@ -25,7 +25,7 @@ namespace UnityWorld.Game.Domain
         {
             var caster = ctx.Caster;
             var target = ctx.Get<CombatNpc>("Target");
-            var cards = target.GetCardDeck();
+            var cards = target.GetField();
             cards = cards.Where(c => c.GetPhase() == CombatCardPhase.InCD).ToList();
             var result = cards.Count > 0 ? cards[caster.Scene.Soul.Random(0, cards.Count)] : null;
             ctx.Set<bool>("Ret",false);
@@ -45,7 +45,7 @@ namespace UnityWorld.Game.Domain
             var caster = ctx.Caster;
             var target = ctx.Get<CombatCard>("Target");
             var direction = ctx.Get<string>("Direction");
-            var deck = caster.GetCardDeck();
+            var deck = caster.GetField();
             var index = caster.GetIndexByCard(target);
 
             List<CombatCard> cards = null;

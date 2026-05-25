@@ -5,83 +5,132 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
-        protected List<CombatCard> CardDeck { get; set; } = new();
+        protected List<CombatCard> Field { get; set; } = new();
 
-        private Queue<(ComabtCardDeckChangeType,CombatCard,ComabtCardDisplaceType)> _changes = new();
+        /// <summary>候补池：静默，不Tick、不占SP</summary>
+        protected List<CombatCard> Reserve { get; set; } = new();
 
-        public List<CombatCard> GetCardDeck()
+        private Queue<(ComabtFieldChangeType,CombatCard,ComabtCardDisplaceType)> _changes = new();
+
+        public List<CombatCard> GetField()
         {
-            return CardDeck;
+            return Field;
+        }
+
+        /// <summary>获取候补池</summary>
+        public List<CombatCard> GetReserve()
+        {
+            return Reserve;
         }
 
         public CombatCard GetCardByIndex(int index)
         {
-            return CardDeck[index];
+            return Field[index];
         }
 
         public int GetIndexByCard(CombatCard card)
         {
-            return CardDeck.IndexOf(card);
-        }
-        public void RemoveCombatCard(CombatCard card)
-        {
-            _changes.Enqueue((ComabtCardDeckChangeType.Remove,card,ComabtCardDisplaceType.None));
-        }
-        public void AddCombatCard(CombatCard card)
-        {
-            _changes.Enqueue((ComabtCardDeckChangeType.Add,card,ComabtCardDisplaceType.None));
-        }
-        
-        public void DisplaceCombatCard(CombatCard card,ComabtCardDisplaceType toPlace)
-        {
-            _changes.Enqueue((ComabtCardDeckChangeType.Displace,card,toPlace));
+            return Field.IndexOf(card);
         }
 
-        public  void DealCardDeckChange()
+        public void RemoveCombatCard(CombatCard card)
+        {
+            _changes.Enqueue((ComabtFieldChangeType.Remove, card, ComabtCardDisplaceType.None));
+        }
+
+        public void AddCombatCard(CombatCard card)
+        {
+            _changes.Enqueue((ComabtFieldChangeType.Add, card, ComabtCardDisplaceType.None));
+        }
+        
+        public void DisplaceCombatCard(CombatCard card, ComabtCardDisplaceType toPlace)
+        {
+            _changes.Enqueue((ComabtFieldChangeType.Displace, card, toPlace));
+        }
+
+        /// <summary>部署：将卡从 Reserve 移入 Field（延迟执行）</summary>
+        public void Deploy(CombatCard card)
+        {
+            _changes.Enqueue((ComabtFieldChangeType.Deploy, card, ComabtCardDisplaceType.None));
+        }
+
+        /// <summary>召回：将卡从 Field 移入 Reserve（延迟执行）</summary>
+        public void Recall(CombatCard card)
+        {
+            _changes.Enqueue((ComabtFieldChangeType.Recall, card, ComabtCardDisplaceType.None));
+        }
+
+        // ── 统一处理队列 ──────────────────────────────────────────
+
+        public void DealFieldChange()
         {
             while (_changes.Count > 0)
             {
                 var (changeType, card, displaceType) = _changes.Dequeue();
                 switch (changeType)
                 {
-                    case ComabtCardDeckChangeType.Add:
-                        CardDeck.Add(card);
+                    case ComabtFieldChangeType.Add:
+                        Field.Add(card);
                         card.Owner = this;
-                        LogMgr.Dbg("[CombatNpc:{0}] 卡组新增卡牌: {1}",GetName(), card.DisplayName);
-                        LogMgr.Dbg("[CombatNpc:{0}] 当前SP: {1}", GetName(), GetSp());
+                        Log($"[Field+] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
-                    case ComabtCardDeckChangeType.Remove:
-                        CardDeck.Remove(card);
-                        LogMgr.Dbg("卡组移除卡牌: {1}", GetName(), card.DisplayName);
-                        LogMgr.Dbg(" 当前SP: {1}", GetName(), GetSp());
+                    case ComabtFieldChangeType.Remove:
+                        Field.Remove(card);
+                        Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
-                    case ComabtCardDeckChangeType.Displace:
-                        CardDeck.Remove(card);
+                    case ComabtFieldChangeType.Displace:
+                        Field.Remove(card);
                         switch (displaceType)
                         {
                             case ComabtCardDisplaceType.First:
-                                CardDeck.Insert(0, card);
+                                Field.Insert(0, card);
                                 break;
                             case ComabtCardDisplaceType.Last:
-                                CardDeck.Add(card);
+                                Field.Add(card);
                                 break;
                             case ComabtCardDisplaceType.Random:
-                                var idx = CardDeck.Count > 0
-                                    ? Scene.Soul.Random(0, CardDeck.Count + 1)
+                                var idx = Field.Count > 0
+                                    ? Scene.Soul.Random(0, Field.Count + 1)
                                     : 0;
-                                CardDeck.Insert(idx, card);
+                                Field.Insert(idx, card);
                                 break;
                             default:
-                                CardDeck.Add(card);
+                                Field.Add(card);
                                 break;
                         }
-                        LogMgr.Dbg("[CombatNpc:{0}] 卡牌位移: {1} -> {2}", card.DisplayName, card.Id, displaceType);
+                        Log($"[Displace] {card.DisplayName} -> {displaceType}");
+                        break;
+
+                    case ComabtFieldChangeType.Deploy:
+                        if (!Reserve.Contains(card))
+                        {
+                            Log($"[Deploy] 警告：{card.DisplayName} 不在 Reserve 中，跳过");
+                            break;
+                        }
+                        Reserve.Remove(card);
+                        Field.Add(card);
+                        card.Ticks["CD"] = 0;
+                        card.SetPhase(CombatCardPhase.WaitResource);
+                        card.CallLua("OnDeploy");
+                        Log($"[Deploy] {card.DisplayName} Reserve→Field，当前SP={GetSp()}");
+                        break;
+
+                    case ComabtFieldChangeType.Recall:
+                        if (!Field.Contains(card))
+                        {
+                            Log($"[Recall] 警告：{card.DisplayName} 不在 Field 中，跳过");
+                            break;
+                        }
+                        Field.Remove(card);
+                        Reserve.Add(card);
+                        card.Ticks["CD"] = 0;
+                        card.CallLua("OnRecall");
+                        Log($"[Recall] {card.DisplayName} Field→Reserve，当前SP={GetSp()}");
                         break;
                 }
             }
-            
         }
     }
 }

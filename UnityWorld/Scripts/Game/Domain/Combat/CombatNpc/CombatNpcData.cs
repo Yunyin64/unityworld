@@ -20,7 +20,7 @@ namespace UnityWorld.Game.Domain.Combat
         public int GetCombatMpMax(){return GetMpMax();}
         public int GetSp(){
             int sp = 0;
-            foreach (var kv in CardDeck) sp += kv.GetSize();
+            foreach (var kv in Field) sp += kv.GetSize();
             return  sp;}
         public int GetCombatSpMax(){return GetSpMax();}
 
