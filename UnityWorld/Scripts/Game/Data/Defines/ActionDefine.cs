@@ -1,31 +1,37 @@
 using System.Text.Json.Serialization;
 using UnityWorld.Core;
+
 namespace UnityWorld.Game.Data
 {
     /// <summary>
-    /// Action（效果动作）定义
-    /// 是Effect中实际产生效果的部分，score为正数，消耗Effect的强度预算
+    /// Action（效果动作）模板定义
+    /// 包含参数化定义，用于自动/半自动组卡时的强度计算与Lua代码生成
     /// </summary>
     public class ActionDefine : DefineBase
     {
-        [JsonPropertyName("desc")]
+        /// <summary>描述模板，用{ParamName}插值</summary>
+        [JsonPropertyName("Desc")]
         public string Desc { get; set; } = "";
 
-        /// <summary>强度分（正数，消耗Effect预算）</summary>
-        [JsonPropertyName("score")]
-        public float Score { get; set; } = 0;
-        
-        /// <summary>稀有度</summary>
-        [JsonPropertyName("weight")]
-        public float Weight { get; set; } = 1;
-
-        /// <summary>Tag列表（这里不可重复）</summary>
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = [];
+        /// <summary>对应的API函数名</summary>
+        [JsonPropertyName("FuncName")]
+        public string FuncName { get; set; } = "";
 
         /// <summary>冲突Tag列表</summary>
-        [JsonPropertyName("conflictTags")]
+        [JsonPropertyName("ConflictTags")]
         public List<string> ConflictTags { get; set; } = [];
 
+        /// <summary>权重（随机选取时使用）</summary>
+        [JsonPropertyName("Weight")]
+        public float Weight { get; set; } = 1;
+
+        /// <summary>参数定义列表</summary>
+        [JsonPropertyName("ParamDefs")]
+        public List<APIParamDef> ParamDefs { get; set; } = [];
+
+        /// <summary>Lua调用模板，用{ParamName}占位</summary>
+        [JsonPropertyName("LuaTemplate")]
+        public string LuaTemplate { get; set; } = "";
     }
+
 }

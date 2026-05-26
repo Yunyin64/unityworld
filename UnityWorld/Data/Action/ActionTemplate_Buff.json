@@ -1,0 +1,86 @@
+[
+  {
+    "ID": "action_add_npc_buff",
+    "DisplayName": "施加Buff",
+    "Desc": "给目标施加{BuffId}，{Stacks}层",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "控制"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [""],
+        "Score": [0]
+      },
+      {
+        "Name": "Stacks",
+        "Type": "Int",
+        "Value": [1, 2, 3],
+        "Score": [1, 2, 3]
+      },
+      {
+        "Name": "Duration",
+        "Type": "Float",
+        "Value": [-1, 30, 60, 90],
+        "Score": [3, 1, 2, 3]
+      }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"{BuffId}\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_add_stat_buff",
+    "DisplayName": "属性增益",
+    "Desc": "给目标{StatId}增加{Value}点",
+    "FuncName": "AddStatBuff",
+    "Tags": ["Buff", "属性"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "StatId",
+        "Type": "String",
+        "Value": [""],
+        "Score": [0]
+      },
+      {
+        "Name": "Value",
+        "Type": "Float",
+        "Value": [1, 2, 3, 5],
+        "Score": [1, 2, 3, 5]
+      },
+      {
+        "Name": "ModifierType",
+        "Type": "String",
+        "Value": ["Flat", "Percent"],
+        "Score": [0, 1]
+      }
+    ],
+    "LuaTemplate": "AddStatBuff(ctx, \"{StatId}\", {Value}, \"{ModifierType}\")"
+  },
+  {
+    "ID": "action_add_card_stat_buff",
+    "DisplayName": "卡牌属性增益",
+    "Desc": "给目标卡牌{StatId}增加{Value}点",
+    "FuncName": "AddCardStatBuff",
+    "Tags": ["Buff", "卡牌属性"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "StatId",
+        "Type": "String",
+        "Value": [""],
+        "Score": [0]
+      },
+      {
+        "Name": "Value",
+        "Type": "Float",
+        "Value": [1, 2, 3, 5],
+        "Score": [1, 2, 3, 5]
+      }
+    ],
+    "LuaTemplate": "AddCardStatBuff(ctx, \"{StatId}\", {Value})"
+  }
+]

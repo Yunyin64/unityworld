@@ -1,0 +1,56 @@
+[
+  {
+    "ID": "action_heal",
+    "DisplayName": "治疗",
+    "Desc": "恢复{HealValue}点HP",
+    "FuncName": "Heal",
+    "Tags": ["治疗"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "HealValue",
+        "Type": "Int",
+        "Value": [1, 2, 3, 5],
+        "Score": [1, 2, 3, 5]
+      }
+    ],
+    "LuaTemplate": "Heal(ctx, {HealValue})"
+  },
+  {
+    "ID": "action_self_damage",
+    "DisplayName": "自伤",
+    "Desc": "对自身造成{DamageValue}点伤害",
+    "FuncName": "SelfDamage",
+    "Tags": ["自伤", "代价"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "DamageValue",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5],
+        "Score": [-1, -2, -3, -4, -5]
+      }
+    ],
+    "LuaTemplate": "SelfDamage(ctx, {DamageValue})"
+  },
+  {
+    "ID": "action_armor_break",
+    "DisplayName": "破甲",
+    "Desc": "消除对方{BreakValue}点护盾",
+    "FuncName": "ArmorBreak",
+    "Tags": ["破甲", "穿透"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BreakValue",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5, 6],
+        "Score": [1, 2, 3, 4, 5, 6]
+      }
+    ],
+    "LuaTemplate": "ArmorBreak(ctx, {BreakValue})"
+  }
+]

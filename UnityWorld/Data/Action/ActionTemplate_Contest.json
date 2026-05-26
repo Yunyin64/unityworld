@@ -1,0 +1,68 @@
+[
+  {
+    "ID": "action_atk",
+    "DisplayName": "攻击",
+    "Desc": "造成{Element}{PhysicalType}{AttackValue}点伤害",
+    "FuncName": "Attack",
+    "Tags": ["攻击", "伤害", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Element",
+        "Type": "String",
+        "Value": ["Jin", "Mu", "Shui", "Huo", "Tu"],
+        "Score": [0, 0, 0, 0, 0]
+      },
+      {
+        "Name": "PhysicalType",
+        "Type": "String",
+        "Value": ["Zhan", "Ci", "Da", "SheJi"],
+        "Score": [0, 0, 0, 1]
+      },
+      {
+        "Name": "AttackValue",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5, 6,7,8,9,10],
+        "Score": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      }
+    ],
+    "LuaTemplate": "Attack(ctx, \"{Element}\", \"{PhysicalType}\", {AttackValue})"
+  },
+  {
+    "ID": "action_shield",
+    "DisplayName": "盾牌防御",
+    "Desc": "防御拼点，赢了叠{ShieldValue}点护盾",
+    "FuncName": "Shield",
+    "Tags": ["防御", "护盾", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "ShieldValue",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5, 6],
+        "Score": [1, 2, 3, 4, 5, 6]
+      }
+    ],
+    "LuaTemplate": "Shield(ctx, {ShieldValue})"
+  },
+  {
+    "ID": "action_block",
+    "DisplayName": "格挡防御",
+    "Desc": "格挡拼点，赢了差值{BlockValue}消失",
+    "FuncName": "Block",
+    "Tags": ["防御", "格挡", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BlockValue",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5, 6],
+        "Score": [1, 2, 3, 4, 5, 6]
+      }
+    ],
+    "LuaTemplate": "Block(ctx, {BlockValue})"
+  }
+]

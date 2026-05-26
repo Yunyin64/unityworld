@@ -1,0 +1,44 @@
+[
+  {
+    "ID": "action_remove_wound",
+    "DisplayName": "移除伤势",
+    "Desc": "移除目标随机一张体量≤{Size}的伤势卡",
+    "FuncName": "RemoveRandomWound",
+    "Tags": ["治疗", "卡组"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Size",
+        "Type": "Int",
+        "Value": [1, 2, 3],
+        "Score": [2, 4, 6]
+      },
+      {
+        "Name": "Exact",
+        "Type": "Bool",
+        "Value": [true, false],
+        "Score": [0, 1]
+      }
+    ],
+    "LuaTemplate": "RemoveRandomWound(ctx, {Size}, {Exact})"
+  },
+  {
+    "ID": "action_displace",
+    "DisplayName": "位移卡牌",
+    "Desc": "将目标卡牌位移至{Position}",
+    "FuncName": "Displace",
+    "Tags": ["控制", "卡组"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Position",
+        "Type": "String",
+        "Value": ["First", "Last", "Random"],
+        "Score": [1, 1, 0]
+      }
+    ],
+    "LuaTemplate": "Displace(ctx, \"{Position}\")"
+  }
+]

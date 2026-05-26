@@ -1,0 +1,68 @@
+[
+  {
+    "ID": "action_convert",
+    "DisplayName": "灵元转化",
+    "Desc": "将{Element}灵元转化回蓝条MP，最多{MaxAmount}点",
+    "FuncName": "Convert",
+    "Tags": ["灵元", "回蓝"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Element",
+        "Type": "String",
+        "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"],
+        "Score": [0, 0, 0, 0, 0, 0]
+      },
+      {
+        "Name": "MaxAmount",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5],
+        "Score": [1, 2, 3, 4, 5]
+      }
+    ],
+    "LuaTemplate": "Convert(ctx, \"{Element}\", {MaxAmount})"
+  },
+  {
+    "ID": "action_draw",
+    "DisplayName": "汲灵",
+    "Desc": "立刻抽取{Amount}点MP为灵元",
+    "FuncName": "Draw",
+    "Tags": ["灵元", "抽取"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Amount",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4],
+        "Score": [1, 2, 3, 4]
+      }
+    ],
+    "LuaTemplate": "Draw(ctx, {Amount})"
+  },
+  {
+    "ID": "action_reduce_mana",
+    "DisplayName": "灵元消耗",
+    "Desc": "减少自身{Element}灵元{Amount}点",
+    "FuncName": "ReduceMana",
+    "Tags": ["灵元", "代价"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Element",
+        "Type": "String",
+        "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"],
+        "Score": [0, 0, 0, 0, 0, 0]
+      },
+      {
+        "Name": "Amount",
+        "Type": "Int",
+        "Value": [1, 2, 3, 4, 5],
+        "Score": [-1, -2, -3, -4, -5]
+      }
+    ],
+    "LuaTemplate": "ReduceMana(ctx, \"{Element}\", {Amount})"
+  }
+]

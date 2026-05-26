@@ -1,0 +1,74 @@
+[
+  {
+    "ID": "action_charge",
+    "DisplayName": "充能",
+    "Desc": "充能目标卡牌，减少{ReduceTick}tick CD",
+    "FuncName": "Charge",
+    "Tags": ["辅助", "充能", "CD"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "ReduceTick",
+        "Type": "Int",
+        "Value": [5, 10, 15, 20],
+        "Score": [1, 2, 3, 4]
+      }
+    ],
+    "LuaTemplate": "Charge(ctx, {ReduceTick})"
+  },
+  {
+    "ID": "action_freeze",
+    "DisplayName": "冻结",
+    "Desc": "冻结目标卡牌{FreezeTime}tick",
+    "FuncName": "Freeze",
+    "Tags": ["控制", "冻结", "CD"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "FreezeTime",
+        "Type": "Int",
+        "Value": [5, 10, 15, 20, 30],
+        "Score": [1, 2, 3, 4, 5]
+      }
+    ],
+    "LuaTemplate": "Freeze(ctx, {FreezeTime})"
+  },
+  {
+    "ID": "action_slow",
+    "DisplayName": "减速",
+    "Desc": "减速目标卡牌{Stack}层",
+    "FuncName": "Slow",
+    "Tags": ["控制", "减速", "CD"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Stack",
+        "Type": "Int",
+        "Value": [1, 2, 3],
+        "Score": [1, 2, 3]
+      }
+    ],
+    "LuaTemplate": "Slow(ctx, {Stack})"
+  },
+  {
+    "ID": "action_haste",
+    "DisplayName": "加速",
+    "Desc": "加速目标卡牌{Stack}层",
+    "FuncName": "Haste",
+    "Tags": ["辅助", "加速", "CD"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Stack",
+        "Type": "Int",
+        "Value": [1, 2, 3],
+        "Score": [1, 2, 3]
+      }
+    ],
+    "LuaTemplate": "Haste(ctx, {Stack})"
+  }
+]

@@ -4,28 +4,30 @@ using UnityWorld.Core;
 namespace UnityWorld.Game.Data
 {
     /// <summary>
-    /// Condition（触发条件检查）定义
-    /// 描述一个Effect触发时需满足的额外条件，score越低代表条件越苛刻
+    /// Condition（触发条件检查）模板定义
+    /// 包含参数化定义，Score为负数代表条件越苛刻（用于自动组卡强度计算）
     /// </summary>
     public class ConditionDefine : DefineBase
     {
-        [JsonPropertyName("desc")]
+        /// <summary>描述模板，用{ParamName}插值</summary>
+        [JsonPropertyName("Desc")]
         public string Desc { get; set; } = "";
 
-        /// <summary>强度分（0或负数，越苛刻越低）</summary>
-        [JsonPropertyName("score")]
-        public int Score { get; set; } = 0;
-
-        /// <summary>Tag列表（这里不可重复）</summary>
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = [];
-
         /// <summary>冲突Tag列表</summary>
-        [JsonPropertyName("conflictTags")]
+        [JsonPropertyName("ConflictTags")]
         public List<string> ConflictTags { get; set; } = [];
 
-        /// <summary>稀有度</summary>
-        [JsonPropertyName("weight")]
-        public int Weight { get; set; } = 0;
+        /// <summary>权重（随机选取时使用）</summary>
+        [JsonPropertyName("Weight")]
+        public float Weight { get; set; } = 1;
+
+        /// <summary>参数定义列表</summary>
+        [JsonPropertyName("ParamDefs")]
+        public List<APIParamDef> ParamDefs { get; set; } = [];
+
+        /// <summary>Lua条件表达式模板，用{ParamName}占位</summary>
+        [JsonPropertyName("LuaTemplate")]
+        public string LuaTemplate { get; set; } = "";
     }
+
 }

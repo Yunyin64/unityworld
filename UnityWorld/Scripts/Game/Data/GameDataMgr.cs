@@ -33,7 +33,7 @@ namespace UnityWorld.Game.Data
         // ── 卡牌系统 ──────────────────────────────────────────
         _datamgrs.Add(new TagDefineMgr(Path.Combine(dataDir, "TagDefines.json")));
         _datamgrs.Add(new TriggerDefineMgr(Path.Combine(dataDir, "TriggerDefines.json")));
-        _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "ConditionDefines.json")));
+        _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "Condition")));
         _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "Card")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
@@ -51,6 +51,8 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new StatDefineMgr(Path.Combine(dataDir, "Stat")));
         // ── 装备定义（按类别分文件存放在 Data/Equip/ 文件夹下）────
         _datamgrs.Add(new EquipDefineMgr(Path.Combine(dataDir, "Equip")));
+        // ── Action定义（按分类分文件存放在 Data/Action/ 文件夹下）────
+        _datamgrs.Add(new ActionDefineMgr(Path.Combine(dataDir, "Action")));
 
             Instance = this;
         }

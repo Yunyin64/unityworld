@@ -1,0 +1,69 @@
+[
+  {
+    "ID": "cond_none",
+    "DisplayName": "无条件",
+    "Desc": "无条件，始终生效",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 10,
+    "ParamDefs": [
+      {
+        "Name": "None",
+        "Type": "None",
+        "Value": [""]
+      }],
+    "LuaTemplate": ""
+  },
+  {
+    "ID": "cond_all_card",
+    "DisplayName": "所有卡牌",
+    "Desc": "获得{Target}所有卡牌",
+    "Tags": ["选取", "全体"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Target",
+        "Type": "CombatNpc",
+        "Value": [""],
+        "Score": [0]
+      }
+    ],
+    "LuaTemplate": "AllCard(ctx, \"{Target}\")"
+  },
+  {
+    "ID": "cond_random_card_in_cd",
+    "DisplayName": "随机CD中卡牌",
+    "Desc": "获得{Target}在CD中的随机一张卡牌",
+    "Tags": ["选取", "随机", "CD"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Target",
+        "Type": "CombatNpc",
+        "Value": [""],
+        "Score": [0]
+      }
+    ],
+    "LuaTemplate": "RandomCardInCD(ctx, \"{Target}\")"
+  },
+  {
+    "ID": "cond_adjacent_cards",
+    "DisplayName": "相邻卡牌",
+    "Desc": "获得目标卡牌{Direction}方向的相邻卡牌",
+    "Tags": ["选取", "位置"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Direction",
+        "Type": "String",
+        "Value": ["Above", "Below","All"],
+        "Score": [0, 0,0],
+        "Multiplier": [1, 1,2]
+      }
+    ],
+    "LuaTemplate": "AdjacentCards(ctx, \"{Direction}\")"
+  }
+]
