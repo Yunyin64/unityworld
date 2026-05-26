@@ -85,40 +85,28 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
         /// <summary>
-        /// 直击处理：接受 ContestData 参数。
+        /// 直击处理：攻击直击=全额伤害，防御直击=无事发生。
         /// </summary>
-        /// <returns>直击结果（包含伤害、是否 HP 清零等）</returns>
-        public CombatResult Straight( ContestData contestData)
+        public CombatResult Straight(ContestData contestData)
         {
             var attacker = contestData.OwnerNpc;
             var target = attacker.Target;
             var ret = new CombatResult();
-            // ── Shield 溢出：叠甲到自身，不造成伤害，不触发攻击事件 ──────
-            if (contestData.ContestType == ContestType.Shield)
-            {
-                float shieldGain = contestData.ContestValue;
-                attacker.ChangeShield(shieldGain);
-                Log($"  溢出: {contestData} 叠甲+{shieldGain:F0}，当前Shield={attacker.ShieldValue:F0}");
-            }
 
-            // ── Block 溢出：防值消失，不造成伤害，不触发攻击事件 ─────────
-            if (contestData.ContestType == ContestType.Block)
-            {
-                Log($"  溢出: {contestData} 防值溢出消失");
-            }
             if (contestData.IsAttackType)
             {
-            Log($"  直击: {contestData} → [{target.GetName()}]");
-            
-            // ── 赢家触发 OnAttack ────────────────────────
-            Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene }, this);
-
-            var ctx = new DamageInfo(contestData);
-            ctx.Damage = contestData.ContestValue;
-            ctx.TargetNpc.AddDamage(ctx);
-            
+                Log($"  直击: {contestData} → [{target.GetName()}]");
+                Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene }, this);
+                var ctx = new DamageInfo(contestData);
+                ctx.Damage = contestData.ContestValue;
+                ctx.TargetNpc.AddDamage(ctx);
             }
-            // 重置来源卡 CD
+            else
+            {
+                // 防御直击=无事发生，纯浪费
+                Log($"  直击: {contestData} 防御溢出，无事发生");
+            }
+
             contestData.SourceCard.Apply();
             Ticks["Straight"] = 0;
             return ret;
@@ -134,125 +122,102 @@ namespace UnityWorld.Game.Domain.Combat
             damageInfos.Enqueue(dmg);
         }
         /// <summary>
-        /// 对拼结算：从双方 PendingSlot（ContestData）读取拼点数值。
+        /// 对拼结算：统一差值制。攻击赢→差值伤害，防御赢→无事。广播 OnContestOverflow。
         /// </summary>
-        /// <returns>对拼结果（包含胜负、伤害、是否 HP 清零等）</returns>
         public CombatResult ResolveContest(ContestData contestA, ContestData contestB)
         {
             var ret = new CombatResult();
             var npcA = contestA.OwnerNpc;
             var npcB = contestB.OwnerNpc;
 
-            // 安全检查：若任一方待发槽已空（上一轮对拼清掉），跳过
             if (contestA == null || contestB == null)
             {
                 Log($"  对拼跳过: [{npcA.GetName()}]槽={contestA != null} [{npcB.GetName()}]槽={contestB != null}");
                 ret.Set("IsEmpty", true);
                 return ret;
             }
-            Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
 
             float valueA = contestA.ContestValue;
             float valueB = contestB.ContestValue;
-            float delta = Math.Abs(valueA - valueB);
 
-            // 判断胜负
+            Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
+
+            // 平局
             if (Math.Abs(valueA - valueB) < 0.001f)
             {
                 Log($"    平局，差值=0，无伤害");
-                // 清空双方待发槽，重置 CD
                 ret.Set("IsDraw", true);
+                contestA.SourceCard.Apply();
+                contestB.SourceCard.Apply();
                 return ret;
             }
 
-            CombatNpc winner, loser;
+            // 判胜负
             ContestData winnerContest, loserContest;
             if (valueA > valueB)
             {
-                winner = npcA; loser = npcB;
-                winnerContest = contestA; loserContest = contestB;
+                winnerContest = contestA;
+                loserContest = contestB;
             }
             else
             {
-                winner = npcB; loser = npcA;
-                winnerContest = contestB; loserContest = contestA;
+                winnerContest = contestB;
+                loserContest = contestA;
             }
-            winner.ContestWin(ret,winnerContest, loserContest);
-            loser.ContestLose(ret,winnerContest, loserContest);
-            
+
+            float overflow = Math.Abs(valueA - valueB);
+            var winner = winnerContest.OwnerNpc;
+            var loser = loserContest.OwnerNpc;
+
+            // 赢家处理
+            winner.ContestWin(ret, winnerContest, loserContest, overflow);
+            // 输家处理
+            loser.ContestLose(ret, winnerContest, loserContest, overflow);
+
+            // 广播 OnContestOverflow
+            var ctx = new APIContext
+            {
+                Caster = winner,
+                SourceCard = winnerContest.SourceCard,
+                Scene = Scene
+            };
+            ctx.Set("Winner", winner);
+            ctx.Set("Loser", loser);
+            ctx.Set("Overflow", overflow);
+            ctx.Set("WinnerType", winnerContest.ContestType);
+            ctx.Set("LoserType", loserContest.ContestType);
+            ctx.Set("WinnerCard", winnerContest.SourceCard);
+            ctx.Set("LoserCard", loserContest.SourceCard);
+            Scene.TriggerCombatEvent("OnContestOverflow", ctx, winner);
+
             Ticks["Straight"] = 0;
-            
             contestA.SourceCard.Apply();
             contestB.SourceCard.Apply();
-            
+
             return ret;
         }
 
-        private CombatResult ContestWin(CombatResult ctx,ContestData win,ContestData lose)
+        private CombatResult ContestWin(CombatResult ctx, ContestData win, ContestData lose, float overflow)
         {
-            
             if (win.IsAttackType)
             {
-                // 构建伤害上下文
                 var dmg = new DamageInfo(win);
-                dmg.Damage = 0f;
-                if(win.ContestType == lose.ContestType && lose.ContestType != ContestType.SheJi)
-                {
-                    //通吃
+                // 同类型通吃：赢家全额伤害；异类型：差值伤害
+                if (win.ContestType == lose.ContestType && lose.ContestType != ContestType.SheJi)
                     dmg.Damage = win.ContestValue;
-                }
                 else
-                {
-                    //差值
-                    dmg.Damage = win.ContestValue - lose.ContestValue;
-                }
-            // ── 赢家触发 OnAttack ────────────────────────
-            Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = win.SourceCard, Scene = Scene }, this);
-
-                //加入伤害结算列表
+                    dmg.Damage = overflow;
                 dmg.TargetNpc.AddDamage(dmg);
+                Log($"  攻击胜，伤害={dmg.Damage:F0} → [{dmg.TargetNpc.GetName()}]");
+                Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = win.SourceCard, Scene = Scene }, this);
             }
-            else if (win.ContestType == ContestType.Shield)
-            {
-                var val = win.ContestValue - lose.ContestValue;
-                ChangeShield(val);
-                Log($"盾卡胜，护盾+{val}，当前Shield={ShieldValue}");
-
-                //差值
-            }
-            else if (win.ContestType == ContestType.Block)
-            {
-                //格挡
-                Log($"防卡胜，差值消失");
-            }
-            
-            // ── 触发 trigger_on_contest_win / lose ────────────
-            // ── 赢家通吃额外触发 Straight  ──────────
+            // 防御赢：基础层无事，交给 OnContestOverflow 事件
             return ctx;
         }
 
-        
-        private CombatResult ContestLose(CombatResult ctx,ContestData win,ContestData lose)
+        private CombatResult ContestLose(CombatResult ctx, ContestData win, ContestData lose, float overflow)
         {
-            if (lose.IsAttackType)
-            {
-                if(lose.ContestType == lose.ContestType && lose.ContestType != ContestType.SheJi)
-                {
-                    //通吃
-                }
-                else
-                {
-                    //差值
-                }
-            }
-            else if (lose.ContestType == ContestType.Shield)
-            {
-                //差值
-            }
-            else if (lose.ContestType == ContestType.Block)
-            {
-                //格挡
-            }
+            // 基础层：输了无额外惩罚，交给 OnContestOverflow 事件处理
             return ctx;
         }
 

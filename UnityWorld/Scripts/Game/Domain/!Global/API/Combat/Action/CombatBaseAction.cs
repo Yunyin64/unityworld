@@ -33,29 +33,20 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
-        /// <summary>盾牌防御（赢了叠盾）。参数：ShieldValue(Int)</summary>
-        [APIFunc("Shield", APIType.Contest, "盾牌防御（赢了叠盾）", Scope.CombatNpc,"ShieldValue:Int")]
-        public static APIContext Shield(APIContext ctx)
+        /// <summary>防御拼点（统一入口）。参数：DefendType(String), DefendValue(Int)</summary>
+        [APIFunc("Defend", APIType.Contest, "防御拼点", Scope.CombatNpc, "DefendType:String", "DefendValue:Int")]
+        public static APIContext Defend(APIContext ctx)
         {
             var card = ctx.SourceCard;
             if (card == null || card.Owner == null) return ctx;
 
-            int shieldValue = ctx.GetValue("ShieldValue", 0);
+            string defendType = ctx.GetValue("DefendType", "Block");
+            int defendValue = ctx.GetValue("DefendValue", 0);
 
-            card.TryPushToPendingSlot(ContestType.Shield, ElementType.None, shieldValue);
-            return ctx;
-        }
+            if (!Enum.TryParse<ContestType>(defendType, true, out var contestType))
+                contestType = ContestType.Block;
 
-        /// <summary>格挡防御（赢了差值消失）。参数：BlockValue(Int)</summary>
-        [APIFunc("Block", APIType.Contest, "格挡防御（赢了差值消失）",Scope.CombatNpc, "BlockValue:Int")]
-        public static APIContext Block(APIContext ctx)
-        {
-            var card = ctx.SourceCard;
-            if (card == null || card.Owner == null) return ctx;
-
-            int blockValue = ctx.GetValue("BlockValue", 0);
-
-            card.TryPushToPendingSlot(ContestType.Block, ElementType.None, blockValue);
+            card.TryPushToPendingSlot(contestType, ElementType.None, defendValue);
             return ctx;
         }
 

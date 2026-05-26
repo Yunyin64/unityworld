@@ -30,39 +30,27 @@
     "LuaTemplate": "Attack(ctx, \"{Element}\", \"{PhysicalType}\", {AttackValue})"
   },
   {
-    "ID": "action_shield",
-    "DisplayName": "盾牌防御",
-    "Desc": "防御拼点，赢了叠{ShieldValue}点护盾",
-    "FuncName": "Shield",
-    "Tags": ["防御", "护盾", "拼点"],
+    "ID": "action_defend",
+    "DisplayName": "防御",
+    "Desc": "防御拼点，以{DefendValue}点{DefendType}进行防御",
+    "FuncName": "Defend",
+    "Tags": ["防御", "拼点"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "ShieldValue",
-        "Type": "Int",
-        "Value": [1, 2, 3, 4, 5, 6],
-        "Score": [1, 2, 3, 4, 5, 6]
-      }
-    ],
-    "LuaTemplate": "Shield(ctx, {ShieldValue})"
-  },
-  {
-    "ID": "action_block",
-    "DisplayName": "格挡防御",
-    "Desc": "格挡拼点，赢了差值{BlockValue}消失",
-    "FuncName": "Block",
-    "Tags": ["防御", "格挡", "拼点"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
+        "Name": "DefendType",
+        "Type": "String",
+        "Value": ["Shield", "Block", "Dodge"],
+        "Score": [0, 0, 0]
+      },
       {
-        "Name": "BlockValue",
+        "Name": "DefendValue",
         "Type": "Int",
-        "Value": [1, 2, 3, 4, 5, 6],
-        "Score": [1, 2, 3, 4, 5, 6]
+        "Value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "Score": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
       }
     ],
-    "LuaTemplate": "Block(ctx, {BlockValue})"
+    "LuaTemplate": "Defend(ctx, \"{DefendType}\", {DefendValue})"
   }
 ]

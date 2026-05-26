@@ -22,7 +22,8 @@ public enum ContestType
     Ci,
     SheJi,
     Shield,
-    Block
+    Block,
+    Dodge
 }
 
 public enum DamageType

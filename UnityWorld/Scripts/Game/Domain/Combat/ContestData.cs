@@ -28,6 +28,10 @@ namespace UnityWorld.Game.Domain.Combat
         public bool IsAttackType => ContestType is ContestType.Zhan or ContestType.Ci
             or ContestType.Da or ContestType.SheJi;
 
+        /// <summary>是否为防御类拼点类型（Shield/Block/Dodge）</summary>
+        public bool IsDefenseType => ContestType is ContestType.Shield or ContestType.Block
+            or ContestType.Dodge;
+
         public void Log()
         {
             LogMgr.Dbg(ToString());
