@@ -15,7 +15,7 @@ card.CardData = {
 card.Keywords = {}
 
 function card:Contest(ctx)
-    Block(ctx, 4)
+    Defend(ctx, "Block", 4)
 end
 
 

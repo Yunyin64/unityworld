@@ -6,11 +6,11 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Keywords": [
-      "Passive"
+      "Passive","Item"
     ],
     "Tags": [
       "怪物素材",
@@ -24,14 +24,13 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "狼"
     ],
-    "Keywords": []
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_lizhao",
@@ -40,14 +39,13 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "狼"
     ],
-    "Keywords": []
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_sheya",
@@ -56,13 +54,14 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "蛇"
-    ]
+    ],
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_shepi",
@@ -71,13 +70,14 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "蛇"
-    ]
+    ],
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_shedan",
@@ -85,14 +85,15 @@
     "Desc": "使用后气血+2，移除所有中毒。消耗品。",
     "Rarity": 1,
     "Size": 1,
-    "Cooldown": 0,
-    "CardType": "Item",
+    "Cooldown": 5,
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "蛇"
-    ]
+    ],
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_niaoyu",
@@ -101,13 +102,14 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "鸟"
-    ]
+    ],
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_niaohui",
@@ -116,13 +118,14 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "鸟"
-    ]
+    ],
+     "Keywords": ["Item"]
   },
   {
     "ID": "card_monster_yingyan",
@@ -131,13 +134,14 @@
     "Rarity": 1,
     "Size": 1,
     "Cooldown": 0,
-    "CardType": "Item",
+     
     "ManaCost": {},
-    "AttachedCardIds": [],
+    
     "Tags": [
       "怪物素材",
       "鸟",
       "鹰"
-    ]
+    ],
+     "Keywords": ["Item"]
   }
 ]

@@ -29,10 +29,6 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("manaCost")]
         public Dictionary<string, int> ManaCost { get; set; } = new();
 
-        /// <summary>附加卡牌 ID 列表（引用其他 CardDefine 的 ID）</summary>
-        [JsonPropertyName("attachedCardIds")]
-        public List<string> AttachedCardIds { get; set; } = [];
-
         /// <summary>关键词列表（如 Passive、OnHit 等，决定卡牌运行模式）</summary>
         [JsonPropertyName("keywords")]
         public List<string> Keywords { get; set; } = [];

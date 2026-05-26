@@ -6,7 +6,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 20,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Jin": 1
     }, 
@@ -23,7 +23,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {}, 
     "Tags": [
       "金",
@@ -38,7 +38,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 40,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Jin": 1
     }, 
@@ -55,7 +55,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 80,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {}, 
     "Tags": [
       "金",
@@ -71,7 +71,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 50,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {}, 
     "Tags": [
       "金",
@@ -85,7 +85,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 80,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Jin": 2
     }, 
@@ -102,7 +102,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 20,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Jin": 1
     }, 

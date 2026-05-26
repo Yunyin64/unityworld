@@ -5,9 +5,11 @@
     "Desc": "斩击造成的伤口，持续自伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 40,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "斩"
@@ -19,9 +21,11 @@
     "Desc": "刺击造成的流血，持续自伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 40,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "刺"
@@ -33,9 +37,11 @@
     "Desc": "打击造成的骨折，持续自伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 40,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "打"
@@ -47,9 +53,11 @@
     "Desc": "射击造成的内伤，持续自伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 4,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 40,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "射击"
@@ -61,9 +69,11 @@
     "Desc": "火焰灼烧，持续自伤并干扰金灵元",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 60,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "火"
@@ -75,9 +85,11 @@
     "Desc": "寒冰冻伤，持续自伤并干扰火灵元",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 60,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "水"
@@ -89,9 +101,11 @@
     "Desc": "毒素侵蚀，持续自伤并干扰土灵元",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 60,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "木"
@@ -103,9 +117,11 @@
     "Desc": "金气割伤，持续自伤并干扰木灵元",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 60,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "金"
@@ -117,9 +133,11 @@
     "Desc": "土气淤滞，持续自伤并干扰水灵元",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 6,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 60,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "土"
@@ -131,9 +149,11 @@
     "Desc": "严重创伤，持续为自己施加易伤",
     "Rarity": 0,
     "Size": 2,
-    "Cooldown": 5,
-    "Keywords": ["Wound"],
-    "ManaCost": {}, 
+    "Cooldown": 50,
+    "Keywords": [
+      "Wound"
+    ],
+    "ManaCost": {},
     "Tags": [
       "伤势",
       "重伤"

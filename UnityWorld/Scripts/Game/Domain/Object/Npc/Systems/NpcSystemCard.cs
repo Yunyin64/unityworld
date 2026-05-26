@@ -117,5 +117,18 @@ namespace UnityWorld.Game.Domain
         public void AssignToReserve(int cardId) => NpcMgr.Instance.CardSystem.AssignToReserve(CardData, cardId);
         /// <summary>取消卡的部署分配</summary>
         public void UnassignCard(int cardId) => NpcMgr.Instance.CardSystem.UnassignCard(CardData, cardId);
+
+        /// <summary>
+        /// 测试用：将所有持有卡牌全部塞入运转池（Field）
+        /// </summary>
+        public void AssignAllToField()
+        {
+            foreach (var cardId in CardData.AllCardIds)
+            {
+                if (!CardData.Field.Contains(cardId))
+                    CardData.Field.Add(cardId);
+            }
+            CardData.Reserve.Clear();
+        }
     }
 }

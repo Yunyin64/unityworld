@@ -15,7 +15,7 @@ card.CardData = {
 card.Keywords = {}
 
 function card:Contest(ctx)
-    Shield(ctx, 12)
+    Defend(ctx, "Shield", 12)
 end
 
 function card:Apply(ctx)

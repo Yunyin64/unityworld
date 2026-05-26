@@ -6,7 +6,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 5,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -22,7 +22,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 45,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -38,7 +38,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 55,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -54,7 +54,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -70,7 +70,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 65,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -86,7 +86,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 55,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -102,7 +102,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -118,7 +118,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 45,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -134,7 +134,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 35,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -150,7 +150,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -166,7 +166,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -182,7 +182,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 70,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -198,7 +198,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",
@@ -214,7 +214,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "CardType": "ZhaoShi",
+    "Keywords": ["ZhaoShi"],
     "ManaCost": {}, 
     "Tags": [
       "武器",

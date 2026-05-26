@@ -6,7 +6,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Shui": 1
     }, 
@@ -22,7 +22,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Shui": 1
     }, 
@@ -39,7 +39,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 30,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Shui": 1
     }, 
@@ -56,7 +56,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Shui": 1
     }, 
@@ -73,7 +73,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 100,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Shui": 2
     }, 

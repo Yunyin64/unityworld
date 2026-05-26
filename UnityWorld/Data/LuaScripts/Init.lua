@@ -34,20 +34,14 @@ Attack = function(ctx, element, physType, value)
     API:Execute("Attack", ctx)
 end
 
---- 盾牌防御
+--- 防御拼点（统一入口）
 --- @param ctx APIContext
---- @param value number 护盾值
-Shield = function(ctx, value)
-    ctx:Set("ShieldValue", tonumber(value))
-    API:Execute("Shield", ctx)
-end
-
---- 格挡防御
---- @param ctx APIContext
---- @param value number 格挡值
-Block = function(ctx, value)
-    ctx:Set("BlockValue", tonumber(value))
-    API:Execute("Block", ctx)
+--- @param defendType string 防御类型（Shield/Block/Dodge）
+--- @param value number 防御值
+Defend = function(ctx, defendType, value)
+    ctx:Set("DefendType", defendType)
+    ctx:Set("DefendValue", tonumber(value))
+    API:Execute("Defend", ctx)
 end
 
 --- 恢复HP

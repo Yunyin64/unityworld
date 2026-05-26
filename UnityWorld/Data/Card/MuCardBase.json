@@ -6,7 +6,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Mu": 1
     }, 
@@ -23,7 +23,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 120,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {}, 
     "Tags": [
       "木",
@@ -38,7 +38,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Mu": 1
     }, 
@@ -55,7 +55,7 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Mu": 1
     }, 
@@ -72,7 +72,7 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 150,
-    "CardType": "FaShu",
+    "Keywords": ["FaShu"],
     "ManaCost": {
       "Mu": 2
     }, 

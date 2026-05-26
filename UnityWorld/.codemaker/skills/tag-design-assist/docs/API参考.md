@@ -1,6 +1,6 @@
 ﻿# API 参考
 
-> 自动生成时间，共 31 个API，4 个Trigger
+> 自动生成时间，共 32 个API，4 个Trigger
 
 ## Trigger（触发条件）
 
@@ -38,6 +38,8 @@
 | Convert | 灵元转化回蓝条MP | Element:String, MaxAmount:Int |
 | Draw | MP转化为灵元 | Amount:Int |
 | ReduceMana | 减少自身指定元素的灵元 | Element:String, Amount:Int |
+| Deploy | 将卡从候补池部署到运转池 | CardId:Int |
+| Recall | 将卡从运转池召回候补池 | CardId:Int |
 | GiveTrait | 给NPC添加特质 | int:String, TraitId:String |
 | RemoveTrait | 移除NPC特质 | int:String, TraitId:String |
 | GiveBehaviorCard | 给NPC添加行为卡 | int:String, CardDefineId:String |
@@ -54,6 +56,5 @@
 | 函数名 | 描述 | 参数 |
 |---|---|---|
 | Attack | 造成伤害（攻击拼点） | Element:String, PhysicalType:String, AttackValue:Int |
-| Shield | 盾牌防御（赢了叠盾） | ShieldValue:Int |
-| Block | 格挡防御（赢了差值消失） | BlockValue:Int |
+| Defend | 防御拼点 | DefendType:String, DefendValue:Int |
 
