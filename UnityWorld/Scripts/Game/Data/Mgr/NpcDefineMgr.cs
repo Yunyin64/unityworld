@@ -1,72 +1,33 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using UnityWorld.Core;
 
 namespace UnityWorld.Game.Data
 {
     /// <summary>
     /// NPC 定义数据管理器
-    /// 负责加载 NpcDefines.json 并提供 NpcDefine 查询
     /// </summary>
-    public class NpcDefineMgr : IDataMgrBase<NpcDefine>
+    public class NpcDefineMgr : DefineMgrBase<NpcDefine>
     {
-        public static NpcDefineMgr? Instance { get; private set; }
+        public static NpcDefineMgr Instance { get; private set; }
 
-        private Dictionary<string, NpcDefine> _defines = [];
+        public NpcDefineMgr(string path) : base(path)
+        {
+            Instance = this;
+        }
 
-        private static readonly JsonSerializerOptions _jsonOpts = new()
+        protected override JsonSerializerOptions CreateJsonOptions() => new()
         {
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
         };
 
-        private readonly string _filePath;
-
-        public NpcDefineMgr(string filePath)
-        {
-            _filePath = filePath;
-            Instance = this;
-        }
-
-        public void Load() => Load(_filePath);
-
-        public void Load(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                LogMgr.Dbg($"[NpcDefineMgr] 警告：找不到 {filePath}，NPC定义库为空");
-                return;
-            }
-
-            var list = JsonSerializer.Deserialize<List<NpcDefine>>(
-                File.ReadAllText(filePath), _jsonOpts) ?? [];
-
-            _defines = list.ToDictionary(d => d.ID, StringComparer.OrdinalIgnoreCase);
-            LogMgr.Dbg($"[NpcDefineMgr] 加载完成：{_defines.Count} 个 NPC 定义");
-        }
-
-        /// <summary>根据 DefineId 获取定义，不存在返回 null</summary>
-        public NpcDefine? Get(string defineId)
-            => _defines.TryGetValue(defineId, out var d) ? d : null;
-
-        /// <summary>获取所有 NPC 定义</summary>
-        public IEnumerable<NpcDefine> GetAll() => _defines.Values;
-
-        /// <summary>是否存在指定 DefineId</summary>
-        public bool Contains(string defineId) => _defines.ContainsKey(defineId);
-        public IEnumerable<NpcDefine> Query(Func<NpcDefine, bool> predicate) => _defines.Values.Where(predicate);
-
         /// <summary>从已加载定义中随机获取一个</summary>
-        public NpcDefine? GetRandom(Random rng)
+        public NpcDefine GetRandom(Random rng)
         {
-            if (_defines.Count == 0) return null;
-            var values = _defines.Values.ToList();
+            var values = GetAll().ToList();
+            if (values.Count == 0) return null;
             return values[rng.Next(values.Count)];
         }
-
-
-
-
     }
 }

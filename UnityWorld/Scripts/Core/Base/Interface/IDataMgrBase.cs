@@ -5,7 +5,8 @@
     public interface IDataMgrBase
     {
         void Load();
-        void Load(string filePath);
+        /// <summary>从指定路径加载（支持 .json 文件或文件夹）</summary>
+        void Load(string path);
     }
 
     /// <summary>

@@ -38,7 +38,7 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "Card")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
         _datamgrs.Add(new EventDefineMgr(Path.Combine(dataDir, "EventDefines.json")));
-        _datamgrs.Add(new CultivationDefineMgr(Path.Combine(dataDir, "Practice", "CultivationDefines.json")));
+        _datamgrs.Add(new CultivationDefineMgr(Path.Combine(dataDir, "Practice","GongFa")));
         _datamgrs.Add(new RealmDefineMgr(Path.Combine(dataDir, "Practice", "RealmDefines.json")));
         // ── 叙事系统 ──────────────────────────────────────────
         //_datamgrs.Add(new OptionDefineMgr(Path.Combine(dataDir, "OptionDefines.json")));
