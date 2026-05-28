@@ -35,9 +35,9 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("│  AllCards: {0}", AllCards.Count);
-            LogMgr.Dbg("│  Field: [{0}]", string.Join(", ", Field));
-            LogMgr.Dbg("│  Reserve: [{0}]", string.Join(", ", Reserve));
+            LogMgr.Instance.Dbg("│  AllCards: {0}", AllCards.Count);
+            LogMgr.Instance.Dbg("│  Field: [{0}]", string.Join(", ", Field));
+            LogMgr.Instance.Dbg("│  Reserve: [{0}]", string.Join(", ", Reserve));
         }
 
     }

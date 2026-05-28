@@ -69,7 +69,7 @@ namespace UnityWorld.Game.Data
             {
                 mgr.Load();
             }
-            LogMgr.Dbg("[GameDataMgr] 所有数据加载完成");
+            LogMgr.Instance.Dbg("[GameDataMgr] 所有数据加载完成");
         }
     }
 }

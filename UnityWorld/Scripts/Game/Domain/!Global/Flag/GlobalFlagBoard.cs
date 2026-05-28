@@ -38,7 +38,7 @@ namespace UnityWorld.Game.Domain
             }
             catch
             {
-                LogMgr.Warn("[GlobalFlagBoard] GetAs<{0}> 转型失败 key={1}", typeof(T).Name, key);
+                LogMgr.Instance.Warn("[GlobalFlagBoard] GetAs<{0}> 转型失败 key={1}", typeof(T).Name, key);
             }
             return defaultValue;
         }

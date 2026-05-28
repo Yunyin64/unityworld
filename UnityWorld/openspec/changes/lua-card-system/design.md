@@ -96,7 +96,7 @@ NLua 1.7.8 已在项目依赖中，LuaEventListener stub 已存在，IEventListe
 | 风险 | 缓解措施 |
 |------|---------|
 | NLua 性能（大量卡同时 Tick）| 战斗卡数量有限（<20张/人），Lua 调用频率低（CD 制），可接受 |
-| Lua 脚本错误导致战斗崩溃 | LuaMgr 包裹 try-catch，错误时 LogMgr.Err + 跳过该效果 |
+| Lua 脚本错误导致战斗崩溃 | LuaMgr 包裹 try-catch，错误时 LogMgr.Instance.Err + 跳过该效果 |
 | 现有卡牌数据迁移成本 | 建立自动转化脚本（tools/），旧 TCA 数据可机械翻译为 .lua |
 | 随机造卡质量 | Score 系统保留，参数化后组合空间更大但分数可控 |
 | self 状态泄漏/持久化 | 卡牌 Lua 环境随 CombatScene 生命周期创建销毁，不跨战斗 |

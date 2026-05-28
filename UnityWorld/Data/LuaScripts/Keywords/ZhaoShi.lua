@@ -9,7 +9,7 @@ function ZhaoShi.OnStart(card, ctx)
 end
 
 function ZhaoShi.OnTick(card, ctx)
-    if card:GetPhase() == "WaitResource" then
+    if card:GetPhase() == CombatCardPhase.Waiting then
         card:CheckMana()
     end
 end

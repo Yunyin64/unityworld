@@ -123,7 +123,7 @@ description: |
    - 开头取 Caster/Target，null 检查后 early return
    - 用 `ctx.GetValue<T>("ParamName", defaultValue)` 取参数
    - 用 `ctx.Get<T>("ParamName")` 取对象引用
-   - 结尾 `LogMgr.Dbg(...)` 输出关键信息
+   - 结尾 `LogMgr.Instance.Dbg(...)` 输出关键信息
    - return ctx
 
 3. **写入后更新** `references/existing-api.md`（保持 API 清单最新）

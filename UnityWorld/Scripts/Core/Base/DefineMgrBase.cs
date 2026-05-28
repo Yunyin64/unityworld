@@ -58,12 +58,12 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
         }
         else
         {
-            LogMgr.Warn("[{0}] 警告：路径不存在 {1}，数据为空", MgrName, path);
+            LogMgr.Instance.Warn("[{0}] 警告：路径不存在 {1}，数据为空", MgrName, path);
             return;
         }
 
         OnLoaded();
-        LogMgr.Dbg("[{0}] 加载完成：共 {1} 条定义", MgrName, _dict.Count);
+        LogMgr.Instance.Dbg("[{0}] 加载完成：共 {1} 条定义", MgrName, _dict.Count);
     }
 
     private void LoadSingleFile(string filePath)
@@ -71,7 +71,7 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
         var text = File.ReadAllText(filePath);
         if (string.IsNullOrWhiteSpace(text))
         {
-            LogMgr.Dbg("[{0}] 跳过空文件：{1}", MgrName, Path.GetFileName(filePath));
+            LogMgr.Instance.Dbg("[{0}] 跳过空文件：{1}", MgrName, Path.GetFileName(filePath));
             return;
         }
 
@@ -89,7 +89,7 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
         var jsonFiles = Directory.GetFiles(folderPath, "*.json", SearchOption.TopDirectoryOnly);
         if (jsonFiles.Length == 0)
         {
-            LogMgr.Warn("[{0}] 警告：文件夹 {1} 下没有 JSON 文件", MgrName, folderPath);
+            LogMgr.Instance.Warn("[{0}] 警告：文件夹 {1} 下没有 JSON 文件", MgrName, folderPath);
             return;
         }
 
@@ -105,7 +105,7 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
 
         if (_dict.ContainsKey(define.ID))
         {
-            LogMgr.Warn("[{0}] 重复 ID '{1}'（文件 {2}），已跳过", MgrName, define.ID, sourceFile);
+            LogMgr.Instance.Warn("[{0}] 重复 ID '{1}'（文件 {2}），已跳过", MgrName, define.ID, sourceFile);
             return;
         }
         _dict[define.ID] = define;

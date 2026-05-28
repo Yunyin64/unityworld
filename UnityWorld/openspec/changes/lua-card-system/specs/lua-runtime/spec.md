@@ -31,7 +31,7 @@ LuaMgr SHALL 提供 `LoadCardScript(string cardId)` 方法，从 `Data/LuaCards/
 
 #### Scenario: 加载不存在的脚本
 - **WHEN** 调用 LoadCardScript("card_nonexist") 且文件不存在
-- **THEN** 返回 null，LogMgr.Warn 输出警告
+- **THEN** 返回 null，LogMgr.Instance.Warn 输出警告
 
 ### Requirement: Hook 函数自动发现
 LuaMgr 加载卡牌脚本后 SHALL 扫描环境中所有 `OnXxx` 命名的函数，返回发现的函数名列表。
@@ -56,7 +56,7 @@ LuaMgr 加载卡牌脚本后 SHALL 扫描环境中所有 `OnXxx` 命名的函数
 - **THEN** 不向 EventMgr 注册任何监听
 
 ### Requirement: LuaEventListener 实现
-LuaEventListener.OnEvent() SHALL 调用对应的 Lua 函数，传入构造好的 context table。执行异常时 LogMgr.Err 并跳过。
+LuaEventListener.OnEvent() SHALL 调用对应的 Lua 函数，传入构造好的 context table。执行异常时 LogMgr.Instance.Err 并跳过。
 
 #### Scenario: 事件正常触发
 - **WHEN** EventMgr 触发 trigger_on_attack 且对应 LuaEventListener 被调用
@@ -64,4 +64,4 @@ LuaEventListener.OnEvent() SHALL 调用对应的 Lua 函数，传入构造好的
 
 #### Scenario: Lua 执行异常
 - **WHEN** Lua 函数执行抛出异常
-- **THEN** LogMgr.Err 记录错误，战斗继续（不崩溃）
+- **THEN** LogMgr.Instance.Err 记录错误，战斗继续（不崩溃）

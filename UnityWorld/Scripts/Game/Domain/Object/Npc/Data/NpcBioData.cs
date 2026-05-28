@@ -59,17 +59,17 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("┌── Bio · 凡间肉身 ──────────────────────────");
-            LogMgr.Dbg("│  名字:          {0}", Name);
-            LogMgr.Dbg("│  性别:          {0}", Gender.ToString());
-            LogMgr.Dbg("│  种族:          {0}", NpcType.ToString());
-            LogMgr.Dbg("│  年龄(累计):    {0:F2} 年", AgeAccumulated);
-            LogMgr.Dbg("│  出生Tick:      {0}", BirthTick);
-            LogMgr.Dbg("│  基础移速:      {0:F2}", BaseMoveSpeed);
-            LogMgr.Dbg("│  [=外观=]");            AppearanceData.Log();
-            LogMgr.Dbg("│  存活:          {0}", IsAlive.ToString());
-            LogMgr.Dbg("│  死亡Tick:      {0}", DeathTick.ToString());
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── Bio · 凡间肉身 ──────────────────────────");
+            LogMgr.Instance.Dbg("│  名字:          {0}", Name);
+            LogMgr.Instance.Dbg("│  性别:          {0}", Gender.ToString());
+            LogMgr.Instance.Dbg("│  种族:          {0}", NpcType.ToString());
+            LogMgr.Instance.Dbg("│  年龄(累计):    {0:F2} 年", AgeAccumulated);
+            LogMgr.Instance.Dbg("│  出生Tick:      {0}", BirthTick);
+            LogMgr.Instance.Dbg("│  基础移速:      {0:F2}", BaseMoveSpeed);
+            LogMgr.Instance.Dbg("│  [=外观=]");            AppearanceData.Log();
+            LogMgr.Instance.Dbg("│  存活:          {0}", IsAlive.ToString());
+            LogMgr.Instance.Dbg("│  死亡Tick:      {0}", DeathTick.ToString());
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

@@ -101,7 +101,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>无耦合初始化</summary>
         public void Init()
         {
-            LogMgr.Dbg("[GlyphMgr] 初始化完成，名字库已加载");
+            LogMgr.Instance.Dbg("[GlyphMgr] 初始化完成，名字库已加载");
         }
 
         /// <summary>有耦合初始化</summary>
@@ -139,12 +139,12 @@ namespace UnityWorld.Game.Domain
         /// <summary>日志输出：名字库统计信息</summary>
         public void Log()
         {
-            LogMgr.Dbg("[GlyphMgr] 名字库统计：");
-            LogMgr.Dbg("  姓氏: {0} 条", _nameLibrary.Surnames.Length);
-            LogMgr.Dbg("  男名: {0} 条", _nameLibrary.MaleFirstNames.Length);
-            LogMgr.Dbg("  女名: {0} 条", _nameLibrary.FemaleFirstNames.Length);
-            LogMgr.Dbg("  道号前缀: {0} 条", _nameLibrary.DaoTitlePrefixes.Length);
-            LogMgr.Dbg("  道号后缀: {0} 条", _nameLibrary.DaoTitleSuffixes.Length);
+            LogMgr.Instance.Dbg("[GlyphMgr] 名字库统计：");
+            LogMgr.Instance.Dbg("  姓氏: {0} 条", _nameLibrary.Surnames.Length);
+            LogMgr.Instance.Dbg("  男名: {0} 条", _nameLibrary.MaleFirstNames.Length);
+            LogMgr.Instance.Dbg("  女名: {0} 条", _nameLibrary.FemaleFirstNames.Length);
+            LogMgr.Instance.Dbg("  道号前缀: {0} 条", _nameLibrary.DaoTitlePrefixes.Length);
+            LogMgr.Instance.Dbg("  道号后缀: {0} 条", _nameLibrary.DaoTitleSuffixes.Length);
         }
     }
 }

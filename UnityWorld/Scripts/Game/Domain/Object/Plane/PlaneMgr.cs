@@ -29,7 +29,7 @@ namespace UnityWorld.Game.Domain
             Instance  = this;
             MainPlane = CreatePlane(PlaneConfig.ForMainPlane("主世界"));
             
-            LogMgr.Dbg("主世界大小：{0}×{1}", MainPlane.Width, MainPlane.Height);
+            LogMgr.Instance.Dbg("主世界大小：{0}×{1}", MainPlane.Width, MainPlane.Height);
         }
 
         // ── 创建 ─────────────────────────────────────────

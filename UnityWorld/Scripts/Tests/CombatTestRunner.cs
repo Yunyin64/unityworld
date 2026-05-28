@@ -17,7 +17,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public static void RunBasicTest()
         {
-            LogMgr.Dbg("=== CombatTestRunner.RunBasicTest ===");
+            LogMgr.Instance.Dbg("=== CombatTestRunner.RunBasicTest ===");
 
             APIMgr.Instance.ExportDoc();
 
@@ -25,7 +25,7 @@ namespace UnityWorld.Game.Domain.Combat
             var npcMgr = NpcMgr.Instance;
             if (npcMgr == null)
             {
-                LogMgr.Dbg("[CombatTestRunner] 错误：NpcMgr 未初始化");
+                LogMgr.Instance.Dbg("[CombatTestRunner] 错误：NpcMgr 未初始化");
                 return;
             }
 
@@ -37,8 +37,8 @@ namespace UnityWorld.Game.Domain.Combat
             ctxB.Set("Path", PracticePath.Ling);
             var npcB = npcMgr.Birth(ctxB);
 
-            LogMgr.Dbg($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
-            LogMgr.Dbg($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
+            LogMgr.Instance.Dbg($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
+            LogMgr.Instance.Dbg($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
 
             // ── 为 NPC 添加功法获得卡组 ──────────────────────
             CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
@@ -54,14 +54,14 @@ namespace UnityWorld.Game.Domain.Combat
             var result = CombatMgr.Instance.RunCombat(npcA, npcB);
 
 
-            LogMgr.Dbg($"\n=== 战斗结束 ===");
+            LogMgr.Instance.Dbg($"\n=== 战斗结束 ===");
             if (result != null)
             {
-                LogMgr.Dbg($"  结束原因: {result.GetValue("EndReason")}");
-                LogMgr.Dbg($"  胜方: {result.GetValue("WinnerTeam")}");
-                LogMgr.Dbg($"  总 Tick: {result.GetValue("TotalTicks")}");
+                LogMgr.Instance.Dbg($"  结束原因: {result.GetValue("EndReason")}");
+                LogMgr.Instance.Dbg($"  胜方: {result.GetValue("WinnerTeam")}");
+                LogMgr.Instance.Dbg($"  总 Tick: {result.GetValue("TotalTicks")}");
             }
-            LogMgr.Dbg("=== 测试完成 ===");
+            LogMgr.Instance.Dbg("=== 测试完成 ===");
         }
     }
 }

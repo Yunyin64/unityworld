@@ -50,7 +50,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>日志输出</summary>
         public void Log()
         {
-            LogMgr.Dbg("[EquipMgr] 装备运行时管理器 | Equip={0}", Count);
+            LogMgr.Instance.Dbg("[EquipMgr] 装备运行时管理器 | Equip={0}", Count);
         }
     }
 }

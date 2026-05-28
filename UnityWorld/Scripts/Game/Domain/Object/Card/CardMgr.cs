@@ -52,6 +52,7 @@ namespace UnityWorld.Game.Domain
                     Size = cardDefine.Size,
                     Cooldown = cardDefine.Cooldown,
                     ManaCost = ElementType.ToDic(cardDefine.ManaCost),
+                    Keywords = cardDefine.Keywords,
                     Tags = cardDefine.Tags,
                 });
             GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
@@ -70,7 +71,7 @@ namespace UnityWorld.Game.Domain
             var cardDefine = CardDefineMgr.Instance?.Get(cardDefineId);
             if (cardDefine == null)
             {
-                LogMgr.Err("[CardMgr] 找不到 CardDefine：{0}", cardDefineId);
+                LogMgr.Instance.Err("[CardMgr] 找不到 CardDefine：{0}", cardDefineId);
                 return null;
             }
             return InstantiateFromDefine(cardDefine);
@@ -127,7 +128,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>
         public void Log()
         {
-            LogMgr.Dbg("[CardMgr] Card管理器 | Cards={0}", _allEntities.Count);
+            LogMgr.Instance.Dbg("[CardMgr] Card管理器 | Cards={0}", _allEntities.Count);
         }
     }
 

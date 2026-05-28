@@ -88,14 +88,14 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("┌── CultivationData · 修行数据 ──────────────────────────");
-            LogMgr.Dbg("│  道途:          {0}", Path.ToString());
-            LogMgr.Dbg("│  寿元上限:      {0:F1} 年", LifespanMax);
-            LogMgr.Dbg("│  五行亲和:      金={0} 木={1} 水={2} 火={3} 土={4}",
+            LogMgr.Instance.Dbg("┌── CultivationData · 修行数据 ──────────────────────────");
+            LogMgr.Instance.Dbg("│  道途:          {0}", Path.ToString());
+            LogMgr.Instance.Dbg("│  寿元上限:      {0:F1} 年", LifespanMax);
+            LogMgr.Instance.Dbg("│  五行亲和:      金={0} 木={1} 水={2} 火={3} 土={4}",
                 Affinity.Jin, Affinity.Mu, Affinity.Shui, Affinity.Huo, Affinity.Tu);
-            LogMgr.Dbg("│  [=功法数据=]"); GongFaData.Log();
-            LogMgr.Dbg("│  [=修炼数据=]"); PracticeData.Log();
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("│  [=功法数据=]"); GongFaData.Log();
+            LogMgr.Instance.Dbg("│  [=修炼数据=]"); PracticeData.Log();
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

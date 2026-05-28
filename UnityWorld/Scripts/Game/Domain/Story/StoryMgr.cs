@@ -54,7 +54,7 @@ namespace UnityWorld.Game.Domain
         public void Begin()
         {
             StoryDefineMgr.Instance?.BuildMergedOptions();
-            LogMgr.Dbg("[StoryMgr] Begin：双向 Option 合并完成");
+            LogMgr.Instance.Dbg("[StoryMgr] Begin：双向 Option 合并完成");
         }
 
         /// <summary>Tick：推进宿命池时间检查 + 劫缘池周期触发</summary>
@@ -125,7 +125,7 @@ namespace UnityWorld.Game.Domain
             var define = StoryDefineMgr.Instance?.Get(storyId);
             if (define == null)
             {
-                LogMgr.Warn("[StoryMgr] TriggerStory 找不到 StoryDefine '{0}'", storyId);
+                LogMgr.Instance.Warn("[StoryMgr] TriggerStory 找不到 StoryDefine '{0}'", storyId);
                 return;
             }
 
@@ -134,14 +134,14 @@ namespace UnityWorld.Game.Domain
             // ① 检查 Conditions
             if (!define.EvaluateConditions(ctx))
             {
-                LogMgr.Dbg("[StoryMgr] Story '{0}' Conditions 不满足，跳过触发", storyId);
+                LogMgr.Instance.Dbg("[StoryMgr] Story '{0}' Conditions 不满足，跳过触发", storyId);
                 return;
             }
 
             // ② Lua 复杂轨检查（预留，当前降级到简单轨）
             if (!string.IsNullOrEmpty(define.LuaScript))
             {
-                LogMgr.Warn("[StoryMgr] Story '{0}' 配置了 LuaScript 但 Lua 尚未集成，降级到简单轨执行", storyId);
+                LogMgr.Instance.Warn("[StoryMgr] Story '{0}' 配置了 LuaScript 但 Lua 尚未集成，降级到简单轨执行", storyId);
             }
 
             // ③ 执行 Effects（简单轨）
@@ -150,7 +150,7 @@ namespace UnityWorld.Game.Domain
             // ④ 若为显示事件，广播 UI 事件
             if (!define.IsHide)
             {
-                LogMgr.Dbg("[StoryMgr] 显示 Story '{0}' 触发，广播 UI 事件", storyId);
+                LogMgr.Instance.Dbg("[StoryMgr] 显示 Story '{0}' 触发，广播 UI 事件", storyId);
                 EventMgr.Instance?.TriggerEvent(
                     "story.show",
                     new { StoryId = storyId, Subject = subject, Options = define.MergedOptionIds },
@@ -159,7 +159,7 @@ namespace UnityWorld.Game.Domain
             }
             else
             {
-                LogMgr.Dbg("[StoryMgr] 隐形 Story '{0}' 触发完成", storyId);
+                LogMgr.Instance.Dbg("[StoryMgr] 隐形 Story '{0}' 触发完成", storyId);
             }
         }
 
@@ -189,7 +189,7 @@ namespace UnityWorld.Game.Domain
             if (bestId != null && bestScore > 0)
                 TriggerStory(bestId, subject, source, rng);
             else
-                LogMgr.Dbg("[StoryMgr] TriggerStoryByTag 未找到匹配的 Story，tags={0}", string.Join(",", tags));
+                LogMgr.Instance.Dbg("[StoryMgr] TriggerStoryByTag 未找到匹配的 Story，tags={0}", string.Join(",", tags));
         }
 
         // ── 内部方法 ──────────────────────────────────────────

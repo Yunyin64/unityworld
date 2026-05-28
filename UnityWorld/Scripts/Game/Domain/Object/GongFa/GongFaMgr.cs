@@ -65,7 +65,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>日志输出</summary>
         public void Log()
         {
-            LogMgr.Dbg("[GongFaMgr] 功法运行时管理器 | GongFa={0}", Count);
+            LogMgr.Instance.Dbg("[GongFaMgr] 功法运行时管理器 | GongFa={0}", Count);
         }
     }
 }

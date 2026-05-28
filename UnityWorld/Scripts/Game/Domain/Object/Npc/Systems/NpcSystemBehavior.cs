@@ -67,13 +67,13 @@ namespace UnityWorld.Game.Domain
         {
             if (!_dataTable.TryGetValue(npcId, out var data))
             {
-                LogMgr.Warn("[NpcSystemBehavior] AddPrimary 找不到 NPC {0}", npcId);
+                LogMgr.Instance.Warn("[NpcSystemBehavior] AddPrimary 找不到 NPC {0}", npcId);
                 return false;
             }
 
             if (data.PrimaryBehavior != null)
             {
-                LogMgr.Warn("[NpcSystemBehavior] NPC {0} 已有主行为 {1}，无法添加新行为", 
+                LogMgr.Instance.Warn("[NpcSystemBehavior] NPC {0} 已有主行为 {1}，无法添加新行为", 
                     npcId, data.PrimaryBehavior.BehaviorId);
                 return false;
             }

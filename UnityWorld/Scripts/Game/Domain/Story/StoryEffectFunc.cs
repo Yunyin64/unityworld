@@ -33,12 +33,12 @@ namespace UnityWorld.Game.Domain
                 try { action(ctx, entry.Args); }
                 catch (Exception e)
                 {
-                    LogMgr.Warn("[StoryEffectFunc] 执行 '{0}' 时异常：{1}", entry.FuncName, e.Message);
+                    LogMgr.Instance.Warn("[StoryEffectFunc] 执行 '{0}' 时异常：{1}", entry.FuncName, e.Message);
                 }
             }
             else
             {
-                LogMgr.Warn("[StoryEffectFunc] 未知函数名 '{0}'，已跳过", entry.FuncName);
+                LogMgr.Instance.Warn("[StoryEffectFunc] 未知函数名 '{0}'，已跳过", entry.FuncName);
             }
         }
 

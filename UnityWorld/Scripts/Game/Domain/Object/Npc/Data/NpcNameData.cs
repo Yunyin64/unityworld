@@ -57,7 +57,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>输出名字数据日志</summary>
         public void Log()
         {
-            LogMgr.Dbg("│  [NameData] 姓: {0}  名: {1}  字: {2}  道号: {3}  全名: {4}",
+            LogMgr.Instance.Dbg("│  [NameData] 姓: {0}  名: {1}  字: {2}  道号: {3}  全名: {4}",
                 Surname, GivenName, CourtesyName, DaoTitle, FullName);
         }
     }

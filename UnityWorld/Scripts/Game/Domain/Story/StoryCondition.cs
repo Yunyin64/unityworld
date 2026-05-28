@@ -54,7 +54,7 @@ namespace UnityWorld.Game.Domain
             }
             catch (Exception e)
             {
-                LogMgr.Warn("[StoryCondition] Evaluate 异常 TargetType={0} Field={1}: {2}", TargetType, FieldName, e.Message);
+                LogMgr.Instance.Warn("[StoryCondition] Evaluate 异常 TargetType={0} Field={1}: {2}", TargetType, FieldName, e.Message);
                 return false;
             }
         }
@@ -78,7 +78,7 @@ namespace UnityWorld.Game.Domain
         private bool EvaluateNpcTag(StoryContext ctx)
         {
             // TODO: 待 NpcSystemTag 实现后接入，当前返回 false
-            LogMgr.Dbg("[StoryCondition] NpcTag 条件暂未实现，跳过");
+            LogMgr.Instance.Dbg("[StoryCondition] NpcTag 条件暂未实现，跳过");
             return false;
         }
 
@@ -90,14 +90,14 @@ namespace UnityWorld.Game.Domain
         private bool EvaluateAuraElement(StoryContext ctx)
         {
             // TODO: 待接入 AuraDaoMgr 查询五行浓度，当前返回 false
-            LogMgr.Dbg("[StoryCondition] AuraElement 条件暂未实现，跳过");
+            LogMgr.Instance.Dbg("[StoryCondition] AuraElement 条件暂未实现，跳过");
             return false;
         }
 
         private bool EvaluateRelation(StoryContext ctx)
         {
             // TODO: 待关系系统实现后接入，当前返回 false
-            LogMgr.Dbg("[StoryCondition] Relation 条件暂未实现，跳过");
+            LogMgr.Instance.Dbg("[StoryCondition] Relation 条件暂未实现，跳过");
             return false;
         }
 

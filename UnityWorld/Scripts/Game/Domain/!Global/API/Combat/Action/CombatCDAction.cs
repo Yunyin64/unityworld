@@ -34,7 +34,7 @@ namespace UnityWorld.Game.Domain
 
             var card = ctx.Get<CombatCard>("TargetCard");
             card.AddCardBuff(CardModifier.Freeze("Freeze"+card.Id, freezeSeconds));
-            LogMgr.Dbg("[Freeze] {0} 冻结 {1} {2}/{3}", card.DisplayName, freezeSeconds,card.Ticks["CD"],card.GetCDMax());
+            LogMgr.Instance.Dbg("[Freeze] {0} 冻结 {1} {2}/{3}", card.DisplayName, freezeSeconds,card.Ticks["CD"],card.GetCDMax());
             return ctx;
         }
 
@@ -49,7 +49,7 @@ namespace UnityWorld.Game.Domain
             int Stack = ctx.GetValue("Stack", 1);
             var card = ctx.Get<CombatCard>("TargetCard");
             card.AddCardBuff(CardModifier.CDSpeed("Slow"+card.Id, -Stack));
-            LogMgr.Dbg("[Slow] {0} 减速 {1} {2}/{3}", card.DisplayName, Stack,card.Ticks["CD"],card.GetCDMax());
+            LogMgr.Instance.Dbg("[Slow] {0} 减速 {1} {2}/{3}", card.DisplayName, Stack,card.Ticks["CD"],card.GetCDMax());
             return ctx;
         }
 
@@ -63,7 +63,7 @@ namespace UnityWorld.Game.Domain
             int Stack = ctx.GetValue("Stack", 1);
             var card = ctx.Get<CombatCard>("TargetCard");
             card.AddCardBuff(CardModifier.CDSpeed("Haste"+card.Id, Stack));
-            LogMgr.Dbg("[Haste] {0} 加速 {1} {2}/{3}", card.DisplayName, Stack,card.Ticks["CD"],card.GetCDMax());
+            LogMgr.Instance.Dbg("[Haste] {0} 加速 {1} {2}/{3}", card.DisplayName, Stack,card.Ticks["CD"],card.GetCDMax());
             return ctx;
         }
 
@@ -79,7 +79,7 @@ namespace UnityWorld.Game.Domain
             if (string.IsNullOrEmpty(statId)) return ctx;
 
             card.AddCardBuff(CardModifier.StatBuff("StatBuff_" + statId + "_" + card.Id, statId, value));
-            LogMgr.Dbg("[AddCardStatBuff] {0} 属性 {1} += {2}", card.DisplayName, statId, value);
+            LogMgr.Instance.Dbg("[AddCardStatBuff] {0} 属性 {1} += {2}", card.DisplayName, statId, value);
 
             return ctx;
         }

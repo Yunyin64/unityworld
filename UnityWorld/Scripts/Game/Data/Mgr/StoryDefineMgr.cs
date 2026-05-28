@@ -28,7 +28,7 @@ namespace UnityWorld.Game.Data
                 foreach (var optId in story.OptionIds)
                 {
                     if (OptionDefineMgr.Instance?.Contains(optId) == false)
-                        LogMgr.Warn("[StoryDefineMgr] Story '{0}' 引用了不存在的 OptionId '{1}'，已跳过", story.ID, optId);
+                        LogMgr.Instance.Warn("[StoryDefineMgr] Story '{0}' 引用了不存在的 OptionId '{1}'，已跳过", story.ID, optId);
                 }
             }
 
@@ -46,11 +46,11 @@ namespace UnityWorld.Game.Data
                     }
                     else
                     {
-                        LogMgr.Warn("[StoryDefineMgr] OptionDefine '{0}' 反向引用了不存在的 StoryId '{1}'，已跳过", option.ID, storyId);
+                        LogMgr.Instance.Warn("[StoryDefineMgr] OptionDefine '{0}' 反向引用了不存在的 StoryId '{1}'，已跳过", option.ID, storyId);
                     }
                 }
             }
-            LogMgr.Dbg("[StoryDefineMgr] 双向 Option 合并完成");
+            LogMgr.Instance.Dbg("[StoryDefineMgr] 双向 Option 合并完成");
         }
     }
 }

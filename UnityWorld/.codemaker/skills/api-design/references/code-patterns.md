@@ -35,7 +35,7 @@ public static APIContext {FuncName}(APIContext ctx)
     // ...
 
     // 5. 日志
-    LogMgr.Dbg("[{FuncName}] {0} → {1}, 值: {2}", caster.GetName(), target.GetName(), value);
+    LogMgr.Instance.Dbg("[{FuncName}] {0} → {1}, 值: {2}", caster.GetName(), target.GetName(), value);
 
     return ctx;
 }

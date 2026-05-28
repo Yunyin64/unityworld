@@ -139,7 +139,7 @@ namespace UnityWorld.Game.Domain
             
             if (!Enum.TryParse<ModifierType>(modifierType, true, out var type))
             {
-                LogMgr.Warn($"[StatBuff] 无法解析 ModifierType: '{modifierType}'，已忽略");
+                LogMgr.Instance.Warn($"[StatBuff] 无法解析 ModifierType: '{modifierType}'，已忽略");
                 return ctx;
             }
 
@@ -167,7 +167,7 @@ namespace UnityWorld.Game.Domain
 
             var picked = wounds[target.Scene.Soul.Random(0, wounds.Count)];
             target.RemoveCombatCard(picked);
-            LogMgr.Dbg("[RemoveRandomWound] {0} 移除伤势卡: {1} (Size:{2})", target.GetName(), picked.DisplayName, picked.GetSize());
+            LogMgr.Instance.Dbg("[RemoveRandomWound] {0} 移除伤势卡: {1} (Size:{2})", target.GetName(), picked.DisplayName, picked.GetSize());
 
             return ctx;
         }
@@ -190,7 +190,7 @@ namespace UnityWorld.Game.Domain
             if (owner == null) return ctx;
 
             owner.DisplaceCombatCard(card, pos);
-            LogMgr.Dbg("[Displace] {0} 的卡牌 {1} 位移至 {2}", owner.GetName(), card.DisplayName, pos);
+            LogMgr.Instance.Dbg("[Displace] {0} 的卡牌 {1} 位移至 {2}", owner.GetName(), card.DisplayName, pos);
 
             return ctx;
         }

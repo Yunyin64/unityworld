@@ -4,7 +4,7 @@
 - [x] 1.2 新建 `Scripts/Core/Systems/ScopeKey.cs`，实现 `ScopeKey` struct（含 `Scope`、`Id` 字段、`Global` 静态属性、正确的 `Equals`/`GetHashCode`/`==`/`!=`）
 - [x] 1.3 新建 `Scripts/Core/Systems/IEventListener.cs`，定义 `IEventListener` 接口（`void OnEvent(string eventId, ScopeKey scope, object args)`）
 - [x] 1.4 在同文件或新建文件中实现 `DelegateEventListener`（包装 `Action<string, ScopeKey, object>`）
-- [x] 1.5 新建 `Scripts/Core/Systems/LuaEventListener.cs`，实现 `LuaEventListener : IEventListener` 占位类（`OnEvent` 只输出 `LogMgr.Warn` 并返回）
+- [x] 1.5 新建 `Scripts/Core/Systems/LuaEventListener.cs`，实现 `LuaEventListener : IEventListener` 占位类（`OnEvent` 只输出 `LogMgr.Instance.Warn` 并返回）
 
 ## 2. EventDefine 数据层
 
@@ -24,6 +24,6 @@
 
 ## 4. 验证与收尾
 
-- [x] 4.1 在 `WorldMgr` 启动日志中打印已加载的 EventDefine 数量（`LogMgr.Dbg`）
+- [x] 4.1 在 `WorldMgr` 启动日志中打印已加载的 EventDefine 数量（`LogMgr.Instance.Dbg`）
 - [x] 4.2 检查全局搜索所有旧 `EventTrigger(Em_Event, ...)` 和 `RegisterEvent(Em_Event, ...)` 调用，确认均已不存在（当前代码库中 `Em_Event` 枚举为空，无存量调用，只需确认）
 - [x] 4.3 检查 `EventMgr` 所有 `public` 成员均有 `<summary>` XML 注释

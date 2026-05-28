@@ -42,7 +42,7 @@ namespace UnityWorld.Game.Domain
         public void Log()
         {
             int totalCards = _cardTable.Values.Sum(l => l.Count);
-            LogMgr.Dbg("[{0}] {1} | NpcCount={2}, TotalCards={3}", Name, Desc, _cardTable.Count, totalCards);
+            LogMgr.Instance.Dbg("[{0}] {1} | NpcCount={2}, TotalCards={3}", Name, Desc, _cardTable.Count, totalCards);
         }
 
         // ── 公共 API ──────────────────────────────────────────
@@ -54,7 +54,7 @@ namespace UnityWorld.Game.Domain
         {
             if (BehaviorCardDataMgr.Instance?.Get(defineId) == null)
             {
-                LogMgr.Warn("[BehaviorCardMgr] GiveCard 找不到 BehaviorCardDefine '{0}'", defineId);
+                LogMgr.Instance.Warn("[BehaviorCardMgr] GiveCard 找不到 BehaviorCardDefine '{0}'", defineId);
                 return;
             }
             if (!_cardTable.TryGetValue(npcId, out var list))
@@ -63,7 +63,7 @@ namespace UnityWorld.Game.Domain
                 _cardTable[npcId] = list;
             }
             list.Add(new BehaviorCard(defineId, npcId));
-            LogMgr.Dbg("[BehaviorCardMgr] GiveCard npc={0} card={1}", npcId, defineId);
+            LogMgr.Instance.Dbg("[BehaviorCardMgr] GiveCard npc={0} card={1}", npcId, defineId);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace UnityWorld.Game.Domain
             if (card != null)
             {
                 list.Remove(card);
-                LogMgr.Dbg("[BehaviorCardMgr] RemoveCard npc={0} card={1}", npcId, defineId);
+                LogMgr.Instance.Dbg("[BehaviorCardMgr] RemoveCard npc={0} card={1}", npcId, defineId);
             }
         }
 
@@ -104,28 +104,28 @@ namespace UnityWorld.Game.Domain
             var card = list.FirstOrDefault(c => c.DefineId == defineId);
             if (card == null)
             {
-                LogMgr.Warn("[BehaviorCardMgr] UseCard npc={0} 未持有 card={1}", npcId, defineId);
+                LogMgr.Instance.Warn("[BehaviorCardMgr] UseCard npc={0} 未持有 card={1}", npcId, defineId);
                 return;
             }
 
             var define = BehaviorCardDataMgr.Instance?.Get(defineId);
             if (define == null)
             {
-                LogMgr.Warn("[BehaviorCardMgr] UseCard 找不到 BehaviorCardDefine '{0}'", defineId);
+                LogMgr.Instance.Warn("[BehaviorCardMgr] UseCard 找不到 BehaviorCardDefine '{0}'", defineId);
                 return;
             }
 
             var behaviorSystem = NpcMgr.Instance?.BehaviorSystem;
             if (behaviorSystem == null)
             {
-                LogMgr.Err("[BehaviorCardMgr] UseCard 找不到 BehaviorSystem");
+                LogMgr.Instance.Err("[BehaviorCardMgr] UseCard 找不到 BehaviorSystem");
                 return;
             }
 
             // 检查空闲（仅主行为需要）
             if (define.BehaviorIsPrimary && !behaviorSystem.IsIdle(npcId))
             {
-                LogMgr.Warn("[BehaviorCardMgr] UseCard npc={0} 非空闲，无法使用主行为卡", npcId);
+                LogMgr.Instance.Warn("[BehaviorCardMgr] UseCard npc={0} 非空闲，无法使用主行为卡", npcId);
                 return;
             }
 
@@ -133,7 +133,7 @@ namespace UnityWorld.Game.Domain
             var behavior = CreateBehaviorFromDefine(define, rng ?? new Rng(npcId + card.UsageCount));
             if (behavior == null)
             {
-                LogMgr.Warn("[BehaviorCardMgr] UseCard 无法创建 Behavior '{0}'", define.BehaviorId);
+                LogMgr.Instance.Warn("[BehaviorCardMgr] UseCard 无法创建 Behavior '{0}'", define.BehaviorId);
                 return;
             }
 
@@ -154,7 +154,7 @@ namespace UnityWorld.Game.Domain
             if (define.IsConsumable)
                 list.Remove(card);
 
-            LogMgr.Dbg("[BehaviorCardMgr] UseCard npc={0} card={1} → behavior={2}", 
+            LogMgr.Instance.Dbg("[BehaviorCardMgr] UseCard npc={0} card={1} → behavior={2}", 
                 npcId, defineId, behavior.BehaviorId);
         }
 

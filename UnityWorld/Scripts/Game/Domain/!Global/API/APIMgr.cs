@@ -113,7 +113,7 @@ namespace UnityWorld.Game.Domain
         {
             if (!_handlers.TryGetValue(funcName, out var handler))
             {
-                LogMgr.Warn("[APIMgr] Execute: 未注册的 Handler '{0}'，已跳过", funcName);
+                LogMgr.Instance.Warn("[APIMgr] Execute: 未注册的 Handler '{0}'，已跳过", funcName);
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace UnityWorld.Game.Domain
             }
             catch (Exception e)
             {
-                LogMgr.Warn("[APIMgr] Execute: 执行 '{0}' 时异常：{1}", funcName, e.Message);
+                LogMgr.Instance.Warn("[APIMgr] Execute: 执行 '{0}' 时异常：{1}", funcName, e.Message);
             }
         }
 
@@ -153,14 +153,14 @@ namespace UnityWorld.Game.Domain
                     bool validParam = parameters.Length == 1 && typeof(ContextBase).IsAssignableFrom(parameters[0].ParameterType);
                     if (!validReturn || !validParam)
                     {
-                        LogMgr.Warn("[APIMgr] ScanHandlers: 方法 {0}.{1} 签名不匹配（需要 static [void|ContextBase] Xxx(ContextBase/子类 ctx)），已跳过",
+                        LogMgr.Instance.Warn("[APIMgr] ScanHandlers: 方法 {0}.{1} 签名不匹配（需要 static [void|ContextBase] Xxx(ContextBase/子类 ctx)），已跳过",
                             type.Name, method.Name);
                         continue;
                     }
 
                     if (_handlers.ContainsKey(attr.FuncName))
                     {
-                        LogMgr.Warn("[APIMgr] ScanHandlers: FuncName '{0}' 重复注册（{1}.{2} 覆盖前者）",
+                        LogMgr.Instance.Warn("[APIMgr] ScanHandlers: FuncName '{0}' 重复注册（{1}.{2} 覆盖前者）",
                             attr.FuncName, type.Name, method.Name);
                     }
 
@@ -189,7 +189,7 @@ namespace UnityWorld.Game.Domain
                 }
             }
 
-            LogMgr.Dbg("[APIMgr] ScanHandlers 完成，已注册 {0} 个 Handler", count);
+            LogMgr.Instance.Dbg("[APIMgr] ScanHandlers 完成，已注册 {0} 个 Handler", count);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace UnityWorld.Game.Domain
                 int colonIdx = cleaned.IndexOf(':');
                 if (colonIdx <= 0 || colonIdx >= cleaned.Length - 1)
                 {
-                    LogMgr.Warn("[APIMgr] ParseApiFromAttribute: FuncName '{0}' 的参数 '{1}' 格式非法（应为 Name:Type），已跳过该参数",
+                    LogMgr.Instance.Warn("[APIMgr] ParseApiFromAttribute: FuncName '{0}' 的参数 '{1}' 格式非法（应为 Name:Type），已跳过该参数",
                         attr.FuncName, raw);
                     continue;
                 }
@@ -230,7 +230,7 @@ namespace UnityWorld.Game.Domain
         public void Init()
         {
             ScanHandlers();
-            LogMgr.Dbg("[APIMgr] 初始化完成，已注册 {0} 个API签名，{1} 个Handler", _apis.Count, _handlers.Count);
+            LogMgr.Instance.Dbg("[APIMgr] 初始化完成，已注册 {0} 个API签名，{1} 个Handler", _apis.Count, _handlers.Count);
         }
 
         public void Begin() { }
@@ -250,20 +250,20 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("=== {0} ===  {1}", Name, Desc);
-            LogMgr.Dbg("  已注册API签名数量: {0}", _apis.Count);
+            LogMgr.Instance.Dbg("=== {0} ===  {1}", Name, Desc);
+            LogMgr.Instance.Dbg("  已注册API签名数量: {0}", _apis.Count);
             foreach (var api in _apis.Values)
             {
                 string hasHandler = _handlers.ContainsKey(api.FuncName) ? " ✓Handler" : " ✗NoHandler";
-                LogMgr.Dbg("    {0}{1}", api, hasHandler);
+                LogMgr.Instance.Dbg("    {0}{1}", api, hasHandler);
             }
-            LogMgr.Dbg("  已注册Handler数量: {0}", _handlers.Count);
+            LogMgr.Instance.Dbg("  已注册Handler数量: {0}", _handlers.Count);
             // 输出有 Handler 但无签名的函数
             foreach (var funcName in _handlers.Keys)
             {
                 if (!_apis.ContainsKey(funcName))
                 {
-                    LogMgr.Dbg("    Handler-only: {0}", funcName);
+                    LogMgr.Instance.Dbg("    Handler-only: {0}", funcName);
                 }
             }
         }
@@ -372,7 +372,7 @@ namespace UnityWorld.Game.Domain
 
             string filePath = Path.Combine(outputDir, "API参考.md");
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
-            LogMgr.Dbg("[APIMgr] ExportDoc 完成，已输出到: {0}", filePath);
+            LogMgr.Instance.Dbg("[APIMgr] ExportDoc 完成，已输出到: {0}", filePath);
         }
 
         /// <summary>

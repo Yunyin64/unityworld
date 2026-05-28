@@ -52,7 +52,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>
         public void Log()
         {
-            LogMgr.Dbg("[{0}] {1}", Name, Desc);
+            LogMgr.Instance.Dbg("[{0}] {1}", Name, Desc);
         }
     }
 }

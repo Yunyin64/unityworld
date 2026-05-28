@@ -17,14 +17,14 @@ namespace UnityWorld.Game.Domain.Combat
         public void PreStart()
         {
             InitializeLuaCards();
-            //执行env的CardData覆写和keyword的应用
+            // keyword hooks（如 Passive.OnPreStart、FaShu.OnPreStart）
             CallLua("OnPreStart");
         }
 
         public void Start()
         {
-            Ticks.Add("Main",0);
-            Ticks.Add("CD",0);
+            Ticks["Main"] = 0;
+            Ticks["CD"] = 0;
             SetPhase(CombatCardPhase.Waiting);
             CallLua("OnStart");
         }
@@ -32,6 +32,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void Tick()
         {
             CallLua("OnTick");
+            
             
             if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.Waiting);
             if(Phase == CombatCardPhase.InCD)
@@ -180,6 +181,9 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.DisplayName = card.DisplayName;
             combatCard.Stats = StatMgr.Instance.CreateBlock(card.Id, typeof(CombatCard));
 
+
+            combatCard.Ticks.Add("Main",0);
+            combatCard.Ticks.Add("CD",0);
             if(card.GetCooldown() <= 0) combatCard.GetKeywords().Add("Passive");
             return combatCard;
         }

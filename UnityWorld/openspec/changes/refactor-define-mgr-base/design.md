@@ -36,7 +36,7 @@ private void LoadPath(string path)
 {
     if (File.Exists(path))       → LoadSingleFile(path)
     else if (Directory.Exists(path)) → LoadFolder(path)
-    else → LogMgr.Warn(...)
+    else → LogMgr.Instance.Warn(...)
 }
 ```
 

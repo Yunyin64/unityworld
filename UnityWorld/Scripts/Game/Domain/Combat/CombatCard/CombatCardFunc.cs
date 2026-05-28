@@ -19,6 +19,68 @@ namespace UnityWorld.Game.Domain.Combat
             if (env != null) env["_self"] = this;
             // 预扫描 Lua 函数缓存
             LuaHooks = LuaMgr.ScanLuaHooks(env);
+
+            // 从 Lua CardData/Keywords 覆写 BaseData
+            ApplyLuaOverrides();
+        }
+
+        /// <summary>
+        /// 从 Lua env 中读取 CardData / Keywords，覆写 C# 侧 BaseData。
+        /// 在 InitializeLuaCards 之后、CallLua("OnPreStart") 之前调用。
+        /// </summary>
+        private void ApplyLuaOverrides()
+        {
+            if (env == null) return;
+            var baseData = BaseData;
+            if (baseData == null) return;
+
+            // ── 覆写 CardData，先不处理 TODO────────────────────────────────────
+            /*
+            if (env["CardData"] is LuaTable cardData)
+            {
+                if (cardData["Size"] is long size)
+                    baseData.Size = (int)size;
+
+                if (cardData["Cooldown"] is long cd)
+                    baseData.Cooldown = cd;
+                else if (cardData["Cooldown"] is double cdD)
+                    baseData.Cooldown = (float)cdD;
+
+                if (cardData["ManaCost"] is LuaTable manaTbl)
+                {
+                    baseData.ManaCost.Clear();
+                    foreach (var key in manaTbl.Keys)
+                    {
+                        var elemStr = key.ToString();
+                        if (Enum.TryParse<BaseElementType>(elemStr, out var baseElem))
+                        {
+                            var val = manaTbl[key];
+                            int cost = val is long l ? (int)l : (int)(double)val;
+                            baseData.ManaCost[new ElementType(baseElem)] = cost;
+                        }
+                    }
+                }
+            }
+            
+            */
+            // ── 覆写 Keywords ────────────────────────────────────
+            // nil 或空表不修改，保留 C# 侧已有 Keywords
+            if (env["Keywords"] is LuaTable kwTbl && kwTbl.Values.Count > 0)
+            {
+                foreach (var val in kwTbl.Values)
+                {
+                    var kw = val.ToString();
+                    if (!baseData.Keywords.Contains(kw))
+                        baseData.Keywords.Add(kw);
+                }
+            }
+
+            // CardData 里的 CardType 字段也视为 keyword（兼容旧写法）
+            if (env["CardData"] is LuaTable cd2 && cd2["CardType"] is string cardType)
+            {
+                if (!string.IsNullOrEmpty(cardType) && !baseData.Keywords.Contains(cardType))
+                    baseData.Keywords.Add(cardType);
+            }
         }
 
         

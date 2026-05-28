@@ -48,14 +48,14 @@ namespace UnityWorld.Game.Domain
         {
             var allGongFa = GetAllGongFa();
             var activeGongFa = GetActiveGongFa();
-            LogMgr.Dbg("┌── GongFa · 功法数据 ──────────────────────────");
-            LogMgr.Dbg("│  持有功法({0}):  [{1}]",
+            LogMgr.Instance.Dbg("┌── GongFa · 功法数据 ──────────────────────────");
+            LogMgr.Instance.Dbg("│  持有功法({0}):  [{1}]",
                 allGongFa.Count,
                 allGongFa.ToInfoString());
-            LogMgr.Dbg("│  激活功法({0}):  [{1}]",
+            LogMgr.Instance.Dbg("│  激活功法({0}):  [{1}]",
                 activeGongFa.Count,
                 activeGongFa.ToInfoString());
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

@@ -27,7 +27,7 @@ public class APIContext : ContextBase
                 }
                     sb.AppendLine($"  Caster: {Caster}");
                     sb.AppendLine($"  SourceCard: {SourceCard}");
-                LogMgr.Dbg(sb.ToString());
+                LogMgr.Instance.Dbg(sb.ToString());
                 return sb.ToString();
         }
 }

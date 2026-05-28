@@ -27,10 +27,10 @@ namespace UnityWorld.Game.Domain
         public void Log()
         {
             var eq = GetEquip();
-            LogMgr.Dbg("┌── CardEquipData ───────────────────────────");
-            LogMgr.Dbg("│  CardId:    {0}", CardId);
-            LogMgr.Dbg("│  Equip:     {0}", eq?.ToString() ?? "null");
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── CardEquipData ───────────────────────────");
+            LogMgr.Instance.Dbg("│  CardId:    {0}", CardId);
+            LogMgr.Instance.Dbg("│  Equip:     {0}", eq?.ToString() ?? "null");
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
     public partial class Card

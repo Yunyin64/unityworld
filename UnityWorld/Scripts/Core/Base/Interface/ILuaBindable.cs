@@ -85,7 +85,7 @@ public static class LuaBindableExtensions
         }
         catch (System.Exception ex)
         {
-            UnityWorld.Core.LogMgr.Err("[ILuaBindable] hook '{0}' 异常: {1}", hookName, ex.Message);
+            UnityWorld.Core.LogMgr.Instance.Err("[ILuaBindable] hook '{0}' 异常: {1}", hookName, ex.Message);
         }
         return default;
     }

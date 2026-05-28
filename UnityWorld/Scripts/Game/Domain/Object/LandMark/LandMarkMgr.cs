@@ -43,14 +43,14 @@ namespace UnityWorld.Game.Domain
             var define = LandMarkDefineMgr.Instance?.Get(defineId);
             if (define == null)
             {
-                LogMgr.Warn("[LandMarkMgr] 找不到 LandMarkDefine: {0}", defineId);
+                LogMgr.Instance.Warn("[LandMarkMgr] 找不到 LandMarkDefine: {0}", defineId);
                 return null;
             }
 
             // Singleton 约束
             if (define.IsSingleton && HasInstance(defineId))
             {
-                LogMgr.Warn("[LandMarkMgr] Singleton 地标 {0} 已存在，跳过", defineId);
+                LogMgr.Instance.Warn("[LandMarkMgr] Singleton 地标 {0} 已存在，跳过", defineId);
                 return null;
             }
 
@@ -139,7 +139,7 @@ namespace UnityWorld.Game.Domain
                 var modDefine = modMgr.Get(modDefineId);
                 if (modDefine == null)
                 {
-                    LogMgr.Warn("[LandMarkMgr] 找不到 TileModifierDefine: {0}", modDefineId);
+                    LogMgr.Instance.Warn("[LandMarkMgr] 找不到 TileModifierDefine: {0}", modDefineId);
                     continue;
                 }
                 tile.AddModifier(modDefine.CreateModifier(sourceId));
@@ -168,7 +168,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>
         public void Log()
         {
-            LogMgr.Dbg("[{0}] {1} | LandMarks={2}", Name, Desc, _allLandMarks.Count);
+            LogMgr.Instance.Dbg("[{0}] {1} | LandMarks={2}", Name, Desc, _allLandMarks.Count);
         }
     }
 }

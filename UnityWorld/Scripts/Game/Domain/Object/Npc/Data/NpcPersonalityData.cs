@@ -47,13 +47,13 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void Log()
         {
-            LogMgr.Dbg("┌── PersonalityData ──────────────────────────");
-            LogMgr.Dbg("│  冒险倾向:      {0:F2}", Boldness);
-            LogMgr.Dbg("│  同情心:        {0:F2}  贪婪:        {1:F2}", Compassion, Greed);
-            LogMgr.Dbg("│  荣誉感:        {0:F2}  理性:        {1:F2}", Honor, Rationality);
-            LogMgr.Dbg("│  社交性:        {0:F2}  复仇心:      {1:F2}", Sociability, Vengefulness);
-            LogMgr.Dbg("│  狂热:          {0:F2}", Zeal);
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── PersonalityData ──────────────────────────");
+            LogMgr.Instance.Dbg("│  冒险倾向:      {0:F2}", Boldness);
+            LogMgr.Instance.Dbg("│  同情心:        {0:F2}  贪婪:        {1:F2}", Compassion, Greed);
+            LogMgr.Instance.Dbg("│  荣誉感:        {0:F2}  理性:        {1:F2}", Honor, Rationality);
+            LogMgr.Instance.Dbg("│  社交性:        {0:F2}  复仇心:      {1:F2}", Sociability, Vengefulness);
+            LogMgr.Instance.Dbg("│  狂热:          {0:F2}", Zeal);
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

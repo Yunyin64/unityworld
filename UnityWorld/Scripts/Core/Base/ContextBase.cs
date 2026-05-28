@@ -68,7 +68,7 @@ public class ContextBase
                     sb.AppendLine($"  {kvp.Key}: {kvp.Value}");
                 }
 
-                LogMgr.Dbg(sb.ToString());
+                LogMgr.Instance.Dbg(sb.ToString());
                 return sb.ToString();
             }
         }

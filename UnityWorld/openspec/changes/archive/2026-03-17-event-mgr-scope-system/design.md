@@ -43,7 +43,7 @@
 
 **选择**：方案A —— `TriggerEvent(eventId, args, (Scope.Npc, id), (Scope.Tile, tileId), ...)`  
 **原因**：最直接透明，调用侧清楚地表达"这次事件涉及哪些对象"；对比方案C（args 实现 FillScopes 接口），本方案更简单且同样能做 Warn 提示  
-**校验逻辑**：EventMgr 对比 `EventDefine.Scopes` 与调用方传入的 scope 列表，发现 EventDefine 声明的 scope 未被传入时 `LogMgr.Warn`
+**校验逻辑**：EventMgr 对比 `EventDefine.Scopes` 与调用方传入的 scope 列表，发现 EventDefine 声明的 scope 未被传入时 `LogMgr.Instance.Warn`
 
 ### 决策4：内部存储结构
 
@@ -79,7 +79,7 @@ C# 侧提供 `DelegateEventListener`（包装 `Action<string, ScopeKey, object>`
 
 ## Risks / Trade-offs
 
-- **字符串 eventId 的拼写错误** → 触发不存在的事件时 `LogMgr.Warn`，EventDefineMgr 提供 `Contains()` 校验  
+- **字符串 eventId 的拼写错误** → 触发不存在的事件时 `LogMgr.Instance.Warn`，EventDefineMgr 提供 `Contains()` 校验  
 - **scope 列表漏传导致静默失效** → EventMgr 对比 EventDefine 声明做 Warn 提示，不静默  
 - **ListenerEntry 列表在触发中被修改** → 保留现有 `triggering` 计数器 + `m_TempEvent` 延迟队列机制  
 - **object args 装箱 GC** → 本次不解决，高频事件结构体化优化留作后续迭代  

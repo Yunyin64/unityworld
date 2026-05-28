@@ -19,7 +19,7 @@ namespace UnityWorld.Game.Data
         {
             var result = base.Get(id);
             if (result == null)
-                LogMgr.Warn("[CombatNpcModifierDefineMgr] Define不存在:{0}", id);
+                LogMgr.Instance.Warn("[CombatNpcModifierDefineMgr] Define不存在:{0}", id);
             return result;
         }
     }

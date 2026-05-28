@@ -12,8 +12,8 @@
 - 新增 `ScopeKey` 结构体（`Scope 枚举 + string ID`）
 - `EventMgr.EventTrigger` 保持命名，但签名改为接收 `string eventId`、`object args`、及 `params (Scope, string)[]` scope 列表
 - `EventMgr.RegisterEvent` 增加第一个参数 `string listenerKey`（便于调试查看 scope 内监听者）
-- 新增对"EventDefine 声明的 Scope 但调用方未传"的 `LogMgr.Warn` 提示机制
-- 悬空监听（对象已销毁但监听未移除）自动清理 + `LogMgr.Warn`
+- 新增对"EventDefine 声明的 Scope 但调用方未传"的 `LogMgr.Instance.Warn` 提示机制
+- 悬空监听（对象已销毁但监听未移除）自动清理 + `LogMgr.Instance.Warn`
 - Lua 集成预留接口：`IEventListener` 接口，`LuaEventListener` 包装类占位
 
 ## Capabilities

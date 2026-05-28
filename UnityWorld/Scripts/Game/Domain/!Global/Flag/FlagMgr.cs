@@ -48,7 +48,7 @@ namespace UnityWorld.Game.Domain
             Tile.ClearAll();
             Plane.ClearAll();
             Global.ClearAll();
-            LogMgr.Dbg("[FlagMgr] 初始化完成");
+            LogMgr.Instance.Dbg("[FlagMgr] 初始化完成");
         }
 
         public void Begin()  { }

@@ -334,9 +334,9 @@ namespace UnityWorld.Game.Domain.Combat
                 if (!mainScene.haslog)
                 {
                     mainScene.haslog = true;
-                    LogMgr.Dbg($"[Tick]{mainScene.CurrentTick}");
+                    LogMgr.Instance.Dbg($"[Tick]{mainScene.CurrentTick}");
                 }
-                LogMgr.Dbg($"[Combat]{msg}");
+                LogMgr.Instance.Dbg($"[Combat]{msg}");
             }
         }
 
@@ -371,7 +371,7 @@ namespace UnityWorld.Game.Domain.Combat
                     }
                     catch (System.Exception ex)
                     {
-                        LogMgr.Err("[CombatScene] CollectModifierStat '{0}' hook '{1}' 异常: {2}",
+                        LogMgr.Instance.Err("[CombatScene] CollectModifierStat '{0}' hook '{1}' 异常: {2}",
                             mod.DefineId, hookName, ex.Message);
                     }
                 }

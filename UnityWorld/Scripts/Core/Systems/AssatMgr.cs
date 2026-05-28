@@ -122,7 +122,7 @@ public Sprite GetSprite(string path,int layout)
     }
     catch (Exception ex)
     {
-        LogMgr.Err(string.Concat(new object[]
+        LogMgr.Instance.Err(string.Concat(new object[]
         {
         "Sprite Error:",
         path,

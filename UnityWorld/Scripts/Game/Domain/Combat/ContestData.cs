@@ -34,7 +34,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Log()
         {
-            LogMgr.Dbg(ToString());
+            LogMgr.Instance.Dbg(ToString());
         }
         
         public ContestData Clone()

@@ -117,7 +117,7 @@ namespace UnityWorld.Game.Domain.Combat
                     
                     if (ManaPool[key] <= 0)
                     {
-                        //LogMgr.Warn($"[CombatNpc] 灵元 {key.ExtraTypeId} 耗尽");
+                        //LogMgr.Instance.Warn($"[CombatNpc] 灵元 {key.ExtraTypeId} 耗尽");
                         //Trigger:触发耗尽某类灵元事件
                     } 
                 }

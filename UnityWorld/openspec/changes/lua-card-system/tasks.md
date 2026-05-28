@@ -20,7 +20,7 @@
 
 - [x] 3.1 修改 LuaEventListener.cs — 实现 OnEvent 真实桥接（调用 Lua 函数，传 ctx）
 - [x] 3.2 实现 ActionContext → Lua table 的适配（Caster/Target/SelfCardId/事件数据）
-- [x] 3.3 异常处理：try-catch 包裹 Lua 调用，LogMgr.Err 记录
+- [x] 3.3 异常处理：try-catch 包裹 Lua 调用，LogMgr.Instance.Err 记录
 
 ## 4. CombatScene 集成
 

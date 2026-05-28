@@ -29,6 +29,11 @@ namespace UnityWorld.Game.World
         /// </summary>
         public static void Initialize(int seed = 12345)
         {
+            _domains.Add(new LogMgr(seed));
+            _domains.Add(new LuaMgr());
+            _domains.Add(new APIMgr());
+
+
             GameDataMgr.Initialize();
             WorldTime.Initialize(seed);
             _gameplays.Add(new GlyphMgr(seed));
@@ -36,8 +41,6 @@ namespace UnityWorld.Game.World
             _gameplays.Add(new CombatMgr(seed));
             _gameplays.Add(new CultivationMgr(seed));
             
-            _domains.Add(new LuaMgr());
-            _domains.Add(new APIMgr());
             
             
             _domains.Add(new StatMgr(seed));
@@ -60,7 +63,7 @@ namespace UnityWorld.Game.World
             foreach (var mgr in _domains) mgr.Begin();  // 有耦合的初始化
             foreach (var mgr in _gameplays) mgr.Begin();
             
-            LogMgr.Dbg("=== 世界初始化完成 ===\n");
+            LogMgr.Instance.Dbg("=== 世界初始化完成 ===\n");
         }
 
         /// <summary>

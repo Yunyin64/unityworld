@@ -42,11 +42,11 @@
 
 #### Scenario: 触发未定义事件时输出 Warn
 - **WHEN** `TriggerEvent("UnknownEvent", args)` 被调用，且 `EventDefineMgr` 中不存在该 ID
-- **THEN** `LogMgr.Warn` 输出警告，事件不触发
+- **THEN** `LogMgr.Instance.Warn` 输出警告，事件不触发
 
 #### Scenario: 调用方未传 EventDefine 声明的 scope 时输出 Warn
 - **WHEN** `EventDefine("NpcMoved").Scopes` 包含 `Tile`，但调用方 `TriggerEvent` 未传入任何 Tile scope
-- **THEN** `LogMgr.Warn` 提示 "NpcMoved: EventDefine 声明了 Tile scope 但调用方未提供"，事件仍正常触发已有 scope
+- **THEN** `LogMgr.Instance.Warn` 提示 "NpcMoved: EventDefine 声明了 Tile scope 但调用方未提供"，事件仍正常触发已有 scope
 
 ### Requirement: EventMgr 支持移除监听
 `EventMgr.RemoveEvent` SHALL 接受 `string eventId`、`ScopeKey scope`、`IEventListener listener`，从对应监听列表中移除该监听者。若监听者不存在则静默忽略。在事件触发过程中调用 `RemoveEvent` 时，SHALL 延迟到本次触发结束后执行（使用现有 `triggering` 计数器机制）。
@@ -60,11 +60,11 @@
 - **THEN** 当前事件触发正常完成，下一次触发时该 listener 已被移除
 
 ### Requirement: EventMgr 悬空监听自动清理
-当事件触发时发现某 `ListenerEntry` 的监听者已失效（null 或 Lua 侧对象已销毁），系统 SHALL 自动将其从列表中移除，并通过 `LogMgr.Warn` 输出警告，包含 `listenerKey` 以定位问题来源。
+当事件触发时发现某 `ListenerEntry` 的监听者已失效（null 或 Lua 侧对象已销毁），系统 SHALL 自动将其从列表中移除，并通过 `LogMgr.Instance.Warn` 输出警告，包含 `listenerKey` 以定位问题来源。
 
 #### Scenario: 发现悬空监听时自动清理并 Warn
 - **WHEN** 触发事件时遍历监听列表，发现某 entry 的 `Listener` 为 null
-- **THEN** 该 entry 被加入待移除列表，触发结束后自动删除，并输出 `LogMgr.Warn` 含 `listenerKey`
+- **THEN** 该 entry 被加入待移除列表，触发结束后自动删除，并输出 `LogMgr.Instance.Warn` 含 `listenerKey`
 
 ### Requirement: IEventListener 接口预留 Lua 集成扩展点
 系统 SHALL 定义 `IEventListener` 接口，包含 `void OnEvent(string eventId, ScopeKey scope, object args)` 方法。C# 侧 SHALL 提供 `DelegateEventListener` 实现类（包装 `Action<string, ScopeKey, object>` 委托）。SHALL 提供空实现的 `LuaEventListener` 占位类，注释标明待 Lua 集成时实现。
@@ -75,4 +75,4 @@
 
 #### Scenario: LuaEventListener 占位不崩溃
 - **WHEN** `LuaEventListener.OnEvent(...)` 被调用（占位实现）
-- **THEN** 方法直接返回，不抛出异常，输出一条 `LogMgr.Warn` 提示"LuaEventListener 尚未实现"
+- **THEN** 方法直接返回，不抛出异常，输出一条 `LogMgr.Instance.Warn` 提示"LuaEventListener 尚未实现"

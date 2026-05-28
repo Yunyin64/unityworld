@@ -24,7 +24,7 @@ namespace UnityWorld.Game.Domain
             var card = reserve.Find(c => c.Id == cardId);
             if (card == null)
             {
-                LogMgr.Warn($"[Deploy] 卡Id={cardId} 不在 {caster.GetName()} 的 Reserve 中");
+                LogMgr.Instance.Warn($"[Deploy] 卡Id={cardId} 不在 {caster.GetName()} 的 Reserve 中");
                 return ctx;
             }
 
@@ -46,7 +46,7 @@ namespace UnityWorld.Game.Domain
             var card = deck.Find(c => c.Id == cardId);
             if (card == null)
             {
-                LogMgr.Warn($"[Recall] 卡Id={cardId} 不在 {caster.GetName()} 的运转池中");
+                LogMgr.Instance.Warn($"[Recall] 卡Id={cardId} 不在 {caster.GetName()} 的运转池中");
                 return ctx;
             }
 

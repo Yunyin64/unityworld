@@ -146,7 +146,7 @@ namespace UnityWorld.Core
         /// <summary>
         /// 触发事件，向 Global scope 和所有传入 scope 广播。
         /// 若 EventDefineMgr 中存在该事件定义，会校验调用方传入的 scope 是否覆盖定义中声明的 scope，
-        /// 缺失时输出 <see cref="LogMgr.Warn"/>。
+        /// 缺失时输出 <see cref="LogMgr.Instance.Warn"/>。
         /// </summary>
         /// <param name="eventId">事件字符串 ID，如 "NpcMoved"</param>
         /// <param name="args">事件参数（由事件定义约定具体类型）</param>
@@ -157,7 +157,7 @@ namespace UnityWorld.Core
             var define = EventDefineMgr.Instance?.Get(eventId);
             if (define == null && EventDefineMgr.Instance != null)
             {
-                LogMgr.Warn("[EventMgr] 触发了未在 EventDefine 中定义的事件：{0}，请检查 EventDefines.json", eventId);
+                LogMgr.Instance.Warn("[EventMgr] 触发了未在 EventDefine 中定义的事件：{0}，请检查 EventDefines.json", eventId);
             }
 
             // ② 校验调用方传入的 scope 是否覆盖 EventDefine 声明的 scope
@@ -173,7 +173,7 @@ namespace UnityWorld.Core
                     }
                     if (!found)
                     {
-                        LogMgr.Warn("[EventMgr] 事件 {0}：EventDefine 声明了 {1} scope，但调用方未提供对应 ID", eventId, declaredScope);
+                        LogMgr.Instance.Warn("[EventMgr] 事件 {0}：EventDefine 声明了 {1} scope，但调用方未提供对应 ID", eventId, declaredScope);
                     }
                 }
             }
@@ -193,7 +193,7 @@ namespace UnityWorld.Core
             }
             catch (Exception ex)
             {
-                LogMgr.Err("[EventMgr] TriggerEvent({0}) 发生异常：{1}", eventId, ex);
+                LogMgr.Instance.Err("[EventMgr] TriggerEvent({0}) 发生异常：{1}", eventId, ex);
             }
             finally
             {
@@ -267,7 +267,7 @@ namespace UnityWorld.Core
                     // 悬空监听：自动清理
                     staleIndices ??= new List<int>();
                     staleIndices.Add(i);
-                    LogMgr.Warn("[EventMgr] 发现悬空监听，已自动移除。eventId={0} scope={1} listenerKey={2}",
+                    LogMgr.Instance.Warn("[EventMgr] 发现悬空监听，已自动移除。eventId={0} scope={1} listenerKey={2}",
                         eventId, scope, entry.ListenerKey);
                     continue;
                 }
@@ -277,7 +277,7 @@ namespace UnityWorld.Core
                 }
                 catch (Exception ex)
                 {
-                    LogMgr.Err("[EventMgr] 监听者 {0} 处理事件 {1} 时抛出异常：{2}",
+                    LogMgr.Instance.Err("[EventMgr] 监听者 {0} 处理事件 {1} 时抛出异常：{2}",
                         entry.ListenerKey, eventId, ex);
                 }
             }

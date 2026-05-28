@@ -57,7 +57,7 @@ namespace UnityWorld.Game.Domain
         public virtual void OnStart()
         {
             EvaluateStoryEntries(BehaviorStoryTrigger.OnStart);
-            LogMgr.Dbg("[Behavior] OnStart: {0} (npc={1}, duration={2})", BehaviorId, Ownerint, Duration);
+            LogMgr.Instance.Dbg("[Behavior] OnStart: {0} (npc={1}, duration={2})", BehaviorId, Ownerint, Duration);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace UnityWorld.Game.Domain
         public virtual void OnEnd()
         {
             EvaluateStoryEntries(BehaviorStoryTrigger.OnEnd);
-            LogMgr.Dbg("[Behavior] OnEnd: {0} (npc={1}, elapsed={2}/{3})", BehaviorId, Ownerint, ElapsedTime, Duration);
+            LogMgr.Instance.Dbg("[Behavior] OnEnd: {0} (npc={1}, elapsed={2}/{3})", BehaviorId, Ownerint, ElapsedTime, Duration);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace UnityWorld.Game.Domain
                 (Scope.Npc, Ownerint.ToString())
             );
 
-            LogMgr.Dbg("[Behavior] OnInterrupt: {0} (npc={1}, elapsed={2})", BehaviorId, Ownerint, ElapsedTime);
+            LogMgr.Instance.Dbg("[Behavior] OnInterrupt: {0} (npc={1}, elapsed={2})", BehaviorId, Ownerint, ElapsedTime);
         }
 
         // ── Story 结算引擎 ───────────────────────────────────────────────────────
@@ -178,21 +178,21 @@ namespace UnityWorld.Game.Domain
 
         public  override void LogAllInfo()
         {
-            LogMgr.Dbg("│ ── 行为 ───────────────────────────────────");
-            LogMgr.Dbg("│  行为ID:     {0}", BehaviorId);
-            LogMgr.Dbg("│  所属NPC:    {0}", Ownerint);
-            LogMgr.Dbg("│  主行为:     {0}  可移动: {1}", IsPrimary, CanMove);
-            LogMgr.Dbg("│  进度:       {0:F1}/{1:F1}  已结束: {2}", ElapsedTime, Duration, IsFinished);
+            LogMgr.Instance.Dbg("│ ── 行为 ───────────────────────────────────");
+            LogMgr.Instance.Dbg("│  行为ID:     {0}", BehaviorId);
+            LogMgr.Instance.Dbg("│  所属NPC:    {0}", Ownerint);
+            LogMgr.Instance.Dbg("│  主行为:     {0}  可移动: {1}", IsPrimary, CanMove);
+            LogMgr.Instance.Dbg("│  进度:       {0:F1}/{1:F1}  已结束: {2}", ElapsedTime, Duration, IsFinished);
 
             if (StoryEntries.Count > 0)
             {
-                LogMgr.Dbg("│  故事条目 ({0}):", StoryEntries.Count);
+                LogMgr.Instance.Dbg("│  故事条目 ({0}):", StoryEntries.Count);
                 foreach (var e in StoryEntries)
                 {
                     var target = !string.IsNullOrEmpty(e.StoryId)
                         ? e.StoryId
                         : $"Tags[{string.Join(",", e.StoryTags)}]";
-                    LogMgr.Dbg("│    {0} | {1} | 概率={2:P0} 延迟={3:F1} 已触发={4}",
+                    LogMgr.Instance.Dbg("│    {0} | {1} | 概率={2:P0} 延迟={3:F1} 已触发={4}",
                         e.Trigger, target, e.Chance, e.Delay, e.HasTriggered);
                 }
             }

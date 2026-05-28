@@ -151,19 +151,19 @@ namespace UnityWorld.Core
         // ================================================================
 
         /// <summary>输出 Debug 级别日志</summary>
-        public static void Dbg(string fmt, params object[] objs)
+        public  void Dbg(string fmt, params object[] objs)
         {
             Log(LogLevel.Debug, fmt, objs);
         }
 
         /// <summary>输出 Warn 级别日志</summary>
-        public static void Warn(string fmt, params object[] objs)
+        public  void Warn(string fmt, params object[] objs)
         {
             Log(LogLevel.Warn, fmt, objs);
         }
 
         /// <summary>输出 Error 级别日志</summary>
-        public static void Err(string fmt, params object[] objs)
+        public  void Err(string fmt, params object[] objs)
         {
             Log(LogLevel.Error, fmt, objs);
         }

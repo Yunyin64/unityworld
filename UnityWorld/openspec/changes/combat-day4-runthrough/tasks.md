@@ -44,7 +44,7 @@
 - [x] 5.8 实现 `cond_target_self`：将 caster.Id.ToString() 写入 env["Targetint"]
 - [x] 5.9 实现 `cond_target_enemy`：将 caster.Target.Id.ToString() 写入 env["Targetint"]
 - [x] 5.10 实现 `cond_enemy_card_top`：取 caster.Target.CardStates 中第一张 IsActive 的卡的 DefineId 写入 env["TargetCardId"]，无卡返回 false
-- [x] 5.11 default 分支：LogMgr.Warn 输出未知 conditionId，返回 false
+- [x] 5.11 default 分支：LogMgr.Instance.Warn 输出未知 conditionId，返回 false
 
 ## 6. Condition 接入 Effect 执行流程
 

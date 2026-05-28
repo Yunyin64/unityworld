@@ -13,7 +13,7 @@
 
 #### Scenario: Path does not exist
 - **WHEN** `Load()` is called and the path is neither an existing file nor directory
-- **THEN** the base class SHALL log a warning via `LogMgr.Warn` and leave the dictionary empty (no exception thrown)
+- **THEN** the base class SHALL log a warning via `LogMgr.Instance.Warn` and leave the dictionary empty (no exception thrown)
 
 ### Requirement: Duplicate ID handling
 When loading multiple entries, `DefineMgrBase` SHALL skip entries whose `ID` already exists in the dictionary and log a warning for each duplicate.

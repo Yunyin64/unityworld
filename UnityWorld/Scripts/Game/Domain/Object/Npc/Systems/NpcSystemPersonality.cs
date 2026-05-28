@@ -53,7 +53,7 @@ namespace UnityWorld.Game.Domain
                 return data;
             }
 
-            LogMgr.Warn("[NpcSystemPersonality] 找不到 NPC {0} 的 PersonalityData，返回默认值", npcId);
+            LogMgr.Instance.Warn("[NpcSystemPersonality] 找不到 NPC {0} 的 PersonalityData，返回默认值", npcId);
             return new NpcPersonalityData();
         }
     }

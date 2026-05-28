@@ -33,10 +33,10 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void Log()
         {
-            LogMgr.Dbg("┌── Behavior · 行为状态 ─────────────────────");
-            LogMgr.Dbg("│  主行为:        {0}", PrimaryBehavior?.ToString() ?? "无");
-            LogMgr.Dbg("│  次要行为:    {0}", SecondaryBehaviors.ToInfoString());
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── Behavior · 行为状态 ─────────────────────");
+            LogMgr.Instance.Dbg("│  主行为:        {0}", PrimaryBehavior?.ToString() ?? "无");
+            LogMgr.Instance.Dbg("│  次要行为:    {0}", SecondaryBehaviors.ToInfoString());
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

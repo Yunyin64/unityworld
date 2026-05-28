@@ -38,11 +38,11 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("┌── PraticeData · 修炼进度 ──────────────────────────");
-            LogMgr.Dbg("│  当前境界:      {0}    境界进度: {1}", CurrentRealmLevel, RealmProgress);
-            LogMgr.Dbg("│  当前修炼功法:  {0}", GetNowGongFa()?.ToString() ?? "无");
-            LogMgr.Dbg("│  是否闭关:      {0}", IsInCultivation.ToString());
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── PraticeData · 修炼进度 ──────────────────────────");
+            LogMgr.Instance.Dbg("│  当前境界:      {0}    境界进度: {1}", CurrentRealmLevel, RealmProgress);
+            LogMgr.Instance.Dbg("│  当前修炼功法:  {0}", GetNowGongFa()?.ToString() ?? "无");
+            LogMgr.Instance.Dbg("│  是否闭关:      {0}", IsInCultivation.ToString());
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

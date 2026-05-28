@@ -55,7 +55,7 @@ namespace UnityWorld.Game.Domain
 
         public void Init()
         {
-            LogMgr.Dbg("[BehaviorMgr] 初始化完成（骨架模式）");
+            LogMgr.Instance.Dbg("[BehaviorMgr] 初始化完成（骨架模式）");
         }
 
         public void Begin()

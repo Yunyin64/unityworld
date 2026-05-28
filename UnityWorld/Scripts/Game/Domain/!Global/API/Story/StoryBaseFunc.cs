@@ -19,11 +19,11 @@ namespace UnityWorld.Game.Domain
             string traitId = ctx.GetValue("TraitId", "");
             if (!int.TryParse(npcIdStr, out int npcIdVal))
             {
-                LogMgr.Warn("[StoryBaseFunc] GiveTrait npcId 非整数: {0}", npcIdStr);
+                LogMgr.Instance.Warn("[StoryBaseFunc] GiveTrait npcId 非整数: {0}", npcIdStr);
                 return;
             }
             NpcMgr.Instance?.TraitSystem?.AddTrait(NpcMgr.Instance.GetById(npcIdVal), new TraitId(traitId));
-            LogMgr.Dbg("[StoryBaseFunc] GiveTrait npc={0} trait={1}", npcIdVal, traitId);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] GiveTrait npc={0} trait={1}", npcIdVal, traitId);
         }
 
         /// <summary>移除NPC特质。参数：int(String), TraitId(String)</summary>
@@ -34,7 +34,7 @@ namespace UnityWorld.Game.Domain
             string traitId = ctx.GetValue("TraitId", "");
             if (!int.TryParse(npcIdStr, out int npcIdVal)) return;
             NpcMgr.Instance?.TraitSystem?.RemoveTrait(NpcMgr.Instance.GetById(npcIdVal), new TraitId(traitId));
-            LogMgr.Dbg("[StoryBaseFunc] RemoveTrait npc={0} trait={1}", npcIdVal, traitId);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] RemoveTrait npc={0} trait={1}", npcIdVal, traitId);
         }
 
         // ── 行为卡操作 ────────────────────────────────────────
@@ -47,7 +47,7 @@ namespace UnityWorld.Game.Domain
             string cardDefineId = ctx.GetValue("CardDefineId", "");
             if (!int.TryParse(npcIdStr, out int npcIdVal)) return;
             BehaviorCardMgr.Instance?.GiveCard(npcIdVal, cardDefineId);
-            LogMgr.Dbg("[StoryBaseFunc] GiveBehaviorCard npc={0} card={1}", npcIdVal, cardDefineId);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] GiveBehaviorCard npc={0} card={1}", npcIdVal, cardDefineId);
         }
 
         // ── 灵气/属性修改 ─────────────────────────────────────
@@ -60,7 +60,7 @@ namespace UnityWorld.Game.Domain
             string element = ctx.GetValue("Element", "");
             float delta = ctx.GetValue("Delta", 0f);
             // TODO: 待 PlaneMgr/TileSystemAura 提供直接修改接口后接入
-            LogMgr.Dbg("[StoryBaseFunc] ModifyAura plane={0} element={1} delta={2}（暂未实现）", planeId, element, delta);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] ModifyAura plane={0} element={1} delta={2}（暂未实现）", planeId, element, delta);
         }
 
         /// <summary>修改NPC属性值。参数：int(String), StatId(String), Delta(Float)</summary>
@@ -74,11 +74,11 @@ namespace UnityWorld.Game.Domain
             var npc = NpcMgr.Instance?.GetById(npcIdVal);
             if (npc == null)
             {
-                LogMgr.Warn("[StoryBaseFunc] ModifyStat 找不到 NPC {0}", npcIdVal);
+                LogMgr.Instance.Warn("[StoryBaseFunc] ModifyStat 找不到 NPC {0}", npcIdVal);
                 return;
             }
             // TODO: 接入 StatBlock 的 AddFlat
-            LogMgr.Dbg("[StoryBaseFunc] ModifyStat npc={0} stat={1} delta={2}", npcIdVal, statId, delta);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] ModifyStat npc={0} stat={1} delta={2}", npcIdVal, statId, delta);
         }
 
         // ── Story 触发 ───────────────────────────────────────
@@ -108,7 +108,7 @@ namespace UnityWorld.Game.Domain
             var tags = tagsStr.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
             if (tags.Count == 0)
             {
-                LogMgr.Warn("[StoryBaseFunc] TriggerStoryByTag 参数 Tags 为空");
+                LogMgr.Instance.Warn("[StoryBaseFunc] TriggerStoryByTag 参数 Tags 为空");
                 return;
             }
 
@@ -128,7 +128,7 @@ namespace UnityWorld.Game.Domain
             string storyId = ctx.GetValue("StoryId", "");
             if (!int.TryParse(subjectIdStr, out int npcIdVal)) return;
             StoryMgr.Instance?.AddToFatePool(npcIdVal, time, storyId);
-            LogMgr.Dbg("[StoryBaseFunc] AddToFatePool npc={0} time={1} story={2}", npcIdVal, time, storyId);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] AddToFatePool npc={0} time={1} story={2}", npcIdVal, time, storyId);
         }
 
         /// <summary>向劫缘池写入条目。参数：SubjectId(String), StoryId(String), Weight(Float)</summary>
@@ -140,7 +140,7 @@ namespace UnityWorld.Game.Domain
             float weight = ctx.GetValue("Weight", 0f);
             if (!int.TryParse(subjectIdStr, out int npcIdVal)) return;
             StoryMgr.Instance?.AddToKarmaPool(npcIdVal, storyId, weight);
-            LogMgr.Dbg("[StoryBaseFunc] AddToKarmaPool npc={0} story={1} weight={2}", npcIdVal, storyId, weight);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] AddToKarmaPool npc={0} story={1} weight={2}", npcIdVal, storyId, weight);
         }
 
         // ── 事件广播 ─────────────────────────────────────────
@@ -152,11 +152,11 @@ namespace UnityWorld.Game.Domain
             string eventName = ctx.GetValue("EventName", "");
             if (string.IsNullOrEmpty(eventName))
             {
-                LogMgr.Warn("[StoryBaseFunc] TriggerEvent 参数 EventName 为空");
+                LogMgr.Instance.Warn("[StoryBaseFunc] TriggerEvent 参数 EventName 为空");
                 return;
             }
             EventMgr.Instance?.TriggerEvent(eventName, "");
-            LogMgr.Dbg("[StoryBaseFunc] TriggerEvent {0}", eventName);
+            LogMgr.Instance.Dbg("[StoryBaseFunc] TriggerEvent {0}", eventName);
         }
     }
 }

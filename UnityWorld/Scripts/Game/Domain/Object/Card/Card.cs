@@ -21,10 +21,10 @@ namespace UnityWorld.Game.Domain
         /// <summary>层次化日志输出</summary>
         public override void LogAllInfo()
         {
-            LogMgr.Dbg("┌══ Card · {0} ══════════════════════════════", DisplayName);
-            LogMgr.Dbg("│  DefineId: {0}", DefineId);
+            LogMgr.Instance.Dbg("┌══ Card · {0} ══════════════════════════════", DisplayName);
+            LogMgr.Instance.Dbg("│  DefineId: {0}", DefineId);
             BaseData.Log();
-            LogMgr.Dbg("└═══════════════════════════════════════════");
+            LogMgr.Instance.Dbg("└═══════════════════════════════════════════");
         }
 
 

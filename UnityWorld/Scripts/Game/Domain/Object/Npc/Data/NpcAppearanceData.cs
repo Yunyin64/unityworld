@@ -24,9 +24,9 @@ namespace UnityWorld.Game.Domain
         // TODO: 待实现
         public void Log()
         {
-            LogMgr.Dbg("┌── AppearanceData ──────────────────────────");
-            LogMgr.Dbg("│  身高:          {0:F2}", Height);
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── AppearanceData ──────────────────────────");
+            LogMgr.Instance.Dbg("│  身高:          {0:F2}", Height);
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
 
     }

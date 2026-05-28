@@ -47,7 +47,7 @@ namespace UnityWorld.Game.Domain
         {
             if (!data.GongFaData.ActiveSlotCardIds.Contains(gongFa.Id))
             {
-                LogMgr.Warn("[NpcSystemCultivation] 无法设定当前功法 {0}，因为它未激活", gongFa.DefineId);
+                LogMgr.Instance.Warn("[NpcSystemCultivation] 无法设定当前功法 {0}，因为它未激活", gongFa.DefineId);
                 return;
             }
             data.PracticeData.NowGongFaCardId = gongFa.Id;

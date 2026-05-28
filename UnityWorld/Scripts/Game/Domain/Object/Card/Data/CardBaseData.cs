@@ -34,10 +34,6 @@ namespace UnityWorld.Game.Domain
         /// <summary>关键词列表（如 Passive 等，决定卡牌运行模式）</summary>
         public List<string> Keywords { get; set; } = [];
 
-        public void InitKeywords()
-        {
-            
-        }
 
         public CardBaseData Clone()
         {
@@ -59,12 +55,12 @@ namespace UnityWorld.Game.Domain
             var mana = ManaCost.Count > 0
                 ? string.Join(",", ManaCost.Select(kv => $"{kv.Key}:{kv.Value}"))
                 : "无";
-            LogMgr.Dbg("┌── BaseData · 基础属性 ──────────────────────");
-            LogMgr.Dbg("│  体量:    {0}", Size);
-            LogMgr.Dbg("│  冷却:    {0:F1}s", Cooldown);
-            LogMgr.Dbg("│  灵元:    {0}", mana);
-            LogMgr.Dbg("│  标签:    [{0}]", string.Join(", ", Tags));
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── BaseData · 基础属性 ──────────────────────");
+            LogMgr.Instance.Dbg("│  体量:    {0}", Size);
+            LogMgr.Instance.Dbg("│  冷却:    {0:F1}s", Cooldown);
+            LogMgr.Instance.Dbg("│  灵元:    {0}", mana);
+            LogMgr.Instance.Dbg("│  标签:    [{0}]", string.Join(", ", Tags));
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

@@ -69,16 +69,13 @@ namespace UnityWorld.Game.Domain
             _luaState = new Lua();
             _luaState.LoadCLRPackage();
 
-            // 注入 LuaMgr 实例，供 Lua 脚本调用 RegisterKeyword 等方法
-            _luaState["LuaMgr"] = this;
-
             // 加载 Init.lua（定义 CardBase、Attack 等全局函数）
             LoadInitScript();
 
             // 扫描并执行 Keywords/ 目录下所有 Lua 脚本（脚本内自注册）
             LoadKeywordScripts();
 
-            LogMgr.Dbg("[LuaMgr] 初始化完成，Lua State 已创建");
+            LogMgr.Instance.Dbg("[LuaMgr] 初始化完成，Lua State 已创建");
         }
 
         public void Begin()
@@ -111,8 +108,8 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("=== {0} ===  {1}", Name, Desc);
-            LogMgr.Dbg("  Lua State: {0}", _luaState != null ? "Active" : "Null");
+            LogMgr.Instance.Dbg("=== {0} ===  {1}", Name, Desc);
+            LogMgr.Instance.Dbg("  Lua State: {0}", _luaState != null ? "Active" : "Null");
         }
 
         // ══════════════════════════════════════════════════════════
@@ -126,47 +123,57 @@ namespace UnityWorld.Game.Domain
         {
             if (!File.Exists(_luaInitPath))
             {
-                LogMgr.Err("[LuaMgr] Init.lua 不存在: {0}", _luaInitPath);
+                LogMgr.Instance.Err("[LuaMgr] Init.lua 不存在: {0}", _luaInitPath);
                 return;
             }
 
             try
             {
-                // 注入 APIMgr 实例到 Lua 全局空间，供 Init.lua 使用
-                if (APIMgr.Instance != null)
-                    _luaState["API"] = APIMgr.Instance;
-
-                // 注入枚举常量表，供 Modifier/Card Lua 脚本使用
+                RegisterGlobals();
                 RegisterEnumTables();
 
                 _luaState.DoFile(_luaInitPath);
-                LogMgr.Dbg("[LuaMgr] Init.lua 加载成功");
+                LogMgr.Instance.Dbg("[LuaMgr] Init.lua 加载成功");
             }
             catch (Exception ex)
             {
-                LogMgr.Err("[LuaMgr] Init.lua 加载失败: {0}", ex.Message);
+                LogMgr.Instance.Err("[LuaMgr] Init.lua 加载失败: {0}", ex.Message);
             }
         }
 
         /// <summary>
-        /// 将 C# 枚举注册为 Lua 全局 table（如 DamageType.Ci、ElementType.Jin）。
+        /// 注入 C# 单例到 Lua 全局空间，供 Lua 脚本直接使用。
+        /// 新增全局变量在此处统一注册。
+        /// </summary>
+        private void RegisterGlobals()
+        {
+            _luaState["LuaMgr"] = this;
+            _luaState["LogMgr"] = LogMgr.Instance;
+            _luaState["API"] = APIMgr.Instance;
+        }
+
+        /// <summary>
+        /// 反射扫描当前程序集所有 public enum，注册为 Lua 全局 table。
+        /// 如 CombatCardPhase.Ready、DamageType.Ci 等，Lua 侧直接用。
         /// </summary>
         private void RegisterEnumTables()
         {
-            // DamageType
-            _luaState.NewTable("DamageType");
-            foreach (DamageType val in Enum.GetValues(typeof(DamageType)))
-                _luaState.GetTable("DamageType")[val.ToString()] = val;
+            var assembly = typeof(LuaMgr).Assembly;
+            var enumTypes = assembly.GetTypes()
+                .Where(t => t.IsEnum && t.IsPublic);
 
-            // ElementType
-            _luaState.NewTable("ElementType");
-            foreach (BaseElementType val in Enum.GetValues(typeof(BaseElementType)))
-                _luaState.GetTable("ElementType")[val.ToString()] = val;
+            foreach (var enumType in enumTypes)
+            {
+                var name = enumType.Name;
+                _luaState.NewTable(name);
+                var tbl = _luaState.GetTable(name);
+                foreach (var val in Enum.GetValues(enumType))
+                {
+                    tbl[val.ToString()] = val;
+                }
+            }
 
-            // ContestType
-            _luaState.NewTable("ContestType");
-            foreach (ContestType val in Enum.GetValues(typeof(ContestType)))
-                _luaState.GetTable("ContestType")[val.ToString()] = val;
+            LogMgr.Instance.Dbg("[LuaMgr] 枚举注册完成，共 {0} 个", enumTypes.Count());
         }
 
         // ══════════════════════════════════════════════════════════
@@ -192,14 +199,14 @@ namespace UnityWorld.Game.Domain
         {
             if (_luaState == null)
             {
-                LogMgr.Err("[LuaMgr] LoadCardScript: Lua State 未初始化");
+                LogMgr.Instance.Err("[LuaMgr] LoadCardScript: Lua State 未初始化");
                 return null;
             }
 
             var filePath = Path.Combine(_luaCardsDir, $"{define.ID}.lua");
             if (!File.Exists(filePath))
             {
-                LogMgr.Dbg("[LuaMgr] LoadCardScript: 找不到脚本文件 {0}.lua", define.ID);
+                LogMgr.Instance.Dbg("[LuaMgr] LoadCardScript: 找不到脚本文件 {0}.lua", define.ID);
                 return null;
             }
 
@@ -213,13 +220,13 @@ namespace UnityWorld.Game.Domain
                 }
                 else
                 {
-                    LogMgr.Warn("[LuaMgr] LoadCardScript '{0}': 脚本未 return table", define.ID);
+                    LogMgr.Instance.Warn("[LuaMgr] LoadCardScript '{0}': 脚本未 return table", define.ID);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogMgr.Err("[LuaMgr] LoadCardScript '{0}' 失败: {1}", define.ID, ex.Message);
+                LogMgr.Instance.Err("[LuaMgr] LoadCardScript '{0}' 失败: {1}", define.ID, ex.Message);
                 return null;
             }
         }
@@ -236,7 +243,7 @@ namespace UnityWorld.Game.Domain
         {
             if (!Directory.Exists(_luaKeywordsDir))
             {
-                LogMgr.Warn("[LuaMgr] Keywords 目录不存在: {0}，跳过 Keyword 加载", _luaKeywordsDir);
+                LogMgr.Instance.Warn("[LuaMgr] Keywords 目录不存在: {0}，跳过 Keyword 加载", _luaKeywordsDir);
                 return;
             }
 
@@ -249,11 +256,11 @@ namespace UnityWorld.Game.Domain
                 }
                 catch (Exception ex)
                 {
-                    LogMgr.Err("[LuaMgr] Keyword 脚本执行失败: {0} -> {1}", Path.GetFileName(filePath), ex.Message);
+                    LogMgr.Instance.Err("[LuaMgr] Keyword 脚本执行失败: {0} -> {1}", Path.GetFileName(filePath), ex.Message);
                 }
             }
 
-            LogMgr.Dbg("[LuaMgr] Keyword 脚本扫描完成，已注册 {0} 个", _keywordRegistry.Count);
+            LogMgr.Instance.Dbg("[LuaMgr] Keyword 脚本扫描完成，已注册 {0} 个", _keywordRegistry.Count);
         }
 
         /// <summary>
@@ -264,17 +271,17 @@ namespace UnityWorld.Game.Domain
         {
             if (string.IsNullOrEmpty(name))
             {
-                LogMgr.Err("[LuaMgr] RegisterKeyword: name 不能为空");
+                LogMgr.Instance.Err("[LuaMgr] RegisterKeyword: name 不能为空");
                 return;
             }
             if (table == null)
             {
-                LogMgr.Err("[LuaMgr] RegisterKeyword: '{0}' 的 table 为 null", name);
+                LogMgr.Instance.Err("[LuaMgr] RegisterKeyword: '{0}' 的 table 为 null", name);
                 return;
             }
 
             _keywordRegistry[name] = table;
-            LogMgr.Dbg("[LuaMgr] Keyword 注册成功: {0}", name);
+            LogMgr.Instance.Dbg("[LuaMgr] Keyword 注册成功: {0}", name);
         }
 
         /// <summary>
@@ -299,7 +306,7 @@ namespace UnityWorld.Game.Domain
         {
             if (_luaState == null)
             {
-                LogMgr.Err("[LuaMgr] LoadModifierScript: Lua State 未初始化");
+                LogMgr.Instance.Err("[LuaMgr] LoadModifierScript: Lua State 未初始化");
                 return null;
             }
 
@@ -319,13 +326,13 @@ namespace UnityWorld.Game.Domain
                 }
                 else
                 {
-                    LogMgr.Warn("[LuaMgr] LoadModifierScript '{0}': 脚本未 return table", defineId);
+                    LogMgr.Instance.Warn("[LuaMgr] LoadModifierScript '{0}': 脚本未 return table", defineId);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                LogMgr.Err("[LuaMgr] LoadModifierScript '{0}' 失败: {1}", defineId, ex.Message);
+                LogMgr.Instance.Err("[LuaMgr] LoadModifierScript '{0}' 失败: {1}", defineId, ex.Message);
                 return null;
             }
         }

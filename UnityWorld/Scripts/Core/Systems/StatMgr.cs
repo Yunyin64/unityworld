@@ -31,7 +31,7 @@ namespace UnityWorld.Core
         public void Init()
         {
             _Blocks.Clear();
-            LogMgr.Dbg("[StatMgr] 初始化完成");
+            LogMgr.Instance.Dbg("[StatMgr] 初始化完成");
         }
 
         public void Begin() { }
@@ -91,7 +91,7 @@ namespace UnityWorld.Core
         /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>
         public void Log()
         {
-            LogMgr.Dbg("[{0}] {1} | Blocks={2}",
+            LogMgr.Instance.Dbg("[{0}] {1} | Blocks={2}",
                 Name, Desc, _Blocks.Count);
         }
     }

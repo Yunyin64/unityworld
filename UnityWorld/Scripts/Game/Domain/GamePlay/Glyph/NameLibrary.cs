@@ -36,7 +36,7 @@ namespace UnityWorld.Game.Domain
         {
             if (!File.Exists(path))
             {
-                LogMgr.Warn("[NameLibrary] 找不到名字库文件 {0}，将使用空库。", path);
+                LogMgr.Instance.Warn("[NameLibrary] 找不到名字库文件 {0}，将使用空库。", path);
                 return new NameLibrary();
             }
 
@@ -52,7 +52,7 @@ namespace UnityWorld.Game.Domain
             }
             catch (Exception ex)
             {
-                LogMgr.Warn("[NameLibrary] 解析名字库失败：{0}", ex.Message);
+                LogMgr.Instance.Warn("[NameLibrary] 解析名字库失败：{0}", ex.Message);
                 return new NameLibrary();
             }
         }

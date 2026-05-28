@@ -40,10 +40,10 @@ namespace UnityWorld.Game.Domain
         public void Log()
         {
             var gf = GetGongFa();
-            LogMgr.Dbg("┌── CardGongFaData ──────────────────────────");
-            LogMgr.Dbg("│  CardId:    {0}", CardId);
-            LogMgr.Dbg("│  GongFa:    {0}", gf?.ToString() ?? "null");
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("┌── CardGongFaData ──────────────────────────");
+            LogMgr.Instance.Dbg("│  CardId:    {0}", CardId);
+            LogMgr.Instance.Dbg("│  GongFa:    {0}", gf?.ToString() ?? "null");
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 

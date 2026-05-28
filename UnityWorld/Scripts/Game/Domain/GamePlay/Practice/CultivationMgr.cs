@@ -42,7 +42,7 @@ namespace UnityWorld.Game.Domain
             var define = CultivationDefineMgr.Instance.Get(defineId);
             if (define == null)
             {
-                LogMgr.Warn("[CultivationMgr] 找不到功法定义：{0}", defineId);
+                LogMgr.Instance.Warn("[CultivationMgr] 找不到功法定义：{0}", defineId);
                 return;
             }
             // 如果未指定修炼点数，默认为满（maxPoint），即所有节点解锁
@@ -72,7 +72,7 @@ namespace UnityWorld.Game.Domain
             // 从 GongFaMgr 全局表移除
             GongFaMgr.Instance?.Remove(slot.Id);
 
-            LogMgr.Dbg("[CultivationMgr] {0} 失去功法 {1}", npc, defineId);
+            LogMgr.Instance.Dbg("[CultivationMgr] {0} 失去功法 {1}", npc, defineId);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace UnityWorld.Game.Domain
             // 检查新解锁的节点并发牌
             GrantCardsForRange(npc, define, oldPoint, newPoint);
 
-            LogMgr.Dbg("[CultivationMgr] {0} 功法 {1} 进度 {2} → {3}",
+            LogMgr.Instance.Dbg("[CultivationMgr] {0} 功法 {1} 进度 {2} → {3}",
                 npc, slot.DefineId, oldPoint, newPoint);
 
             return delta;
@@ -112,7 +112,7 @@ namespace UnityWorld.Game.Domain
             var slot = npc.GetAllSlots().FirstOrDefault(s => s.DefineId == defineId);
             if (slot == null)
             {
-                LogMgr.Warn("[CultivationMgr] {0} 未激活功法 {1}，无法切换", npc, defineId);
+                LogMgr.Instance.Warn("[CultivationMgr] {0} 未激活功法 {1}，无法切换", npc, defineId);
                 return false;
             }
             npc.SetNowGongFa(slot);
@@ -147,7 +147,7 @@ namespace UnityWorld.Game.Domain
                 if (pt.Type == CultivationPointType.Card && !string.IsNullOrEmpty(pt.RefId))
                 {  
                     npc.GainCard(pt.RefId);
-                    LogMgr.Dbg("[CultivationMgr] {0} {1}功法解锁卡牌 {2}", npc, define.ID,pt.RefId);
+                    LogMgr.Instance.Dbg("[CultivationMgr] {0} {1}功法解锁卡牌 {2}", npc, define.ID,pt.RefId);
                     
                 }
                 // 后续扩展：BehaviorCard / Modifier / Story 类型在此追加分支
@@ -159,7 +159,7 @@ namespace UnityWorld.Game.Domain
 
         public void Init()
         {
-            LogMgr.Dbg("[CultivationMgr] 初始化完成（骨架模式）");
+            LogMgr.Instance.Dbg("[CultivationMgr] 初始化完成（骨架模式）");
         }
 
         public void Begin()
@@ -190,11 +190,11 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Dbg("┌── CultivationMgr · {0} ──────────────────────────", Name);
-            LogMgr.Dbg("│  {0}", Desc);
-            LogMgr.Dbg("│  功法定义总数: {0}",
+            LogMgr.Instance.Dbg("┌── CultivationMgr · {0} ──────────────────────────", Name);
+            LogMgr.Instance.Dbg("│  {0}", Desc);
+            LogMgr.Instance.Dbg("│  功法定义总数: {0}",
                 CultivationDefineMgr.Instance?.GetAll().Count() ?? 0);
-            LogMgr.Dbg("└───────────────────────────────────────────");
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 }

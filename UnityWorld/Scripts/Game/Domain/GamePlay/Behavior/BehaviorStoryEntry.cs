@@ -63,7 +63,7 @@ namespace UnityWorld.Game.Domain
 
         public override void LogAllInfo()
         {
-                LogMgr.Dbg("│  StoryEntry: Trigger={0}, StoryId='{1}', StoryTags={2}, Chance={3}, Delay={4}, HasTriggered={5}",
+                LogMgr.Instance.Dbg("│  StoryEntry: Trigger={0}, StoryId='{1}', StoryTags={2}, Chance={3}, Delay={4}, HasTriggered={5}",
                     Trigger, StoryId, StoryTags.ToInfoString(), Chance, Delay, HasTriggered);
         }
 

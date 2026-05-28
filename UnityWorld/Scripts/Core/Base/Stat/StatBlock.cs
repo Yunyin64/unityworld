@@ -82,7 +82,7 @@ namespace UnityWorld.Core
             if (define == null) return;
             if (define.BaseType != StatBaseType.Primary)
             {
-                LogMgr.Warn("StatBlock", $"尝试对非 Primary 属性 [{statId}] 调用 AddBase，已忽略。Derived 属性请使用公式驱动。");
+                LogMgr.Instance.Warn("StatBlock", $"尝试对非 Primary 属性 [{statId}] 调用 AddBase，已忽略。Derived 属性请使用公式驱动。");
                 return;
             }
             var entry = GetOrCreateEntry(statId);
@@ -98,7 +98,7 @@ namespace UnityWorld.Core
             if (define == null) return;
             if (define.BaseType != StatBaseType.Primary)
             {
-                LogMgr.Warn("StatBlock", $"尝试对非 Primary 属性 [{statId}] 调用 SetBase，已忽略。Derived 属性请使用公式驱动。");
+                LogMgr.Instance.Warn("StatBlock", $"尝试对非 Primary 属性 [{statId}] 调用 SetBase，已忽略。Derived 属性请使用公式驱动。");
                 return;
             }
             var entry = GetOrCreateEntry(statId);
