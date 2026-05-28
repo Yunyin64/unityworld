@@ -1,6 +1,6 @@
 ## Why
 
-当前战斗卡牌系统中所有 CombatCard 都走统一的 CD 循环（WaitResource → InCD → Ready → InPending → Finished），无法表达"被动卡"——一种不主动出手、没有 CD 机制、通过声明式 keyword 决定行为的卡牌类型。需要引入 Keyword 系统作为基础设施，使卡牌的运行模式可由 Lua 脚本声明式扩展，首个落地的 keyword 为 `Passive`。
+当前战斗卡牌系统中所有 CombatCard 都走统一的 CD 循环（Waiting → InCD → Ready → InPending → Finished），无法表达"被动卡"——一种不主动出手、没有 CD 机制、通过声明式 keyword 决定行为的卡牌类型。需要引入 Keyword 系统作为基础设施，使卡牌的运行模式可由 Lua 脚本声明式扩展，首个落地的 keyword 为 `Passive`。
 
 ## What Changes
 

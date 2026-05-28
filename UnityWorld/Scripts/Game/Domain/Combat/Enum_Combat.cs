@@ -37,13 +37,11 @@ namespace UnityWorld.Game.Domain.Combat
 
     public enum CombatCardPhase
     {
-        WaitResource,
+        Waiting,
         InCD,
         Ready,
         InPending,
         Finished,
-        /// <summary>准备移除</summary>
-        IsExpired,
         /// <summary>被动模式：不参与 CD 循环，由 Keyword 驱动</summary>
         Passive,
     }

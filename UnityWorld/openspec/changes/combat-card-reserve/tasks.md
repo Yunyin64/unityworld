@@ -13,7 +13,7 @@
 ## 3. 战斗层 Reserve 池
 
 - [x] 3.1 CombatNpcCardFunc.cs 新增 `Reserve: List<CombatCard>` 字段和 `GetReserve()` 访问器
-- [x] 3.2 实现 `Deploy(CombatCard card)` — 从 Reserve 移入 CardDeck，CD 清零，Phase=WaitResource，调用 card.CallLua("OnDeploy")
+- [x] 3.2 实现 `Deploy(CombatCard card)` — 从 Reserve 移入 CardDeck，CD 清零，Phase=Waiting，调用 card.CallLua("OnDeploy")
 - [x] 3.3 实现 `Recall(CombatCard card)` — 从 CardDeck 移入 Reserve，CD 清零，调用 card.CallLua("OnRecall")
 - [x] 3.4 Deploy/Recall 边界处理：卡不在预期池中时输出警告日志并 return
 

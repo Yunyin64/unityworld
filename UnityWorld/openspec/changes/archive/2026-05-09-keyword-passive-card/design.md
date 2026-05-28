@@ -1,6 +1,6 @@
 ## Context
 
-当前战斗卡牌系统中，`CombatCard` 统一走 `WaitResource → InCD → Ready → InPending → Finished` 的 Phase 循环。所有卡牌行为由 Lua env 中的 `Contest`/`Apply` 等 Hook 驱动。`LuaMgr` 负责管理 Lua State 生命周期及卡牌脚本加载，卡牌脚本目录为 `Data/LuaCards/`，初始化脚本为 `Data/LuaScripts/Init.lua`。
+当前战斗卡牌系统中，`CombatCard` 统一走 `Waiting → InCD → Ready → InPending → Finished` 的 Phase 循环。所有卡牌行为由 Lua env 中的 `Contest`/`Apply` 等 Hook 驱动。`LuaMgr` 负责管理 Lua State 生命周期及卡牌脚本加载，卡牌脚本目录为 `Data/LuaCards/`，初始化脚本为 `Data/LuaScripts/Init.lua`。
 
 现在需要支持"被动卡"——一种不走 CD 循环、通过 keyword 声明行为模式的卡牌。为了 Mod 友好，C# 侧不硬编码任何 keyword 的语义，只负责加载 keyword Lua 脚本并在卡牌生命周期节点遍历调用。
 

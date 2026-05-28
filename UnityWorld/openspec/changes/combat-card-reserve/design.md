@@ -37,7 +37,7 @@ Field/Reserve 存 cardId（int），引用 AllCards 中的 Card 实例。
 
 ### 3. Deploy/Recall 默认 CD 清零
 
-Deploy 后卡从 WaitResource 开始走流程；Recall 时清零 CD 进度。
+Deploy 后卡从 Waiting 开始走流程；Recall 时清零 CD 进度。
 
 **理由：** 探索讨论中确定。Lua hook（OnDeploy/OnRecall）可覆盖此行为，Keyword 也可自定义。
 

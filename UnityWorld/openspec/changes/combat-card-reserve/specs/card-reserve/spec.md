@@ -45,11 +45,11 @@ InitDeck() SHALL 将大世界 NpcCardData.Field 中的卡加载到 CombatNpc.Car
 - **THEN** fallback 到原逻辑：AllCards 全部加载到 CardDeck
 
 ### Requirement: Deploy 操作将卡从 Reserve 移入 CardDeck
-CombatNpc SHALL 提供 `Deploy(CombatCard card)` 方法，将指定卡从 Reserve 移入 CardDeck。移入后卡的 CD 清零，Phase 设为 WaitResource，触发 Lua hook `OnDeploy`。
+CombatNpc SHALL 提供 `Deploy(CombatCard card)` 方法，将指定卡从 Reserve 移入 CardDeck。移入后卡的 CD 清零，Phase 设为 Waiting，触发 Lua hook `OnDeploy`。
 
 #### Scenario: 成功 Deploy
 - **WHEN** 调用 Deploy(card) 且 card 在 Reserve 中
-- **THEN** card 从 Reserve 移除，加入 CardDeck，CD=0，Phase=WaitResource，触发 OnDeploy hook
+- **THEN** card 从 Reserve 移除，加入 CardDeck，CD=0，Phase=Waiting，触发 OnDeploy hook
 
 #### Scenario: Deploy 不存在于 Reserve 的卡
 - **WHEN** 调用 Deploy(card) 且 card 不在 Reserve 中

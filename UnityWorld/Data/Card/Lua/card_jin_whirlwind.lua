@@ -1,6 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
 -- 回旋斩
--- 3点物理斩击，己方每次攻击赢时为自己充能10 tick
+-- 3点物理斩击，己方每次攻击时为自己充能10 tick
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -18,8 +18,8 @@ function card:Contest(ctx)
     Attack(ctx, "Jin", "Zhan", 3)
 end
 
-function card:Apply(ctx)
-end
+--function card:Apply(ctx)
+--end
 
 function card:OnAttack(ctx)
     -- 己方攻击赢时，为自己充能 10 tick

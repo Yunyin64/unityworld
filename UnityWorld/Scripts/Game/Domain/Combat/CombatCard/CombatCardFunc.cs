@@ -62,7 +62,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
             if(Ticks["CD"] >= GetCDMax()){
             Ticks["CD"] = 0;
-            Phase = CombatCardPhase.Ready;
+            SetPhase(CombatCardPhase.Ready);
             }
         }
         /// <summary>
@@ -71,7 +71,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void CheckMana()
         {
             var cost = GetCombatManaCost();
-            if (cost.Count == 0 || Owner.TryCostMana(cost)) Phase = CombatCardPhase.InCD;
+            if (cost.Count == 0 || Owner.TryCostMana(cost)) SetPhase(CombatCardPhase.InCD);
         }
         public void Charge(int Tick)
         {

@@ -77,10 +77,50 @@ namespace UnityWorld.Game.Domain.Combat
             CombatManaCost.Clear();
             foreach (var kv in GetManaCost())
             {
-                var final = Math.Max(0, kv.Value + (int)GetStat($"ManaAdj_{kv.Key}"));
-                if (final > 0) CombatManaCost[kv.Key] = final;
+                var key = kv.Key;
+                var ID = key.ExtraTypeId;
+
+                if (ID == "Min")
+                {
+                    // Min：直接取原始数量，不走属性修正
+                    int cost = Math.Max(0, kv.Value);
+                    if (cost <= 0) continue;
+                    var candidate = Owner.ManaPool
+                        .Where(x => x.Value > 0)
+                        .OrderBy(x => x.Value)
+                        .FirstOrDefault();
+                    if (candidate.Key.Kind == BaseElementType.None) continue;
+                    AddToCost(candidate.Key, cost);
+                }
+                else if (ID == "Max")
+                {
+                    // Max：直接取原始数量，不走属性修正
+                    int cost = Math.Max(0, kv.Value);
+                    if (cost <= 0) continue;
+                    var candidate = Owner.ManaPool
+                        .Where(x => x.Value > 0)
+                        .OrderByDescending(x => x.Value)
+                        .FirstOrDefault();
+                    if (candidate.Key.Kind == BaseElementType.None) continue;
+                    AddToCost(candidate.Key, cost);
+                }
+                else
+                {
+                    // 普通元素：受 ManaAdj 属性修正
+                    var final = Math.Max(0, kv.Value + (int)GetStat($"ManaAdj_{key}"));
+                    if (final <= 0) continue;
+                    AddToCost(key, final);
+                }
             }
             return CombatManaCost;
+        }
+
+        private void AddToCost(ElementType key, int amount)
+        {
+            if (CombatManaCost.ContainsKey(key))
+                CombatManaCost[key] += amount;
+            else
+                CombatManaCost[key] = amount;
         }
         public int GetDeckIndex() => Owner?.GetField().IndexOf(this) ?? -1;
         public float GetCDMax()

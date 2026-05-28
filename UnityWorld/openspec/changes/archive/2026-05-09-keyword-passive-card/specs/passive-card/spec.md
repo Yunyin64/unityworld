@@ -26,14 +26,14 @@
 - **THEN** 克隆体的 Keywords 列表内容相同但引用不同（修改克隆体不影响原体）
 
 ### Requirement: CombatCard.Tick() 跳过 Passive 卡的 CD 循环
-CombatCard.Tick() SHALL 在 Phase == Passive 时，仅调用 keyword hooks 的 OnTick 和卡自身 Lua env 的 `OnPassiveTick`（如果定义了），然后 return，不执行 WaitResource/InCD/Ready 的状态转换逻辑。
+CombatCard.Tick() SHALL 在 Phase == Passive 时，仅调用 keyword hooks 的 OnTick 和卡自身 Lua env 的 `OnPassiveTick`（如果定义了），然后 return，不执行 Waiting/InCD/Ready 的状态转换逻辑。
 
 #### Scenario: Passive 卡的 Tick
 - **WHEN** 一张 Phase == Passive 的卡执行 Tick()
 - **THEN** 不调用 CheckMana()、不调用 ResetCD()、不改变 Phase、不增加 CD 计时器
 
 #### Scenario: 主动卡的 Tick 不受影响
-- **WHEN** 一张 Phase == WaitResource 的卡执行 Tick()
+- **WHEN** 一张 Phase == Waiting 的卡执行 Tick()
 - **THEN** 正常走 CheckMana → InCD → ResetCD → Ready 流程，行为与改动前完全一致
 
 ### Requirement: Passive.lua 实现

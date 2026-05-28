@@ -10,7 +10,7 @@ namespace UnityWorld.Game.Domain.Combat
         public Dictionary<string, LuaFunction> LuaHooks { get; set; } = new();
         public HashSet<string> HookUse { get; set; } = new();
         public CombatNpc Owner;    
-        private CombatCardPhase Phase = CombatCardPhase.WaitResource;
+        private CombatCardPhase Phase = CombatCardPhase.Waiting;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
         public CombatScene Scene { get ; set ; }
 
@@ -23,23 +23,23 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Start()
         {
-            SetPhase(CombatCardPhase.WaitResource);
+            Ticks.Add("Main",0);
+            Ticks.Add("CD",0);
+            SetPhase(CombatCardPhase.Waiting);
             CallLua("OnStart");
         }
 
         public void Tick()
         {
-            if (Phase == CombatCardPhase.Passive){}
-            if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.WaitResource);
-            if(Phase == CombatCardPhase.WaitResource) CheckMana();
-
+            CallLua("OnTick");
+            
+            if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.Waiting);
             if(Phase == CombatCardPhase.InCD)
             {
                 CDTick();
                 ResetCD();
             }
             CardModifierTick();
-            CallLua("OnTick");
             HookUse.Clear();
             Ticks["Main"]++;
 
@@ -179,8 +179,8 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.DefineId = card.DefineId;
             combatCard.DisplayName = card.DisplayName;
             combatCard.Stats = StatMgr.Instance.CreateBlock(card.Id, typeof(CombatCard));
-            combatCard.Ticks.Add("Main",0);
-            combatCard.Ticks.Add("CD",0);
+
+            if(card.GetCooldown() <= 0) combatCard.GetKeywords().Add("Passive");
             return combatCard;
         }
 

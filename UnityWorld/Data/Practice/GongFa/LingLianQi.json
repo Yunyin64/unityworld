@@ -1,0 +1,154 @@
+[
+  {
+    "ID": "jin_fa",
+    "DisplayName": "金法",
+    "Desc": "以金行之力修炼的基础功法，金气锐利，善攻伐。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 100,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 25, "Type": "Card", "refId": "card_jin_slash" },
+      { "threshold": 50, "Type": "Card", "refId": "card_jin_needle" },
+      { "threshold": 80, "Type": "Card", "refId": "card_jin_armor_break" }
+    ],
+    "Tags": ["灵修", "金", "五行", "基础"]
+  },
+  {
+    "ID": "mu_fa",
+    "DisplayName": "木法",
+    "Desc": "以木行之力修炼的基础功法，木气生发，善恢复。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 100,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 25, "Type": "Card", "refId": "card_mu_stab" },
+      { "threshold": 50, "Type": "Card", "refId": "card_mu_haste" },
+      { "threshold": 80, "Type": "Card", "refId": "card_mu_heal_wound" }
+    ],
+    "Tags": ["灵修", "木", "五行", "基础"]
+  },
+  {
+    "ID": "shui_fa",
+    "DisplayName": "水法",
+    "Desc": "以水行之力修炼的基础功法，水气柔韧，善防御。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 100,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 25, "Type": "Card", "refId": "card_shui_shield" },
+      { "threshold": 50, "Type": "Card", "refId": "card_shui_heal" },
+      { "threshold": 80, "Type": "Card", "refId": "card_shui_freeze" }
+    ],
+    "Tags": ["灵修", "水", "五行", "基础"]
+  },
+  {
+    "ID": "huo_fa",
+    "DisplayName": "火法",
+    "Desc": "以火行之力修炼的基础功法，火气暴烈，善爆发。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 100,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 25, "Type": "Card", "refId": "card_huo_shot" },
+      { "threshold": 50, "Type": "Card", "refId": "card_huo_drain" },
+      { "threshold": 80, "Type": "Card", "refId": "card_huo_burst" }
+    ],
+    "Tags": ["灵修", "火", "五行", "基础"]
+  },
+  {
+    "ID": "tu_fa",
+    "DisplayName": "土法",
+    "Desc": "以土行之力修炼的基础功法，土气厚重，善承受。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 100,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 25, "Type": "Card", "refId": "card_tu_block" },
+      { "threshold": 50, "Type": "Card", "refId": "card_tu_armor" },
+      { "threshold": 80, "Type": "Card", "refId": "card_tu_stun" }
+    ],
+    "Tags": ["灵修", "土", "五行", "基础"]
+  },
+  {
+    "ID": "wu_xing_lun_zhuan",
+    "DisplayName": "五行轮转功",
+    "Desc": "五行相生相克循环不息，灵活切换五行属性。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 150,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 30, "Type": "Card", "refId": "card_jin_slash" },
+      { "threshold": 60, "Type": "Card", "refId": "card_mu_convert" },
+      { "threshold": 90, "Type": "Card", "refId": "card_shui_displace" },
+      { "threshold": 120, "Type": "Card", "refId": "card_huo_shot" }
+    ],
+    "Tags": ["灵修", "五行", "轮转", "切换"]
+  },
+  {
+    "ID": "hun_yuan_gong",
+    "DisplayName": "混元功",
+    "Desc": "融合五行之力的高阶功法，五气朝元，威能浑厚。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 200,
+    "completeness": 0.9,
+    "points": [
+      { "threshold": 40, "Type": "Card", "refId": "card_jin_heavy_slash" },
+      { "threshold": 80, "Type": "Card", "refId": "card_huo_spear" },
+      { "threshold": 130, "Type": "Card", "refId": "card_shui_shield" },
+      { "threshold": 170, "Type": "Card", "refId": "card_tu_armor" }
+    ],
+    "Tags": ["灵修", "混元", "五行", "高阶"]
+  },
+  {
+    "ID": "qing_ling_jue",
+    "DisplayName": "清灵诀",
+    "Desc": "凝神静气的辅助功法，提升灵力恢复速度。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 80,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 20, "Type": "Card", "refId": "card_shui_heal" },
+      { "threshold": 50, "Type": "Card", "refId": "card_mu_haste" },
+      { "threshold": 70, "Type": "Card", "refId": "card_mu_heal_wound" }
+    ],
+    "Tags": ["灵修", "辅助", "恢复", "灵力"]
+  },
+  {
+    "ID": "tan_ling_shu",
+    "DisplayName": "探灵术",
+    "Desc": "感知周围灵气波动的探查功法，可侦测隐匿之物。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 80,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 20, "Type": "Card", "refId": "card_shui_displace" },
+      { "threshold": 50, "Type": "Card", "refId": "card_mu_vulnerable" },
+      { "threshold": 70, "Type": "Card", "refId": "card_shui_weakness" }
+    ],
+    "Tags": ["灵修", "探查", "感知", "辅助"]
+  },
+  {
+    "ID": "gu_yuan_gong",
+    "DisplayName": "固元功",
+    "Desc": "固本培元的防御功法，强化体魄根基。",
+    "pathType": "Ling",
+    "realmLevel": 1,
+    "maxPoint": 100,
+    "completeness": 1.0,
+    "points": [
+      { "threshold": 25, "Type": "Card", "refId": "card_tu_block" },
+      { "threshold": 50, "Type": "Card", "refId": "card_jin_armor" },
+      { "threshold": 80, "Type": "Card", "refId": "card_shui_shield" }
+    ],
+    "Tags": ["灵修", "防御", "固本", "体魄"]
+  }
+]

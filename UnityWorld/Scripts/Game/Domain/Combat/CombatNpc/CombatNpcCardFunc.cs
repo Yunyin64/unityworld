@@ -111,8 +111,7 @@ namespace UnityWorld.Game.Domain.Combat
                         }
                         Reserve.Remove(card);
                         Field.Add(card);
-                        card.Ticks["CD"] = 0;
-                        card.SetPhase(CombatCardPhase.WaitResource);
+                        card.Start();
                         card.CallLua("OnDeploy");
                         Log($"[Deploy] {card.DisplayName} Reserve→Field，当前SP={GetSp()}");
                         break;
@@ -125,7 +124,6 @@ namespace UnityWorld.Game.Domain.Combat
                         }
                         Field.Remove(card);
                         Reserve.Add(card);
-                        card.Ticks["CD"] = 0;
                         card.CallLua("OnRecall");
                         Log($"[Recall] {card.DisplayName} Field→Reserve，当前SP={GetSp()}");
                         break;

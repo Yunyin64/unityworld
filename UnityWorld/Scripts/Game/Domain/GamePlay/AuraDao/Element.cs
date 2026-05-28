@@ -30,6 +30,9 @@ namespace UnityWorld.Game.Domain
         public static ElementType Huo = new ElementType(BaseElementType.Huo,"Huo");
         public static ElementType Tu = new ElementType(BaseElementType.Tu,"Tu");
         public static ElementType Mix = new ElementType(BaseElementType.Extra,"Mix");
+        public static ElementType Min = new ElementType(BaseElementType.Extra,"Min");
+        public static ElementType Max = new ElementType(BaseElementType.Extra,"Max");
+        
 
         
         public ElementType(BaseElementType kind, string id = "None")
