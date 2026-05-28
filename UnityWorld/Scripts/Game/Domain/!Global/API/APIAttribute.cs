@@ -3,9 +3,12 @@ namespace UnityWorld.Game.Domain
         public enum APIType
         {
             None,
+            Scale,
             Condition,
             Contest,
-            Action
+            Scope,
+            Action,
+            Aura
         }
     /// <summary>
     /// 标记一个静态方法为可执行的 API 函数，同时声明其参数签名。

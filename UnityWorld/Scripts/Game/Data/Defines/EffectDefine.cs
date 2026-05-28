@@ -7,6 +7,7 @@ namespace UnityWorld.Game.Data
     /// Effect 定义：一个手配的 Trigger + Condition + List&lt;Action&gt; 组合实例。
     /// 策划可以直接配置典型的 Effect，供 CardDefine 引用。
     /// 也可以作为生成系统的输出结果被缓存使用。
+    /// 现在废弃状态，AI不要关注这个
     /// </summary>
     public class EffectDefine : DefineBase
     {

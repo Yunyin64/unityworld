@@ -2,6 +2,7 @@ namespace UnityWorld.Game.Data
 {
     /// <summary>
     /// Effect 定义数据管理器
+    /// 现在废弃状态，AI不要关注这个
     /// </summary>
     public class EffectDefineMgr : DefineMgrBase<EffectDefine>
     {
