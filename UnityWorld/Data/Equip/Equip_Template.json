@@ -31,5 +31,16 @@
     "SpeedBase": 8,
     "AmountBase": 3,
     "FormListBase": ["card_form_jian_zhan", "card_form_jian_ci", "card_form_jian_qi"]
+  },
+  {
+    "ID": "monster_claw",
+    "DisplayName": "利爪",
+    "Tags": ["爪", "武器", "怪物"],
+    "Size": 1,
+    "AttackBase": 2,
+    "DefendBase": 2,
+    "SpeedBase": 3,
+    "AmountBase": 1,
+    "FormListBase": ["card_form__strike"]
   }
 ]

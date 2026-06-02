@@ -36,9 +36,8 @@ namespace UnityWorld.Game.Domain.Combat
             var ctxB = new BirthContext();
             ctxB.Set("Path", PracticePath.Ling);
             var npcB = npcMgr.Birth(ctxB);
-
-            LogMgr.Instance.Dbg($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
-            LogMgr.Instance.Dbg($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
+            var NpcC = npcMgr.Assemble(NpcDefineMgr.Instance.Get("monster_wolf_0"));
+            var NpcD = npcMgr.Assemble(NpcDefineMgr.Instance.Get("monster_wolf_0"));
 
             // ── 为 NPC 添加功法获得卡组 ──────────────────────
             CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
@@ -46,12 +45,20 @@ namespace UnityWorld.Game.Domain.Combat
 
             CultivationMgr.Instance.AddCultivation(npcB, "ling_flame_heart");
             CultivationMgr.Instance.AddCultivation(npcB, "hun_frost_mind");
+            
 
             npcA.AssignAllToField();
             npcB.AssignAllToField();
+            NpcC.AssignAllToField();
+            NpcD.AssignAllToField();
+
+            
+            LogMgr.Instance.Dbg($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
+            LogMgr.Instance.Dbg($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
+            LogMgr.Instance.Dbg($"  NPC C: ID={NpcC.Id}, HP={NpcC.GetHpMax()}, SP={NpcC.GetSpMax()}, MP={NpcC.GetMpMax()}");
 
             // ── 发起战斗 ─────────────────────────────────────
-            var result = CombatMgr.Instance.RunCombat(npcA, npcB);
+            var result = CombatMgr.Instance.RunCombat(npcA,new [] {NpcC,NpcD});
 
 
             LogMgr.Instance.Dbg($"\n=== 战斗结束 ===");

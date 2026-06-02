@@ -84,6 +84,53 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>
+        /// 从 NpcDefine 模板直接组装 NPC（无因果，不走 Birth/GlyphMgr）。
+        /// 适用于妖兽等模板实体，战斗结束后可直接 Remove。
+        /// </summary>
+        public Npc Assemble(NpcDefine define)
+        {
+            // 1. 造壳
+            var npc = new Npc(Soul.NewId());
+
+            // 2. Bio 注册：NpcType + 名字来自 Define
+            var bioData = new NpcBioData
+            {
+                NpcType = define.NpcType,
+                IsAlive = true,
+                AgeAccumulated = define.InitAge,
+                BaseMoveSpeed = 3f,
+                NameData = new NpcNameData
+                {
+                    Surname = define.DisplayName,
+                    GivenName = "",
+                    DaoTitle = "",
+                },
+            };
+            BioSystem.Register(npc, bioData);
+
+            // 3. 其余子系统注册空数据（避免 Tick 时 KeyNotFoundException）
+            PositionSystem.Register(npc, new NpcPositionData());
+            TraitSystem.Register(npc, new NpcTraitData());
+            CultivationSystem.Register(npc, new NpcCultivationData());
+            BehaviorSystem.Register(npc, new NpcBehaviorData());
+            PersonalitySystem.Register(npc, new NpcPersonalityData());
+
+            // 4. Stats 写入 InitStat
+            foreach (var kv in define.InitStat)
+                npc.Stats.SetBase(kv.Key, kv.Value);
+
+            // 5. Card 注册 + 发牌
+            CardSystem.Register(npc, new NpcCardData());
+            foreach (var cardDefineId in define.InitCardDeck)
+                npc.GainCard(cardDefineId);
+            npc.AssignAllToField();
+
+            // 6. 注册到世界
+            Add(npc.Id, npc);
+            return npc;
+        }
+
+        /// <summary>
         /// NPC 诞生：造壳 → GlyphMgr 铭刻 → 各系统 OnEntityBorn → 注册到 _allEntities
         /// </summary>
         public Npc Birth(BirthContext ctx)

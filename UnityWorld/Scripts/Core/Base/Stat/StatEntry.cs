@@ -104,9 +104,11 @@ namespace UnityWorld.Core
 
         private void Recalculate()
         {
-            // ① 从 Define 读取 DefaultValue
+            // ① Primary 属性 baseValue=0（由 AddValue 承载基础值）；非 Primary 从 Define 读 DefaultValue
             var define = StatDefineMgr.Instance?.Get(_statId);
-            float baseValue = define?.DefaultValue ?? 0f;
+            float baseValue = (define != null && define.BaseType == StatBaseType.Primary)
+                ? 0f
+                : (define?.DefaultValue ?? 0f);
             var formulaStr = define.ExtraBase;
             if (!string.IsNullOrEmpty(formulaStr))
             {

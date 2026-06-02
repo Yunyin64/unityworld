@@ -21,7 +21,7 @@ function card:Apply(ctx)
     ArmorBreak(ctx, 5)
 end
 
-function card:OnTick(ctx)
-end
+--function card:Tick(ctx)
+--end
 
 return card

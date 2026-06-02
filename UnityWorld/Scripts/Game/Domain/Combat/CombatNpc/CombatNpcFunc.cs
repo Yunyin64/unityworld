@@ -31,7 +31,11 @@ namespace UnityWorld.Game.Domain.Combat
         {
             int sp = GetSp();
             int spMax = GetSpMax();
-            if (sp > spMax) Status = CombatantStatus.Defeated;
+            if (sp > spMax && Status == CombatantStatus.Active)
+            {
+                Status = CombatantStatus.Defeated;
+                Log($"当前SP={sp}/{spMax}，状态：{Status}");
+            } 
         }
 
         public void InitDeck()
@@ -93,10 +97,11 @@ namespace UnityWorld.Game.Domain.Combat
             var target = attacker.Target;
             var ret = new CombatResult();
 
+                Scene.TriggerCombatEvent("OnStraight", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene });
             if (contestData.IsAttackType)
             {
                 Log($"  直击: {contestData} → [{target.GetName()}]");
-                Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene }, this);
+                Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene });
                 var ctx = new DamageInfo(contestData);
                 ctx.Damage = contestData.ContestValue;
                 ctx.TargetNpc.AddDamage(ctx);
@@ -174,6 +179,13 @@ namespace UnityWorld.Game.Domain.Combat
             // 输家处理
             loser.ContestLose(ret, winnerContest, loserContest, overflow);
 
+            foreach (var contest in new[] { winnerContest, loserContest })
+            {
+                var eventName = contest.IsAttackType ? "OnAttack" : contest.IsDefenseType ? "OnDefend" : null;
+                if (eventName != null)
+                    Scene.TriggerCombatEvent(eventName, new APIContext { Caster = contest.OwnerNpc, SourceCard = contest.SourceCard, Scene = Scene });
+            }
+
             // 广播 OnContestOverflow
             var ctx = new APIContext
             {
@@ -188,7 +200,7 @@ namespace UnityWorld.Game.Domain.Combat
             ctx.Set("LoserType", loserContest.ContestType);
             ctx.Set("WinnerCard", winnerContest.SourceCard);
             ctx.Set("LoserCard", loserContest.SourceCard);
-            Scene.TriggerCombatEvent("OnContestOverflow", ctx, winner);
+            Scene.TriggerCombatEvent("OnContestOverflow", ctx);
 
             Ticks["Straight"] = 0;
             contestA.SourceCard.Apply();
@@ -209,7 +221,6 @@ namespace UnityWorld.Game.Domain.Combat
                     dmg.Damage = overflow;
                 dmg.TargetNpc.AddDamage(dmg);
                 Log($"  攻击胜，伤害={dmg.Damage:F0} → [{dmg.TargetNpc.GetName()}]");
-                Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = win.SourceCard, Scene = Scene }, this);
             }
             // 防御赢：基础层无事，交给 OnContestOverflow 事件
             return ctx;

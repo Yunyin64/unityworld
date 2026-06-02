@@ -2,22 +2,23 @@
 -- 法术卡：标准循环（消耗灵元 → CD → Contest → Apply）
 local FaShu = {}
 
-function FaShu.OnPreStart(card, ctx)
-end
+--function FaShu.PreStart(card, ctx)
+--end
 
-function FaShu.OnStart(card, ctx)
-end
+--function FaShu.Start(card, ctx)
+--end
 
-function FaShu.OnTick(card, ctx)
+function FaShu.Tick(card, ctx)
     if card:GetPhase() == CombatCardPhase.Waiting then
         card:CheckMana()
     end
 end
 
 function FaShu.Contest(card, ctx)
+    card:SetPhase(CombatCardPhase.Finished);
 end
 
-function FaShu.Apply(card, ctx)
-end
+--function FaShu.Apply(card, ctx)
+--end
 
 LuaMgr:RegisterKeyword("FaShu", FaShu)

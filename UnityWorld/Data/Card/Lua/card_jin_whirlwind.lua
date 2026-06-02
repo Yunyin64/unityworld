@@ -22,14 +22,14 @@ end
 --end
 
 function card:OnAttack(ctx)
-    -- 己方攻击赢时，为自己充能 10 tick
-    local self_card = self:Self()
-    if ctx.Caster == self:Owner() then
+    -- 己方攻击时，为自己充能 10 tick
+    local self_card = self.m_Self
+    if ctx.Caster == self.m_Owner then
         Charge(ctx,self_card , 10)
     end
 end
 
-function card:OnTick(ctx)
-end
+--function card:Tick(ctx)
+--end
 
 return card

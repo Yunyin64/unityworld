@@ -15,8 +15,12 @@ namespace UnityWorld.Game.Domain.Combat
         {
             // 加载 Lua 脚本，获得独立的 card table
             env = LuaMgr.Instance.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
-            // 注入 C# 卡牌实例引用，供 Lua 通过 self._self 访问
-            if (env != null) env["_self"] = this;
+            // 注入 C# 卡牌实例引用，供 Lua 通过  self.m_Self / self.m_Owner 访问
+            if (env != null)
+            {
+                env["m_Self"] = this;
+                env["m_Owner"] = this.Owner;
+            }
             // 预扫描 Lua 函数缓存
             LuaHooks = LuaMgr.ScanLuaHooks(env);
 
@@ -133,7 +137,12 @@ namespace UnityWorld.Game.Domain.Combat
         public void CheckMana()
         {
             var cost = GetCombatManaCost();
-            if (cost.Count == 0 || Owner.TryCostMana(cost)) SetPhase(CombatCardPhase.InCD);
+            if (Owner.TryCostMana(cost)) SetPhase(CombatCardPhase.InCD);
+        }
+        public bool TryPayMana()
+        {
+            var cost = GetCombatManaCost();
+            return Owner.TryCostMana(cost);
         }
         public void Charge(int Tick)
         {

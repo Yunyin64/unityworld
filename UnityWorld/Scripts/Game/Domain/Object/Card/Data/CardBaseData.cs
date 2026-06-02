@@ -18,6 +18,10 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>冷却时间（秒）</summary>
         public float Cooldown { get; set; } = 3f;
+        
+
+        /// <summary>弹药上限</summary>
+        public int AmountMax { get; set; } = 0;
 
         // ── 灵元消耗 ──────────────────────────────────────────
 
@@ -70,11 +74,14 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public partial class Card
     {
+        /// <summary>父卡 Id（招式卡 → 所属法宝卡 Id，-1 表示无父卡）</summary>
+        public int ParentCardId { get; set; } = -1;
         public CardBaseData BaseData => CardMgr.Instance.DataSystem.GetData(Id);
         public float GetCooldown() => BaseData.Cooldown;
         public int GetSize() => BaseData.Size;
 
         public Dictionary<ElementType, int> GetManaCost() => BaseData.ManaCost;
+        public int GetAmountMax() => BaseData.AmountMax;
         
         public List<string> GetKeywords() => BaseData.Keywords;
 

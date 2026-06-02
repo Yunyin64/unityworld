@@ -21,7 +21,7 @@ end
 function card:Apply(ctx)
 end
 
-function card:OnTick(ctx)
-end
+--function card:Tick(ctx)
+--end
 
 return card

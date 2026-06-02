@@ -132,6 +132,10 @@ namespace UnityWorld.Game.Domain
                 RegisterGlobals();
                 RegisterEnumTables();
 
+                // 设置 package.path，让 require 能找到 Data/LuaScripts/ 下的模块
+                var luaScriptsDir = Path.GetDirectoryName(_luaInitPath).Replace("\\", "/");
+                _luaState.DoString($"package.path = '{luaScriptsDir}/?.lua;' .. package.path");
+
                 _luaState.DoFile(_luaInitPath);
                 LogMgr.Instance.Dbg("[LuaMgr] Init.lua 加载成功");
             }

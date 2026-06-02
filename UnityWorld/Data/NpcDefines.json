@@ -1,7 +1,27 @@
 [
   {
-    "ID": "human_farmer",
-    "npcType": "Human",
-    "defaultRoles": [ "farmer" ]
+    "ID": "monster_wolf_0",
+    "DisplayName": "灰狼",
+    "NpcType": "Monster",
+    "InitAge": 5,
+    "InitCultivationLevel": 0,
+    "InitialTraits": [],
+    "InitCardDeck": [
+      "card_monster_langya",
+      "card_monster_shoupi",
+      "card_monster_lizhao",
+      "card_form__strike",
+      "card_wolf_meat"
+    ],
+    "InitStat": {
+      "QiXue": 6,
+      "TiPo": 6,
+      "QiGan": 6,
+      "LingJi": 6,
+      "ShenShi": 6,
+      "WuXing": 6,
+      "JiYuan": 6,
+      "MeiLi": 6
+    }
   }
 ]

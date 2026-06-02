@@ -2,12 +2,14 @@
   {
     "ID": "card_form_jian_zhan",
     "DisplayName": "剑斩",
-    "Desc": "基础剑招，造成3点<武器>斩伤",
+    "Desc": "基础剑招，造成<武器>点斩伤",
     "Rarity": 0,
-    "Size": 1,
+    "Size": 0,
     "Cooldown": 5,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -18,12 +20,14 @@
   {
     "ID": "card_form_jian_ci",
     "DisplayName": "剑刺",
-    "Desc": "基础剑招，造成3点<武器>刺伤",
+    "Desc": "基础剑招，造成<武器>点刺伤",
     "Rarity": 0,
-    "Size": 1,
+    "Size": 0,
     "Cooldown": 45,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -34,12 +38,14 @@
   {
     "ID": "card_form_jian_qi",
     "DisplayName": "剑气",
-    "Desc": "基础剑招，造成3点<武器>射伤",
+    "Desc": "基础剑招，造成<武器>点射伤",
     "Rarity": 0,
-    "Size": 1,
+    "Size": 0,
     "Cooldown": 55,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -54,8 +60,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -70,8 +78,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 65,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -86,8 +96,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 55,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -102,8 +114,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -118,8 +132,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 45,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -134,8 +150,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 35,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -150,8 +168,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -166,8 +186,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -182,8 +204,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 70,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "攻击",
@@ -198,8 +222,10 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "防御",
@@ -214,13 +240,33 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "Keywords": ["ZhaoShi"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
     "Tags": [
       "武器",
       "防御",
       "格挡",
       "刀"
+    ]
+  },
+  {
+    "ID": "card_form__strike",
+    "DisplayName": "抓击",
+    "Desc": "基础爪招，造成<武器>点刺伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 40,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {},
+    "Tags": [
+      "武器",
+      "攻击",
+      "刺",
+      "爪"
     ]
   }
 ]

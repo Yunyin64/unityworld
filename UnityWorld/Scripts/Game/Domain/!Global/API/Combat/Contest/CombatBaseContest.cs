@@ -38,7 +38,7 @@ namespace UnityWorld.Game.Domain
         public static APIContext Defend(APIContext ctx)
         {
             var card = ctx.SourceCard;
-            if (card == null || card.Owner == null) return ctx;
+            if (card == null || card.Owner == null) return ctx; 
 
             string defendType = ctx.GetValue("DefendType", "Block");
             int defendValue = ctx.GetValue("DefendValue", 0);

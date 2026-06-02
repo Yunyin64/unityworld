@@ -57,17 +57,37 @@ namespace UnityWorld.Game.Domain
              
         }
 
+        /// <summary>
+        /// 1v1 便捷入口
+        /// </summary>
         public CombatResult RunCombat(Npc A, Npc B)
         {
-            var combatScene = new CombatScene();
-            combatScenes.Add(A.Id, combatScene);
+            return RunCombat(
+                new[] { (A, CombatTeam.TeamA) },
+                new[] { (B, CombatTeam.TeamB) });
+        }
 
-            var participants = new[]
-            {
-                (A, CombatTeam.TeamA),
-                (B, CombatTeam.TeamB)
-            };
-            combatScene.Init(12345,participants,600);
+        /// <summary>
+        /// 1vN 便捷入口：单个 Npc 对抗多个敌人
+        /// </summary>
+        public CombatResult RunCombat(Npc solo, IEnumerable<Npc> enemies)
+        {
+            var teamA = new[] { (solo, CombatTeam.TeamA) };
+            var teamB = enemies.Select(e => (e, CombatTeam.TeamB));
+            return RunCombat(teamA, teamB);
+        }
+
+        /// <summary>
+        /// 通用多人入口：传入任意数量 (Npc, CombatTeam) 组合
+        /// </summary>
+        public CombatResult RunCombat(IEnumerable<(Npc npc, CombatTeam team)> teamA, IEnumerable<(Npc npc, CombatTeam team)> teamB)
+        {
+            var participants = teamA.Concat(teamB).ToArray();
+            var combatScene = new CombatScene();
+            var sceneId = participants[0].npc.Id;
+            combatScenes[sceneId] = combatScene;
+
+            combatScene.Init(12345, participants, 600);
             return combatScene.Run();
         }
     }

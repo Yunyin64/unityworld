@@ -75,7 +75,7 @@ namespace UnityWorld.Game.Domain.Combat
             var readyCards = GetCards( CombatCardPhase.Ready);   
             foreach (var card in readyCards)
             {
-                card.OnUse();
+                card.Use();
             }
         }
         // ── 目标 ──────────────────────────────────────────────
@@ -128,7 +128,7 @@ namespace UnityWorld.Game.Domain.Combat
                 Hp -= finalval;
                 Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
                 // 广播受击事件，供 Modifier 触发器响应
-                Scene.TriggerCombatEvent("OnDamage" , new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene }, this);
+                Scene.TriggerCombatEvent("OnDamage" , new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene });
             }
 
             if (Hp <= 0)

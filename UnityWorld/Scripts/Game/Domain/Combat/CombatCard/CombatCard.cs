@@ -12,13 +12,16 @@ namespace UnityWorld.Game.Domain.Combat
         public CombatNpc Owner;    
         private CombatCardPhase Phase = CombatCardPhase.Waiting;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
-        public CombatScene Scene { get ; set ; }
+        public CombatScene Scene
+        {
+            get => Owner?.Scene;
+            set => Owner.Scene = value;
+        }
 
         public void PreStart()
         {
             InitializeLuaCards();
-            // keyword hooks（如 Passive.OnPreStart、FaShu.OnPreStart）
-            CallLua("OnPreStart");
+            CallLua("PreStart");
         }
 
         public void Start()
@@ -26,12 +29,13 @@ namespace UnityWorld.Game.Domain.Combat
             Ticks["Main"] = 0;
             Ticks["CD"] = 0;
             SetPhase(CombatCardPhase.Waiting);
-            CallLua("OnStart");
+            CallLua("Start");
         }
 
         public void Tick()
         {
-            CallLua("OnTick");
+            CallLua("Tick");
+            Scene.TriggerCombatEvent("OnTick", CreateCtx());
             
             
             if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.Waiting);
@@ -59,14 +63,13 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
 
-        public void OnUse()
+        public void Use()
         {
             //Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
             //Trigger:触发使用事件
             Contest();
-            if(Phase == CombatCardPhase.Ready){
-                Apply();
-            }
+            if(GetPhase() == CombatCardPhase.Ready) Apply();
+            Scene.TriggerCombatEvent("OnUse", CreateCtx());
         }
 
         public void Contest()
@@ -76,15 +79,8 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Apply()
         {
-            //Log($"[{Owner.GetName()}]卡牌生效:[{DisplayName}]");
             CallLua("Apply");
-
-            // 广播卡牌使用事件，供 Modifier 触发器响应
-            EventMgr.Instance?.TriggerEvent("Apply", this,
-                (Scope.CombatNpc, Owner?.Id.ToString() ?? ""),
-                (Scope.CombatCard, Id.ToString()));
-
-            SetPhase(CombatCardPhase.Finished);
+            Scene.TriggerCombatEvent("OnApply", CreateCtx());
         }
 
         /// <summary>
@@ -107,14 +103,8 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void SetPhase(string phaseName)
         {
-            if (Enum.TryParse<CombatCardPhase>(phaseName, out var phase))
-            {
-                SetPhase(phase);
-            }
-            else
-            {
-                Log($"SetPhase 失败：无法解析 '{phaseName}' 为 CombatCardPhase");
-            }
+            if (Enum.TryParse<CombatCardPhase>(phaseName, out var phase)) SetPhase(phase);
+            else Log($"SetPhase 失败：无法解析 '{phaseName}' 为 CombatCardPhase");
         }
 
         /// <summary>
@@ -179,13 +169,19 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.Id = card.Id;
             combatCard.DefineId = card.DefineId;
             combatCard.DisplayName = card.DisplayName;
+            combatCard.ParentCardId = card.ParentCardId;
             combatCard.Stats = StatMgr.Instance.CreateBlock(card.Id, typeof(CombatCard));
 
 
             combatCard.Ticks.Add("Main",0);
             combatCard.Ticks.Add("CD",0);
-            if(card.GetCooldown() <= 0) combatCard.GetKeywords().Add("Passive");
+
             return combatCard;
+        }
+        public void KeyWordCheck(Card card,CombatCard combatCard)
+        {
+            if(card.GetCooldown() <= 0) combatCard.GetKeywords().Add("Passive");
+            if(card.GetAmountMax() > 0) combatCard.GetKeywords().Add("Amount");
         }
 
         /// <summary>

@@ -152,6 +152,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var c in Combatants.Values) c.DealDamage();
             foreach (var c in Combatants.Values) c.DealFieldChange();
             foreach (var c in Combatants.Values) c.CheckDefeated();
+            AssignTargets();
             CheckEndConditions();
 
             CurrentTick++;
@@ -293,7 +294,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <param name="eventId">事件ID，同时也是 Lua hook 名（如 "OnAttack"）</param>
         /// <param name="ctx">事件上下文</param>
         /// <param name="source">事件来源 NPC</param>
-        public void TriggerCombatEvent(string eventId, APIContext ctx, CombatNpc source)
+        public void TriggerCombatEvent(string eventId, APIContext ctx)
         {
             // 通道1：ILuaBindable hook 分发
             DispatchHookToAll(eventId, ctx);
@@ -302,7 +303,7 @@ namespace UnityWorld.Game.Domain.Combat
             EventMgr.Instance?.TriggerEvent(
                 eventId,
                 ctx,
-                (Scope.CombatNpc, source.Id.ToString()));
+                (Scope.CombatNpc, ctx.Caster.Id.ToString()));
         }
 
         /// <summary>

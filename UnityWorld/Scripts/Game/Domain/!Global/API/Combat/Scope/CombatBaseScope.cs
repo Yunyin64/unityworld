@@ -7,7 +7,7 @@ namespace UnityWorld.Game.Domain
     public  static partial class CombatBaseFunc
     {
         /// <summary>获得目标所有卡牌。</summary>
-        [APIFunc("AllCard",APIType.Condition, "获得目标所有卡牌", Scope.CombatNpc, "Target:CombatNpc", "Result:List<CombatCard>")]
+        [APIFunc("AllCard",APIType.Scope, "获得目标所有卡牌", Scope.CombatNpc, "Target:CombatNpc", "Result:List<CombatCard>")]
         public static APIContext AllCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -20,7 +20,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>获得目标在CD中的一张卡牌。</summary>
-        [APIFunc("RandomCardInCD",APIType.Condition, "获得目标在CD中的一张卡牌", Scope.CombatNpc, "Target:CombatNpc", "Result:CombatCard")]
+        [APIFunc("RandomCardInCD",APIType.Scope, "获得目标在CD中的一张卡牌", Scope.CombatNpc, "Target:CombatNpc", "Result:CombatCard")]
         public static APIContext RandomCardInCD(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -39,7 +39,7 @@ namespace UnityWorld.Game.Domain
         }
         
         /// <summary>获得目标相邻卡牌（Direction: Above/Below）。</summary>
-        [APIFunc("AdjacentCards", APIType.Condition, "获得目标相邻卡牌", Scope.CombatCard, "Target:CombatCard", "Direction:string", "Result:List<CombatCard>")]
+        [APIFunc("AdjacentCards", APIType.Scope, "获得目标相邻卡牌", Scope.CombatCard, "Target:CombatCard", "Direction:string", "Result:List<CombatCard>")]
         public static APIContext AdjacentCards(APIContext ctx)
         {
             var caster = ctx.Caster;

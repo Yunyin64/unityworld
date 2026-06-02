@@ -1,13 +1,13 @@
 [
   {
     "ID": "card_fabao_jian",
-    "DisplayName": "精铁剑",
-    "Desc": "基础武器",
+    "DisplayName": "长剑",
+    "Desc": "剑气：当抽取时，造成<武器>点<武器>系射击伤",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 50,
+    "Cooldown": 0,
     "Keywords": [
-      "FaBao"
+      "FaBao","Passive"
     ],
     "ManaCost": {
       "Jin": 1
@@ -22,12 +22,12 @@
   {
     "ID": "card_fabao_kaijia",
     "DisplayName": "铠甲",
-    "Desc": "基础防具，抵御外力",
+    "Desc": "战斗开始时，获得1《护甲》Buff",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
     "Keywords": [
-      "FaBao"
+      "FaBao","Passive","Armor"
     ],
     "ManaCost": {
       "Tu": 1
@@ -36,6 +36,24 @@
       "武器",
       "防御",
       "护甲"
+    ]
+  },
+  {
+    "ID": "card_monster_lizhao",
+    "DisplayName": "利爪",
+    "Desc": "当拼点时，该武器攻击+1",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 50,
+    "ManaCost": {
+      "Jin": 1
+    },
+    "Tags": [
+      "怪物素材",
+      "狼"
+    ],
+    "Keywords": [
+      "FaBao","Passive"
     ]
   }
 ]

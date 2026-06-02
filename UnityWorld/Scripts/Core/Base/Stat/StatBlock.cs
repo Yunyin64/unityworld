@@ -38,6 +38,7 @@ namespace UnityWorld.Core
             StatDefineMgr.Instance.GetAll().Where(d => d.Type == Type && d.BaseType == StatBaseType.Primary).ToList().ForEach(d =>
             {
                 var entry = GetOrCreateEntry(d.ID);
+                entry.SetAdd(d.DefaultValue);
                 if( string.IsNullOrEmpty(d.ExtraBase)) 
                 GetFinalCache()[d.ID] = entry.FinalValue; 
             });
@@ -87,6 +88,7 @@ namespace UnityWorld.Core
             }
             var entry = GetOrCreateEntry(statId);
             entry.Add(amount);
+            GetFinalCache()[statId] = entry.FinalValue;
         }
 
         /// <summary>
@@ -103,6 +105,7 @@ namespace UnityWorld.Core
             }
             var entry = GetOrCreateEntry(statId);
             entry.SetAdd(value);
+            GetFinalCache()[statId] = entry.FinalValue;
         }
 
         /// <summary>

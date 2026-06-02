@@ -1,6 +1,6 @@
 ﻿# API 参考
 
-> 自动生成时间，共 32 个API，4 个Trigger
+> 自动生成时间，共 38 个API，6 个Trigger
 
 ## Trigger（触发条件）
 
@@ -8,16 +8,21 @@
 |---|---|---|---|---|---|
 | OnUse | 使用时触发 | 0 | 1 | 主动, 使用 | - |
 | OnAttack | 己方攻击拼点赢时触发 | 0 | 0 | 主动, 攻击 | - |
-| OnBurn | 敌人触发燃烧时 | -3 | 1 | 被动, 火, 燃烧 | - |
+| OnApply | 卡牌生效时触发 | 0 | 1 | 主动, 应用 | - |
+| OnStraight | 造成直击时触发 | 0 | 1 | 主动, 直击 | - |
+| OnContest | 对拼时触发 | 0 | 1 | 主动, 对拼 | - |
 | OnDeath | 敌人死亡时触发 | -4 | 1 | 被动, 死亡, 黑暗 | - |
 
 ## Condition（条件函数）
 
 | 函数名 | 描述 | 参数 |
 |---|---|---|
-| AllCard | 获得目标所有卡牌 | Target:CombatNpc, Result:List<CombatCard> |
-| RandomCardInCD | 获得目标在CD中的一张卡牌 | Target:CombatNpc, Result:CombatCard |
-| AdjacentCards | 获得目标相邻卡牌 | Target:CombatCard, Direction:string, Result:List<CombatCard> |
+| IsFabao | 判断目标卡牌是否为法宝 | Target:CombatCard |
+| IsFaShu | 判断目标卡牌是否为法术 | Target:CombatCard |
+| IsGongFa | 判断目标卡牌是否为功法 | Target:CombatCard |
+| IsItem | 判断目标卡牌是否为物品 | Target:CombatCard |
+| IsEquip | 判断目标卡牌是否为装备 | Target:CombatCard |
+| IsZhaoShi | 判断目标卡牌是否为招式 | Target:CombatCard |
 
 ## Action（动作函数）
 
@@ -57,4 +62,7 @@
 |---|---|---|
 | Attack | 造成伤害（攻击拼点） | Element:String, PhysicalType:String, AttackValue:Int |
 | Defend | 防御拼点 | DefendType:String, DefendValue:Int |
+| AllCard | 获得目标所有卡牌 | Target:CombatNpc, Result:List<CombatCard> |
+| RandomCardInCD | 获得目标在CD中的一张卡牌 | Target:CombatNpc, Result:CombatCard |
+| AdjacentCards | 获得目标相邻卡牌 | Target:CombatCard, Direction:string, Result:List<CombatCard> |
 

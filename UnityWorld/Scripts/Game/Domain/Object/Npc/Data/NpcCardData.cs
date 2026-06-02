@@ -16,6 +16,9 @@ namespace UnityWorld.Game.Domain
         /// <summary>候补池：战斗中需要 Deploy 才能上场的卡 Id 列表</summary>
         public List<int> Reserve { get; set; } = new();
 
+        /// <summary>已装备的法宝卡 Id 列表（纯标记，分配 Field 时消费）</summary>
+        public List<int> EquippedFaBao { get; set; } = new();
+
         public NpcCardData()
         {
             
@@ -27,6 +30,7 @@ namespace UnityWorld.Game.Domain
             copy.AllCards = new List<Card>(AllCards);
             copy.Field = new List<int>(Field);
             copy.Reserve = new List<int>(Reserve);
+            copy.EquippedFaBao = new List<int>(EquippedFaBao);
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();

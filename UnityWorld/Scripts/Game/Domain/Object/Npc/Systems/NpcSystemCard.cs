@@ -101,6 +101,23 @@ namespace UnityWorld.Game.Domain
         {
             // TODO: 卡牌系统逻辑
         }
+
+        /// <summary>
+        /// 装备法宝（纯标记，不实例化招式卡）
+        /// </summary>
+        public void EquipFaBao(NpcCardData data, int fabaoCardId)
+        {
+            if (!data.EquippedFaBao.Contains(fabaoCardId))
+                data.EquippedFaBao.Add(fabaoCardId);
+        }
+
+        /// <summary>
+        /// 卸装法宝（移除标记）
+        /// </summary>
+        public void UnequipFaBao(NpcCardData data, int fabaoCardId)
+        {
+            data.EquippedFaBao.Remove(fabaoCardId);
+        }
     }
 
     public partial class Npc
@@ -118,17 +135,45 @@ namespace UnityWorld.Game.Domain
         /// <summary>取消卡的部署分配</summary>
         public void UnassignCard(int cardId) => NpcMgr.Instance.CardSystem.UnassignCard(CardData, cardId);
 
+        /// <summary>装备法宝（纯标记）</summary>
+        public void EquipFaBao(int fabaoCardId) => NpcMgr.Instance.CardSystem.EquipFaBao(CardData, fabaoCardId);
+        /// <summary>卸装法宝</summary>
+        public void UnequipFaBao(int fabaoCardId) => NpcMgr.Instance.CardSystem.UnequipFaBao(CardData, fabaoCardId);
+
         /// <summary>
-        /// 测试用：将所有持有卡牌全部塞入运转池（Field）
+        /// 测试用：将所有持有卡牌全部塞入运转池（Field）。
+        /// 已装备法宝会附带实例化 FormList 招式卡。
         /// </summary>
         public void AssignAllToField()
         {
+            // 先把已有卡全入 Field
             foreach (var cardId in CardData.AllCardIds)
             {
                 if (!CardData.Field.Contains(cardId))
                     CardData.Field.Add(cardId);
             }
             CardData.Reserve.Clear();
+
+            // 已装备法宝 → 实例化 FormList 招式卡
+            foreach (var fabaoId in CardData.EquippedFaBao)
+            {
+                var equip = EquipMgr.Instance?.GetById(fabaoId);
+                if (equip == null || equip.FormList == null || equip.FormList.Count == 0) continue;
+
+                // 防重复：检查是否已有 ParentCardId = fabaoId 的招式卡
+                bool alreadyCreated = CardData.AllCards.Exists(c => c.ParentCardId == fabaoId);
+                if (alreadyCreated) continue;
+
+                foreach (var formDefineId in equip.FormList)
+                {
+                    var formCard = CardMgr.Instance.InstantiateFromDefine(formDefineId);
+                    if (formCard == null) continue;
+                    formCard.ParentCardId = fabaoId;
+                    CardData.AllCardIds.Add(formCard.Id);
+                    CardData.AllCards.Add(formCard);
+                    CardData.Field.Add(formCard.Id);
+                }
+            }
         }
     }
 }

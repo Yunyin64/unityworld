@@ -1,23 +1,24 @@
 -- ZhaoShi Keyword
--- 招式卡：（待定义，和法术可能有差异）
+-- 招式卡：会拼点完成后，才继续走 CD 循环
 local ZhaoShi = {}
 
-function ZhaoShi.OnPreStart(card, ctx)
+function ZhaoShi.PreStart(card, ctx)
 end
 
-function ZhaoShi.OnStart(card, ctx)
+function ZhaoShi.Start(card, ctx)
 end
 
-function ZhaoShi.OnTick(card, ctx)
+function ZhaoShi.Tick(card, ctx)
     if card:GetPhase() == CombatCardPhase.Waiting then
         card:CheckMana()
     end
 end
 
-function ZhaoShi.Contest(card, ctx)
-end
+--function ZhaoShi.Contest(card, ctx)
+--end
 
 function ZhaoShi.Apply(card, ctx)
+    card:SetPhase(CombatCardPhase.Finished);
 end
 
 LuaMgr:RegisterKeyword("ZhaoShi", ZhaoShi)

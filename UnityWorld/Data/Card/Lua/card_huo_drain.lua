@@ -21,7 +21,7 @@ function card:Apply(ctx)
     Draw(ctx, 3)
 end
 
-function card:OnTick(ctx)
-end
+--function card:Tick(ctx)
+--end
 
 return card
