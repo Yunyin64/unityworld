@@ -128,24 +128,6 @@ namespace UnityWorld.Game.Domain.Combat
             return GetCooldown() + GetStat("CDTickAdj");
         }
 
-        /// <summary>
-        /// 获取所属装备数据（通过 ParentCardId → EquipMgr）。
-        /// 返回 ContextBase 包含 Attack/Defend/Speed/Amount/DisplayName。
-        /// 无父装备时返回空 ContextBase。
-        /// </summary>
-        public ContextBase GetEquipData()
-        {
-            var ctx = new ContextBase();
-            if (ParentCardId < 0) return ctx;
-            var equip = EquipMgr.Instance?.GetById(ParentCardId);
-            if (equip == null) return ctx;
-            ctx.Set("Attack", equip.Attack);
-            ctx.Set("Defend", equip.Defend);
-            ctx.Set("Speed", equip.Speed);
-            ctx.Set("Amount", equip.Amount);
-            ctx.Set("DisplayName", equip.DisplayName);
-            return ctx;
-        }
 
         
     }

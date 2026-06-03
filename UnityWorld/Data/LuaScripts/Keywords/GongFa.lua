@@ -12,7 +12,7 @@ end
 --end
 
 function GongFa.Apply(card, ctx)
-    card:SetPhase(CombatCardPhase.Finished);
+    --card:SetPhase(CombatCardPhase.Finished);
 end
 
 LuaMgr:RegisterKeyword("GongFa", GongFa)

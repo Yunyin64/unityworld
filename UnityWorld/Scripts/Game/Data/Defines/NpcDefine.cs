@@ -9,6 +9,10 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class NpcDefine:DefineBase
     {
+        public string Surname { get; set; } = "";
+        public string GivenName { get; set; } = "";
+        public string DaoTitle { get; set; } = "";
+        public NpcTypes.Gender Gender { get; set; } = NpcTypes.Gender.Male;
         /// <summary>NPC 种族</summary>
         public NpcTypes.NpcType NpcType { get; set; } = NpcTypes.NpcType.Human;
 

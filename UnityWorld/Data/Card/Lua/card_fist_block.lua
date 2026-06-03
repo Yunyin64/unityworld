@@ -1,11 +1,11 @@
--- 枪扫 - 基础枪招，造成<武器>点斩伤
+-- 拳挡 - 格挡<武器>点
 local card = setmetatable({}, { __index = CardBase })
-card.CardData = { Size = 1, Cooldown = 5, CardType = "ZhaoShi", ManaCost = {} }
+card.CardData = { Size = 1, Cooldown = 3, CardType = "ZhaoShi", ManaCost = {} }
 card.Keywords = {}
 
 function card:Contest(ctx)
     local name, atk, def, spd, amo, elem = self:GetEquip()
-    Attack(ctx, elem, "Zhan", atk)
+    Defend(ctx, "Block", def)
 end
 
 return card

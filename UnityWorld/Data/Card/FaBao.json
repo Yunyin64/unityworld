@@ -2,12 +2,12 @@
   {
     "ID": "card_fabao_jian",
     "DisplayName": "长剑",
-    "Desc": "剑气：当抽取时，造成<武器>点<武器>系射击伤",
+    "Desc": "剑气：当抽取mp时，造成<武器>射击伤",
     "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 0,
+    "Size": 2,
+    "Cooldown": 50,
     "Keywords": [
-      "FaBao","Passive"
+      "FaBao"
     ],
     "ManaCost": {
       "Jin": 1
@@ -27,7 +27,9 @@
     "Size": 1,
     "Cooldown": 60,
     "Keywords": [
-      "FaBao","Passive","Armor"
+      "FaBao",
+      "Passive",
+      "Armor"
     ],
     "ManaCost": {
       "Tu": 1
@@ -53,7 +55,8 @@
       "狼"
     ],
     "Keywords": [
-      "FaBao","Passive"
+      "FaBao",
+      "Passive"
     ]
   }
 ]

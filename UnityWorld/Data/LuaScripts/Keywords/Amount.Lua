@@ -8,8 +8,8 @@ local Amount = {}
 --function Amount.Start(card, ctx)
 --end
 
---function Amount.Tick(card, ctx)
---end
+function Amount.Tick(card, ctx)
+end
 
 --function Amount.Contest(card, ctx)
 --end

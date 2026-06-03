@@ -217,11 +217,10 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 if (!c.IsActive) continue;
                 // Target 有效则跳过
-                if (c.Target != null && c.Target.IsActive) continue;
+                if (c.GetTarget() != null && c.GetTarget().IsActive) continue;
 
                 // 选择对方阵营第一个存活敌人
-                c.Target = Combatants.Values
-                    .FirstOrDefault(e => e.Team != c.Team && e.IsActive);
+                c.ChangeTarget(Combatants.Values.FirstOrDefault(e => e.Team != c.Team && e.IsActive));
             }
         }
 

@@ -28,8 +28,8 @@ public class ContextBase
             }
 
             /// <summary>获取一个因果项（引用类型），不存在返回 null</summary>
-            public T Get<T>(string key) where T : class
-                => _causes.TryGetValue(key, out var v) ? v as T : null;
+            public T Get<T>(string key, T defaultValue = default) where T : class
+                => _causes.TryGetValue(key, out var v) ? v as T : default;
 
             /// <summary>获取一个因果项（非泛型，Lua 友好），不存在返回 null</summary>
             public object GetObject(string key)
@@ -47,6 +47,8 @@ public class ContextBase
 
             /// <summary>获取一个因果项（字符串），不存在返回 defaultValue</summary>
             public string GetValue(string key, string defaultValue = "")
+                => _causes.TryGetValue(key, out var v) && v is string s ? s : defaultValue;
+            public string GetStringValue(string key, string defaultValue = "")
                 => _causes.TryGetValue(key, out var v) && v is string s ? s : defaultValue;
 
                 

@@ -16,13 +16,19 @@ namespace UnityWorld.Game.Domain
         public override void OnEntityBorn(BirthContext context)
         {
             var npc = context.MainNpc;
-            Register(npc, new NpcCardData());
+            var cardData = new NpcCardData();
+            Register(npc, cardData);
+
+            var InitCardDeck = context.Get<string[]>("InitCardDeck");
+            if (InitCardDeck != null && InitCardDeck.Length > 0)
+            {
+                foreach (var cardDefineId in InitCardDeck) npc.GainCard(cardDefineId);
+            }
         }
 
         public Card GainCard(NpcCardData data, string cardDefineId)
         {
             var card = CardMgr.Instance.InstantiateFromDefine(cardDefineId);
-            
             return GainCard(data, card);
         }
         
@@ -103,6 +109,33 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>
+        /// 获得法宝：创建 Card 实例 + 创建 Equip 实例并注册到 EquipMgr（以 card.Id 为 key）。
+        /// Card 和 Equip 不绑死——同一张法宝卡可配不同装备模板。
+        /// </summary>
+        public Card GainEquip(NpcCardData data, string cardDefineId, string equipDefineId)
+        {
+            // 1. 创建 Card 实例
+            var card = GainCard(data, cardDefineId);
+            if (card == null) return null;
+
+            // 2. 从 EquipDefine 创建 Equip 运行时实例
+            var equipDef = EquipDefineMgr.Instance?.Get(equipDefineId);
+            if (equipDef == null)
+            {
+                LogMgr.Instance.Err("[NpcSystemCard] 找不到 EquipDefine：{0}", equipDefineId);
+                return card;
+            }
+            var equip = Equip.FromDefine(equipDef);
+            equip.Id = card.Id;
+
+            // 3. 注册到 EquipMgr
+            EquipMgr.Instance.Add(card.Id, equip);
+            LogMgr.Instance.Dbg("[NpcSystemCard] GainEquip: Card={0} ← Equip={1}", cardDefineId, equipDefineId);
+
+            return card;
+        }
+
+        /// <summary>
         /// 装备法宝（纯标记，不实例化招式卡）
         /// </summary>
         public void EquipFaBao(NpcCardData data, int fabaoCardId)
@@ -140,6 +173,10 @@ namespace UnityWorld.Game.Domain
         /// <summary>卸装法宝</summary>
         public void UnequipFaBao(int fabaoCardId) => NpcMgr.Instance.CardSystem.UnequipFaBao(CardData, fabaoCardId);
 
+        /// <summary>获得法宝（Card + Equip），返回 Card 实例</summary>
+        public Card GainEquip(string cardDefineId, string equipDefineId)
+            => NpcMgr.Instance.CardSystem.GainEquip(CardData, cardDefineId, equipDefineId);
+
         /// <summary>
         /// 测试用：将所有持有卡牌全部塞入运转池（Field）。
         /// 已装备法宝会附带实例化 FormList 招式卡。
@@ -159,10 +196,6 @@ namespace UnityWorld.Game.Domain
             {
                 var equip = EquipMgr.Instance?.GetById(fabaoId);
                 if (equip == null || equip.FormList == null || equip.FormList.Count == 0) continue;
-
-                // 防重复：检查是否已有 ParentCardId = fabaoId 的招式卡
-                bool alreadyCreated = CardData.AllCards.Exists(c => c.ParentCardId == fabaoId);
-                if (alreadyCreated) continue;
 
                 foreach (var formDefineId in equip.FormList)
                 {

@@ -21,7 +21,7 @@ namespace UnityWorld.Game.Domain
             var data = new NpcBioData
             {
                 Gender = context.GetEmValue<NpcTypes.Gender>("Gender"),
-                NpcType = NpcTypes.NpcType.Human,
+                NpcType = context.GetEmValue<NpcTypes.NpcType>("NpcType", NpcTypes.NpcType.Human),
                 IsAlive = true,
                 AgeAccumulated = 0f,
                 BirthTick = 0,

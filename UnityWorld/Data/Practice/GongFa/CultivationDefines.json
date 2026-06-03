@@ -131,7 +131,6 @@
     "points": [
       { "threshold": 30, "Type": "Card", "refId": "card_jin_slash" },
       { "threshold": 60, "Type": "Card", "refId": "card_jin_needle" },
-      { "threshold": 100, "Type": "Card", "refId": "card_jin_armor_break" },
       { "threshold": 110, "Type": "Card", "refId": "card_jin_whirlwind" }
     ],
     "Tags": ["灵修", "金锐", "剑典", "破甲"]

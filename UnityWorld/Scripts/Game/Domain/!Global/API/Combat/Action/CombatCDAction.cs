@@ -17,7 +17,7 @@ namespace UnityWorld.Game.Domain
             if (TargetCard == null) return ctx;
 
             int ReduceTick = ctx.GetValue("ReduceTick", 10);
-            foreach (var card in TargetCard.Where(c=> c.GetPhase() == CombatCardPhase.InCD))
+            foreach (var card in TargetCard.Where(c=> c.CheckPhase(CombatCardPhase.InCD)))
             {
                 card.Charge(ReduceTick);
             }

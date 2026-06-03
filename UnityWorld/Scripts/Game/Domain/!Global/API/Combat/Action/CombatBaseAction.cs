@@ -49,7 +49,7 @@ namespace UnityWorld.Game.Domain
             if (caster == null) return ctx;
 
             int breakValue = ctx.GetValue("BreakValue", 0);
-            var target = caster.Target;
+            var target = caster.GetTarget();
             if (target == null) return ctx;
 
             float actual = Math.Min(target.ShieldValue, breakValue);

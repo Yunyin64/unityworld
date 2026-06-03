@@ -11,6 +11,10 @@ namespace UnityWorld.Game.Domain.Combat
         public HashSet<string> HookUse { get; set; } = new();
         public CombatNpc Owner;    
         private CombatCardPhase Phase = CombatCardPhase.Waiting;
+
+        private bool isReady = false;
+        public void SetReady(bool ready) => isReady = ready;
+        public bool IsReady() => isReady;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
         public CombatScene Scene
         {
@@ -34,19 +38,16 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Tick()
         {
+            if(CheckPhase( CombatCardPhase.Finished)) SetPhase(CombatCardPhase.Waiting);
+            
             CallLua("Tick");
             Scene.TriggerCombatEvent("OnTick", CreateCtx());
-            
-            
-            if(Phase == CombatCardPhase.Finished)  SetPhase(CombatCardPhase.Waiting);
-            if(Phase == CombatCardPhase.InCD)
-            {
-                CDTick();
-                ResetCD();
-            }
+
+            if(CheckPhase(CombatCardPhase.InCD)) CDTick();
             CardModifierTick();
             HookUse.Clear();
             Ticks["Main"]++;
+            
 
         }
         public void CDTick()
@@ -60,6 +61,10 @@ namespace UnityWorld.Game.Domain.Combat
             }
             if(CDadd <= 0.1f) CDadd = 0;
             Ticks["CD"] += CDadd;
+            if (Ticks["CD"] >= GetCDMax())
+            {
+                SetPhase(CombatCardPhase.CDFull);
+            }
         }
 
 
@@ -68,7 +73,7 @@ namespace UnityWorld.Game.Domain.Combat
             //Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
             //Trigger:触发使用事件
             Contest();
-            if(GetPhase() == CombatCardPhase.Ready) Apply();
+            if(IsReady()) Apply();
             Scene.TriggerCombatEvent("OnUse", CreateCtx());
         }
 
@@ -93,8 +98,9 @@ namespace UnityWorld.Game.Domain.Combat
             Scene = Owner?.Scene
         };
         
+        public CombatCardPhase GetPhase(CombatCardPhase phase) => Phase;
         
-        public CombatCardPhase GetPhase() => Phase;
+        public bool CheckPhase(CombatCardPhase phase) => Phase == phase;
         public void SetPhase(CombatCardPhase phase) => Phase = phase;
 
         /// <summary>

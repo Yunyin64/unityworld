@@ -1,27 +1,11 @@
--- ══════════════════════════════════════════════════════════════
--- 拳打
--- 基础拳招，造成2点<武器>打伤
--- ══════════════════════════════════════════════════════════════
-
--- ── 继承元表 ──────────────────────────────────────────
+-- 拳打 - 基础拳招，造成<武器>点打伤
 local card = setmetatable({}, { __index = CardBase })
-
--- ── 数据表 ────────────────────────────────────────────
-card.CardData = {
-    Size = 1,
-    Cooldown = 4,
-    CardType = "ZhaoShi",
-    ManaCost = {},
-}
-
+card.CardData = { Size = 1, Cooldown = 4, CardType = "ZhaoShi", ManaCost = {} }
 card.Keywords = {}
 
--- ── OnXxx 函数 ────────────────────────────────────────
-
---- 使用时构造拼点
 function card:Contest(ctx)
-    Attack(ctx, "Wu", "Da", 2)
+    local name, atk, def, spd, amo, elem = self:GetEquip()
+    Attack(ctx, elem, "Da", atk)
 end
-
 
 return card

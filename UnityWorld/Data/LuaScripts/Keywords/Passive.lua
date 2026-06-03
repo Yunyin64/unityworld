@@ -3,7 +3,7 @@
 local Passive = {}
 
 function Passive.PreStart(card, ctx)
-    card:SetPhase("Passive")
+    card:SetPhase(CombatCardPhase.Passive)
 end
 
 

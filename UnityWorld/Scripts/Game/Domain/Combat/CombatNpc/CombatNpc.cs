@@ -72,7 +72,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void UseCard()
         {
-            var readyCards = GetCards( CombatCardPhase.Ready);   
+            var readyCards = Field.Where(c => c.IsReady()).ToList();  
             foreach (var card in readyCards)
             {
                 card.Use();
@@ -84,7 +84,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// 当前战斗目标（单向引用）。
         /// Target 被击败/逃跑后需由 CombatScene 重新分配。
         /// </summary>
-        public CombatNpc Target { get; set; } = null;
+        protected CombatNpc Target { get; set; } = null;
 
 
         // ── 构造 ──────────────────────────────────────────────

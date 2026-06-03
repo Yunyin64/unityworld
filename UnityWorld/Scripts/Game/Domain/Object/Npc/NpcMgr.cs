@@ -89,44 +89,19 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public Npc Assemble(NpcDefine define)
         {
-            // 1. 造壳
-            var npc = new Npc(Soul.NewId());
+            // 构造 BirthContext，从 Define 预设值
+            var ctx = NpcDefineMgr.ToBirthContext(define);
+            var npc = ctx.MainNpc = new Npc(Soul.NewId());
+            
+            BioSystem.OnEntityBorn(ctx);
+            PositionSystem.OnEntityBorn(ctx);
+            TraitSystem.OnEntityBorn(ctx);
+            CardSystem.OnEntityBorn(ctx);
+            CultivationSystem.OnEntityBorn(ctx);
+            PersonalitySystem.OnEntityBorn(ctx);
+            BehaviorSystem.OnEntityBorn(ctx);
 
-            // 2. Bio 注册：NpcType + 名字来自 Define
-            var bioData = new NpcBioData
-            {
-                NpcType = define.NpcType,
-                IsAlive = true,
-                AgeAccumulated = define.InitAge,
-                BaseMoveSpeed = 3f,
-                NameData = new NpcNameData
-                {
-                    Surname = define.DisplayName,
-                    GivenName = "",
-                    DaoTitle = "",
-                },
-            };
-            BioSystem.Register(npc, bioData);
 
-            // 3. 其余子系统注册空数据（避免 Tick 时 KeyNotFoundException）
-            PositionSystem.Register(npc, new NpcPositionData());
-            TraitSystem.Register(npc, new NpcTraitData());
-            CultivationSystem.Register(npc, new NpcCultivationData());
-            BehaviorSystem.Register(npc, new NpcBehaviorData());
-            PersonalitySystem.Register(npc, new NpcPersonalityData());
-
-            // 4. Stats 写入 InitStat
-            foreach (var kv in define.InitStat)
-                npc.Stats.SetBase(kv.Key, kv.Value);
-
-            // 5. Card 注册 + 发牌
-            CardSystem.Register(npc, new NpcCardData());
-            foreach (var cardDefineId in define.InitCardDeck)
-                npc.GainCard(cardDefineId);
-            npc.AssignAllToField();
-
-            // 6. 注册到世界
-            Add(npc.Id, npc);
             return npc;
         }
 

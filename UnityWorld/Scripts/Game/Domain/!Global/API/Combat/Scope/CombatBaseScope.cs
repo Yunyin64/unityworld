@@ -26,7 +26,7 @@ namespace UnityWorld.Game.Domain
             var caster = ctx.Caster;
             var target = ctx.Get<CombatNpc>("Target");
             var cards = target.GetField();
-            cards = cards.Where(c => c.GetPhase() == CombatCardPhase.InCD).ToList();
+            cards = cards.Where(c => c.CheckPhase(CombatCardPhase.InCD) ).ToList();
             var result = cards.Count > 0 ? cards[caster.Scene.Soul.Random(0, cards.Count)] : null;
             ctx.Set<bool>("Ret",false);
             if (result != null)

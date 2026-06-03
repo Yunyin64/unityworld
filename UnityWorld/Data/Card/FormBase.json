@@ -5,7 +5,7 @@
     "Desc": "基础剑招，造成<武器>点斩伤",
     "Rarity": 0,
     "Size": 0,
-    "Cooldown": 5,
+    "Cooldown": 50,
     "Keywords": [
       "ZhaoShi"
     ],
@@ -252,7 +252,7 @@
     ]
   },
   {
-    "ID": "card_form__strike",
+    "ID": "card_form_strike",
     "DisplayName": "抓击",
     "Desc": "基础爪招，造成<武器>点刺伤",
     "Rarity": 0,

@@ -31,7 +31,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             SourceNpc = data.OwnerNpc;
             SourceCard = data.SourceCard;
-            TargetNpc = data.OwnerNpc.Target;
+            TargetNpc = data.OwnerNpc.GetTarget();
             damageType = data.ToDamageType();
             ElementType = data.Element;
 

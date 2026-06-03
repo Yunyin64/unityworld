@@ -59,6 +59,14 @@ namespace UnityWorld.Game.Domain
         {
             var npc = context.MainNpc;
 
+            // InitStat 写入（来自 NpcDefine 或外部预设）
+            var initStat = context.Get<Dictionary<string, int>>("InitStat");
+            if (initStat != null)
+            {
+                foreach (var kv in initStat)
+                    npc.Stats.SetBase(kv.Key, kv.Value);
+            }
+
             // 创建并注册修行数据
             var data = new NpcCultivationData();
             data.Affinity = new ElementalAffinity(npc.Soul);

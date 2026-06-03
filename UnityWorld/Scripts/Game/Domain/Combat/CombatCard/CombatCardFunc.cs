@@ -110,7 +110,7 @@ namespace UnityWorld.Game.Domain.Combat
             Owner.ModifyContest(contestData);
 
             // 入槽即切换阶段，防止下一 Tick 再次被收集
-            SetPhase(CombatCardPhase.InPending);
+            //SetPhase(CombatCardPhase.InPending);
 
             // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);
@@ -121,23 +121,13 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void ResetCD()
         {
-            //如果有弹药机制且弹药不足，则不重置CD    
-            if(IsAmount ){
-                if (HasAmount) ConsumeAmount();
-                else return;
-            }
-            if(Ticks["CD"] >= GetCDMax()){
-            Ticks["CD"] = 0;
-            SetPhase(CombatCardPhase.Ready);
+            if(CheckPhase(CombatCardPhase.CDFull)){
+                Ticks["CD"] = 0;
             }
         }
-        /// <summary>
-        /// 没有消耗直接进 CD，有消耗则尝试扣除、成功也进 CD，失败什么都不做。
-        /// </summary>
-        public void CheckMana()
+        public void LogCDInfo()
         {
-            var cost = GetCombatManaCost();
-            if (Owner.TryCostMana(cost)) SetPhase(CombatCardPhase.InCD);
+            Log($" CD: {Ticks["CD"]} | {GetCDMax()}  ");
         }
         public bool TryPayMana()
         {

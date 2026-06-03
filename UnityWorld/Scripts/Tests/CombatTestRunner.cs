@@ -40,8 +40,12 @@ namespace UnityWorld.Game.Domain.Combat
             var NpcD = npcMgr.Assemble(NpcDefineMgr.Instance.Get("monster_wolf_0"));
 
             // ── 为 NPC 添加功法获得卡组 ──────────────────────
-            CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
-            CultivationMgr.Instance.AddCultivation(npcA, "wu_stone_body");
+            //CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
+            //CultivationMgr.Instance.AddCultivation(npcA, "wu_stone_body");
+
+            // ── 手动装备法宝：card_fabao_jian + long_sword ──────
+            var fabaoCard = npcA.GainEquip("card_fabao_jian", "long_sword");
+           npcA.EquipFaBao(fabaoCard.Id);
 
             CultivationMgr.Instance.AddCultivation(npcB, "ling_flame_heart");
             CultivationMgr.Instance.AddCultivation(npcB, "hun_frost_mind");

@@ -9,7 +9,20 @@ namespace UnityWorld.Game.Domain.Combat
         
         public List<CombatCard> GetCards(CombatCardPhase phase)
         {
-            return Field.Where(c => c.GetPhase() == phase).ToList();
+            return Field.Where(c => c.CheckPhase(phase)).ToList();
+        }
+
+        public CombatNpc GetTarget()
+        {
+            return Target;
+        }
+        public void ChangeTarget(CombatNpc target)
+        {
+            if(target != null && target.IsActive)
+            {
+                Target = target;
+                Log($"目标变更：{target.GetName()}");
+            }
         }
         
 

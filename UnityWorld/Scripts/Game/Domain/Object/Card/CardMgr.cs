@@ -45,6 +45,7 @@ namespace UnityWorld.Game.Domain
                 Id = cardid,
                 DefineId = cardDefine.ID,
                 DisplayName = cardDefine.DisplayName,
+                ParentCardId = cardid,
                 Stats = StatMgr.Instance.CreateBlock(cardid,GetType()),
             };
             DataSystem.Register(card, new CardBaseData

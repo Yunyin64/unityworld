@@ -9,13 +9,20 @@ local FaShu = {}
 --end
 
 function FaShu.Tick(card, ctx)
-    if card:GetPhase() == CombatCardPhase.Waiting then
-        card:CheckMana()
+    if card:CheckPhase(CombatCardPhase.Waiting)  then
+        if card:TryPayMana() then 
+            card:SetPhase(CombatCardPhase.InCD) 
+        end
+    end
+    if card:CheckPhase(CombatCardPhase.CDFull) then
+        card:ResetCD()
+        card:SetReady(true)
     end
 end
 
 function FaShu.Contest(card, ctx)
-    card:SetPhase(CombatCardPhase.Finished);
+    card:SetReady(false)
+    card:SetPhase(CombatCardPhase.Finished)
 end
 
 --function FaShu.Apply(card, ctx)

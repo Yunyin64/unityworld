@@ -1,22 +1,11 @@
--- ══════════════════════════════════════════════════════════════
--- 剑气
--- 基础剑招，造成3点<武器>射伤
--- ══════════════════════════════════════════════════════════════
-
+-- 剑气 - 基础剑招，造成<武器>点射伤
 local card = setmetatable({}, { __index = CardBase })
-
-card.CardData = {
-    Size = 1,
-    Cooldown = 5.5,
-    CardType = "ZhaoShi",
-    ManaCost = {},
-}
-
+card.CardData = { Size = 0, Cooldown = 5.5, CardType = "ZhaoShi", ManaCost = {} }
 card.Keywords = {}
 
 function card:Contest(ctx)
-    Attack(ctx, "Wu", "SheJi", 3)
+    local name, atk, def, spd, amo, elem = self:GetEquip()
+    Attack(ctx, elem, "SheJi", atk)
 end
-
 
 return card

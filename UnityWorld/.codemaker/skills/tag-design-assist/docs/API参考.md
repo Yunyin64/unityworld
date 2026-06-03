@@ -17,12 +17,12 @@
 
 | 函数名 | 描述 | 参数 |
 |---|---|---|
-| IsFabao | 判断目标卡牌是否为法宝 | Target:CombatCard |
-| IsFaShu | 判断目标卡牌是否为法术 | Target:CombatCard |
-| IsGongFa | 判断目标卡牌是否为功法 | Target:CombatCard |
-| IsItem | 判断目标卡牌是否为物品 | Target:CombatCard |
-| IsEquip | 判断目标卡牌是否为装备 | Target:CombatCard |
-| IsZhaoShi | 判断目标卡牌是否为招式 | Target:CombatCard |
+| IsFabao | 判断目标卡牌是否为法宝 | Target:CombatCard, Result:Bool |
+| IsFaShu | 判断目标卡牌是否为法术 | Target:CombatCard, Result:Bool |
+| IsGongFa | 判断目标卡牌是否为功法 | Target:CombatCard, Result:Bool |
+| IsItem | 判断目标卡牌是否为物品 | Target:CombatCard, Result:Bool |
+| IsEquip | 判断目标卡牌是否为装备 | Target:CombatCard, Result:Bool |
+| IsZhaoShi | 判断目标卡牌是否为招式 | Target:CombatCard, Result:Bool |
 
 ## Action（动作函数）
 

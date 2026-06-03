@@ -37,12 +37,23 @@ namespace UnityWorld.Game.Domain.Combat
 
     public enum CombatCardPhase
     {
+        /// <summary>
+        /// 有CD，但在等待开始走
+        /// </summary>
         Waiting,
+        /// <summary>
+        /// 有CD，正在走
+        /// </summary>
         InCD,
-        Ready,
-        InPending,
+        /// <summary>
+        /// 有CD，走完了
+        /// </summary>
+        CDFull,
+        /// <summary>
+        /// 标志使用完成一次，记录使用次数
+        /// </summary>
         Finished,
-        /// <summary>被动模式：不参与 CD 循环，由 Keyword 驱动</summary>
+        /// <summary>被动无CD</summary>
         Passive,
     }
 

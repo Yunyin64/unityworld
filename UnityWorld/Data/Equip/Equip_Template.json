@@ -8,7 +8,7 @@
     "DefendBase": 1,
     "SpeedBase": 3,
     "AmountBase": 3,
-    "FormListBase": ["card_form_jian_qi"]
+    "FormListBase": ["card_form_jian_ci"]
   },
   {
     "ID": "long_sword",
@@ -19,7 +19,7 @@
     "DefendBase": 3,
     "SpeedBase": 5, 
     "AmountBase": 3,
-    "FormListBase": [ "card_form_jian_ci", "card_form_jian_qi"]
+    "FormListBase": [ "card_form_jian_ci", "card_form_jian_zhan"]
   },
   {
     "ID": "great_sword",
@@ -41,6 +41,6 @@
     "DefendBase": 2,
     "SpeedBase": 3,
     "AmountBase": 1,
-    "FormListBase": ["card_form__strike"]
+    "FormListBase": ["card_form_strike"]
   }
 ]

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UnityWorld.Game.Domain;
 
 namespace UnityWorld.Game.Data
 {
@@ -28,6 +29,24 @@ namespace UnityWorld.Game.Data
             var values = GetAll().ToList();
             if (values.Count == 0) return null;
             return values[rng.Next(values.Count)];
+        }
+
+        /// <summary>
+        /// 将 NpcDefine 转换为 BirthContext，按已有字段填充。
+        /// </summary>
+        public static BirthContext ToBirthContext(NpcDefine define)
+        {
+            var ctx = new BirthContext();
+            ctx.Set("NpcType", define.NpcType);
+            ctx.Set("Gender", define.Gender);
+            ctx.Set("Surname", define.Surname.Length > 0 ? define.Surname : define.DisplayName);
+            ctx.Set("GivenName", define.GivenName);
+            ctx.Set("DaoTitle", define.DaoTitle);
+            ctx.Set("InitAge", define.InitAge);
+            ctx.Set("InitStat", define.InitStat);
+            ctx.Set("InitCardDeck", define.InitCardDeck);
+            ctx.Set("InitTraits", define.InitialTraits);
+            return ctx;
         }
     }
 }

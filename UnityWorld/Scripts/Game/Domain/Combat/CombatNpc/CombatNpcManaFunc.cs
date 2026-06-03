@@ -16,19 +16,15 @@ namespace UnityWorld.Game.Domain.Combat
         public void DoManaDraw(bool noCheck = false)
         {
             if (Mp <= 0f) return;
-            if (noCheck)
-            {
-                DrawMana((int)GetStat("ManaDrawCost"));
-            }
-            else
-            {
+            bool needDraw = false;
+            if (noCheck)needDraw = true;
             int ManaDrawCD = (int)(GetStat("ManaDrawCD")*10);
             if(Ticks["ManaDraw"] >= ManaDrawCD )
-            {
-                Ticks["ManaDraw"] = 0;
-                DrawMana((int)GetStat("ManaDrawCost"));
-            } 
-            }
+                {
+                    Ticks["ManaDraw"] = 0;
+                    needDraw = true;
+                } 
+            if(needDraw) DrawMana((int)GetStat("ManaDrawCost"));
           }
 
         public void DrawMana(int costvalue)
@@ -65,7 +61,7 @@ namespace UnityWorld.Game.Domain.Combat
                             ManaPool[chosen] = 1;
                     }  
                 Log($"DoManaDraw: Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
-               
+                Scene.TriggerCombatEvent("OnManaDraw", new APIContext { Caster = this, Scene = Scene });
         }
         public void ManaConvert(Dictionary<ElementType, int> cost)
         {
