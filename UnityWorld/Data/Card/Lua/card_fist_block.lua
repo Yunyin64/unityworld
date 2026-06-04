@@ -1,6 +1,6 @@
 -- 拳挡 - 格挡<武器>点
 local card = setmetatable({}, { __index = CardBase })
-card.CardData = { Size = 1, Cooldown = 3, CardType = "ZhaoShi", ManaCost = {} }
+card.CardData = { Size = 1, Cooldown = 30, CardType = "ZhaoShi", ManaCost = {} }
 card.Keywords = {}
 
 function card:Contest(ctx)

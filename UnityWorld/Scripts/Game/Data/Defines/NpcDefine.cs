@@ -4,6 +4,18 @@ using UnityWorld.Core;
 namespace UnityWorld.Game.Data
 {
     /// <summary>
+    /// 功法初始化条目：描述 NPC 出生时携带的功法及修炼进度
+    /// </summary>
+    public struct InitGongFaEntry
+    {
+        /// <summary>功法定义ID（对应 CultivationDefine.ID）</summary>
+        public string DefineId { get; set; }
+
+        /// <summary>初始修炼点数（决定已解锁哪些节点子卡）</summary>
+        public int CurrentPoint { get; set; }
+    }
+
+    /// <summary>
     /// NPC 定义/配置模板（由策划配置，用于批量创建同类 NPC）
     /// 模板只描述 NPC 在生成时的初始属性范围，运行时由 NpcMgr 随机化
     /// </summary>
@@ -31,6 +43,10 @@ namespace UnityWorld.Game.Data
 
         public Dictionary<string,int> InitStat  { get; set; } = new();
 
-
+        /// <summary>
+        /// NPC 出生时携带的初始功法列表（对应 CultivationDefine.ID + 修炼进度）。
+        /// 会在 OnEntityBorn 时通过 CultivationMgr.AddCultivation 装配，自动解锁子卡。
+        /// </summary>
+        public List<InitGongFaEntry> InitGongFa { get; set; } = [];
     }
 }

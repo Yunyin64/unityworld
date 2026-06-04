@@ -49,11 +49,11 @@ namespace UnityWorld.Game.Domain
         /// 构造 LuaMgr。
         /// </summary>
         /// <param name="luaCardsDir">Lua 卡牌脚本目录（默认 Data/LuaCards）</param>
-        public LuaMgr(string? luaCardsDir = null)
+        public LuaMgr()
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            _luaCardsDir = luaCardsDir ?? Path.Combine(baseDir, "Data", "Card","Lua");
-            _luaCombatModifiersDir = Path.Combine(baseDir, "Data", "LuaScripts", "CombatModifiers");
+            _luaCardsDir =  Path.Combine(baseDir, "Data", "Card","Lua");
+            _luaCombatModifiersDir = Path.Combine(baseDir, "Data", "Modifier","Lua");
             _luaKeywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
             _luaInitPath = Path.Combine(baseDir, "Data", "LuaScripts", "Init.lua");
             Instance = this;

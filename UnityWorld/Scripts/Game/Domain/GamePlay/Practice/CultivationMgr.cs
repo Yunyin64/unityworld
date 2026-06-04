@@ -47,6 +47,7 @@ namespace UnityWorld.Game.Domain
             }
             // 如果未指定修炼点数，默认为满（maxPoint），即所有节点解锁
             var point = currentPoint < 0 ? define.MaxPoint : currentPoint;
+            point = Math.Min(define.MaxPoint, point);
 
             var card = npc.GainCard(defineId);
             var gongfa = GongFaMgr.Instance.InstantiateFromDefine(card.Id, define);

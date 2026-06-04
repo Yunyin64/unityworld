@@ -166,17 +166,18 @@ namespace UnityWorld.Game.Domain.Combat
         // ══════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 拼点修正管线：构建 ContestData 后、入槽前，遍历 Modifier 调用 ModifyContest hook。
-        /// hook 签名：ModifyContest(env, ctx)，ctx.ContestData 携带拼点数据。
+        /// 通用数值修正管线：遍历所有 Modifier，调用 "Modify{HookName}" hook。
+        /// hook 签名（Lua）：function mod:ModifyXxx(ctx) — self 为 C# Modifier 实例，ctx 为 APIContext。
+        /// 需要修正的数据通过 ctx.Set 存入，Lua 侧 ctx:GetObject 取出。
         /// </summary>
-        public void ModifyContest(ContestData contestData)
+        public void ModifyHook(string hookName, APIContext ctx)
         {
             if (Modifiers.Count == 0) return;
 
             foreach (var mod in Modifiers)
             {
-                var ctx = CreateModifierCtx(mod);
-                mod.CallLuaHook<bool>("ModifyContest", mod.env, ctx, contestData);
+                ctx.Set("Modifier", mod);
+                mod.CallLuaHook<bool>("Modify" + hookName, mod.env, ctx);
             }
         }
 

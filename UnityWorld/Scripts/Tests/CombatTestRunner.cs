@@ -2,7 +2,6 @@ using UnityWorld.Core;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 using UnityWorld.Game.World;
-using CardDefineList = System.Collections.Generic.List<UnityWorld.Game.Data.CardDefine>;
 
 namespace UnityWorld.Game.Domain.Combat
 {
@@ -29,27 +28,24 @@ namespace UnityWorld.Game.Domain.Combat
                 return;
             }
 
-            var ctxA = new BirthContext();
-            ctxA.Set("Path", PracticePath.Wu);
-            var npcA = npcMgr.Birth(ctxA);
+            // NpcA/B 从 JSON 定义读取（Data/Npc/Test.json）
+            var defineA = NpcDefineMgr.Instance.Get("test_npc_a");
+            var defineB = NpcDefineMgr.Instance.Get("test_npc_b");
+            if (defineA == null || defineB == null)
+            {
+                LogMgr.Instance.Dbg("[CombatTestRunner] 错误：找不到 test_npc_a 或 test_npc_b 定义");
+                return;
+            }
+            var npcA = npcMgr.Assemble(defineA);
+            var npcB = npcMgr.Assemble(defineB);
 
-            var ctxB = new BirthContext();
-            ctxB.Set("Path", PracticePath.Ling);
-            var npcB = npcMgr.Birth(ctxB);
+            // NpcC/D 从 Monster 定义读取（Data/Npc/Monster.json）
             var NpcC = npcMgr.Assemble(NpcDefineMgr.Instance.Get("monster_wolf_0"));
             var NpcD = npcMgr.Assemble(NpcDefineMgr.Instance.Get("monster_wolf_0"));
 
-            // ── 为 NPC 添加功法获得卡组 ──────────────────────
-            //CultivationMgr.Instance.AddCultivation(npcA, "ling_golden_blade");
-            //CultivationMgr.Instance.AddCultivation(npcA, "wu_stone_body");
-
             // ── 手动装备法宝：card_fabao_jian + long_sword ──────
             var fabaoCard = npcA.GainEquip("card_fabao_jian", "long_sword");
-           npcA.EquipFaBao(fabaoCard.Id);
-
-            CultivationMgr.Instance.AddCultivation(npcB, "ling_flame_heart");
-            CultivationMgr.Instance.AddCultivation(npcB, "hun_frost_mind");
-            
+            npcA.EquipFaBao(fabaoCard.Id);
 
             npcA.AssignAllToField();
             npcB.AssignAllToField();

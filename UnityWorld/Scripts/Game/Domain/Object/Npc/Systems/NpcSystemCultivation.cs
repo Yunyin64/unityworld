@@ -58,6 +58,9 @@ namespace UnityWorld.Game.Domain
         public override void OnEntityBorn(BirthContext context)
         {
             var npc = context.MainNpc;
+            // 创建并注册修行数据
+            var data = new NpcCultivationData();
+            Register(npc, data);
 
             // InitStat 写入（来自 NpcDefine 或外部预设）
             var initStat = context.Get<Dictionary<string, int>>("InitStat");
@@ -66,16 +69,24 @@ namespace UnityWorld.Game.Domain
                 foreach (var kv in initStat)
                     npc.Stats.SetBase(kv.Key, kv.Value);
             }
+            
+            // InitGongFa：从 NpcDefine 预配的功法列表，逐一装配
+            var initGongFa = context.Get<List<InitGongFaEntry>>("InitGongFa");
+            if (initGongFa != null && initGongFa.Count > 0)
+            {
+                foreach (var entry in initGongFa)
+                {
+                    CultivationMgr.Instance.AddCultivation(npc, entry.DefineId, entry.CurrentPoint);
+                }
+            }
 
-            // 创建并注册修行数据
-            var data = new NpcCultivationData();
             data.Affinity = new ElementalAffinity(npc.Soul);
             npc.Stats.SetBase("AffinityJin", data.Affinity.Jin);
             npc.Stats.SetBase("AffinityMu", data.Affinity.Mu);
             npc.Stats.SetBase("AffinityShui", data.Affinity.Shui);
             npc.Stats.SetBase("AffinityHuo", data.Affinity.Huo);
             npc.Stats.SetBase("AffinityTu", data.Affinity.Tu);
-            Register(npc, data);
+
         }
 
         public override void OnTick(Npc npc, float deltaTime)

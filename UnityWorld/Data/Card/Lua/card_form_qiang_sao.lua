@@ -1,6 +1,6 @@
 -- 枪扫 - 基础枪招，造成<武器>点斩伤
 local card = setmetatable({}, { __index = CardBase })
-card.CardData = { Size = 1, Cooldown = 5, CardType = "ZhaoShi", ManaCost = {} }
+card.CardData = { Size = 1, Cooldown = 50, CardType = "ZhaoShi", ManaCost = {} }
 card.Keywords = {}
 
 function card:Contest(ctx)

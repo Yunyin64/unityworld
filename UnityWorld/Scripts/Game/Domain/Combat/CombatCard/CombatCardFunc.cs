@@ -107,10 +107,17 @@ namespace UnityWorld.Game.Domain.Combat
             };
 
             // Modifier 修正拼点数值
-            Owner.ModifyContest(contestData);
+            var modCtx = new APIContext
+            {
+                SourceCard = this,
+                Caster = Owner,
+                Scene = Owner?.Scene
+            };
+            modCtx.Set("ContestData", contestData);
+            Owner.ModifyHook("Contest", modCtx);
 
             // 入槽即切换阶段，防止下一 Tick 再次被收集
-            //SetPhase(CombatCardPhase.InPending);
+            SetPhase(CombatCardPhase.InPending);
 
             // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);

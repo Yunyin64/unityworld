@@ -31,6 +31,7 @@ common-cli.exe DataManager auto <command> [args...]
 common-cli.exe DataManager auto status
 common-cli.exe DataManager auto list-files
 common-cli.exe DataManager auto query FaBao --ID XXX
+common-cli.exe DataManager auto query --ID XXX
 ```
 
 ### 连接失败排查

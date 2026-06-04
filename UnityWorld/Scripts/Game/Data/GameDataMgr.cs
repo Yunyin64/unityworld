@@ -28,7 +28,7 @@ namespace UnityWorld.Game.Data
         var dataDir = Path.Combine(baseDir, "Data");
         _datamgrs.Add(new SocialRoleMgr(Path.Combine(dataDir, "SocialRoles.json")));
         _datamgrs.Add(new TraitDefineMgr(Path.Combine(dataDir, "Traits.json")));
-        _datamgrs.Add(new NpcDefineMgr(Path.Combine(dataDir, "NpcDefines.json")));
+        _datamgrs.Add(new NpcDefineMgr(Path.Combine(dataDir, "Npc")));
         _datamgrs.Add(new PlaneDefineMgr(Path.Combine(dataDir, "PlaneDefines.json")));
         // ── 卡牌系统 ──────────────────────────────────────────
         _datamgrs.Add(new TagDefineMgr(Path.Combine(dataDir, "TagDefines.json")));

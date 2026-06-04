@@ -57,14 +57,26 @@ namespace UnityWorld.Game.Domain
             buff.Ticks.Add("Main",0);
 
             // 加载 Lua env 并预扫描 hooks
-            var luaMgr = LuaMgr.Instance;
-            if (luaMgr != null)
-            {
-                buff.env = luaMgr.LoadModifierScript(source.ID);
-                buff.LuaHooks = LuaMgr.ScanLuaHooks(buff.env);
-            }
+            buff.InitializeLuaModifier();
 
             return buff;
+        }
+
+        /// <summary>
+        /// 加载 Lua 脚本并注入 C# 引用（与 CombatCard.InitializeLuaCards 对齐）。
+        /// </summary>
+        public void InitializeLuaModifier()
+        {
+            var luaMgr = LuaMgr.Instance;
+            if (luaMgr == null) return;
+
+            env = luaMgr.LoadModifierScript(DefineId);
+            if (env != null)
+            {
+                env["m_Self"] = this;
+                env["m_Owner"] = Owner;
+            }
+            LuaHooks = LuaMgr.ScanLuaHooks(env);
         }
 
         public void Cleanup()
@@ -102,6 +114,16 @@ namespace UnityWorld.Game.Domain
             }
         }
         
+        /// <summary>
+        /// 统一 Lua hook 调用入口（与 CombatCard.CallLua 对齐）。
+        /// self = env（含 m_Self/m_Owner），ctx 为调用上下文。
+        /// </summary>
+        public void CallLua(string hookName, APIContext ctx = null)
+        {
+            if (ctx == null) ctx = CreateCtx();
+            this.CallLuaHook<bool>(hookName, env, ctx);
+        }
+
         private APIContext CreateCtx() => new APIContext
         {
             Caster = Owner,

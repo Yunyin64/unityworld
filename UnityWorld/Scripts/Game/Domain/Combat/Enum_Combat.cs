@@ -50,6 +50,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         CDFull,
         /// <summary>
+        /// 有CD和拼点，在等待拼点
+        /// </summary>
+        InPending,
+        /// <summary>
         /// 标志使用完成一次，记录使用次数
         /// </summary>
         Finished,

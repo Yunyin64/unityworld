@@ -1,0 +1,52 @@
+[
+  {
+    "ID": "test_npc_a",
+    "DisplayName": "测试武修",
+    "Surname": "李",
+    "GivenName": "铁柱",
+    "DaoTitle": "",
+    "Gender": "Male",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitCardDeck": [],
+    "InitStat": {
+      "QiXue": 10,
+      "TiPo": 10,
+      "QiGan": 10,
+      "LingJi": 10,
+      "ShenShi": 10,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    }
+  },
+  {
+    "ID": "test_npc_b",
+    "DisplayName": "测试灵修",
+    "Surname": "苏",
+    "GivenName": "灵儿",
+    "DaoTitle": "",
+    "Gender": "Female",
+    "NpcType": "Human",
+    "InitAge": 22,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitCardDeck": [],
+    "InitStat": {
+      "QiXue": 10,
+      "TiPo": 10,
+      "QiGan": 10,
+      "LingJi": 10,
+      "ShenShi": 10,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "InitGongFa": [
+      { "DefineId": "ling_flame_heart", "CurrentPoint": 350 },
+      { "DefineId": "hun_frost_mind", "CurrentPoint": 150 }
+    ]
+  }
+]

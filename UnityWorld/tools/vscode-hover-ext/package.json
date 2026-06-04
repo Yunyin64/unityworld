@@ -1,0 +1,48 @@
+{
+  "name": "unityworld-hover",
+  "displayName": "UnityWorld Hover Info",
+  "description": "Hover on any string in JSON to get info from external CLI",
+  "version": "0.0.1",
+  "publisher": "unityworld",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/placeholder/unityworld-hover"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onLanguage:json", "onLanguage:jsonc"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "UnityWorld Hover",
+      "properties": {
+        "unityworld-hover.cliPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the CLI executable that resolves hover info. Receives the hovered string as first argument, returns info via stdout."
+        },
+        "unityworld-hover.timeoutMs": {
+          "type": "number",
+          "default": 3000,
+          "description": "Timeout in milliseconds for CLI response."
+        },
+        "unityworld-hover.useLongRunning": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, use a long-running CLI process with stdin/stdout line protocol instead of spawning per hover."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
