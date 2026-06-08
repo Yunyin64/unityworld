@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(& \"C:\\\\Users\\\\weitianzhe\\\\.local\\\\bin\\\\claude.exe\" --version; & \"C:\\\\Users\\\\weitianzhe\\\\AppData\\\\Roaming\\\\npm\\\\claude.cmd\" --version; & \"C:\\\\Users\\\\weitianzhe\\\\.cherrystudio\\\\bin\\\\claude.exe\" --version)",
+      "Skill(update-config)"
+    ]
+  }
+}

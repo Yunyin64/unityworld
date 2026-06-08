@@ -15,8 +15,8 @@
 !/UnityWorld/common-cli/**
 
 # UnityWorld 下的目录白名单
-!/UnityWorld/.codemaker/
-!/UnityWorld/.codemaker/**
+!/UnityWorld/.claude/
+!/UnityWorld/.claude/**
 !/UnityWorld/Data/
 !/UnityWorld/Data/**
 !/UnityWorld/Docs/

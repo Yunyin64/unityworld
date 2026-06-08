@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where godot:*)",
+      "Read(//c/Users/**)"
+    ]
+  }
+}
