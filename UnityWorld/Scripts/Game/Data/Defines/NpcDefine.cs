@@ -16,6 +16,18 @@ namespace UnityWorld.Game.Data
     }
 
     /// <summary>
+    /// 装备初始化条目：描述 NPC 出生时携带的装备（Card + Equip 绑定）
+    /// </summary>
+    public struct InitEquipEntry
+    {
+        /// <summary>装备卡定义ID（对应 CardDefine.ID，作为法宝/武器卡）</summary>
+        public string CardID { get; set; }
+
+        /// <summary>装备模板ID（对应 EquipDefine.ID，提供攻防数值和招式列表）</summary>
+        public string EquipID { get; set; }
+    }
+
+    /// <summary>
     /// NPC 定义/配置模板（由策划配置，用于批量创建同类 NPC）
     /// 模板只描述 NPC 在生成时的初始属性范围，运行时由 NpcMgr 随机化
     /// </summary>
@@ -48,5 +60,11 @@ namespace UnityWorld.Game.Data
         /// 会在 OnEntityBorn 时通过 CultivationMgr.AddCultivation 装配，自动解锁子卡。
         /// </summary>
         public List<InitGongFaEntry> InitGongFa { get; set; } = [];
+
+        /// <summary>
+        /// NPC 出生时携带的初始装备列表（CardID + EquipID 绑定）。
+        /// 会在 OnEntityBorn 时通过 GainEquip 创建装备卡并自动装备。
+        /// </summary>
+        public List<InitEquipEntry> InitEquip { get; set; } = [];
     }
 }

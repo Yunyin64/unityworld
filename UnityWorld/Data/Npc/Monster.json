@@ -12,8 +12,6 @@
     "InitCardDeck": [
       "card_monster_langya",
       "card_monster_shoupi",
-      "card_monster_lizhao",
-      "card_form_strike",
       "card_wolf_meat"
     ],
     "InitStat": {
@@ -26,6 +24,9 @@
       "JiYuan": 6,
       "MeiLi": 6
     },
-    "InitGongFa": []
+    "InitGongFa": [],
+    "InitEquip": [
+      { "CardID": "card_monster_lizhao", "EquipID": "monster_claw" }
+    ]
   }
 ]

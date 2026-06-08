@@ -47,6 +47,7 @@ namespace UnityWorld.Game.Data
             ctx.Set("InitCardDeck", define.InitCardDeck);
             ctx.Set("InitTraits", define.InitialTraits);
             ctx.Set("InitGongFa", define.InitGongFa);
+            ctx.Set("InitEquip", define.InitEquip);
             return ctx;
         }
     }

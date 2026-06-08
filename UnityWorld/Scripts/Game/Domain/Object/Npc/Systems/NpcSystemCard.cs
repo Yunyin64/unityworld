@@ -24,6 +24,16 @@ namespace UnityWorld.Game.Domain
             {
                 foreach (var cardDefineId in InitCardDeck) npc.GainCard(cardDefineId);
             }
+
+            var initEquip = context.Get<List<InitEquipEntry>>("InitEquip");
+            if (initEquip != null && initEquip.Count > 0)
+            {
+                foreach (var entry in initEquip)
+                {
+                    var card = npc.GainEquip(entry.CardID, entry.EquipID);
+                    if (card != null) npc.EquipFaBao(card.Id);
+                }
+            }
         }
 
         public Card GainCard(NpcCardData data, string cardDefineId)
