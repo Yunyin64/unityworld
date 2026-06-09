@@ -10,6 +10,16 @@ namespace UnityWorld.Game.Domain
         {
             
         }
+        
+        public string ReName(NpcBioData data,string Surname,string GivenName,string CourtesyName = "" ,string DaoTitle = "")
+        {
+            data.NameData.Surname = Surname;
+            data.NameData.GivenName = GivenName;
+            if(!string.IsNullOrWhiteSpace(CourtesyName))data.NameData.CourtesyName = CourtesyName;
+            if(!string.IsNullOrWhiteSpace(DaoTitle))data.NameData.DaoTitle = DaoTitle;
+
+            return Surname+GivenName;
+        }
 
         /// <summary>
         /// NPC 诞生时初始化 BioData：从 ctx kv 读取姓名/性别，填充所有基础生物信息并注册
@@ -40,5 +50,11 @@ namespace UnityWorld.Game.Domain
 
             Register(npc, data);
         }
+    }
+
+    public partial class Npc
+    {
+        public string ReName(string Surname,string GivenName,string CourtesyName = "" ,string DaoTitle = "") 
+        => NpcMgr.Instance.BioSystem.ReName(BioData, Surname,GivenName);
     }
 }

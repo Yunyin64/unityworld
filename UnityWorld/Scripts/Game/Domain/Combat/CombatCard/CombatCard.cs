@@ -35,11 +35,14 @@ namespace UnityWorld.Game.Domain.Combat
             SetPhase(CombatCardPhase.Waiting);
             CallLua("Start");
         }
+        public void ReLoad()
+        {
+            if(CheckPhase( CombatCardPhase.Finished)) SetPhase(CombatCardPhase.Waiting);
+        }
 
         public void Tick()
         {
-            if(CheckPhase( CombatCardPhase.Finished)) SetPhase(CombatCardPhase.Waiting);
-            
+            ReLoad();
             CallLua("Tick");
             Scene.TriggerCombatEvent("OnTick", CreateCtx());
 
@@ -73,7 +76,7 @@ namespace UnityWorld.Game.Domain.Combat
             //Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
             //Trigger:触发使用事件
             Contest();
-            if(IsReady()) Apply();
+            if(IsReady() && !CheckPhase(CombatCardPhase.InPending)) Apply();
             Scene.TriggerCombatEvent("OnUse", CreateCtx());
         }
 

@@ -50,6 +50,7 @@ namespace UnityWorld.Game.Domain.Combat
             npcA.AssignAllToField();
             npcB.AssignAllToField();
             NpcC.AssignAllToField();
+            NpcD.ReName("","灰狼2");
             NpcD.AssignAllToField();
 
             

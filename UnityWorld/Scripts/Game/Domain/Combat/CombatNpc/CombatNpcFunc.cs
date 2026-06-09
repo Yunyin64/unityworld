@@ -83,21 +83,12 @@ namespace UnityWorld.Game.Domain.Combat
         public void ProcessContest()
         {
             var target = Target;
+            while (PendingSlot.Count > 0 && target.PendingSlot.Count > 0)
+                ResolveContest(PendingSlot.Dequeue(), target.PendingSlot.Dequeue());
             while (PendingSlot.Count > GetStat("PendingSlotMax"))
             {
-                if(target.PendingSlot.Count > 0)
-                {
-                    var Contest = PendingSlot.Dequeue();
-                    var targetContest = target.PendingSlot.Dequeue();
-                    //拼点
-                    ResolveContest(Contest, targetContest);
-                }
-                else if (Ticks["Straight"] >= GetStat("StraightCD")*10)
-                {
-                    var Contest = PendingSlot.Dequeue();
-                    Straight(Contest);
-                    
-                }
+                if (Ticks["Straight"] >= GetStat("StraightCD") * 10)
+                    Straight(PendingSlot.Dequeue());
                 else break;
             }
         }
@@ -227,6 +218,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (win.IsAttackType)
             {
                 var dmg = new DamageInfo(win);
+                dmg.TargetNpc = lose.OwnerNpc;
                 // 同类型通吃：赢家全额伤害；异类型：差值伤害
                 if (win.ContestType == lose.ContestType && lose.ContestType != ContestType.SheJi)
                     dmg.Damage = win.ContestValue;

@@ -128,9 +128,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void ResetCD()
         {
-            if(CheckPhase(CombatCardPhase.CDFull)){
-                Ticks["CD"] = 0;
-            }
+            Ticks["CD"] = 1;
         }
         public void LogCDInfo()
         {

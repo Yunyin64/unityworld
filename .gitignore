@@ -15,6 +15,9 @@
 !/UnityWorld/common-cli/**
 
 # UnityWorld 下的目录白名单
+!/UnityWorld/CLAUDE.md
+!/UnityWorld/Hooks系统详解.md
+!/UnityWorld/CLAUDE.md
 !/UnityWorld/.claude/
 !/UnityWorld/.claude/**
 !/UnityWorld/Data/

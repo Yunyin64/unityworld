@@ -57,10 +57,12 @@ namespace UnityWorld.Game.Domain.Combat
         {
             CDTick();
             ModifierTick();
-            foreach (var card in Field)
-            {
-                card.Tick();
-            }
+            foreach (var card in Field) card.Tick();
+        }
+
+        public void Refresh()
+        {
+            foreach (var card in Field) card.ReLoad();
         }
 
         private void CDTick()
@@ -173,6 +175,8 @@ namespace UnityWorld.Game.Domain.Combat
             }
             // 3. ManaPool 初始化为空（由 DoManaConvert 统一按亲和权重转化）
             ManaPool = new Dictionary<ElementType, int>();
+            // 4. 招式轮转初始化
+            InitZhaoShiRotation();
         }
 
         public void Start()

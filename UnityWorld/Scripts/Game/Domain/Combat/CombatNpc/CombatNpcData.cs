@@ -37,5 +37,8 @@ namespace UnityWorld.Game.Domain.Combat
             Hp = GetCombatHpMax();
             Mp = GetCombatMpMax();
         }
+
+        // ── 招式轮转 ──────────────────────────────────────────
+        public int CurrentZhaoShiCardId { get; set; } = -1;
     }
 }

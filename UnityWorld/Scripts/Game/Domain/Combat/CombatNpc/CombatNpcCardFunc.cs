@@ -60,6 +60,44 @@ namespace UnityWorld.Game.Domain.Combat
             _changes.Enqueue((ComabtFieldChangeType.Recall, card, ComabtCardDisplaceType.None));
         }
 
+        // ── 招式轮转 ──────────────────────────────────────────
+
+        public List<CombatCard> GetZhaoShiList()
+        {
+            return Field.Where(c => c.HasKeyword("ZhaoShi")).ToList();
+        }
+
+        public int GetCurrentZhaoShiCardId()
+        {
+            return CurrentZhaoShiCardId;
+        }
+
+        public void SetCurrentZhaoShiCardId(int id)
+        {
+            CurrentZhaoShiCardId = id;
+        }
+
+        public void AdvanceZhaoShi()
+        {
+            var list = GetZhaoShiList();
+            if (list.Count == 0)
+            {
+                CurrentZhaoShiCardId = -1;
+                return;
+            }
+            var idx = list.FindIndex(c => c.Id == CurrentZhaoShiCardId);
+            var nextIdx = (idx + 1) % list.Count;
+            CurrentZhaoShiCardId = list[nextIdx].Id;
+            list[nextIdx].ResetCD();
+            Log($"[ZhaoShi]  切换招式为【{list[nextIdx].DisplayName}】");
+        }
+
+        public void InitZhaoShiRotation()
+        {
+            var list = GetZhaoShiList();
+            CurrentZhaoShiCardId = list.Count > 0 ? list[0].Id : -1;
+        }
+
         // ── 统一处理队列 ──────────────────────────────────────────
 
         public void DealFieldChange()
@@ -128,6 +166,12 @@ namespace UnityWorld.Game.Domain.Combat
                         Log($"[Recall] {card.DisplayName} Field→Reserve，当前SP={GetSp()}");
                         break;
                 }
+            }
+            // 招式轮转 Fallback：当前卡不在 Field 中时重置
+            if (CurrentZhaoShiCardId != -1 && !Field.Any(c => c.Id == CurrentZhaoShiCardId))
+            {
+                var list = GetZhaoShiList();
+                CurrentZhaoShiCardId = list.Count > 0 ? list[0].Id : -1;
             }
         }
     }

@@ -1,18 +1,15 @@
 -- ZhaoShi Keyword
--- 招式卡：会拼点完成后，才继续走 CD 循环
+-- 招式卡：串行轮转，同一时间只有当前卡走CD，Apply后advance到下一张
 local ZhaoShi = {}
 
---function ZhaoShi.PreStart(card, ctx)
---end
-
---function ZhaoShi.Start(card, ctx)
---end
-
 function ZhaoShi.Tick(card, ctx)
-    if card:CheckPhase(CombatCardPhase.Waiting)  then
-        if card:TryPayMana() then 
-            card:SetPhase(CombatCardPhase.InCD) 
-        end
+    local owner = card.Owner
+    if owner:GetCurrentZhaoShiCardId() ~= card.Id then
+        return
+    end
+
+    if card:CheckPhase(CombatCardPhase.Waiting) then
+        card:SetPhase(CombatCardPhase.InCD)
     end
     if card:CheckPhase(CombatCardPhase.CDFull) then
         card:ResetCD()
@@ -20,12 +17,13 @@ function ZhaoShi.Tick(card, ctx)
     end
 end
 
---function ZhaoShi.Contest(card, ctx)
---end
+function ZhaoShi.Contest(card, ctx)
+    card:SetReady(false)
+end
 
 function ZhaoShi.Apply(card, ctx)
-    card:SetReady(false)
-    card:SetPhase(CombatCardPhase.Finished);
+    card:SetPhase(CombatCardPhase.Finished)
+    card.Owner:AdvanceZhaoShi()
 end
 
 LuaMgr:RegisterKeyword("ZhaoShi", ZhaoShi)

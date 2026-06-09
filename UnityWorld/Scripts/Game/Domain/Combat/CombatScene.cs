@@ -147,6 +147,9 @@ namespace UnityWorld.Game.Domain.Combat
             mainScene.haslog = false;
             AssertPhase(CombatPhase.Running, nameof(Tick));
             foreach (var c in Combatants.Values) c.DoManaDraw();
+            
+            foreach (var c in Combatants.Values) c.Tick();
+
             foreach (var c in Combatants.Values) c.UseCard();
             foreach (var c in Combatants.Values) c.ProcessContest();
             foreach (var c in Combatants.Values) c.DealDamage();
@@ -154,9 +157,10 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var c in Combatants.Values) c.CheckDefeated();
             AssignTargets();
             CheckEndConditions();
+            
 
             CurrentTick++;
-            foreach (var c in Combatants.Values) c.Tick();
+            foreach (var c in Combatants.Values) c.Refresh();
         }
         public CombatResult Run()
         {
