@@ -128,35 +128,35 @@ def main():
     # 检查 git 可用性
     code, _ = run_git("status")
     if code != 0:
-        print("❌ 当前目录不是 git 仓库，或 git 不可用")
+        print("[X] 当前目录不是 git 仓库，或 git 不可用")
         sys.exit(1)
 
     # 获取当前分支
     branch = get_current_branch()
     print(f"── Git 每日提交 ──")
-    print(f"📁 仓库：{GIT_ROOT}")
-    print(f"🌿 分支：{branch}")
+    print(f"仓库：{GIT_ROOT}")
+    print(f"分支：{branch}")
 
     # 获取改动
     added, modified, deleted = get_status()
     if added is None:
-        print("❌ 无法获取 git status")
+        print("[X] 无法获取 git status")
         sys.exit(1)
 
     total = len(added) + len(modified) + len(deleted)
     if total == 0:
-        print("\n✅ 工作区干净，没有需要提交的改动。")
+        print("\n[OK] 工作区干净，没有需要提交的改动。")
         sys.exit(0)
 
     # 打印改动摘要
-    print(f"\n📊 改动统计：共 {total} 个文件")
-    print_file_list("新增", added, "＋")
-    print_file_list("修改", modified, "～")
-    print_file_list("删除", deleted, "－")
+    print(f"\n改动统计：共 {total} 个文件")
+    print_file_list("新增", added, "+")
+    print_file_list("修改", modified, "~")
+    print_file_list("删除", deleted, "-")
 
     # 生成 commit message
     msg = build_commit_message(added, modified, deleted, custom_msg)
-    print(f"\n💬 Commit 消息：{msg}")
+    print(f"\nCommit 消息：{msg}")
 
     if not apply_mode:
         print("\n── 预览模式 ──")
@@ -167,35 +167,35 @@ def main():
         sys.exit(0)
 
     # 执行 git add
-    print("\n⏳ git add -A ...")
+    print("\n[..] git add -A ...")
     code, output = run_git("add", "-A")
     if code != 0:
-        print(f"❌ git add 失败：{output}")
+        print(f"[X] git add 失败：{output}")
         sys.exit(1)
-    print("  ✅ 已暂存所有改动")
+    print("  [OK] 已暂存所有改动")
 
     # 执行 git commit
-    print(f"⏳ git commit ...")
+    print(f"[..] git commit ...")
     code, output = run_git("commit", "-m", msg)
     if code != 0:
-        print(f"❌ git commit 失败：{output}")
+        print(f"[X] git commit 失败：{output}")
         sys.exit(1)
-    print(f"  ✅ 已提交：{msg}")
+    print(f"  [OK] 已提交：{msg}")
 
     # 执行 git push
     if no_push:
         print("\n── 完成（仅 commit，未 push）──")
     else:
-        print(f"⏳ git push origin {branch} ...")
+        print(f"[..] git push origin {branch} ...")
         code, output = run_git("push", "origin", branch)
         if code != 0:
-            print(f"⚠️ git push 失败：{output}")
+            print(f"[!] git push 失败：{output}")
             print("  可以稍后手动执行 git push")
             sys.exit(1)
-        print(f"  ✅ 已推送到 origin/{branch}")
+        print(f"  [OK] 已推送到 origin/{branch}")
         print("\n── 完成 ──")
 
-    print(f"📝 {total} 个文件已提交并推送。")
+    print(f"{total} 个文件已提交并推送。")
 
 
 if __name__ == "__main__":
