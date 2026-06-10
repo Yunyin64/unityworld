@@ -62,7 +62,7 @@ namespace UnityWorld.Game.Domain
         // ── Buff 类 ──────────────────────────────────────────
 
         /// <summary>给目标NPC添加Buff。参数：Target(CombatNpc), BuffId(String), Stacks(Int), Duration(Float,可选)</summary>
-        [APIFunc("AddNpcBuff", APIType.Action, "给目标NPC添加Buff", Scope.Npc, "Target:CombatNpc", "BuffId:String", "Stacks:Int", "[Duration:Float]")]
+        [APIFunc("AddNpcBuff", APIType.Action, "给目标NPC添加Buff", Scope.Npc, "Target:CombatNpc", "BuffId:String", "Stacks:Int", "Duration:Float")]
         public static void AddNpcBuff(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -84,7 +84,7 @@ namespace UnityWorld.Game.Domain
         // ── 轻量属性修正类 ──────────────────────────────────────
 
         /// <summary>给施法者添加永久属性修正。参数：StatId(String), Value(Float), ?ModifierType(String), ?SourceId(String)</summary>
-        [APIFunc("AddStatBuff", APIType.Action, "给施法者添加永久属性修正", Scope.CombatNpc, "Target:CombatNpc","StatId:String", "Value:Float", "?ModifierType:String", "?SourceId:String")]
+        [APIFunc("AddStatBuff", APIType.Action, "给施法者添加永久属性修正", Scope.CombatNpc, "Target:CombatNpc","StatId:String", "Value:Float", "ModifierType:String", "SourceId:String")]
         public static APIContext AddStatBuff(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -113,7 +113,7 @@ namespace UnityWorld.Game.Domain
         // ── 卡组操作类 ────────────────────────────────────────
 
         /// <summary>移除目标随机一张伤势卡（按体量筛选）。参数：Target(CombatNpc), Size(Int), ?Exact(Bool)</summary>
-        [APIFunc("RemoveRandomWound", APIType.Action, "移除目标随机一张伤势卡", Scope.CombatNpc, "Target:CombatNpc", "Size:Int", "?Exact:Bool")]
+        [APIFunc("RemoveRandomWound", APIType.Action, "移除目标随机一张伤势卡", Scope.CombatNpc, "Target:CombatNpc", "Size:Int", "Exact:Bool")]
         public static APIContext RemoveRandomWound(APIContext ctx)
         {
             var target = ctx.Get<CombatNpc>("Target");

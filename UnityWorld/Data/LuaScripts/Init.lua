@@ -10,7 +10,7 @@
 require("Action")
 require("Aura")
 require("Condition")
-require("Scope")
+require("Contest")
 
 -- ── CardBase 元表 ────────────────────────────────────────────
 CardBase = {}
