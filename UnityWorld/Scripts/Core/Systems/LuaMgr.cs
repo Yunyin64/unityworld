@@ -67,6 +67,7 @@ namespace UnityWorld.Game.Domain
         public void Init()
         {
             _luaState = new Lua();
+            _luaState.State.Encoding = System.Text.Encoding.UTF8;
             _luaState.LoadCLRPackage();
 
             // 加载 Init.lua（定义 CardBase、Attack 等全局函数）
@@ -136,7 +137,7 @@ namespace UnityWorld.Game.Domain
                 var luaScriptsDir = Path.GetDirectoryName(_luaInitPath).Replace("\\", "/");
                 _luaState.DoString($"package.path = '{luaScriptsDir}/?.lua;' .. package.path");
 
-                _luaState.DoFile(_luaInitPath);
+                DoFileUtf8(_luaInitPath);
                 LogMgr.Instance.Dbg("[LuaMgr] Init.lua 加载成功");
             }
             catch (Exception ex)
@@ -216,7 +217,7 @@ namespace UnityWorld.Game.Domain
 
             try
             {
-                var results = _luaState.DoFile(filePath);
+                var results = DoFileUtf8(filePath);
 
                 if (results != null && results.Length > 0 && results[0] is LuaTable cardTable)
                 {
@@ -256,7 +257,7 @@ namespace UnityWorld.Game.Domain
             {
                 try
                 {
-                    _luaState.DoFile(filePath);
+                    DoFileUtf8(filePath);
                 }
                 catch (Exception ex)
                 {
@@ -322,7 +323,7 @@ namespace UnityWorld.Game.Domain
 
             try
             {
-                var results = _luaState.DoFile(filePath);
+                var results = DoFileUtf8(filePath);
 
                 if (results != null && results.Length > 0 && results[0] is LuaTable modTable)
                 {
@@ -339,6 +340,16 @@ namespace UnityWorld.Game.Domain
                 LogMgr.Instance.Err("[LuaMgr] LoadModifierScript '{0}' 失败: {1}", defineId, ex.Message);
                 return null;
             }
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  UTF-8 脚本加载（替代 DoFile，避免 GBK 乱码）
+        // ══════════════════════════════════════════════════════════
+
+        private object[] DoFileUtf8(string filePath)
+        {
+            var code = File.ReadAllText(filePath, System.Text.Encoding.UTF8);
+            return _luaState.DoString(code, filePath);
         }
 
         // ══════════════════════════════════════════════════════════

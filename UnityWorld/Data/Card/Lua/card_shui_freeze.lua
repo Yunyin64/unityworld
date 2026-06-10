@@ -18,12 +18,7 @@ function card:Contest(ctx)
 end
 
 function card:Apply(ctx)
-    -- 找敌方一张正在CD中的随机卡牌，冻结10 tick
-    local target = ctx.Caster.Target
-    local con,targetCard = RandomCardInCD(ctx, target)
-    if con then
-        Freeze(ctx, targetCard, 10)
-    end
+    Freeze(ctx, "TargetRandom", 10)
 end
 
 --function card:Tick(ctx)

@@ -77,20 +77,7 @@ namespace UnityWorld.Game.Domain.Combat
             CurrentZhaoShiCardId = id;
         }
 
-        public void AdvanceZhaoShi()
-        {
-            var list = GetZhaoShiList();
-            if (list.Count == 0)
-            {
-                CurrentZhaoShiCardId = -1;
-                return;
-            }
-            var idx = list.FindIndex(c => c.Id == CurrentZhaoShiCardId);
-            var nextIdx = (idx + 1) % list.Count;
-            CurrentZhaoShiCardId = list[nextIdx].Id;
-            list[nextIdx].ResetCD();
-            Log($"[ZhaoShi]  切换招式为【{list[nextIdx].DisplayName}】");
-        }
+
 
         public void InitZhaoShiRotation()
         {

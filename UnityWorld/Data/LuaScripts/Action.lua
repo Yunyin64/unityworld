@@ -43,10 +43,10 @@ end
 
 --- 充能目标卡牌（减少CD）
 --- @param ctx APIContext
---- @param cards table<CombatCard> 目标卡牌列表
+--- @param domain string 选卡域（"All","Random","AboveOne","AboveAll","BelowOne","BelowAll","Adjacent","Self","Other","TargetAll","TargetRandom"）
 --- @param reduceTick number 减少的tick数
-Charge = function(ctx, cards, reduceTick)
-    ctx:Set("TargetCard", cards)
+Charge = function(ctx, domain, reduceTick)
+    ctx:Set("Domain", domain)
     ctx:Set("ReduceTick", tonumber(reduceTick))
     API:Execute("Charge", ctx)
 end
@@ -61,30 +61,30 @@ end
 
 --- 冻结目标卡牌
 --- @param ctx APIContext
---- @param card CombatCard 目标卡牌
---- @param freezeTime number 冻结秒数
-Freeze = function(ctx, card, freezeTime)
-    ctx:Set("TargetCard", card)
+--- @param domain string 选卡域
+--- @param freezeTime number 冻结tick数
+Freeze = function(ctx, domain, freezeTime)
+    ctx:Set("Domain", domain)
     ctx:Set("FreezeTime", tonumber(freezeTime))
     API:Execute("Freeze", ctx)
 end
 
 --- 减速目标卡牌
 --- @param ctx APIContext
---- @param card CombatCard 目标卡牌
+--- @param domain string 选卡域
 --- @param stack number 减速层数
-Slow = function(ctx, card, stack)
-    ctx:Set("TargetCard", card)
+Slow = function(ctx, domain, stack)
+    ctx:Set("Domain", domain)
     ctx:Set("Stack", tonumber(stack))
     API:Execute("Slow", ctx)
 end
 
 --- 加速目标卡牌
 --- @param ctx APIContext
---- @param card CombatCard 目标卡牌
+--- @param domain string 选卡域
 --- @param stack number 加速层数
-Haste = function(ctx, card, stack)
-    ctx:Set("TargetCard", card)
+Haste = function(ctx, domain, stack)
+    ctx:Set("Domain", domain)
     ctx:Set("Stack", tonumber(stack))
     API:Execute("Haste", ctx)
 end
@@ -150,10 +150,10 @@ end
 
 --- 位移目标卡牌到指定位置
 --- @param ctx APIContext
---- @param card CombatCard 目标卡牌
+--- @param domain string 选卡域
 --- @param position string 位置（"First"/"Last"/"Random"）
-Displace = function(ctx, card, position)
-    ctx:Set("TargetCard", card)
+Displace = function(ctx, domain, position)
+    ctx:Set("Domain", domain)
     ctx:Set("Position", position)
     API:Execute("Displace", ctx)
 end
@@ -180,11 +180,11 @@ end
 
 --- 给目标卡牌添加永久属性修正
 --- @param ctx APIContext
---- @param card CombatCard 目标卡牌
+--- @param domain string 选卡域
 --- @param statId string 属性ID（如 "ManaAdj_Jin", "CDTickAdj"）
 --- @param value number 修正值
-AddCardStatBuff = function(ctx, card, statId, value)
-    ctx:Set("TargetCard", card)
+AddCardStatBuff = function(ctx, domain, statId, value)
+    ctx:Set("Domain", domain)
     ctx:Set("StatId", statId)
     ctx:Set("Value", tonumber(value))
     API:Execute("AddCardStatBuff", ctx)

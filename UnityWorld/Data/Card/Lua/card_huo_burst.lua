@@ -18,12 +18,7 @@ function card:Contest(ctx)
 end
 
 function card:Apply(ctx)
-    -- 对自身所有卡牌充能 10 tick（1s）
-    local owner = ctx.Caster
-    local con,allCards = AllCard(ctx, owner)
-    if con then
-        Charge(ctx, allCards, 10)
-    end
+    Charge(ctx, "All", 10)
 end
 
 --function card:Tick(ctx)

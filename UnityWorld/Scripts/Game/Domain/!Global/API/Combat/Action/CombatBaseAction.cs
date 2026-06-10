@@ -133,26 +133,25 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
-        /// <summary>位移目标卡牌到指定位置。参数：TargetCard(CombatCard), Position(String: First/Last/Random)</summary>
-        [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.CombatCard, "TargetCard:CombatCard", "Position:String")]
+        /// <summary>位移目标卡牌到指定位置。参数：Domain(String), Position(String: First/Last/Random)</summary>
+        [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.Card, "Domain:String", "Position:String")]
         public static APIContext Displace(APIContext ctx)
         {
             var caster = ctx.Caster;
             if (caster == null) return ctx;
-
-            var card = ctx.Get<CombatCard>("TargetCard");
-            if (card == null) return ctx;
+            ctx.CardTargets = APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx);
 
             string posStr = ctx.GetValue("Position", "Random");
             if (!Enum.TryParse<ComabtCardDisplaceType>(posStr, true, out var pos))
                 pos = ComabtCardDisplaceType.Random;
 
-            var owner = card.Owner;
-            if (owner == null) return ctx;
-
-            owner.DisplaceCombatCard(card, pos);
-            LogMgr.Instance.Dbg("[Displace] {0} 的卡牌 {1} 位移至 {2}", owner.GetName(), card.DisplayName, pos);
-
+            foreach (var card in ctx.CardTargets)
+            {
+                var owner = card.Owner;
+                if (owner == null) continue;
+                owner.DisplaceCombatCard(card, pos);
+                LogMgr.Instance.Dbg("[Displace] {0} 的卡牌 {1} 位移至 {2}", owner.GetName(), card.DisplayName, pos);
+            }
             return ctx;
         }
 

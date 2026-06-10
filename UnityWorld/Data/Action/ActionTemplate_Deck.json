@@ -26,12 +26,18 @@
   {
     "ID": "action_displace",
     "DisplayName": "位移卡牌",
-    "Desc": "将目标卡牌位移至{Position}",
+    "Desc": "将{DoMain}目标卡牌位移至{Position}",
     "FuncName": "Displace",
     "Tags": ["控制", "卡组"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
+      {
+        "Name": "DoMain",
+        "Type": "String",
+        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
+        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
+      },
       {
         "Name": "Position",
         "Type": "String",
@@ -39,6 +45,6 @@
         "Score": [1, 1, 0]
       }
     ],
-    "LuaTemplate": "Displace(ctx, \"{Position}\")"
+    "LuaTemplate": "Displace(ctx, \"{DoMain}\", \"{Position}\")"
   }
 ]

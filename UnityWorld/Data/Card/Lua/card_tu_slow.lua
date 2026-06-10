@@ -16,12 +16,7 @@ card.Keywords = {}
 
 
 function card:Apply(ctx)
-    -- 减速敌方随机一张卡
-    local target = ctx.Caster.Target
-    local con, targetCard = RandomCardInCD(ctx, target)
-    if con then
-        Slow(ctx, targetCard, 10)
-    end
+    Slow(ctx, "TargetRandom", 10)
 end
 
 

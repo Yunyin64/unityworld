@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using UnityWorld.Game.Data;
 using UnityWorld.Core;
+using UnityWorld.Game.Domain.Combat;
 
 namespace UnityWorld.Game.Domain
 {
@@ -25,6 +26,8 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>执行委托字典：funcName → 执行函数</summary>
         private readonly Dictionary<string, Action<ContextBase>> _handlers = new();
+
+        private APIDomainFunc Funcs = new APIDomainFunc();
 
         // ── 构造 ──────────────────────────────────────────────
 
@@ -386,6 +389,17 @@ namespace UnityWorld.Game.Domain
                 string opt = p.IsOptional ? "?" : "";
                 return $"{opt}{p.Name}:{p.Type}";
             }));
+        }
+
+        
+        public List<CombatCard> GetTargetCard(string key, APIContext ctx)
+        {
+           return Funcs.GetTargetCard(key,ctx);
+        }
+
+        public List<CombatNpc> GetTargetNpc(string key, APIContext ctx)
+        {
+           return Funcs.GetTargetNpc(key,ctx);
         }
 
     }

@@ -7,7 +7,13 @@ public class APIContext : ContextBase
 {
     public CombatNpc Caster { get; set; }
     public CombatCard SourceCard { get; set; }
+    public CombatNpcModifier SourceBuff { get; set; }
     public CombatScene Scene { get; set; }
+    /// <summary>
+    /// 要通讯的目标
+    /// </summary>
+    public List<CombatNpc> NpcTargets { get; set; } = new();
+    public List<CombatCard> CardTargets { get; set; } = new();
 
     public APIContext CreateContextFromCard(CombatCard SourceCard,CombatScene scene) { 
         return new APIContext

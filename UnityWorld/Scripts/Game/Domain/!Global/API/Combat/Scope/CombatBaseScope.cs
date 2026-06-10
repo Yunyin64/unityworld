@@ -1,3 +1,4 @@
+// [Deprecated] 已迁移至 APIDomainFunc，保留供参考。新代码请使用 APIMgr.GetTargetCard(domain, ctx)
 
         using UnityWorld.Core;
 using UnityWorld.Game.Domain.Combat;

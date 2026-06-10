@@ -62,12 +62,18 @@
   {
     "ID": "action_add_card_stat_buff",
     "DisplayName": "卡牌属性增益",
-    "Desc": "给目标卡牌{StatId}增加{Value}点",
+    "Desc": "给{DoMain}目标卡牌{StatId}增加{Value}点",
     "FuncName": "AddCardStatBuff",
     "Tags": ["Buff", "卡牌属性"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
+      {
+        "Name": "DoMain",
+        "Type": "String",
+        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
+        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
+      },
       {
         "Name": "StatId",
         "Type": "String",
@@ -81,6 +87,6 @@
         "Score": [1, 2, 3, 5]
       }
     ],
-    "LuaTemplate": "AddCardStatBuff(ctx, \"{StatId}\", {Value})"
+    "LuaTemplate": "AddCardStatBuff(ctx, \"{DoMain}\", \"{StatId}\", {Value})"
   }
 ]
