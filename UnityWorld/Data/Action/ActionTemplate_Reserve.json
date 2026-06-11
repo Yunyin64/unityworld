@@ -2,30 +2,18 @@
   {
     "ID": "action_deploy",
     "DisplayName": "部署",
-    "Desc": "将一张卡从候补池部署到运转池",
+    "Desc": "将{Domain}一张卡从候补池部署到运转池",
     "FuncName": "Deploy",
     "Tags": ["卡组", "部署"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "CardId",
-        "Type": "Int",
-        "Value": [0],
-        "Score": [0]
-      }
-    ],
-    "LuaTemplate": "Deploy(ctx, {CardId})"
-  },
-  {
-    "ID": "action_recall",
-    "DisplayName": "召回",
-    "Desc": "将一张卡从运转池召回候补池",
-    "FuncName": "Recall",
-    "Tags": ["卡组", "召回"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Target"],
+        "Score": [0, 0]
+      },
       {
         "Name": "CardId",
         "Type": "Int",
@@ -33,6 +21,30 @@
         "Score": [0]
       }
     ],
-    "LuaTemplate": "Recall(ctx, {CardId})"
+    "LuaTemplate": "Deploy(ctx, \"{Domain}\", {CardId})"
+  },
+  {
+    "ID": "action_recall",
+    "DisplayName": "召回",
+    "Desc": "将{Domain}一张卡从运转池召回候补池",
+    "FuncName": "Recall",
+    "Tags": ["卡组", "召回"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Target"],
+        "Score": [0, 0]
+      },
+      {
+        "Name": "CardId",
+        "Type": "Int",
+        "Value": [0],
+        "Score": [0]
+      }
+    ],
+    "LuaTemplate": "Recall(ctx, \"{Domain}\", {CardId})"
   }
 ]

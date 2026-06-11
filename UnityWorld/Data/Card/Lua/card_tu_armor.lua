@@ -14,12 +14,11 @@ card.CardData = {
 
 card.Keywords = {}
 
-function card:Contest(ctx)
-end
+--function card:Contest(ctx)
+--end
 
 function card:Apply(ctx)
-    local caster = ctx.Caster
-    AddNpcBuff(ctx, caster, "buff_armor", 1)
+    AddNpcBuff(ctx, "Self", "buff_armor", 1,-1)
 end
 
 --function card:Tick(ctx)

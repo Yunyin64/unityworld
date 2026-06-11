@@ -2,12 +2,18 @@
   {
     "ID": "action_remove_wound",
     "DisplayName": "移除伤势",
-    "Desc": "移除目标随机一张体量≤{Size}的伤势卡",
+    "Desc": "移除{Domain}随机一张体量≤{Size}的伤势卡",
     "FuncName": "RemoveRandomWound",
     "Tags": ["治疗", "卡组"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Target"],
+        "Score": [0, 0]
+      },
       {
         "Name": "Size",
         "Type": "Int",
@@ -21,7 +27,7 @@
         "Score": [0, 1]
       }
     ],
-    "LuaTemplate": "RemoveRandomWound(ctx, {Size}, {Exact})"
+    "LuaTemplate": "RemoveRandomWound(ctx, \"{Domain}\", {Size}, {Exact})"
   },
   {
     "ID": "action_displace",

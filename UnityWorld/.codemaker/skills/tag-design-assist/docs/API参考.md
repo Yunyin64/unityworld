@@ -28,23 +28,23 @@
 
 | 函数名 | 描述 | 参数 |
 |---|---|---|
-| Heal | 恢复战斗中HP | HealValue:Int |
-| SelfDamage | 自伤 | DamageValue:Int |
-| ArmorBreak | 消除对方护盾值 | BreakValue:Int |
-| AddNpcBuff | 给目标NPC添加Buff | Target:CombatNpc, BuffId:String, Stacks:Int, Duration:Float |
-| AddStatBuff | 给施法者添加永久属性修正 | Target:CombatNpc, StatId:String, Value:Float, ModifierType:String, SourceId:String |
-| RemoveRandomWound | 移除目标随机一张伤势卡 | Target:CombatNpc, Size:Int, Exact:Bool |
+| Heal | 恢复战斗中HP | Domain:String, HealValue:Int |
+| SelfDamage | 自伤 | Domain:String, DamageValue:Int |
+| ArmorBreak | 消除目标护盾值 | Domain:String, BreakValue:Int |
+| AddNpcBuff | 给目标NPC添加Buff | Domain:String, BuffId:String, Stacks:Int, Duration:Float |
+| AddStatBuff | 给目标添加永久属性修正 | Domain:String, StatId:String, Value:Float, ModifierType:String, SourceId:String |
+| RemoveRandomWound | 移除目标随机一张伤势卡 | Domain:String, Size:Int, Exact:Bool |
 | Displace | 位移目标卡牌 | Domain:String, Position:String |
 | Charge | 充能目标卡牌 | Domain:String, ReduceTick:Int |
 | Freeze | 冻结目标卡牌 | Domain:String, FreezeTime:Int |
 | Slow | 减速目标卡牌 | Domain:String, Stack:Int |
 | Haste | 加速目标卡牌 | Domain:String, Stack:Int |
 | AddCardStatBuff | 给目标卡牌添加永久属性修正 | Domain:String, StatId:String, Value:Float |
-| Convert | 灵元转化回蓝条MP | Element:String, MaxAmount:Int |
-| Draw | MP转化为灵元 | Amount:Int |
-| ReduceMana | 减少自身指定元素的灵元 | Element:String, Amount:Int |
-| Deploy | 将卡从候补池部署到运转池 | CardId:Int |
-| Recall | 将卡从运转池召回候补池 | CardId:Int |
+| Convert | 灵元转化回蓝条MP | Domain:String, Element:String, MaxAmount:Int |
+| Draw | MP转化为灵元 | Domain:String, Amount:Int |
+| ReduceMana | 减少目标指定元素的灵元 | Domain:String, Element:String, Amount:Int |
+| Deploy | 将卡从候补池部署到运转池 | Domain:String, CardId:Int |
+| Recall | 将卡从运转池召回候补池 | Domain:String, CardId:Int |
 | GiveTrait | 给NPC添加特质 | int:String, TraitId:String |
 | RemoveTrait | 移除NPC特质 | int:String, TraitId:String |
 | GiveBehaviorCard | 给NPC添加行为卡 | int:String, CardDefineId:String |

@@ -18,7 +18,7 @@ function card:Contest(ctx)
 end
 
 function card:Apply(ctx)
-    Draw(ctx, 3)
+    Draw(ctx, "Self", 3)
 end
 
 --function card:Tick(ctx)

@@ -3,51 +3,57 @@
 
 --- 恢复战斗中HP
 --- @param ctx APIContext
+--- @param Domain string
 --- @param HealValue number
-Heal = function(ctx, HealValue)
+Heal = function(ctx, Domain, HealValue)
+    ctx:Set("Domain", Domain)
     ctx:Set("HealValue", tonumber(HealValue))
     API:Execute("Heal", ctx)
 end
 
 --- 自伤
 --- @param ctx APIContext
+--- @param Domain string
 --- @param DamageValue number
-SelfDamage = function(ctx, DamageValue)
+SelfDamage = function(ctx, Domain, DamageValue)
+    ctx:Set("Domain", Domain)
     ctx:Set("DamageValue", tonumber(DamageValue))
     API:Execute("SelfDamage", ctx)
 end
 
---- 消除对方护盾值
+--- 消除目标护盾值
 --- @param ctx APIContext
+--- @param Domain string
 --- @param BreakValue number
-ArmorBreak = function(ctx, BreakValue)
+ArmorBreak = function(ctx, Domain, BreakValue)
+    ctx:Set("Domain", Domain)
     ctx:Set("BreakValue", tonumber(BreakValue))
     API:Execute("ArmorBreak", ctx)
 end
 
 --- 给目标NPC添加Buff
 --- @param ctx APIContext
---- @param Target CombatNpc
+--- @param Domain string
 --- @param BuffId string
 --- @param Stacks number
 --- @param Duration number
-AddNpcBuff = function(ctx, Target, BuffId, Stacks, Duration)
-    ctx:Set("Target", Target)
+AddNpcBuff = function(ctx, Domain, BuffId, Stacks, Duration)
+    ctx:Set("Domain", Domain)
     ctx:Set("BuffId", BuffId)
     ctx:Set("Stacks", tonumber(Stacks))
     ctx:Set("Duration", tonumber(Duration))
     API:Execute("AddNpcBuff", ctx)
 end
 
---- 给施法者添加永久属性修正
+--- 给目标添加永久属性修正
 --- @param ctx APIContext
---- @param Target CombatNpc
+--- @param Domain string
 --- @param StatId string
 --- @param Value number
 --- @param ModifierType string
 --- @param SourceId string
-AddStatBuff = function(ctx, Target, StatId, Value, ModifierType, SourceId)
-    ctx:Set("Target", Target)
+AddStatBuff = function(ctx, Domain, StatId, Value, ModifierType, SourceId)
+    ctx:Set("Domain", Domain)
     ctx:Set("StatId", StatId)
     ctx:Set("Value", tonumber(Value))
     ctx:Set("ModifierType", ModifierType)
@@ -57,11 +63,11 @@ end
 
 --- 移除目标随机一张伤势卡
 --- @param ctx APIContext
---- @param Target CombatNpc
+--- @param Domain string
 --- @param Size number
 --- @param Exact boolean
-RemoveRandomWound = function(ctx, Target, Size, Exact)
-    ctx:Set("Target", Target)
+RemoveRandomWound = function(ctx, Domain, Size, Exact)
+    ctx:Set("Domain", Domain)
     ctx:Set("Size", tonumber(Size))
     ctx:Set("Exact", Exact)
     API:Execute("RemoveRandomWound", ctx)
@@ -131,9 +137,11 @@ end
 
 --- 灵元转化回蓝条MP
 --- @param ctx APIContext
+--- @param Domain string
 --- @param Element string
 --- @param MaxAmount number
-Convert = function(ctx, Element, MaxAmount)
+Convert = function(ctx, Domain, Element, MaxAmount)
+    ctx:Set("Domain", Domain)
     ctx:Set("Element", Element)
     ctx:Set("MaxAmount", tonumber(MaxAmount))
     API:Execute("Convert", ctx)
@@ -141,17 +149,21 @@ end
 
 --- MP转化为灵元
 --- @param ctx APIContext
+--- @param Domain string
 --- @param Amount number
-Draw = function(ctx, Amount)
+Draw = function(ctx, Domain, Amount)
+    ctx:Set("Domain", Domain)
     ctx:Set("Amount", tonumber(Amount))
     API:Execute("Draw", ctx)
 end
 
---- 减少自身指定元素的灵元
+--- 减少目标指定元素的灵元
 --- @param ctx APIContext
+--- @param Domain string
 --- @param Element string
 --- @param Amount number
-ReduceMana = function(ctx, Element, Amount)
+ReduceMana = function(ctx, Domain, Element, Amount)
+    ctx:Set("Domain", Domain)
     ctx:Set("Element", Element)
     ctx:Set("Amount", tonumber(Amount))
     API:Execute("ReduceMana", ctx)
@@ -159,16 +171,20 @@ end
 
 --- 将卡从候补池部署到运转池
 --- @param ctx APIContext
+--- @param Domain string
 --- @param CardId number
-Deploy = function(ctx, CardId)
+Deploy = function(ctx, Domain, CardId)
+    ctx:Set("Domain", Domain)
     ctx:Set("CardId", tonumber(CardId))
     API:Execute("Deploy", ctx)
 end
 
 --- 将卡从运转池召回候补池
 --- @param ctx APIContext
+--- @param Domain string
 --- @param CardId number
-Recall = function(ctx, CardId)
+Recall = function(ctx, Domain, CardId)
+    ctx:Set("Domain", Domain)
     ctx:Set("CardId", tonumber(CardId))
     API:Execute("Recall", ctx)
 end

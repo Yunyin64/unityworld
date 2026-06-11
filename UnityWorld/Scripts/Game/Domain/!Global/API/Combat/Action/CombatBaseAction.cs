@@ -13,91 +13,99 @@ namespace UnityWorld.Game.Domain
 
         // ── 效果类 ────────────────────────────────────────────
 
-        /// <summary>恢复战斗中HP。参数：HealValue(Int)</summary>
-        [APIFunc("Heal", APIType.Action, "恢复战斗中HP", Scope.CombatNpc,"HealValue:Int")]
-        public static APIContext Heal( APIContext ctx)
+        /// <summary>恢复战斗中HP。参数：Domain(String), HealValue(Int)</summary>
+        [APIFunc("Heal", APIType.Action, "恢复战斗中HP", Scope.CombatNpc, "Domain:String", "HealValue:Int")]
+        public static APIContext Heal(APIContext ctx)
         {
             var caster = ctx.Caster;
             if (caster == null) return ctx;
-            int healValue = ctx.GetValue("HealValue", 0);
-            caster.ApplyHeal(healValue);
-            return ctx;
-         }
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
 
-        /// <summary>自伤。参数：DamageValue(Int)</summary>
-        [APIFunc("SelfDamage", APIType.Action, "自伤", Scope.CombatNpc, "DamageValue:Int")]
-        public static APIContext SelfDamage( APIContext ctx)
+            int healValue = ctx.GetValue("HealValue", 0);
+            foreach (var npc in ctx.NpcTargets)
+            {
+                npc.ApplyHeal(healValue);
+            }
+            return ctx;
+        }
+
+        /// <summary>自伤。参数：Domain(String), DamageValue(Int)</summary>
+        [APIFunc("SelfDamage", APIType.Action, "自伤", Scope.CombatNpc, "Domain:String", "DamageValue:Int")]
+        public static APIContext SelfDamage(APIContext ctx)
         {
             var caster = ctx.Caster;
             if (caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
+
             int damageValue = ctx.GetValue("DamageValue", 0);
-            var dmg = new DamageInfo();
-            dmg.Damage = damageValue;
-            caster.AddDamage(dmg);
+            foreach (var npc in ctx.NpcTargets)
+            {
+                var dmg = new DamageInfo();
+                dmg.Damage = damageValue;
+                npc.AddDamage(dmg);
+            }
             return ctx;
-          }
+        }
 
 
 
         // ── 破甲/护盾类 ──────────────────────────────────────
 
-        /// <summary>破甲：消除对方护盾值。参数：BreakValue(Int)</summary>
-        [APIFunc("ArmorBreak", APIType.Action, "消除对方护盾值", Scope.CombatNpc, "BreakValue:Int")]
-        public static APIContext ArmorBreak( APIContext ctx)
+        /// <summary>破甲：消除目标护盾值。参数：Domain(String), BreakValue(Int)</summary>
+        [APIFunc("ArmorBreak", APIType.Action, "消除目标护盾值", Scope.CombatNpc, "Domain:String", "BreakValue:Int")]
+        public static APIContext ArmorBreak(APIContext ctx)
         {
             var caster = ctx.Caster;
             if (caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
 
             int breakValue = ctx.GetValue("BreakValue", 0);
-            var target = caster.GetTarget();
-            if (target == null) return ctx;
-
-            float actual = Math.Min(target.ShieldValue, breakValue);
-            if (actual > 0)
-                target.ChangeShield(-actual);
-
+            foreach (var npc in ctx.NpcTargets)
+            {
+                float actual = Math.Min(npc.ShieldValue, breakValue);
+                if (actual > 0)
+                    npc.ChangeShield(-actual);
+            }
             return ctx;
         }
 
         // ── Buff 类 ──────────────────────────────────────────
 
-        /// <summary>给目标NPC添加Buff。参数：Target(CombatNpc), BuffId(String), Stacks(Int), Duration(Float,可选)</summary>
-        [APIFunc("AddNpcBuff", APIType.Action, "给目标NPC添加Buff", Scope.Npc, "Target:CombatNpc", "BuffId:String", "Stacks:Int", "Duration:Float")]
+        /// <summary>给目标NPC添加Buff。参数：Domain(String), BuffId(String), Stacks(Int), Duration(Float)</summary>
+        [APIFunc("AddNpcBuff", APIType.Action, "给目标NPC添加Buff", Scope.CombatNpc, "Domain:String", "BuffId:String", "Stacks:Int", "Duration:Float")]
         public static void AddNpcBuff(APIContext ctx)
         {
             var caster = ctx.Caster;
-            var scene = ctx.Scene;
-            if (caster == null || scene == null) return;
+            if (caster == null) return;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
 
-            CombatNpc target = ctx.Get<CombatNpc>("Target");
             string buffId = ctx.GetValue("BuffId", "");
             int stacks = ctx.GetValue("Stacks", 1);
             float duration = ctx.GetValue("Duration", -1f);
 
             if (string.IsNullOrEmpty(buffId)) return;
 
-            // 查找目标 NPC
-            target.AddModifier(buffId, stacks,duration);
-
-          }
+            foreach (var npc in ctx.NpcTargets)
+            {
+                npc.AddModifier(buffId, stacks, duration);
+            }
+        }
 
         // ── 轻量属性修正类 ──────────────────────────────────────
 
-        /// <summary>给施法者添加永久属性修正。参数：StatId(String), Value(Float), ?ModifierType(String), ?SourceId(String)</summary>
-        [APIFunc("AddStatBuff", APIType.Action, "给施法者添加永久属性修正", Scope.CombatNpc, "Target:CombatNpc","StatId:String", "Value:Float", "ModifierType:String", "SourceId:String")]
+        /// <summary>给目标添加永久属性修正。参数：Domain(String), StatId(String), Value(Float), ModifierType(String), SourceId(String)</summary>
+        [APIFunc("AddStatBuff", APIType.Action, "给目标添加永久属性修正", Scope.CombatNpc, "Domain:String", "StatId:String", "Value:Float", "ModifierType:String", "SourceId:String")]
         public static APIContext AddStatBuff(APIContext ctx)
         {
             var caster = ctx.Caster;
             if (caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
 
-
-            CombatNpc target = ctx.Get<CombatNpc>("Target");
             string statId = ctx.GetValue("StatId", "");
             float value = ctx.GetValue("Value", 0f);
             string modifierType = ctx.GetValue("ModifierType", "Flat");
             string sourceId = ctx.GetValue("SourceId", "");
 
-            
             if (!Enum.TryParse<ModifierType>(modifierType, true, out var type))
             {
                 LogMgr.Instance.Warn($"[StatBuff] 无法解析 ModifierType: '{modifierType}'，已忽略");
@@ -106,29 +114,36 @@ namespace UnityWorld.Game.Domain
 
             if (string.IsNullOrEmpty(statId)) return ctx;
 
-            target.AddStatBuff(statId, value, type, string.IsNullOrEmpty(sourceId) ? null : sourceId);
+            foreach (var npc in ctx.NpcTargets)
+            {
+                npc.AddStatBuff(statId, value, type, string.IsNullOrEmpty(sourceId) ? null : sourceId);
+            }
             return ctx;
         }
 
         // ── 卡组操作类 ────────────────────────────────────────
 
-        /// <summary>移除目标随机一张伤势卡（按体量筛选）。参数：Target(CombatNpc), Size(Int), ?Exact(Bool)</summary>
-        [APIFunc("RemoveRandomWound", APIType.Action, "移除目标随机一张伤势卡", Scope.CombatNpc, "Target:CombatNpc", "Size:Int", "Exact:Bool")]
+        /// <summary>移除目标随机一张伤势卡（按体量筛选）。参数：Domain(String), Size(Int), Exact(Bool)</summary>
+        [APIFunc("RemoveRandomWound", APIType.Action, "移除目标随机一张伤势卡", Scope.CombatNpc, "Domain:String", "Size:Int", "Exact:Bool")]
         public static APIContext RemoveRandomWound(APIContext ctx)
         {
-            var target = ctx.Get<CombatNpc>("Target");
-            if (target == null) return ctx;
+            var caster = ctx.Caster;
+            if (caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
 
             int size = ctx.GetValue("Size", 1);
             bool exact = ctx.GetValue("Exact", true);
 
-            var deck = target.GetField();
-            var wounds = deck.Where(c => c.HasKeyword("Wound") && (exact ? c.GetSize() == size : c.GetSize() <= size)).ToList();
-            if (wounds.Count == 0) return ctx;
+            foreach (var npc in ctx.NpcTargets)
+            {
+                var deck = npc.GetField();
+                var wounds = deck.Where(c => c.HasKeyword("Wound") && (exact ? c.GetSize() == size : c.GetSize() <= size)).ToList();
+                if (wounds.Count == 0) continue;
 
-            var picked = wounds[target.Scene.Soul.Random(0, wounds.Count)];
-            target.RemoveCombatCard(picked);
-            LogMgr.Instance.Dbg("[RemoveRandomWound] {0} 移除伤势卡: {1} (Size:{2})", target.GetName(), picked.DisplayName, picked.GetSize());
+                var picked = wounds[npc.Scene.Soul.Random(0, wounds.Count)];
+                npc.RemoveCombatCard(picked);
+                LogMgr.Instance.Dbg("[RemoveRandomWound] {0} 移除伤势卡: {1} (Size:{2})", npc.GetName(), picked.DisplayName, picked.GetSize());
+            }
 
             return ctx;
         }

@@ -18,7 +18,7 @@ function card:Contest(ctx)
 end
 
 function card:Apply(ctx)
-    ArmorBreak(ctx, 5)
+    ArmorBreak(ctx, "Target", 5)
 end
 
 --function card:Tick(ctx)

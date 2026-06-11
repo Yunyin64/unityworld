@@ -2,12 +2,18 @@
   {
     "ID": "action_heal",
     "DisplayName": "治疗",
-    "Desc": "恢复{HealValue}点HP",
+    "Desc": "恢复{Domain}{HealValue}点HP",
     "FuncName": "Heal",
     "Tags": ["治疗"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Target"],
+        "Score": [0, 0]
+      },
       {
         "Name": "HealValue",
         "Type": "Int",
@@ -15,17 +21,23 @@
         "Score": [1, 2, 3, 5]
       }
     ],
-    "LuaTemplate": "Heal(ctx, {HealValue})"
+    "LuaTemplate": "Heal(ctx, \"{Domain}\", {HealValue})"
   },
   {
     "ID": "action_self_damage",
     "DisplayName": "自伤",
-    "Desc": "对自身造成{DamageValue}点伤害",
+    "Desc": "对{Domain}造成{DamageValue}点伤害",
     "FuncName": "SelfDamage",
     "Tags": ["自伤", "代价"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Target"],
+        "Score": [0, 0]
+      },
       {
         "Name": "DamageValue",
         "Type": "Int",
@@ -33,17 +45,23 @@
         "Score": [-1, -2, -3, -4, -5]
       }
     ],
-    "LuaTemplate": "SelfDamage(ctx, {DamageValue})"
+    "LuaTemplate": "SelfDamage(ctx, \"{Domain}\", {DamageValue})"
   },
   {
     "ID": "action_armor_break",
     "DisplayName": "破甲",
-    "Desc": "消除对方{BreakValue}点护盾",
+    "Desc": "消除{Domain}{BreakValue}点护盾",
     "FuncName": "ArmorBreak",
     "Tags": ["破甲", "穿透"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Target"],
+        "Score": [0, 0]
+      },
       {
         "Name": "BreakValue",
         "Type": "Int",
@@ -51,6 +69,6 @@
         "Score": [1, 2, 3, 4, 5, 6]
       }
     ],
-    "LuaTemplate": "ArmorBreak(ctx, {BreakValue})"
+    "LuaTemplate": "ArmorBreak(ctx, \"{Domain}\", {BreakValue})"
   }
 ]

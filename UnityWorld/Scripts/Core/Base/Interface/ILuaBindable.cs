@@ -1,4 +1,5 @@
 using NLua;
+using UnityWorld.Game.Domain;
 
 /// <summary>
 /// Lua 绑定能力接口：持有 Lua env 和预扫描的 LuaHooks 缓存。
@@ -22,6 +23,11 @@ public interface ILuaBindable
 /// </summary>
 public static class LuaBindableExtensions
 {
+    public static string GetOwnerID(this ILuaBindable self)
+    {
+        if (self is Card c) return $"Card#{c.DefineId}";
+        return self.GetType().Name;
+    }
     /// <summary>
     /// 扫描 env 中所有 Lua 函数并缓存到 LuaHooks。
     /// env 为 null 时初始化空字典。应在加载 env 后立即调用。
@@ -85,7 +91,7 @@ public static class LuaBindableExtensions
         }
         catch (System.Exception ex)
         {
-            UnityWorld.Core.LogMgr.Instance.Err("[ILuaBindable] hook '{0}' 异常: {1}", hookName, ex.Message);
+            UnityWorld.Core.LogMgr.Instance.Err("[ILuaBindable]{0} hook '{1}' 异常: {2}",self.GetOwnerID(), hookName, ex.Message);
         }
         return default;
     }
