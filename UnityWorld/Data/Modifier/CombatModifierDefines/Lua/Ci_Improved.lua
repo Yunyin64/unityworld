@@ -1,21 +1,15 @@
 -- ══════════════════════════════════════════════════════════════
--- 狼牙
--- 被动：战斗开始时获得一层刺击强化(Ci_Improved)
+--  刺击强化
+-- 每层：刺击拼点 +1
 -- ══════════════════════════════════════════════════════════════
 
-local card = setmetatable({}, { __index = CardBase })
+local Buff = setmetatable({}, { __index = BuffBase })
 
-card.CardData = {
-    Size = 1,
-    Cooldown = 0,
-    CardType = "Item",
-    ManaCost = {},
-}
-
-card.Keywords = { "Passive" }
-
-function card:Apply(ctx)
-    AddNpcBuff(ctx, "Self", "Ci_Improved", 1,-1)
+function Buff:ModifyContest(ctx)
+    local Data = ctx:GetObject("ContestData")
+    if Data.ContestType == ContestType.Ci then
+        Data.ContestValue = Data.ContestValue + self.m_Self.CurrentStack
+    end
 end
 
-return card
+return Buff

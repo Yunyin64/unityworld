@@ -105,7 +105,7 @@ namespace UnityWorld.Game.Domain
     public partial class Npc
     {
         public PracticePath GetPath() => CultivationData.Path;
-        public int GetQixue() => CultivationData.Properties.QiXue;
+        public int GetQiXue() => CultivationData.Properties.QiXue;
         public NpcGongFaData GongFa => CultivationData.GongFa;
         public NpcPraticeData PracticeData => CultivationData.PracticeData;
     }

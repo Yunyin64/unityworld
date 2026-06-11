@@ -22,7 +22,7 @@
   {
     "ID": "card_fabao_kaijia",
     "DisplayName": "铠甲",
-    "Desc": "战斗开始时，获得1《护甲》Buff",
+    "Desc": "战斗开始时，获得<护甲>1",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
@@ -43,7 +43,7 @@
   {
     "ID": "card_monster_lizhao",
     "DisplayName": "利爪",
-    "Desc": "当拼点时，该武器攻击+1",
+    "Desc": "当拼点时，施加<出血>1",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,

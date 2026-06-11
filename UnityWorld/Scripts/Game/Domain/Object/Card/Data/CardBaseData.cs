@@ -103,6 +103,9 @@ namespace UnityWorld.Game.Domain
 
             foreach (var kv in manaCost)
             {
+                if (kv.Key.Kind == BaseElementType.Extra || kv.Key.Kind == BaseElementType.None)
+                    continue;
+
                 if (kv.Value > maxVal)
                 {
                     maxVal = kv.Value;
@@ -114,6 +117,9 @@ namespace UnityWorld.Game.Domain
                     tied = true;
                 }
             }
+
+            if (maxVal < 0)
+                return ElementType.None;
 
             return tied ? ElementType.Mix : maxType;
         }

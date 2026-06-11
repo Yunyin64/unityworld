@@ -175,8 +175,6 @@ namespace UnityWorld.Game.Domain.Combat
             }
             // 3. ManaPool 初始化为空（由 DoManaConvert 统一按亲和权重转化）
             ManaPool = new Dictionary<ElementType, int>();
-            // 4. 招式轮转初始化
-            InitZhaoShiRotation();
         }
 
         public void Start()
@@ -186,6 +184,7 @@ namespace UnityWorld.Game.Domain.Combat
                 card.Start();
             }
             InitData();
+            InitZhaoShiRotation();
         }
 
 

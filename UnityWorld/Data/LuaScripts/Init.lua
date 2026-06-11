@@ -14,6 +14,7 @@ require("Contest")
 
 -- ── CardBase 元表 ────────────────────────────────────────────
 CardBase = {}
+BuffBase = {}
 
 
 --- 全局日志快捷函数

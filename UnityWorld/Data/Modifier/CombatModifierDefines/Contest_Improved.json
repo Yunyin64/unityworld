@@ -1,0 +1,114 @@
+[
+  {
+    "ID": "Ci_Improved",
+    "DisplayName": "刺击强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Zhan_Improved",
+    "DisplayName": "斩击强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Da_Improved",
+    "DisplayName": "钝击强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "SheJi_Improved",
+    "DisplayName": "射击强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Block_Improved",
+    "DisplayName": "格挡强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Doge_Improved",
+    "DisplayName": "闪避强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Shield_Improved",
+    "DisplayName": "护盾强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Jin_Improved",
+    "DisplayName": "金系强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Huo_Improved",
+    "DisplayName": "火系强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Mu_Improved",
+    "DisplayName": "木系强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Shui_Improved",
+    "DisplayName": "水系强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Tu_Improved",
+    "DisplayName": "土系强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Attack_Improved",
+    "DisplayName": "全攻击强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Defend_Improved",
+    "DisplayName": "全防御强化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  }
+]

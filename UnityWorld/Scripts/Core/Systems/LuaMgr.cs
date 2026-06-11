@@ -20,11 +20,6 @@ namespace UnityWorld.Game.Domain
         /// <summary>全局 Lua State（整个应用共享一个）</summary>
         private Lua _luaState;
 
-        /// <summary>Lua 卡牌脚本目录路径</summary>
-        private readonly string _luaCardsDir;
-
-        /// <summary>Lua 战斗 Modifier 脚本目录路径</summary>
-        private readonly string _luaCombatModifiersDir;
 
         /// <summary>Lua 初始化脚本路径</summary>
         private readonly string _luaInitPath;
@@ -52,8 +47,6 @@ namespace UnityWorld.Game.Domain
         public LuaMgr()
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            _luaCardsDir =  Path.Combine(baseDir, "Data", "Card","Lua");
-            _luaCombatModifiersDir = Path.Combine(baseDir, "Data", "Modifier","Lua");
             _luaKeywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
             _luaInitPath = Path.Combine(baseDir, "Data", "LuaScripts", "Init.lua");
             Instance = this;
@@ -190,7 +183,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public bool HasCardScript(string cardId)
         {
-            var path = Path.Combine(_luaCardsDir, $"{cardId}.lua");
+            var path = Path.Combine(CardDefineMgr.Instance.DataDir, "Lua", $"{cardId}.lua");
             return File.Exists(path);
         }
 
@@ -208,7 +201,7 @@ namespace UnityWorld.Game.Domain
                 return null;
             }
 
-            var filePath = Path.Combine(_luaCardsDir, $"{define.ID}.lua");
+            var filePath = Path.Combine(CardDefineMgr.Instance.DataDir, "Lua", $"{define.ID}.lua");
             if (!File.Exists(filePath))
             {
                 LogMgr.Instance.Dbg("[LuaMgr] LoadCardScript: 找不到脚本文件 {0}.lua", define.ID);
@@ -286,7 +279,6 @@ namespace UnityWorld.Game.Domain
             }
 
             _keywordRegistry[name] = table;
-            LogMgr.Instance.Dbg("[LuaMgr] Keyword 注册成功: {0}", name);
         }
 
         /// <summary>
@@ -315,7 +307,7 @@ namespace UnityWorld.Game.Domain
                 return null;
             }
 
-            var filePath = Path.Combine(_luaCombatModifiersDir, $"{defineId}.lua");
+            var filePath = Path.Combine(CombatNpcModifierDefineMgr.Instance.DataDir, "Lua", $"{defineId}.lua");
             if (!File.Exists(filePath))
             {
                 return null;

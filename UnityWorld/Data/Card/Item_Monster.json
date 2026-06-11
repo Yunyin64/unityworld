@@ -130,9 +130,9 @@
     ]
   },
   {
-    "ID": "card_wolf_meat",
+    "ID": "card_monster_meat",
     "DisplayName": "兽肉",
-    "Desc": "体魄+1",
+    "Desc": "气血+1",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 0,

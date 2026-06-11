@@ -11,6 +11,9 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
     private readonly string _path;
     private JsonSerializerOptions _jsonOpts;
 
+    /// <summary>数据目录路径（若构造时传入的是文件则取其所在目录）</summary>
+    public string DataDir => Directory.Exists(_path) ? _path : Path.GetDirectoryName(_path);
+
     /// <summary>日志前缀，默认取子类类名</summary>
     protected virtual string MgrName => GetType().Name;
 

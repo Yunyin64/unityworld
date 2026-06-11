@@ -115,6 +115,7 @@ namespace UnityWorld.Core
         {
             var  entry = GetOrCreateEntry(statId);
             entry.AddModifier(modifier);
+            GetFinalCache()[statId] = entry.FinalValue;
         }
 
         /// <summary>

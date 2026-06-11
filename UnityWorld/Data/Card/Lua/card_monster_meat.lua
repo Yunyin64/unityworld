@@ -1,6 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
--- 狼牙
--- 被动：战斗开始时获得一层刺击强化(Ci_Improved)
+-- 兽肉
+-- 被动：战斗开始时气血+1
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -15,7 +15,7 @@ card.CardData = {
 card.Keywords = { "Passive" }
 
 function card:Apply(ctx)
-    AddNpcBuff(ctx, "Self", "Ci_Improved", 1,-1)
+    AddStatBuff(ctx, "Self", "QiXue", 1, "Flat", "card_monster_meat")
 end
 
 return card

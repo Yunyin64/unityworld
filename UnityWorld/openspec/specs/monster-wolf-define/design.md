@@ -66,7 +66,7 @@ ID=`monster_wolf_0`。八维全6 → HpMax=6, SpMax=6, MpMax=18（QiGan×3）。
 | card_monster_shoupi | 兽皮 | Item | 已有 Item_Monster.json | 斩击伤害抗性1 |
 | card_monster_lizhao | 利爪 | FaBao | 改造 Item_Monster.json → FaBao | 攻2防2速3，金1，拼点时攻击+1 |
 | card_form__strike | 抓击 | ZhaoShi | 新增 FormBase.json | CD=40, 刺击3 |
-| card_wolf_meat | 兽肉 | Item | 新增 Item_Monster.json | 体魄+1 |
+| card_wolf_meat | 兽肉 | Item | 新增 Item_Monster.json | 气血+1 |
 
 ### D5：利爪装备定义
 

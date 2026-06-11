@@ -183,7 +183,7 @@
     "Type": "Npc",
     "BaseType": "Primary",
     "DefaultValue": 0,
-    "ExtraBase" : "QiXue ",
+    "ExtraBase" : "QiXue * 2",
     "MinValue": 0,
     "MaxValue": 9999,
     "DisplayFormat": "Integer",

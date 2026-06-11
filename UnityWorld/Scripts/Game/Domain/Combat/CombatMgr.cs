@@ -87,7 +87,7 @@ namespace UnityWorld.Game.Domain
             var sceneId = participants[0].npc.Id;
             combatScenes[sceneId] = combatScene;
 
-            combatScene.Init(12345, participants, 600);
+            combatScene.Init(12345, participants, 2000);
             return combatScene.Run();
         }
     }

@@ -54,10 +54,6 @@ namespace UnityWorld.Game.Domain.Combat
             NpcD.AssignAllToField();
 
             
-            LogMgr.Instance.Dbg($"  NPC A: ID={npcA.Id}, HP={npcA.GetHpMax()}, SP={npcA.GetSpMax()}, MP={npcA.GetMpMax()}");
-            LogMgr.Instance.Dbg($"  NPC B: ID={npcB.Id}, HP={npcB.GetHpMax()}, SP={npcB.GetSpMax()}, MP={npcB.GetMpMax()}");
-            LogMgr.Instance.Dbg($"  NPC C: ID={NpcC.Id}, HP={NpcC.GetHpMax()}, SP={NpcC.GetSpMax()}, MP={NpcC.GetMpMax()}");
-
             // ── 发起战斗 ─────────────────────────────────────
             var result = CombatMgr.Instance.RunCombat(npcA,new [] {NpcC,NpcD});
 

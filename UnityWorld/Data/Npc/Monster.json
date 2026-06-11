@@ -12,7 +12,7 @@
     "InitCardDeck": [
       "card_monster_langya",
       "card_monster_shoupi",
-      "card_wolf_meat"
+      "card_monster_meat"
     ],
     "InitStat": {
       "QiXue": 6,

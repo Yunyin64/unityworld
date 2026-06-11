@@ -46,7 +46,7 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new BehaviorCardDataMgr(Path.Combine(dataDir, "BehaviorCardDefines.json")));
         // ── NPC 修正 ──────────────────────────────────────────
         _datamgrs.Add(new NpcModifierDefineMgr(Path.Combine(dataDir, "NpcModifierDefines.json")));
-        _datamgrs.Add(new CombatNpcModifierDefineMgr(Path.Combine(dataDir, "Modifier","CombatModifierDefines.json")));
+        _datamgrs.Add(new CombatNpcModifierDefineMgr(Path.Combine(dataDir, "Modifier","CombatModifierDefines")));
         // ── Stat 定义（按 Type 分文件存放在 Data/Stat/ 文件夹下）────
         _datamgrs.Add(new StatDefineMgr(Path.Combine(dataDir, "Stat")));
         // ── 装备定义（按类别分文件存放在 Data/Equip/ 文件夹下）────

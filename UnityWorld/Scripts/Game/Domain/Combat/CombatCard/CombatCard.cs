@@ -100,6 +100,12 @@ namespace UnityWorld.Game.Domain.Combat
             Caster = Owner,
             Scene = Owner?.Scene
         };
+        private APIContext CreateCtx<T>(string key,T value)
+        {
+            var api = CreateCtx();
+            api.Set<T>(key,value);
+            return api;
+        }
         
         public CombatCardPhase GetPhase(CombatCardPhase phase) => Phase;
         

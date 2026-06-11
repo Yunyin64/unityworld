@@ -102,7 +102,7 @@ namespace UnityWorld.Game.Domain
     public partial class Npc
     {
         public PracticePath GetPath() => CultivationData.Path;
-        public int GetQixue()=> (int)Stats.Get("Qixue");
+        public int GetQiXue()=> (int)Stats.Get("QiXue");
         public int GetTiPo()=> (int)Stats.Get("TiPo");
         public int GetQiGan()=> (int)Stats.Get("QiGan");
         public int GetLingJi()=> (int)Stats.Get("LingJi");

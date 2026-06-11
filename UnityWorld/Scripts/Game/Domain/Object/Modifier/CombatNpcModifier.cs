@@ -116,7 +116,6 @@ namespace UnityWorld.Game.Domain
         
         /// <summary>
         /// 统一 Lua hook 调用入口（与 CombatCard.CallLua 对齐）。
-        /// self = env（含 m_Self/m_Owner），ctx 为调用上下文。
         /// </summary>
         public void CallLua(string hookName, APIContext ctx = null)
         {
