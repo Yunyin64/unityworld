@@ -1,0 +1,66 @@
+[
+  {
+    "ID": "Zhan_Damage_Add",
+    "DisplayName": "斩击增伤",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Ci_Damage_Add",
+    "DisplayName": "刺击增伤",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Da_Damage_Add",
+    "DisplayName": "钝击增伤",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "SheJi_Damage_Add",
+    "DisplayName": "射击增伤",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Zhan_Resist",
+    "DisplayName": "斩击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Ci_Resist",
+    "DisplayName": "刺击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "Da_Resist",
+    "DisplayName": "钝击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  },
+  {
+    "ID": "SheJi_Resist",
+    "DisplayName": "射击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": []
+  }
+]

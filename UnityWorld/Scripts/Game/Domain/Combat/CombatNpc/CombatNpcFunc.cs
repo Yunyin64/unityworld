@@ -124,10 +124,17 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void AddContestData(ContestData data)
         {
+            // Modifier 修正拼点数值;
             PendingSlot.Enqueue(data);
         }
         public void AddDamage(DamageInfo dmg)
         {
+            if (dmg.SourceNpc != null)
+            {
+                var ctx = new APIContext { Caster = dmg.SourceNpc, SourceCard = dmg.SourceCard, Scene = Scene };
+                ctx.Set("DamageInfo", dmg);
+                dmg.SourceNpc.ModifyHook("DamageOut", ctx);
+            }
             damageInfos.Enqueue(dmg);
         }
         /// <summary>

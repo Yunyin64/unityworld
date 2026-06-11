@@ -106,12 +106,11 @@ namespace UnityWorld.Game.Domain.Combat
                 SourceCard = this
             };
 
-            // Modifier 修正拼点数值
-            Owner.ModifyHook("Contest", CreateCtx("ContestData", contestData));
 
             // 入槽即切换阶段，防止下一 Tick 再次被收集
             SetPhase(CombatCardPhase.InPending);
 
+            Owner.ModifyHook("Contest", CreateCtx("ContestData", contestData));
             // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);
 

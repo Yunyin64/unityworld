@@ -123,15 +123,19 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void ApplyDamage(DamageInfo info)
         {
+            // 守方减伤管线
+            var ctx = new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene };
+            ctx.Set("DamageInfo", info);
+            this.ModifyHook("DamageIn", ctx);
+
             var finalval = info.Damage;
             finalval = ApplyShieldAbsorb(info);
             if(finalval > 0)
             {
                 Hp -= finalval;
-                Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
-                // 广播受击事件，供 Modifier 触发器响应
                 Scene.TriggerCombatEvent("OnDamage" , new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene });
             }
+            Log($"受到伤害: {finalval}，剩余 HP: {Hp}");
 
             if (Hp <= 0)
             {

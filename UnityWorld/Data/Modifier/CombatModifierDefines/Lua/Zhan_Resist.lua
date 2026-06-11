@@ -1,21 +1,16 @@
 -- ══════════════════════════════════════════════════════════════
---  兽皮
--- 被动：战斗开始时获得一层斩击抗性(Zhan_Resist)
+--  斩击抗性
+-- 每层：受到斩击伤害 -1
 -- ══════════════════════════════════════════════════════════════
 
-local card = setmetatable({}, { __index = CardBase })
+local Buff = setmetatable({}, { __index = BuffBase })
 
-card.CardData = {
-    Size = 1,
-    Cooldown = 0,
-    CardType = "Item",
-    ManaCost = {},
-}
-
-card.Keywords = { "Passive" }
-
-function card:Apply(ctx)
-    AddNpcBuff(ctx, "Self", "Zhan_Resist", 1, -1)
+function Buff:ModifyDamageIn(ctx)
+    local dmg = ctx:GetObject("DamageInfo")
+    if dmg.damageType == DamageType.Zhan then
+        dmg.Damage = dmg.Damage - self.m_Self.CurrentStack
+        if dmg.Damage < 0 then dmg.Damage = 0 end
+    end
 end
 
-return card
+return Buff
