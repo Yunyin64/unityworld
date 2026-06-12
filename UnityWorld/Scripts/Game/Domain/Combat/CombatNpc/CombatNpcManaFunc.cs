@@ -70,7 +70,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 totalConsumed = ConsumeMana(cost);
             }
-            RecoverMana(totalConsumed);
+            RecoverMP(totalConsumed);
             Log($"ManaConvert: Consumed={totalConsumed}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
         }
         
@@ -122,10 +122,15 @@ namespace UnityWorld.Game.Domain.Combat
             //Log($"ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
             return totalConsumed;
         }
-        public void RecoverMana(int amount)
+        public void RecoverMP(int amount)
         {
             if(amount <= 0) return;
             Mp += amount;
+        }
+
+        public string RandomBaseElementBuff(bool isDebuff = false)
+        {
+            return ElementType.RandomBaseElementBuff(Scene.Soul,isDebuff);
         }
 }
 }

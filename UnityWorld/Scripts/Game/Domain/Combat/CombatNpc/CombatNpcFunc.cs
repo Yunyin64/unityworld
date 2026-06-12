@@ -37,8 +37,14 @@ namespace UnityWorld.Game.Domain.Combat
         public void ApplyHeal(float amount)
         {
             var val = Math.Min(amount, GetHpMax() - Hp);
-            EventMgr.Instance.TriggerEvent("OnHeal", val, (Scope.CombatNpc, Id.ToString()));
-            Hp += val;
+            Scene.TriggerCombatEvent("OnHeal", new APIContext { Caster = this, Scene = Scene });
+            RecoverHP(amount);
+        }
+
+        public void RecoverHP(float amount)
+        {
+            if(amount <= 0) return;
+            Hp += amount;
         }
         public void CheckDefeated()
         {

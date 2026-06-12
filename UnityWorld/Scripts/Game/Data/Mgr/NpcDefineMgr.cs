@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using UnityWorld.Game.Domain;
 
 namespace UnityWorld.Game.Data
@@ -15,13 +13,6 @@ namespace UnityWorld.Game.Data
         {
             Instance = this;
         }
-
-        protected override JsonSerializerOptions CreateJsonOptions() => new()
-        {
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
-        };
 
         /// <summary>从已加载定义中随机获取一个</summary>
         public NpcDefine GetRandom(Random rng)

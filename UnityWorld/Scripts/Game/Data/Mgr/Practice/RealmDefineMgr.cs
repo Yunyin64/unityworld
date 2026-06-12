@@ -1,6 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
 namespace UnityWorld.Game.Data
 {
     /// <summary>
@@ -14,13 +11,6 @@ namespace UnityWorld.Game.Data
         {
             Instance = this;
         }
-
-        protected override JsonSerializerOptions CreateJsonOptions() => new()
-        {
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
-        };
 
         /// <summary>获取指定道途的所有境界（按 Level 排序）</summary>
         public IEnumerable<RealmDefine> GetByPath(PracticePath path)

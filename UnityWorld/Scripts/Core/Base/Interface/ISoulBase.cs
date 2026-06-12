@@ -19,6 +19,8 @@ public struct SoulData
 
     public int Random(int min, int max) => rng.Range(min, max);
     
+    public int Random(int max) => Random(1, max);
+    
     public float Random(float min, float max) => rng.Range(min, max);
     public SoulData(int guid)
     {

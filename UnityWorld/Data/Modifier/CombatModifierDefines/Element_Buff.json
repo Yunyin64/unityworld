@@ -1,0 +1,92 @@
+[
+  {
+    "ID": "Element_Buff_Jin",
+    "DisplayName": "锐意",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Debuff_Jin",
+    "DisplayName": "出血",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Buff_Mu",
+    "DisplayName": "再生",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Debuff_Mu",
+    "DisplayName": "中毒",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Buff_Tu",
+    "DisplayName": "载德",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Debuff_Tu",
+    "DisplayName": "石化",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Buff_Shui",
+    "DisplayName": "浩瀚",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Debuff_Shui",
+    "DisplayName": "寒意",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Buff_Huo",
+    "DisplayName": "心火",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  },
+  {
+    "ID": "Element_Debuff_Huo",
+    "DisplayName": "灼烧",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "ExpirePolicy": "StackBased",
+    "StatModifiers": []
+  }
+]

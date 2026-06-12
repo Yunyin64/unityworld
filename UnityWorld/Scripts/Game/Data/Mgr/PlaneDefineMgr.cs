@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using UnityWorld.Game.Domain;
 
 namespace UnityWorld.Game.Data
@@ -15,13 +13,6 @@ namespace UnityWorld.Game.Data
         {
             Instance = this;
         }
-
-        protected override JsonSerializerOptions CreateJsonOptions() => new()
-        {
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
-        };
 
         /// <summary>按位面类型筛选</summary>
         public IEnumerable<PlaneDefine> GetByKind(PlaneTypes.PlaneKind kind)

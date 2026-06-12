@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using UnityWorld.Core;
 
 /// <summary>
@@ -33,6 +34,7 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
     {
         PropertyNameCaseInsensitive = true,
         ReadCommentHandling = JsonCommentHandling.Skip,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
     };
 
     /// <summary>加载后钩子，子类可重写</summary>
@@ -78,12 +80,19 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
             return;
         }
 
-        var list = JsonSerializer.Deserialize<List<TDefine>>(text, _jsonOpts);
-        if (list == null || list.Count == 0) return;
-
-        foreach (var define in list)
+        try
         {
-            AddDefine(define, Path.GetFileName(filePath));
+            var list = JsonSerializer.Deserialize<List<TDefine>>(text, _jsonOpts);
+            if (list == null || list.Count == 0) return;
+
+            foreach (var define in list)
+            {
+                AddDefine(define, Path.GetFileName(filePath));
+            }
+        }
+        catch (Exception ex)
+        {
+            LogMgr.Instance.Err("[{0}] 加载失败：{1}\n{2}", MgrName, Path.GetFileName(filePath), ex.Message);
         }
     }
 

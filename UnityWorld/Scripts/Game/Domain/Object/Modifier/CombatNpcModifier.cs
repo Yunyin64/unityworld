@@ -56,9 +56,6 @@ namespace UnityWorld.Game.Domain
             };
             buff.Ticks.Add("Main",0);
 
-            // 加载 Lua env 并预扫描 hooks
-            buff.InitializeLuaModifier();
-
             return buff;
         }
 

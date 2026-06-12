@@ -1,6 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
 namespace UnityWorld.Game.Data
 {
     /// <summary>
@@ -14,13 +11,6 @@ namespace UnityWorld.Game.Data
         {
             Instance = this;
         }
-
-        protected override JsonSerializerOptions CreateJsonOptions() => new()
-        {
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true) },
-        };
 
         /// <summary>按 Object 类型过滤 StatDefine</summary>
         public IEnumerable<StatDefine> GetByType(string type)

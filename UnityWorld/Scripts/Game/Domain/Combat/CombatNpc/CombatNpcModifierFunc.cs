@@ -116,6 +116,8 @@ namespace UnityWorld.Game.Domain.Combat
             modifier.Owner = this;
             modifier.CurrentStack = stacks;
             modifier.Duration = duration;
+            modifier.InitializeLuaModifier();
+            
             modifier.CallLuaHook<bool>("Apply", modifier.env, CreateModifierCtx(modifier));
             Modifiers.Add(modifier);
 

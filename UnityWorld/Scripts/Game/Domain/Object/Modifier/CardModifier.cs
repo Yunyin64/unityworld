@@ -25,11 +25,11 @@ namespace UnityWorld.Game.Domain
                 Id = id,
                 Duration = -1,
                 RemainingTime = -1,
-                MaxStack = 1,
+                MaxStack = 99,
                 CurrentStack = 1,
                 RefreshOnStack = false,
                 ExpirePolicy = ExpirePolicy.TriggerBased,
-                RemoveTriggerId = "被使用",
+                RemoveTriggerId = "OnUse",
                 StatModifiers = new List<StatModifierEntry>()
                 {
                     new StatModifierEntry()
@@ -50,7 +50,7 @@ namespace UnityWorld.Game.Domain
                 Id = id,
                 Duration = time,
                 RemainingTime = time,
-                MaxStack = 1,
+                MaxStack = 99,
                 CurrentStack = 1,
                 RefreshOnStack = false,
                 ExpirePolicy = ExpirePolicy.TimeBased,

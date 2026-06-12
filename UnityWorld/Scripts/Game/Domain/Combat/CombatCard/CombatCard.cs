@@ -55,6 +55,16 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void CDTick()
         {
+            var CDadd = GetCDAdd();
+            Ticks["CD"] += CDadd;
+            if (Ticks["CD"] >= GetCDMax())
+            {
+                SetPhase(CombatCardPhase.CDFull);
+            }
+        }
+
+        private float GetCDAdd()
+        {
             var TickSpeed = GetStat("CDSpeed");
             var CDadd = 1f;
             if(TickSpeed > 0) CDadd = CDadd*(1+TickSpeed/10);
@@ -63,12 +73,19 @@ namespace UnityWorld.Game.Domain.Combat
                 CDadd = CDadd / (1 + (-TickSpeed) / 10f);
             }
             if(CDadd <= 0.1f) CDadd = 0;
-            Ticks["CD"] += CDadd;
-            if (Ticks["CD"] >= GetCDMax())
-            {
-                SetPhase(CombatCardPhase.CDFull);
-            }
+            return CDadd;
         }
+
+        /// <summary>按当前CDSpeed计算还需多少真实Tick才能CD满，返回-1表示无法完成</summary>
+        public int GetCDTickRemaining()
+        {
+            var CDadd = GetCDAdd();
+            if(CDadd <= 0.1f) return -1;
+            var remaining = GetCDMax() - Ticks["CD"];
+            if(remaining <= 0) return 0;
+            return (int)Math.Ceiling(remaining / CDadd);
+        }
+
 
 
         public void Use()

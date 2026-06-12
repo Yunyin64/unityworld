@@ -57,5 +57,21 @@ namespace UnityWorld.Game.Domain
                         : new ElementType(BaseElementType.None),
             };
         }
+        
+        public static Dictionary<ElementType,(string,string)> BaseElementBuff = new Dictionary<ElementType, (string, string)>
+        {
+                [ElementType.Jin] = ("Element_Buff_Jin","Element_Debuff_Jin"),
+                [ElementType.Mu]   = ("Element_Buff_Mu","Element_Debuff_Mu"),
+                [ElementType.Tu]   = ("Element_Buff_Tu","Element_Debuff_Tu"),
+                [ElementType.Shui] = ("Element_Buff_Shui","Element_Debuff_Shui"),
+                [ElementType.Huo]  = ("Element_Buff_Huo","Element_Debuff_Huo"),
+        };
+
+        public static string RandomBaseElementBuff(SoulData soul,bool isDebuff = false)
+        {
+            var kk = BaseElementBuff.Values.ToList()[soul.Random(BaseElementBuff.Count)];
+            if(isDebuff) return kk.Item2;
+            else return kk.Item1;
+        }
     }
 }

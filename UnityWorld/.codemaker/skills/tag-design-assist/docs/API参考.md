@@ -1,6 +1,6 @@
 ﻿# API 参考
 
-> 自动生成时间，共 38 个API，6 个Trigger
+> 自动生成时间，共 40 个API，6 个Trigger
 
 ## Trigger（触发条件）
 
@@ -41,6 +41,8 @@
 | Haste | 加速目标卡牌 | Domain:String, Stack:Int |
 | AddCardStatBuff | 给目标卡牌添加永久属性修正 | Domain:String, StatId:String, Value:Float |
 | Convert | 灵元转化回蓝条MP | Domain:String, Element:String, MaxAmount:Int |
+| AddElementBuff | 循环添加五行元素Buff | Domain:String, Element:String, IsDebuff:Bool, Count:Int |
+| RemoveElementBuff | 循环清除五行元素Buff | Domain:String, Element:String, IsDebuff:Bool, Count:Int |
 | Draw | MP转化为灵元 | Domain:String, Amount:Int |
 | ReduceMana | 减少目标指定元素的灵元 | Domain:String, Element:String, Amount:Int |
 | Deploy | 将卡从候补池部署到运转池 | Domain:String, CardId:Int |

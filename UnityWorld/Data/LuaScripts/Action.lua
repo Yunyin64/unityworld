@@ -147,6 +147,34 @@ Convert = function(ctx, Domain, Element, MaxAmount)
     API:Execute("Convert", ctx)
 end
 
+--- 循环添加五行元素Buff
+--- @param ctx APIContext
+--- @param Domain string
+--- @param Element string
+--- @param IsDebuff boolean
+--- @param Count number
+AddElementBuff = function(ctx, Domain, Element, IsDebuff, Count)
+    ctx:Set("Domain", Domain)
+    ctx:Set("Element", Element)
+    ctx:Set("IsDebuff", IsDebuff)
+    ctx:Set("Count", tonumber(Count))
+    API:Execute("AddElementBuff", ctx)
+end
+
+--- 循环清除五行元素Buff
+--- @param ctx APIContext
+--- @param Domain string
+--- @param Element string
+--- @param IsDebuff boolean
+--- @param Count number
+RemoveElementBuff = function(ctx, Domain, Element, IsDebuff, Count)
+    ctx:Set("Domain", Domain)
+    ctx:Set("Element", Element)
+    ctx:Set("IsDebuff", IsDebuff)
+    ctx:Set("Count", tonumber(Count))
+    API:Execute("RemoveElementBuff", ctx)
+end
+
 --- MP转化为灵元
 --- @param ctx APIContext
 --- @param Domain string

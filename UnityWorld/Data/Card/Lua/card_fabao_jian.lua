@@ -11,6 +11,8 @@ end
 function card:Contest(ctx)
     local name, atk, def, spd, amo, elem = self:GetEquip()
     Attack(ctx, elem, "SheJi", atk)
+    
+    AddElementBuff(ctx, "Self", "None", false, 5)
 end
 
 

@@ -8,6 +8,7 @@ namespace UnityWorld.Core
         {
             return $"[{string.Join(", ", list.Select(t => t.ToString() ?? "null"))}]";
         }
+
         
     }
 }

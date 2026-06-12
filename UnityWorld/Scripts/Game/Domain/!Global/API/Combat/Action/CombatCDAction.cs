@@ -50,7 +50,7 @@ namespace UnityWorld.Game.Domain
             foreach (var card in ctx.CardTargets)
             {
                 card.AddCardBuff(CardModifier.CDSpeed("Slow"+card.Id, -Stack));
-                LogMgr.Instance.Dbg("[Slow] {0} 减速 {1} {2}/{3}", card.DisplayName, Stack,card.Ticks["CD"],card.GetCDMax());
+                LogMgr.Instance.Dbg("[Slow] {0} 减速*{1} {2}/{3},还需{4}", card.DisplayName, Stack,(int)card.Ticks["CD"],card.GetCDMax(),card.GetCDTickRemaining());
             }
             return ctx;
         }
@@ -67,7 +67,7 @@ namespace UnityWorld.Game.Domain
             foreach (var card in ctx.CardTargets)
             {
                 card.AddCardBuff(CardModifier.CDSpeed("Haste"+card.Id, Stack));
-                LogMgr.Instance.Dbg("[Haste] {0} 加速 {1} {2}/{3}", card.DisplayName, Stack,card.Ticks["CD"],card.GetCDMax());
+                LogMgr.Instance.Dbg("[Haste] {0} 加速*{1} {2}/{3},还需{4}", card.DisplayName, Stack,(int)card.Ticks["CD"],card.GetCDMax(),card.GetCDTickRemaining());
             }
             return ctx;
         }
