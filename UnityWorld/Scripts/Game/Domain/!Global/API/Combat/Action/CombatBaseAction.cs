@@ -149,7 +149,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>位移目标卡牌到指定位置。参数：Domain(String), Position(String: First/Last/Random)</summary>
-        [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.Card, "Domain:String", "Position:String")]
+        [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.CombatCard, "Domain:String", "Position:String")]
         public static APIContext Displace(APIContext ctx)
         {
             var caster = ctx.Caster;

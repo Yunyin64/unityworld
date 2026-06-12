@@ -47,7 +47,7 @@ function ZhaoShi.Advance(owner)
     local nextCard = list[nextIdx]
     owner:SetCurrentZhaoShiCardId(nextCard.Id)
     nextCard:ResetCD()
-    owner:Log("[ZhaoShi]  切换招式为【" .. nextCard.DisplayName .. "】")
+    owner:Log("[招式]  切换为【" .. nextCard.DisplayName .. "】")
 end
 
 LuaMgr:RegisterKeyword("ZhaoShi", ZhaoShi)

@@ -7,10 +7,15 @@
 -- ── C# 侧已注入全局变量：LuaMgr, LogMgr, API ────────────────
 
 -- ── 加载同级 Lua 模块 ──────────────────────────────────────
-require("Action")
-require("Aura")
-require("Condition")
-require("Contest")
+local scopes = {"Global", "Npc", "Tile", "Plane", "Card", "CombatCard", "CombatNpc"}
+local types  = {"Action", "Aura", "Condition", "Contest", "Scope"}
+
+for _, scope in ipairs(scopes) do
+    for _, apiType in ipairs(types) do
+        local mod = scope .. "_" .. apiType
+        local ok, err = pcall(require, mod)
+    end
+end
 
 -- ── CardBase 元表 ────────────────────────────────────────────
 CardBase = {}

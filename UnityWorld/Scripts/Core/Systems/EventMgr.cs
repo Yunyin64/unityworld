@@ -157,7 +157,7 @@ namespace UnityWorld.Core
             var define = EventDefineMgr.Instance?.Get(eventId);
             if (define == null && EventDefineMgr.Instance != null)
             {
-                LogMgr.Instance.Warn("[EventMgr] 触发了未在 EventDefine 中定义的事件：{0}，请检查 EventDefines.json", eventId);
+                //LogMgr.Instance.Warn("[EventMgr] 触发了未在 EventDefine 中定义的事件：{0}，请检查 EventDefines.json", eventId);
             }
 
             // ② 校验调用方传入的 scope 是否覆盖 EventDefine 声明的 scope

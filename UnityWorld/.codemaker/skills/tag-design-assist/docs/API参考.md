@@ -1,6 +1,6 @@
 ﻿# API 参考
 
-> 自动生成时间，共 40 个API，6 个Trigger
+> 自动生成时间，共 40 个API，8 个Trigger
 
 ## Trigger（触发条件）
 
@@ -11,6 +11,8 @@
 | OnApply | 卡牌生效时触发 | 0 | 1 | 主动, 应用 | - |
 | OnStraight | 造成直击时触发 | 0 | 1 | 主动, 直击 | - |
 | OnContest | 对拼时触发 | 0 | 1 | 主动, 对拼 | - |
+| OnManaDraw | 抽取灵力 | -4 | 1 | - | - |
+| OnTick | 每帧 | -4 | 1 | - | - |
 | OnDeath | 敌人死亡时触发 | -4 | 1 | 被动, 死亡, 黑暗 | - |
 
 ## Condition（条件函数）

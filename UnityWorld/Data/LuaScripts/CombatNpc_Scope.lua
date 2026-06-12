@@ -21,15 +21,3 @@ RandomCardInCD = function(ctx, Target, Result)
     API:Execute("RandomCardInCD", ctx)
 end
 
---- 获得目标相邻卡牌
---- @param ctx APIContext
---- @param Target CombatCard
---- @param Direction string
---- @param Result List<CombatCard>
-AdjacentCards = function(ctx, Target, Direction, Result)
-    ctx:Set("Target", Target)
-    ctx:Set("Direction", Direction)
-    ctx:Set("Result", Result)
-    API:Execute("AdjacentCards", ctx)
-end
-

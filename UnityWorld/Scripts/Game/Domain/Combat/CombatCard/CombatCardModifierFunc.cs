@@ -4,11 +4,106 @@ namespace UnityWorld.Game.Domain.Combat
 {
     /// <summary>
     /// CombatCard 的 CardModifier 管理逻辑（partial）：
-    /// AddCardBuff / ModifierTick / RemoveCardBuff / GetStat 贡献
+    /// AddCardBuff / ModifierTick / RemoveCardBuff / GetStat 贡献 / 触发器移除
     /// </summary>
     public partial class CombatCard
     {
         private List<CardModifier> CardModifiers { get; set; } = new();
+
+        private DelegateEventListener _cardBuffTriggerListener;
+        private Dictionary<string, int> _cardBuffTriggerRefCounts = new();
+
+        private void InitCardBuffTriggerListener()
+        {
+            _cardBuffTriggerListener = new DelegateEventListener(OnCardBuffTriggerEvent);
+        }
+
+        private ScopeKey GetCardScope() => new ScopeKey(Scope.CombatCard, Id.ToString());
+
+        // ══════════════════════════════════════════════════════════
+        //  触发器事件响应
+        // ══════════════════════════════════════════════════════════
+
+        private void OnCardBuffTriggerEvent(string eventId, ScopeKey scope, object args)
+        {
+            if (CardModifiers.Count == 0) return;
+
+            var toRemove = new List<CardModifier>();
+
+            foreach (var mod in CardModifiers)
+            {
+                if (string.IsNullOrEmpty(mod.RemoveTriggerId)) continue;
+                if (mod.RemoveTriggerId != eventId) continue;
+
+                if (mod.ExpirePolicy == ExpirePolicy.TriggerBased)
+                {
+                    toRemove.Add(mod);
+                }
+                else
+                {
+                    mod.ReduceStack(1);
+                    if (mod.IsExpired())
+                    {
+                        toRemove.Add(mod);
+                    }
+                }
+            }
+
+            foreach (var mod in toRemove)
+            {
+                UnregisterCardBuffTrigger(mod);
+                CardModifiers.Remove(mod);
+                Log($"[CardBuff] 触发器移除: {mod.Id} (trigger={eventId})");
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════
+        //  触发器注册/注销
+        // ══════════════════════════════════════════════════════════
+
+        private void RegisterCardBuffTrigger(CardModifier modifier)
+        {
+            if (string.IsNullOrEmpty(modifier.RemoveTriggerId)) return;
+
+            var triggerId = modifier.RemoveTriggerId;
+            if (_cardBuffTriggerListener == null) InitCardBuffTriggerListener();
+
+            if (_cardBuffTriggerRefCounts.TryGetValue(triggerId, out int count))
+            {
+                _cardBuffTriggerRefCounts[triggerId] = count + 1;
+            }
+            else
+            {
+                _cardBuffTriggerRefCounts[triggerId] = 1;
+                EventMgr.Instance?.RegisterEvent(
+                    $"CombatCard:{Id}:CardBuff",
+                    triggerId,
+                    GetCardScope(),
+                    _cardBuffTriggerListener);
+            }
+        }
+
+        private void UnregisterCardBuffTrigger(CardModifier modifier)
+        {
+            if (string.IsNullOrEmpty(modifier.RemoveTriggerId)) return;
+
+            var triggerId = modifier.RemoveTriggerId;
+            if (!_cardBuffTriggerRefCounts.TryGetValue(triggerId, out int count)) return;
+
+            count--;
+            if (count <= 0)
+            {
+                _cardBuffTriggerRefCounts.Remove(triggerId);
+                EventMgr.Instance?.RemoveEvent(
+                    triggerId,
+                    GetCardScope(),
+                    _cardBuffTriggerListener);
+            }
+            else
+            {
+                _cardBuffTriggerRefCounts[triggerId] = count;
+            }
+        }
 
         // ══════════════════════════════════════════════════════════
         //  AddCardBuff
@@ -31,6 +126,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
 
             CardModifiers.Add(modifier);
+            RegisterCardBuffTrigger(modifier);
             Log($"[CardBuff] 添加: {modifier.Id} (Stack={modifier.CurrentStack}, Expire={modifier.ExpirePolicy})");
         }
 
@@ -45,6 +141,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             var modifier = CardModifiers.FirstOrDefault(m => m.Id == id);
             if (modifier == null) return;
+            UnregisterCardBuffTrigger(modifier);
             CardModifiers.Remove(modifier);
             Log($"[CardBuff] 移除: {id}");
         }
@@ -72,6 +169,7 @@ namespace UnityWorld.Game.Domain.Combat
             var toRemove = CardModifiers.Where(m => m.IsExpired()).ToList();
             foreach (var mod in toRemove)
             {
+                UnregisterCardBuffTrigger(mod);
                 CardModifiers.Remove(mod);
                 Log($"[CardBuff] 过期移除: {mod.Id}");
             }

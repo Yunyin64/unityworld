@@ -45,29 +45,29 @@
     "weight": 1
   },
   {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
+    "ID": "OnUse",
+    "DisplayName": "使用时",
+    "desc": "卡的使用，无论是否生效",
     "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
+    "tags": [],
     "conflictTags": [],
     "weight": 1
   },
   {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
+    "ID": "OnManaDraw",
+    "DisplayName": "抽取灵力时",
+    "desc": "抽取灵力",
     "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
+    "tags": [],
     "conflictTags": [],
     "weight": 1
   },
   {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
+    "ID": "OnTick",
+    "DisplayName": "每帧时",
+    "desc": "每帧",
     "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
+    "tags": [],
     "conflictTags": [],
     "weight": 1
   },

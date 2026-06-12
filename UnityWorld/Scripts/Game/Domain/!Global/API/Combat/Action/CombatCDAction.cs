@@ -6,7 +6,7 @@ namespace UnityWorld.Game.Domain
 {
     public  static partial class CombatBaseFunc
     {/// <summary>充能目标卡牌，减少CD。参数：Domain(String),ReduceTick(Int)</summary>
-        [APIFunc("Charge",APIType.Action, "充能目标卡牌", Scope.Card, "Domain:String","ReduceTick:Int")]
+        [APIFunc("Charge",APIType.Action, "充能目标卡牌", Scope.CombatCard, "Domain:String","ReduceTick:Int")]
         public static APIContext Charge(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -21,7 +21,7 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
         /// <summary>冻结目标卡牌。参数：Domain(String), FreezeTime(Int)</summary>
-        [APIFunc("Freeze", APIType.Action, "冻结目标卡牌", Scope.Card, "Domain:String", "FreezeTime:Int")]
+        [APIFunc("Freeze", APIType.Action, "冻结目标卡牌", Scope.CombatCard, "Domain:String", "FreezeTime:Int")]
         public static APIContext Freeze( APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -39,7 +39,7 @@ namespace UnityWorld.Game.Domain
 
 
         /// <summary>减速目标卡牌。参数：Domain(String), Stack(Int)</summary>
-        [APIFunc("Slow", APIType.Action, "减速目标卡牌", Scope.Card, "Domain:String", "Stack:Int")]
+        [APIFunc("Slow", APIType.Action, "减速目标卡牌", Scope.CombatCard, "Domain:String", "Stack:Int")]
         public static APIContext Slow( APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -56,7 +56,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>加速目标卡牌。参数：Domain(String), Stack(Int)</summary>
-        [APIFunc("Haste" , APIType.Action, "加速目标卡牌", Scope.Card, "Domain:String", "Stack:Int")]
+        [APIFunc("Haste" , APIType.Action, "加速目标卡牌", Scope.CombatCard, "Domain:String", "Stack:Int")]
         public static APIContext Haste( APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -73,7 +73,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>给目标卡牌添加永久属性修正。参数：Domain(String), StatId(String), Value(Float)</summary>
-        [APIFunc("AddCardStatBuff", APIType.Action, "给目标卡牌添加永久属性修正", Scope.Card, "Domain:String", "StatId:String", "Value:Float")]
+        [APIFunc("AddCardStatBuff", APIType.Action, "给目标卡牌添加永久属性修正", Scope.CombatCard, "Domain:String", "StatId:String", "Value:Float")]
         public static APIContext AddCardStatBuff(APIContext ctx)
         {
             var caster = ctx.Caster;

@@ -303,10 +303,21 @@ namespace UnityWorld.Game.Domain.Combat
             DispatchHookToAll(eventId, ctx);
 
             // 通道2：EventMgr 广播
-            EventMgr.Instance?.TriggerEvent(
-                eventId,
-                ctx,
-                (Scope.CombatNpc, ctx.Caster.Id.ToString()));
+            if (ctx.SourceCard != null)
+            {
+                EventMgr.Instance?.TriggerEvent(
+                    eventId,
+                    ctx,
+                    (Scope.CombatNpc, ctx.Caster.Id.ToString()),
+                    (Scope.CombatCard, ctx.SourceCard.Id.ToString()));
+            }
+            else
+            {
+                EventMgr.Instance?.TriggerEvent(
+                    eventId,
+                    ctx,
+                    (Scope.CombatNpc, ctx.Caster.Id.ToString()));
+            }
         }
 
         /// <summary>

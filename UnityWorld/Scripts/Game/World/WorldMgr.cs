@@ -32,6 +32,7 @@ namespace UnityWorld.Game.World
             _domains.Add(new LogMgr(seed));
             _domains.Add(new LuaMgr());
             _domains.Add(new APIMgr());
+            _domains.Add(new EventMgr());
 
 
             GameDataMgr.Initialize();

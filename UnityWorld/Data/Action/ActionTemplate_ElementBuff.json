@@ -1,0 +1,174 @@
+[
+  {
+    "ID": "action_add_element_buff",
+    "DisplayName": "附灵",
+    "Desc": "给{Domain}循环附加{Count}个{Element}元素{IsDebuff?减益:增益}",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Buff"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Element", "Type": "String", "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0, 0] },
+      { "Name": "IsDebuff", "Type": "Bool", "Value": [false, true], "Score": [0, 1] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"{Element}\", {IsDebuff}, {Count})"
+  },
+  {
+    "ID": "action_remove_element_buff",
+    "DisplayName": "祛灵",
+    "Desc": "移除{Domain}身上{Count}个{Element}元素{IsDebuff?减益:增益}",
+    "FuncName": "RemoveElementBuff",
+    "Tags": ["灵元", "驱散"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Element", "Type": "String", "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0, 0] },
+      { "Name": "IsDebuff", "Type": "Bool", "Value": [false, true], "Score": [0, 1] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3, 99], "Score": [1, 2, 3, 5] }
+    ],
+    "LuaTemplate": "RemoveElementBuff(ctx, \"{Domain}\", \"{Element}\", {IsDebuff}, {Count})"
+  },
+  {
+    "ID": "action_add_jin_buff",
+    "DisplayName": "锐意",
+    "Desc": "给{Domain}附加{Count}层锐意(金增益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Buff", "金"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Jin\", false, {Count})"
+  },
+  {
+    "ID": "action_add_jin_debuff",
+    "DisplayName": "出血",
+    "Desc": "给{Domain}附加{Count}层出血(金减益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Debuff", "金"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Jin\", true, {Count})"
+  },
+  {
+    "ID": "action_add_mu_buff",
+    "DisplayName": "再生",
+    "Desc": "给{Domain}附加{Count}层再生(木增益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Buff", "木"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Mu\", false, {Count})"
+  },
+  {
+    "ID": "action_add_mu_debuff",
+    "DisplayName": "中毒",
+    "Desc": "给{Domain}附加{Count}层中毒(木减益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Debuff", "木"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Mu\", true, {Count})"
+  },
+  {
+    "ID": "action_add_shui_buff",
+    "DisplayName": "浩瀚",
+    "Desc": "给{Domain}附加{Count}层浩瀚(水增益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Buff", "水"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Shui\", false, {Count})"
+  },
+  {
+    "ID": "action_add_shui_debuff",
+    "DisplayName": "寒意",
+    "Desc": "给{Domain}附加{Count}层寒意(水减益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Debuff", "水"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Shui\", true, {Count})"
+  },
+  {
+    "ID": "action_add_huo_buff",
+    "DisplayName": "心火",
+    "Desc": "给{Domain}附加{Count}层心火(火增益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Buff", "火"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Huo\", false, {Count})"
+  },
+  {
+    "ID": "action_add_huo_debuff",
+    "DisplayName": "灼烧",
+    "Desc": "给{Domain}附加{Count}层灼烧(火减益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Debuff", "火"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Huo\", true, {Count})"
+  },
+  {
+    "ID": "action_add_tu_buff",
+    "DisplayName": "载德",
+    "Desc": "给{Domain}附加{Count}层载德(土增益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Buff", "土"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Tu\", false, {Count})"
+  },
+  {
+    "ID": "action_add_tu_debuff",
+    "DisplayName": "石化",
+    "Desc": "给{Domain}附加{Count}层石化(土减益)",
+    "FuncName": "AddElementBuff",
+    "Tags": ["灵元", "Debuff", "土"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Count", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddElementBuff(ctx, \"{Domain}\", \"Tu\", true, {Count})"
+  }
+]
