@@ -1,18 +1,10 @@
 -- Item Keyword
 -- 物品卡
-local Item = {}
+local Item = setmetatable({}, { __index = KeywordBase })
 
---function Item.PreStart(card, ctx)
---end
-
---function Item.Start(card, ctx)
---end
-
---function Item.Tick(card, ctx)
---end
-
---function Item.Contest(card, ctx)
---end
+function Item.CheckCondition(card)
+    return card.IsItemCard
+end
 
 function Item.Apply(card, ctx)
     card:SetPhase(CombatCardPhase.Finished);

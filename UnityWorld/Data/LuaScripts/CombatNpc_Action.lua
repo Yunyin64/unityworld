@@ -145,6 +145,16 @@ RecoverMP = function(ctx, Domain, Amount)
     API:Execute("RecoverMP", ctx)
 end
 
+--- 目标直接减少MP。
+--- @param ctx APIContext
+--- @param Domain string
+--- @param Amount number
+ReduceMP = function(ctx, Domain, Amount)
+    ctx:Set("Domain", Domain)
+    ctx:Set("Amount", tonumber(Amount))
+    API:Execute("ReduceMP", ctx)
+end
+
 --- 将卡从候补池部署到运转池
 --- @param ctx APIContext
 --- @param Domain string

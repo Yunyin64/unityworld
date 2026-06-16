@@ -1,6 +1,6 @@
 -- ZhaoShi Keyword
 -- 招式卡：串行轮转，同一时间只有当前卡走CD，Apply后advance到下一张
-local ZhaoShi = {}
+local ZhaoShi = setmetatable({}, { __index = KeywordBase })
 
 function ZhaoShi.Tick(card, ctx)
     local owner = card.Owner

@@ -26,6 +26,14 @@ namespace UnityWorld.Game.Domain.Combat
 
             // 从 Lua CardData/Keywords 覆写 BaseData
             ApplyLuaOverrides();
+
+            // 遍历所有 Keyword 的 CheckCondition，派生 keyword
+            var derived = LuaMgr.Instance.RunKeywordConditions(this);
+            foreach (var kw in derived)
+            {
+                if (!GetKeywords().Contains(kw))
+                    GetKeywords().Add(kw);
+            }
         }
 
         /// <summary>

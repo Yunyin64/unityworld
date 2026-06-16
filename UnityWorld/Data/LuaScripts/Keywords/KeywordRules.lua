@@ -1,12 +1,2 @@
-function OnKeywordCheck(combatCard)
-    local base = combatCard.BaseData
-    if base.Cooldown <= 0 then
-        combatCard:AddKeyword("Passive")
-    end
-    if base.AmountMax > 0 then
-        combatCard:AddKeyword("Amount")
-    end
-    if base.StackMax > 0 then
-        combatCard:AddKeyword("Consume")
-    end
-end
+-- KeywordRules.lua
+-- 已废弃：Keyword 派生逻辑已移至各 Keyword 文件的 CheckCondition 函数

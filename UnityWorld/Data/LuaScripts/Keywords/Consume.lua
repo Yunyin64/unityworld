@@ -1,20 +1,9 @@
 -- Consume Keyword
--- 可消耗类型通用机制：
-local Consume = {}
+-- 可消耗类型：StackMax > 0 时自动激活
+local Consume = setmetatable({}, { __index = KeywordBase })
 
---function Consume.PreStart(card, ctx)
---end
-
---function Consume.Start(card, ctx)
---end
-
---function Consume.Tick(card, ctx)
---end
-
---function Consume.Contest(card, ctx)
---end
-
---function Consume.Apply(card, ctx)
---end
+function Consume.CheckCondition(card)
+    return card:GetStackMax() > 0
+end
 
 LuaMgr:RegisterKeyword("Consume", Consume)

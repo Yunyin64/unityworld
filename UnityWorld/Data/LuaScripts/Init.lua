@@ -21,6 +21,12 @@ end
 CardBase = {}
 BuffBase = {}
 
+-- ── KeywordBase 元表 ─────────────────────────────────────────
+KeywordBase = {}
+function KeywordBase.CheckCondition(card)
+    return false
+end
+
 
 --- 全局日志快捷函数
 Log = function(msg)

@@ -210,11 +210,6 @@ namespace UnityWorld.Game.Domain.Combat
 
             return combatCard;
         }
-        public void KeyWordCheck(Card card,CombatCard combatCard)
-        {
-            if(card.GetCooldown() <= 0) combatCard.GetKeywords().Add("Passive");
-            if(card.GetAmountMax() > 0) combatCard.GetKeywords().Add("Amount");
-        }
 
         /// <summary>
         /// 获取属性最终值（含全场 Modifier OnModifierStat hook 贡献）。

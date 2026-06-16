@@ -1,6 +1,6 @@
 ﻿# API 参考
 
-> 自动生成时间，共 41 个API，9 个Trigger
+> 自动生成时间，共 42 个API，9 个Trigger
 
 ## Trigger（触发条件）
 
@@ -49,6 +49,7 @@
 | Draw | MP转化为灵元 | Domain:String, Amount:Int |
 | ReduceMana | 减少目标指定元素的灵元 | Domain:String, Element:String, Amount:Int |
 | RecoverMP | 目标直接获得MP。 | Domain:String, Amount:Int |
+| ReduceMP | 目标直接减少MP。 | Domain:String, Amount:Int |
 | Deploy | 将卡从候补池部署到运转池 | Domain:String, CardId:Int |
 | Recall | 将卡从运转池召回候补池 | Domain:String, CardId:Int |
 | GiveTrait | 给NPC添加特质 | int:String, TraitId:String |

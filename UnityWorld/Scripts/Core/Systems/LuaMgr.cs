@@ -289,6 +289,34 @@ namespace UnityWorld.Game.Domain
             return _keywordRegistry.TryGetValue(name, out var table) ? table : null;
         }
 
+        /// <summary>
+        /// 遍历所有已注册 Keyword，调用 CheckCondition(card)，
+        /// 返回 true 则为该卡添加对应 keyword。单 pass，不允许依赖其他 keyword。
+        /// </summary>
+        public List<string> RunKeywordConditions(object card)
+        {
+            var added = new List<string>();
+            foreach (var kv in _keywordRegistry)
+            {
+                var func = kv.Value["CheckCondition"] as NLua.LuaFunction;
+                if (func == null) continue;
+
+                try
+                {
+                    var results = func.Call(card);
+                    if (results != null && results.Length > 0 && results[0] is bool b && b)
+                    {
+                        added.Add(kv.Key);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogMgr.Instance.Err("[LuaMgr] Keyword '{0}' CheckCondition 异常: {1}", kv.Key, ex.Message);
+                }
+            }
+            return added;
+        }
+
         // ══════════════════════════════════════════════════════════
         //  战斗 Modifier 脚本加载
         // ══════════════════════════════════════════════════════════
