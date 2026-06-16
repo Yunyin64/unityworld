@@ -93,7 +93,7 @@ namespace UnityWorld.Game.Domain.Combat
                 ResolveContest(PendingSlot.Dequeue(), target.PendingSlot.Dequeue());
             while (PendingSlot.Count > GetStat("PendingSlotMax"))
             {
-                if (Ticks["Straight"] >= GetStat("StraightCD") * 10)
+                if (Ticks["Straight"] >= GetStat("StraightCD") )
                     Straight(PendingSlot.Dequeue());
                 else break;
             }
@@ -259,7 +259,7 @@ namespace UnityWorld.Game.Domain.Combat
             string woundCardId = ResolveWoundCardId(ctx);
             AddWound(woundCardId);
             // HP 恢复 50%
-            Hp = GetCombatHpMax() * 0.5f;
+            Hp = (int)(GetCombatHpMax() * 0.5f +0.5f);
          }
         
         public CombatCard AddWound(string woundCardId)

@@ -53,6 +53,8 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new EquipDefineMgr(Path.Combine(dataDir, "Equip")));
         // ── Action定义（按分类分文件存放在 Data/Action/ 文件夹下）────
         _datamgrs.Add(new ActionDefineMgr(Path.Combine(dataDir, "Action")));
+        // ── 物品定义（按分类分文件存放在 Data/Item/ 文件夹下）────
+        _datamgrs.Add(new ItemDefineMgr(Path.Combine(dataDir, "Item")));
 
             Instance = this;
         }

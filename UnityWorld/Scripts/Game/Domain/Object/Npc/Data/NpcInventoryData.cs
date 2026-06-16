@@ -3,25 +3,43 @@ using UnityWorld.Core;
 namespace UnityWorld.Game.Domain
 {
     /// <summary>
-    /// NPC 物品栏数据：管理 NPC 持有的物品集合
+    /// NPC 物品栏数据：从 NPC 的卡牌列表中筛选 Item 卡的查询接口
     /// </summary>
     public class NpcInventoryData : IDomainDataBase
     {
-        // ── 物品列表 ────────────────────────────────────
+        /// <summary>所属 NPC 的 ID</summary>
+        public int NpcId { get; set; }
 
-        /// <summary>持有的物品 ID 列表</summary>
-        public List<string> ItemIds { get; set; } = new();
+        /// <summary>获取该 NPC 持有的所有 Item 卡</summary>
+        public List<Card> GetAllItems()
+        {
+            var npc = NpcMgr.Instance?.GetById(NpcId);
+            if (npc == null) return [];
+            return npc.GetAllCards().Where(c => c.IsItemCard).ToList();
+        }
+
+        /// <summary>获取该 NPC 持有的所有可消耗 Item 卡</summary>
+        public List<Card> GetConsumables()
+        {
+            return GetAllItems().Where(c => c.HasKeyword("Consume")).ToList();
+        }
 
         public IDomainDataBase Clone()
         {
-            throw new NotImplementedException();
+            return (NpcInventoryData)MemberwiseClone();
         }
-
-        // ── 日志 ────────────────────────────────────
 
         public void Log()
         {
-            // TODO: 由 DomainData Log 技能补全
+            var items = GetAllItems();
+            LogMgr.Instance.Dbg("┌── InventoryData · 物品栏 ─────────────────────");
+            LogMgr.Instance.Dbg("│  物品数: {0}", items.Count);
+            foreach (var item in items)
+            {
+                var stack = item.GetStack() > 0 ? $" x{item.GetStack()}" : "";
+                LogMgr.Instance.Dbg("│    [{0}] {1}{2}", item.Id, item.DisplayName, stack);
+            }
+            LogMgr.Instance.Dbg("└───────────────────────────────────────────");
         }
     }
 }

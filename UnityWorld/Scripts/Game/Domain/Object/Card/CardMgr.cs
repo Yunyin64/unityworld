@@ -19,6 +19,7 @@ namespace UnityWorld.Game.Domain
         public CardSystemData DataSystem { get; } = new();
         public CardSystemGongFa GongFaSystem { get; } = new();
         public CardSystemEquip EquipSystem { get; } = new();
+        public CardSystemItem ItemSystem { get; } = new();
 
         public SoulData Soul { get; set; }      
         private readonly Rng _rng = new();
@@ -52,12 +53,15 @@ namespace UnityWorld.Game.Domain
                 {
                     Size = cardDefine.Size,
                     Cooldown = cardDefine.Cooldown,
+                    AmountMax = cardDefine.AmountMax,
+                    StackMax = cardDefine.StackMax,
                     ManaCost = ElementType.ToDic(cardDefine.ManaCost),
                     Keywords = cardDefine.Keywords,
                     Tags = cardDefine.Tags,
                 });
             GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
             EquipSystem.Register(card, new CardEquipData { CardId = card.Id });
+            ItemSystem.Register(card, new CardItemData { CardId = card.Id });
 
             Add(card.Id,card);
             return card;

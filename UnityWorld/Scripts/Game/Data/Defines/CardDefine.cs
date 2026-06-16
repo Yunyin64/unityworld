@@ -29,6 +29,10 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("AmountMax")]
         public int AmountMax  { get; set; } = 0;
 
+        /// <summary>堆叠上限（Consume keyword 时生效，0=不可堆叠）</summary>
+        [JsonPropertyName("StackMax")]
+        public int StackMax { get; set; } = 0;
+
         /// <summary>灵元消耗（元素名 → 数量）</summary>
         [JsonPropertyName("manaCost")]
         public Dictionary<string, int> ManaCost { get; set; } = new();

@@ -23,6 +23,14 @@ namespace UnityWorld.Game.Domain
         /// <summary>弹药上限</summary>
         public int AmountMax { get; set; } = 0;
 
+        // ── 消耗堆叠 ──────────────────────────────────────────
+
+        /// <summary>世界侧堆叠数量（Consume keyword 时生效）</summary>
+        public int Stack { get; set; } = 0;
+
+        /// <summary>堆叠上限</summary>
+        public int StackMax { get; set; } = 0;
+
         // ── 灵元消耗 ──────────────────────────────────────────
 
         /// <summary>灵元消耗（key=元素名称字符串，value=数量）</summary>
@@ -82,6 +90,8 @@ namespace UnityWorld.Game.Domain
 
         public Dictionary<ElementType, int> GetManaCost() => BaseData.ManaCost;
         public int GetAmountMax() => BaseData.AmountMax;
+        public int GetStack() => BaseData.Stack;
+        public int GetStackMax() => BaseData.StackMax;
         
         public List<string> GetKeywords() => BaseData.Keywords;
 

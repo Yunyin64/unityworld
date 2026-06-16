@@ -36,7 +36,7 @@
     "ID": "StraightCD",
     "DisplayName": "直击CD，CD(秒)",
     "Type": "Npc",
-    "DefaultValue": 0.5,
+    "DefaultValue": 5,
     "MinValue": 0.1,
     "MaxValue": 1,
     "DisplayFormat": "Float",
