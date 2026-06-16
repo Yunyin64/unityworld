@@ -23,8 +23,12 @@ namespace UnityWorld.Game.Domain.Combat
                 {
                     Ticks["ManaDraw"] = 0;
                     needDraw = true;
-                } 
-            if(needDraw) DrawMana((int)GetStat("ManaDrawCost"));
+                }
+            if (needDraw)
+            {
+                Scene.TriggerCombatEvent("OnBaseManaDraw", new APIContext { Caster = this, Scene = Scene });
+                DrawMana((int)GetStat("ManaDrawCost"));
+            } 
           }
 
         public void DrawMana(int costvalue)
@@ -70,7 +74,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 totalConsumed = ConsumeMana(cost);
             }
-            RecoverMP(totalConsumed);
+            ChangeMP(totalConsumed);
             Log($"ManaConvert: Consumed={totalConsumed}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
         }
         
@@ -122,10 +126,24 @@ namespace UnityWorld.Game.Domain.Combat
             //Log($"ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
             return totalConsumed;
         }
-        public void RecoverMP(int amount)
+        public int RecoverMP(int amount)
         {
-            if(amount <= 0) return;
+            int final = Math.Min(amount, GetCombatMpMax() - Mp);
+            Log($"回复{final}MP ");
+            ChangeMP(final);
+            return final;
+        }
+        public int ReduceMP(int amount)
+        {
+            int final = Math.Min(amount, Mp);
+            Log($"消耗{final}MP ");
+            ChangeMP(-final);
+            return final;
+        }
+        private void ChangeMP(int amount)
+        {
             Mp += amount;
+            Scene.TriggerCombatEvent("OnMPChanged", new APIContext { Caster = this, Scene = Scene });
         }
 
         public string RandomBaseElementBuff(bool isDebuff = false)

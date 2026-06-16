@@ -23,7 +23,7 @@
 - **THEN** CombatNpcModifierDefineMgr 包含以上 10 条 Define，可通过 Get(id) 获取
 
 ### Requirement: 五行元素 Buff Lua 脚本
-系统 SHALL 为每个 Buff 创建对应 Lua 脚本，通过 `OnManaDraw(ctx)` hook 触发效果。
+系统 SHALL 为每个 Buff 创建对应 Lua 脚本，通过 `OnBaseManaDraw(ctx)` hook 触发效果。
 
 | Buff | Lua 效果 |
 |------|----------|
@@ -41,13 +41,13 @@
 每个脚本 SHALL 检查 `ctx.Caster == self.m_Owner` 确保只响应自己的 ManaDraw。
 
 #### Scenario: 锐意触发扩散
-- **WHEN** 拥有 3 层锐意的 NPC 触发 OnManaDraw
+- **WHEN** 拥有 3 层锐意的 NPC 触发 OnBaseManaDraw
 - **THEN** 调用 AddElementBuff 循环 3 次，每次随机给自己加 1 层正面五行 Buff
 
 #### Scenario: 出血造成伤害
-- **WHEN** 拥有 5 层出血的 NPC 触发 OnManaDraw
+- **WHEN** 拥有 5 层出血的 NPC 触发 OnBaseManaDraw
 - **THEN** 调用 SelfDamage 对自己造成 5 点伤害
 
 #### Scenario: 载德清除负面
-- **WHEN** 拥有 2 层载德的 NPC 触发 OnManaDraw，身上有出血(3)+寒意(1)
+- **WHEN** 拥有 2 层载德的 NPC 触发 OnBaseManaDraw，身上有出血(3)+寒意(1)
 - **THEN** 调用 RemoveElementBuff 循环 2 次，从 [出血, 寒意] 中随机各减 1 层

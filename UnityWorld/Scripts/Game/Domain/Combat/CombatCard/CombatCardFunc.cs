@@ -95,7 +95,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <param name="contestType">拼点类型（Zhan/Ci/Da/SheJi/Shield/Block）</param>
         /// <param name="element">元素类型（仅攻击类有效）</param>
         /// <param name="contestValue">拼点数值（攻击值/盾值/防值）</param>
-        public void TryPushToPendingSlot(ContestType contestType, ElementType element, float contestValue)
+        public void TryPushToPendingSlot(ContestType contestType, ElementType element, int contestValue)
         {
             // 构造 ContestData 快照
             var contestData = new ContestData

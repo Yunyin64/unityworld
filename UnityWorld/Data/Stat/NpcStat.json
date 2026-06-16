@@ -34,10 +34,21 @@
   },
   {
     "ID": "StraightCD",
-    "DisplayName": "直击CD，CD(秒)",
+    "DisplayName": "直击CD,Tick",
     "Type": "Npc",
     "DefaultValue": 5,
-    "MinValue": 0.1,
+    "MinValue": 1,
+    "MaxValue": 1000,
+    "DisplayFormat": "Integer",
+    "Category": "基础",
+    "Description": "直击CD"
+  },
+  {
+    "ID": "HpZeroRecoverRate",
+    "DisplayName": "HP回复比例",
+    "Type": "Npc",
+    "DefaultValue": 0.5,
+    "MinValue": 0.01,
     "MaxValue": 1,
     "DisplayFormat": "Float",
     "Category": "基础",

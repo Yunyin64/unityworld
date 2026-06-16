@@ -1,6 +1,6 @@
 ﻿# API 参考
 
-> 自动生成时间，共 40 个API，8 个Trigger
+> 自动生成时间，共 41 个API，9 个Trigger
 
 ## Trigger（触发条件）
 
@@ -11,6 +11,7 @@
 | OnApply | 卡牌生效时触发 | 0 | 1 | 主动, 应用 | - |
 | OnStraight | 造成直击时触发 | 0 | 1 | 主动, 直击 | - |
 | OnContest | 对拼时触发 | 0 | 1 | 主动, 对拼 | - |
+| OnBaseManaDraw | 抽取灵力 | -4 | 1 | - | - |
 | OnManaDraw | 抽取灵力 | -4 | 1 | - | - |
 | OnTick | 每帧 | -4 | 1 | - | - |
 | OnDeath | 敌人死亡时触发 | -4 | 1 | 被动, 死亡, 黑暗 | - |
@@ -47,6 +48,7 @@
 | RemoveElementBuff | 循环清除五行元素Buff | Domain:String, Element:String, IsDebuff:Bool, Count:Int |
 | Draw | MP转化为灵元 | Domain:String, Amount:Int |
 | ReduceMana | 减少目标指定元素的灵元 | Domain:String, Element:String, Amount:Int |
+| RecoverMP | 目标直接获得MP。 | Domain:String, Amount:Int |
 | Deploy | 将卡从候补池部署到运转池 | Domain:String, CardId:Int |
 | Recall | 将卡从运转池召回候补池 | Domain:String, CardId:Int |
 | GiveTrait | 给NPC添加特质 | int:String, TraitId:String |

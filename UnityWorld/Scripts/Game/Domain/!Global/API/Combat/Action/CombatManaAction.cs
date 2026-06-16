@@ -203,5 +203,44 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
         
+        /// <summary>直接获得MP。参数：Domain(String),  Amount(Int)</summary>
+        [APIFunc("RecoverMP", APIType.Action, "目标直接获得MP。", Scope.CombatNpc, "Domain:String",  "Amount:Int")]
+        public  static APIContext RecoverMP(APIContext ctx)
+        {
+            var caster = ctx.Caster;
+            var Scene = ctx.Scene;
+            if (caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
+
+            
+            int amount = ctx.GetValue("Amount", 0);
+            if (amount <= 0) return ctx;
+
+            foreach (var npc in ctx.NpcTargets)
+            {
+                npc.RecoverMP(amount);
+            }
+            return ctx;
+        }
+        
+        /// <summary>直接减少MP。参数：Domain(String),  Amount(Int)</summary>
+        [APIFunc("ReduceMP", APIType.Action, "目标直接减少MP。", Scope.CombatNpc, "Domain:String",  "Amount:Int")]
+        public  static APIContext ReduceMP(APIContext ctx)
+        {
+            var caster = ctx.Caster;
+            var Scene = ctx.Scene;
+            if (caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
+
+            
+            int amount = ctx.GetValue("Amount", 0);
+            if (amount <= 0) return ctx;
+
+            foreach (var npc in ctx.NpcTargets)
+            {
+                npc.ReduceMP(amount);
+            }
+            return ctx;
+        }
     }
 }

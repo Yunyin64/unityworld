@@ -5,7 +5,7 @@
 
 local Buff = setmetatable({}, { __index = BuffBase })
 
-function Buff:OnManaDraw(ctx)
+function Buff:OnBaseManaDraw(ctx)
     if ctx.Caster ~= self.m_Owner then return end
     local n = self.m_Self.CurrentStack
     AddElementBuff(ctx, "Self", "None", false, n)

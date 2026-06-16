@@ -34,14 +34,14 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>
         /// 应用治疗，不超过初始HP上限。
         /// </summary>
-        public void ApplyHeal(float amount)
+        public void ApplyHeal(int amount)
         {
             var val = Math.Min(amount, GetHpMax() - Hp);
             Scene.TriggerCombatEvent("OnHeal", new APIContext { Caster = this, Scene = Scene });
             RecoverHP(amount);
         }
 
-        public void RecoverHP(float amount)
+        public void RecoverHP(int amount)
         {
             if(amount <= 0) return;
             Hp += amount;
@@ -159,8 +159,8 @@ namespace UnityWorld.Game.Domain.Combat
                 return ret;
             }
 
-            float valueA = contestA.ContestValue;
-            float valueB = contestB.ContestValue;
+            int valueA = contestA.ContestValue;
+            int valueB = contestB.ContestValue;
 
             Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
 
@@ -187,7 +187,7 @@ namespace UnityWorld.Game.Domain.Combat
                 loserContest = contestA;
             }
 
-            float overflow = Math.Abs(valueA - valueB);
+            int overflow = Math.Abs(valueA - valueB);
             var winner = winnerContest.OwnerNpc;
             var loser = loserContest.OwnerNpc;
 
@@ -226,7 +226,7 @@ namespace UnityWorld.Game.Domain.Combat
             return ret;
         }
 
-        private CombatResult ContestWin(CombatResult ctx, ContestData win, ContestData lose, float overflow)
+        private CombatResult ContestWin(CombatResult ctx, ContestData win, ContestData lose, int overflow)
         {
             if (win.IsAttackType)
             {
@@ -258,8 +258,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 根据伤害来源的元素/物理类型选择对应的伤势卡 ID
             string woundCardId = ResolveWoundCardId(ctx);
             AddWound(woundCardId);
-            // HP 恢复 50%
-            Hp = (int)(GetCombatHpMax() * 0.5f +0.5f);
+            Hp = (GetCombatHpMax() * GetStat("HpZeroRecoverRate")).ToInt() ;
          }
         
         public CombatCard AddWound(string woundCardId)

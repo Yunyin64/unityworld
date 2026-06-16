@@ -13,7 +13,7 @@ namespace UnityWorld.Game.Domain.Combat
         public ContestType ContestType { get; set; } = ContestType.Zhan;
 
         /// <summary>拼点数值（攻击值/盾值/防值）</summary>
-        public float ContestValue { get; set; } = 0f;
+        public int ContestValue { get; set; } = 0;
 
         /// <summary>元素类型（仅攻击类 Zhan/Ci/Da/SheJi 有效）</summary>
         public ElementType Element { get; set; } = ElementType.None;

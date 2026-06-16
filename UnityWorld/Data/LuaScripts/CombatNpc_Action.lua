@@ -135,6 +135,16 @@ ReduceMana = function(ctx, Domain, Element, Amount)
     API:Execute("ReduceMana", ctx)
 end
 
+--- 目标直接获得MP。
+--- @param ctx APIContext
+--- @param Domain string
+--- @param Amount number
+RecoverMP = function(ctx, Domain, Amount)
+    ctx:Set("Domain", Domain)
+    ctx:Set("Amount", tonumber(Amount))
+    API:Execute("RecoverMP", ctx)
+end
+
 --- 将卡从候补池部署到运转池
 --- @param ctx APIContext
 --- @param Domain string

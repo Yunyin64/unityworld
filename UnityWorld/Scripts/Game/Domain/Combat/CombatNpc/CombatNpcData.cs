@@ -9,10 +9,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// 战斗内当前数值（与大世界 StatBlock 独立）
         /// </summary>
         /// 
-        public  float ShieldValue { get; private  set; }
-        private float Hp { get; set; }
-        private float Mp { get; set; }
-        private float Sp { get ; set; }
+        public  int ShieldValue { get; private  set; }
+        private int Hp { get; set; }
+        private int Mp { get; set; }
+        private int Sp { get ; set; }
 
         public int GetHp(){return (int)Hp;}
         public int GetCombatHpMax(){return GetHpMax();}
@@ -24,11 +24,11 @@ namespace UnityWorld.Game.Domain.Combat
             return  sp;}
         public int GetCombatSpMax(){return GetSpMax();}
 
-        public void ChangeShield(float val)
+        public void ChangeShield(int val)
         {
             //可能要加入护盾上限值，待定
             ShieldValue += val;
-            ShieldValue = Math.Clamp(ShieldValue, 0, float.MaxValue);
+            ShieldValue = Math.Clamp(ShieldValue, 0, int.MaxValue);
             Log($"护盾值变更：{val:+0.##;-0.##;0}，当前护盾={ShieldValue:0.##}");
         }
         public void InitData()

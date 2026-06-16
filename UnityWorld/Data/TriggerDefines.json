@@ -54,6 +54,15 @@
     "weight": 1
   },
   {
+    "ID": "OnBaseManaDraw",
+    "DisplayName": "固定抽取灵力时",
+    "desc": "抽取灵力",
+    "score": -4,
+    "tags": [],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
     "ID": "OnManaDraw",
     "DisplayName": "抽取灵力时",
     "desc": "抽取灵力",

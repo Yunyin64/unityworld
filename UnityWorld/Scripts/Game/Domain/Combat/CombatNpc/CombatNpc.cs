@@ -147,14 +147,14 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>
         /// Shield 吸收：先扣盾再返回剩余伤害。
         /// </summary>
-        private float ApplyShieldAbsorb(DamageInfo info)
+        private int ApplyShieldAbsorb(DamageInfo info)
         {
             var damage = info.Damage;
             if (ShieldValue <= 0 || damage <= 0) return damage;
 
-            float absorbed = Math.Min(ShieldValue, damage);
+            int absorbed = Math.Min(ShieldValue, damage);
             ChangeShield(-absorbed);
-            float remaining = damage - absorbed;
+            int remaining = damage - absorbed;
             return remaining;
         }
 

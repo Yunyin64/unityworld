@@ -1,3 +1,5 @@
+using UnityWorld.Core;
+
 namespace UnityWorld.Game.Domain.Combat
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace UnityWorld.Game.Domain.Combat
         // ── 伤害数值 ──────────────────────────────────────
 
         /// <summary>基础伤害值（结算前的原始值）</summary>
-        public float Damage { get; set; } = 0;
+        public int Damage { get; set; } = 0;
         public DamageType damageType { get; set; } = DamageType.Zhan;
 
         /// <summary>元素类型：无 / 火 / 冰 / 雷 / 毒 / 暗 / 光</summary>
@@ -43,7 +45,7 @@ namespace UnityWorld.Game.Domain.Combat
             SourceNpc = source;
             SourceCard = sourceCard;
             TargetNpc = target;
-            Damage = damage;
+            Damage = damage.ToInt();
             this.damageType = damageType;
             ElementType = elementType ?? ElementType.None;
         }

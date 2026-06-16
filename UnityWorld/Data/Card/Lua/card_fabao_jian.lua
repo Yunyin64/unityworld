@@ -3,7 +3,7 @@ local card = setmetatable({}, { __index = CardBase })
 card.CardData = { Size = 2, Cooldown = 0, CardType = "FaBao", ManaCost = { Jin = 1 } }
 card.Keywords = {}
 
-function card:OnManaDraw(ctx)
+function card:OnBaseManaDraw(ctx)
     if ctx.Caster ~= self.m_Owner then return end
     self:UseFabao()
 end

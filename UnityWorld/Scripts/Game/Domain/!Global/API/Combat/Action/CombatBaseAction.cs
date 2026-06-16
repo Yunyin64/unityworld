@@ -62,7 +62,7 @@ namespace UnityWorld.Game.Domain
             int breakValue = ctx.GetValue("BreakValue", 0);
             foreach (var npc in ctx.NpcTargets)
             {
-                float actual = Math.Min(npc.ShieldValue, breakValue);
+                int actual = Math.Min(npc.ShieldValue, breakValue);
                 if (actual > 0)
                     npc.ChangeShield(-actual);
             }

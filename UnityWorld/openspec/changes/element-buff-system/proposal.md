@@ -6,7 +6,7 @@
 
 - 新增 2 个战斗 API 函数：`AddElementBuff` 和 `RemoveElementBuff`，放在 `CombatManaAction.cs`
 - 在 `Element_Buff.json` 中定义 10 条 CombatNpcModifierDefine（金木水火土 × 正/负面）
-- 创建 10 个 Lua 脚本，通过 `OnManaDraw` hook 触发各自效果
+- 创建 10 个 Lua 脚本，通过 `OnBaseManaDraw` hook 触发各自效果
 - 所有 Buff 永久存在（Duration:-1），可叠层（MaxStack:99），效果强度 = CurrentStack
 
 ## Capabilities
