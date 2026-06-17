@@ -41,7 +41,7 @@ namespace UnityWorld.Game.Domain
         // ── 读操作 ────────────────────────────────────────────
 
         /// <summary>获取原始 object 值，不存在返回 null</summary>
-        public object? Get(TKey id, string key)
+        public object Get(TKey id, string key)
         {
             if (_boards.TryGetValue(id, out var dict) && dict.TryGetValue(key, out var val))
                 return val;

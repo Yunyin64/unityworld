@@ -96,7 +96,7 @@ namespace UnityWorld.Game.Domain.Tag
         /// <summary>
         /// 按权重随机抽取一个 id（加权随机）
         /// </summary>
-        public string? WeightedRandom(Dictionary<string, float> weights, Random rng)
+        public string WeightedRandom(Dictionary<string, float> weights, Random rng)
         {
             float total = weights.Values.Sum();
             if (total <= 0f) return null;

@@ -8,7 +8,7 @@
 
 ## 2. NpcMgr.RandomCreate 方法
 
-- [x] 2.1 在 `NpcMgr.cs` 中新增 `RandomCreate(PracticePath path, int realmLevel, float age, float lifespanMax, float moveSpeed, NpcTypes.Gender gender, string[] roles, string[] traitIds, string? cultivationDefineId, int x, int y)` 方法
+- [x] 2.1 在 `NpcMgr.cs` 中新增 `RandomCreate(PracticePath path, int realmLevel, float age, float lifespanMax, float moveSpeed, NpcTypes.Gender gender, string[] roles, string[] traitIds, string cultivationDefineId, int x, int y)` 方法
 - [x] 2.2 RandomCreate 内部：生成随机 ID、随机修士姓名（调用 NameSystem.RandomCultivatorFullName）
 - [x] 2.3 RandomCreate 内部：注册 NameSystem、BioSystem（含 CultivationLevel=realmLevel）、RoleSystem、PositionSystem
 - [x] 2.4 RandomCreate 内部：注册 TraitMgr 并循环 AddTrait

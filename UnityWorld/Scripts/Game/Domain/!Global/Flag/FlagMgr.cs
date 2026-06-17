@@ -75,7 +75,7 @@ namespace UnityWorld.Game.Domain
             => Instance?.Npc.Set(id, key, value);
 
         /// <summary>获取 NPC Flag（空值安全，不存在返回 null）</summary>
-        public static object? GetNpc(int id, string key)
+        public static object GetNpc(int id, string key)
             => Instance?.Npc.Get(id, key);
 
         /// <summary>设置全局 Flag（空值安全）</summary>
@@ -83,7 +83,7 @@ namespace UnityWorld.Game.Domain
             => Instance?.Global.Set(key, value);
 
         /// <summary>获取全局 Flag（空值安全，不存在返回 null）</summary>
-        public static object? GetGlobal(string key)
+        public static object GetGlobal(string key)
             => Instance?.Global.Get(key);
 
         /// <summary>检查全局 Flag 是否为 true</summary>

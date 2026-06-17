@@ -9,7 +9,7 @@ namespace UnityWorld.Core
 {
     public class AssatMgr:IDomainMgrBase
     {
-        public static AssatMgr? Instance { get; private set; }
+        public static AssatMgr Instance { get; private set; }
 
         public string Name => "AssatMgr";
 

@@ -19,11 +19,11 @@ namespace UnityWorld.Game.Data
 
         /// <summary>事件标题（IsHide=false 时必填）</summary>
         [JsonPropertyName("title")]
-        public string? Title { get; set; }
+        public string Title { get; set; }
 
         /// <summary>事件正文描述（IsHide=false 时必填）</summary>
         [JsonPropertyName("text")]
-        public string? Text { get; set; }
+        public string Text { get; set; }
 
         /// <summary>
         /// 正向持有的选项 ID 列表

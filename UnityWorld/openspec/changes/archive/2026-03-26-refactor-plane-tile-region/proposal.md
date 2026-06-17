@@ -23,7 +23,7 @@
 ### Region 对象移除
 - **BREAKING** 废弃 Region.cs 运行时实体（代码保留但不使用）
 - **BREAKING** 废弃 RegionMgr.cs（代码保留但不使用）
-- Tile 用 `RegionDefineId: string?` 替代 `RegionId: int?`
+- Tile 用 `RegionDefineId: string` 替代 `RegionId: int?`
 - PlaneGenerator.Step3 不再创建 Region 对象，只执行地形/元气/地标覆盖
 
 ### TileMgr 增强

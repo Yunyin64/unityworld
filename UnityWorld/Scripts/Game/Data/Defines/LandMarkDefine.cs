@@ -52,11 +52,5 @@ namespace UnityWorld.Game.Data
         /// </summary>
         [JsonPropertyName("ModifierDefineIds")]
         public List<string> ModifierDefineIds { get; set; } = new();
-
-        // ── 叙事 ──────────────────────────────────────────
-
-        /// <summary>叙事标签（供事件系统、NPC Trait 匹配使用）</summary>
-        [JsonPropertyName("Tags")]
-        public List<string> Tags { get; set; } = new();
     }
 }

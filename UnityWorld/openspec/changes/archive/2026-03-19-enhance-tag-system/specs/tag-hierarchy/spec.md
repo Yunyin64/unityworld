@@ -3,7 +3,7 @@
 ### Requirement: Tag 层级结构定义
 TagDefine SHALL 支持 `Parent` 字段，用于构建树状层级结构。
 
-- `Parent` 为 `string?` 类型，`null` 表示根节点
+- `Parent` 为 `string` 类型，`null` 表示根节点
 - 每个 Tag 最多有一个父节点
 - 通过 Parent 链条可追溯到根节点
 

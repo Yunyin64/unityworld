@@ -25,7 +25,7 @@ namespace UnityWorld.Game.Domain
         // ── 读操作 ────────────────────────────────────────────
 
         /// <summary>获取原始 object 值，不存在返回 null</summary>
-        public object? Get(string key) => _flags.TryGetValue(key, out var val) ? val : null;
+        public object Get(string key) => _flags.TryGetValue(key, out var val) ? val : null;
 
         /// <summary>尝试以指定类型获取值，失败返回 defaultValue</summary>
         public T GetAs<T>(string key, T defaultValue = default!)

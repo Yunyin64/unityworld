@@ -1,6 +1,6 @@
 ## 1. TagDefine 扩展
 
-- [x] 1.1 在 `TagDefine.cs` 中添加 `Parent` 字段（`string?` 类型）
+- [x] 1.1 在 `TagDefine.cs` 中添加 `Parent` 字段（`string` 类型）
 - [x] 1.2 在 `TagDefine.cs` 中添加 `ConflictTags` 字段（`List<string>` 类型，默认空列表）
 - [x] 1.3 确保字段有正确的 XML 注释
 

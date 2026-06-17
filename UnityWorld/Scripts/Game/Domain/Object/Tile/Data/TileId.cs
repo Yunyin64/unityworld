@@ -50,7 +50,7 @@ namespace UnityWorld.Game.Domain
         public static TileId operator -(TileId a, TileId b) => new(a.Q - b.Q, a.R - b.R);
 
         public bool Equals(TileId other) => Q == other.Q && R == other.R;
-        public override bool Equals(object? obj) => obj is TileId other && Equals(other);
+        public override bool Equals(object obj) => obj is TileId other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(Q, R);
         public override string ToString() => $"TileId({Q},{R})";
 

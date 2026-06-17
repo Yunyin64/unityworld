@@ -17,8 +17,5 @@ namespace UnityWorld.Game.Data
 
         /// <summary>突破后寿命加成（百分比）</summary>
         public float LifespanBonus { get; set; } = 0f;
-
-        /// <summary>境界相关 Tag（用于功法匹配）</summary>
-        public string[] Tags { get; set; } = [];
     }
 }

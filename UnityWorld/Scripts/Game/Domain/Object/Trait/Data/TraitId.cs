@@ -10,7 +10,7 @@ namespace UnityWorld.Game.Domain
         public TraitId(string value) => Value = value ?? "";
 
         public bool Equals(TraitId other) => string.Equals(Value, other.Value, StringComparison.OrdinalIgnoreCase);
-        public override bool Equals(object? obj) => obj is TraitId other && Equals(other);
+        public override bool Equals(object obj) => obj is TraitId other && Equals(other);
         public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Value ?? "");
         public override string ToString() => $"TraitId({Value})";
 

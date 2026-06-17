@@ -57,7 +57,7 @@ CurrentAura  ← Lerp(Current, Target, speed * dt)
 
 ### D3: Region 元数据下沉
 
-**选择**：Tile 直接存储 `RegionDefineId: string?`
+**选择**：Tile 直接存储 `RegionDefineId: string`
 
 **替换方案**：
 - ❌ 保持 Region 运行时对象 → 管理复杂度高，价值低

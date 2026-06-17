@@ -10,7 +10,7 @@ namespace UnityWorld.Game.Domain
         public PlaneId(int value) => Value = value;
 
         public bool Equals(PlaneId other) => Value == other.Value;
-        public override bool Equals(object? obj) => obj is PlaneId other && Equals(other);
+        public override bool Equals(object obj) => obj is PlaneId other && Equals(other);
         public override int GetHashCode() => Value;
         public override string ToString() => $"PlaneId({Value})";
 

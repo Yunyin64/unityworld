@@ -8,9 +8,6 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class BehaviorCardDefine : DefineBase
     {
-        /// <summary>语义标签，用于 TagBag 匹配</summary>
-        [JsonPropertyName("Tags")]
-        public List<string> Tags { get; set; } = [];
 
         // ── 行为配置 ───────────────────────────────────────────────────────
 
@@ -42,23 +39,23 @@ namespace UnityWorld.Game.Data
 
         /// <summary>行为开始时触发的 Story 规则</summary>
         [JsonPropertyName("OnStart")]
-        public StoryTriggerRule? OnStart { get; set; }
+        public StoryTriggerRule OnStart { get; set; }
 
         /// <summary>行为结束时触发的 Story 规则</summary>
         [JsonPropertyName("OnEnd")]
-        public StoryTriggerRule? OnEnd { get; set; }
+        public StoryTriggerRule OnEnd { get; set; }
 
         /// <summary>行为被打断时触发的 Story 规则</summary>
         [JsonPropertyName("OnInterrupt")]
-        public StoryTriggerRule? OnInterrupt { get; set; }
+        public StoryTriggerRule OnInterrupt { get; set; }
 
         /// <summary>行为每 Tick 触发的 Story 规则（概率触发）</summary>
         [JsonPropertyName("OnTick")]
-        public StoryTickRule? OnTick { get; set; }
+        public StoryTickRule OnTick { get; set; }
 
         /// <summary>行为计时触发规则（延迟触发）</summary>
         [JsonPropertyName("OnTimer")]
-        public StoryTimerRule? OnTimer { get; set; }
+        public StoryTimerRule OnTimer { get; set; }
 
         // ── 兼容旧数据：将 storyIds/storyTags 映射为 OnStart ──────────────
 
@@ -68,7 +65,7 @@ namespace UnityWorld.Game.Data
         /// </summary>
         [JsonPropertyName("storyIds")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<string>? LegacyStoryIds
+        public List<string> LegacyStoryIds
         {
             get => null; // 序列化时不输出
             set
@@ -87,7 +84,7 @@ namespace UnityWorld.Game.Data
         /// </summary>
         [JsonPropertyName("storyTags")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<string>? LegacyStoryTags
+        public List<string> LegacyStoryTags
         {
             get => null; // 序列化时不输出
             set
@@ -111,14 +108,14 @@ namespace UnityWorld.Game.Data
         /// 优先级高于 StoryTags，不为空时从此列表随机选一个触发
         /// </summary>
         [JsonPropertyName("StoryIds")]
-        public List<string>? StoryIds { get; set; }
+        public List<string> StoryIds { get; set; }
 
         /// <summary>
         /// TagBag 动态匹配用 Tag 列表（涌现性模式）
         /// 仅当 StoryIds 为空时生效，在全局 StoryPool 中做 TagBag 匹配后触发
         /// </summary>
         [JsonPropertyName("StoryTags")]
-        public List<string>? StoryTags { get; set; }
+        public List<string> StoryTags { get; set; }
     }
 
     /// <summary>
@@ -132,7 +129,7 @@ namespace UnityWorld.Game.Data
 
         /// <summary>触发的 Story 规则</summary>
         [JsonPropertyName("Trigger")]
-        public StoryTriggerRule? Trigger { get; set; }
+        public StoryTriggerRule Trigger { get; set; }
     }
 
     /// <summary>
@@ -146,6 +143,6 @@ namespace UnityWorld.Game.Data
 
         /// <summary>触发的 Story 规则</summary>
         [JsonPropertyName("Trigger")]
-        public StoryTriggerRule? Trigger { get; set; }
+        public StoryTriggerRule Trigger { get; set; }
     }
 }

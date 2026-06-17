@@ -257,7 +257,7 @@ namespace UnityWorld.Core
             if (!_listeners.TryGetValue(eventId, out var scopeMap)) return;
             if (!scopeMap.TryGetValue(scope, out var entries) || entries.Count == 0) return;
 
-            List<int>? staleIndices = null;
+            List<int> staleIndices = null;
 
             for (int i = 0; i < entries.Count; i++)
             {

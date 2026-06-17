@@ -8,9 +8,6 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class StoryBaseDefine : DefineBase
     {
-        /// <summary>语义标签列表，用于 TagBag 匹配（可重复，重复次数代表浓度）</summary>
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = [];
 
         /// <summary>触发/出现条件列表（AND 逻辑，全部满足才通过）</summary>
         [JsonPropertyName("conditions")]
@@ -25,7 +22,7 @@ namespace UnityWorld.Game.Data
         /// 当前版本预留，非空时打 Warning 并降级到简单轨
         /// </summary>
         [JsonPropertyName("luaScript")]
-        public string? LuaScript { get; set; }
+        public string LuaScript { get; set; }
 
         /// <summary>检查所有 Conditions 是否全部满足</summary>
         public bool EvaluateConditions(UnityWorld.Game.Domain.StoryContext ctx)

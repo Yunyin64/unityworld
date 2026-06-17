@@ -12,7 +12,7 @@ CultivationMgr SHALL 管理每个 NPC 的修炼运行时数据（`NpcCultivation
 - `Path`（PracticePath）：NPC 的道途类型（由核心功法决定）
 - `CurrentRealmLevel`（int）：当前境界等级
 - `RealmProgress`（int）：当前境界进度累计值
-- `CoreCultivationId`（string?）：核心功法的 Define ID
+- `CoreCultivationId`（string）：核心功法的 Define ID
 - `GongFaDatas`（List\<GongFa\>）：所有装备功法槽位（含核心）
 - `ActiveSlotIndex`（int）：当前正在修炼的功法槽位索引（AI 决策）
 

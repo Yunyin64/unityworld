@@ -21,7 +21,7 @@ namespace UnityWorld.Game.Data
 
         // ── 初始化 ────────────────────────────────────────────
 
-        public GameDataMgr (string? baseDir = null)
+        public GameDataMgr (string baseDir = null)
         {
             baseDir ??= AppContext.BaseDirectory;
             // 注册到列表，方便统一调用 Load
@@ -63,7 +63,7 @@ namespace UnityWorld.Game.Data
         /// 统一加载所有数据文件（应在游戏启动时调用一次）
         /// baseDir 默认为程序所在目录（与 Program.cs 同级）
         /// </summary>
-        public static void Initialize(string? baseDir = null)
+        public static void Initialize(string baseDir = null)
         {
             baseDir ??= AppContext.BaseDirectory;
 

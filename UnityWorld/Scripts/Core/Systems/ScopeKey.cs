@@ -33,7 +33,7 @@ namespace UnityWorld.Core
             Scope == other.Scope && string.Equals(Id, other.Id, StringComparison.Ordinal);
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) =>
+        public override bool Equals(object obj) =>
             obj is ScopeKey other && Equals(other);
 
         /// <inheritdoc/>

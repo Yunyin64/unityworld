@@ -11,9 +11,5 @@ namespace UnityWorld.Game.Data
         /// <summary>描述文本</summary>
         [JsonPropertyName("Desc")]
         public string Desc { get; set; } = "";
-
-        /// <summary>语义标签列表</summary>
-        [JsonPropertyName("Tags")]
-        public List<string> Tags { get; set; } = new();
     }
 }

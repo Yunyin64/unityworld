@@ -38,8 +38,5 @@ namespace UnityWorld.Game.Data
 
         /// <summary>修炼节点序列</summary>
         public CultivationPointDefine[] Points { get; set; } = [];
-
-        /// <summary>功法相关 Tag（用于匹配和分类）</summary>
-        public string[] Tags { get; set; } = [];
     }
 }

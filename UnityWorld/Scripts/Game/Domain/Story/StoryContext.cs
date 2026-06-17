@@ -9,7 +9,7 @@ namespace UnityWorld.Game.Domain
     public class StoryContext
     {
         /// <summary>触发该 Story 的主体对象（NPC/门派/世界等，具体类型由调用方判断）</summary>
-        public object? Subject { get; set; }
+        public object Subject { get; set; }
 
         /// <summary>触发来源（天/地/人三池）</summary>
         public StoryPoolSource SourcePool { get; set; }
@@ -26,7 +26,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>
         /// 构造一个故事执行上下文
         /// </summary>
-        public StoryContext(object? subject, StoryPoolSource source, float currentTime, Rng? rng, string storyId = "")
+        public StoryContext(object subject, StoryPoolSource source, float currentTime, Rng? rng, string storyId = "")
         {
             Subject     = subject;
             SourcePool  = source;

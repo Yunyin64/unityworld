@@ -28,7 +28,7 @@
 - **THEN** NpcSystemPractice MUST 判定该 NPC 寿元耗尽
 
 ### Requirement: NpcCultivationData 灵根
-`NpcCultivationData` SHALL 包含 `SpiritRoot` (string?) 字段，表示灵根类型（如「火灵根」「双灵根」）。
+`NpcCultivationData` SHALL 包含 `SpiritRoot` (string) 字段，表示灵根类型（如「火灵根」「双灵根」）。
 凡人 NPC 的 SpiritRoot 为 null。
 
 #### Scenario: 凡人无灵根
@@ -86,7 +86,7 @@
 
 ### Requirement: NpcCultivationData 功法槽位（保留已有）
 `NpcCultivationData` SHALL 保留已有的功法槽位相关字段：
-- `CoreCultivationId` (string?)：核心功法定义 ID
+- `CoreCultivationId` (string)：核心功法定义 ID
 - `GongFaDatas` (List\<GongFa\>)：功法槽位列表
 - `ActiveSlotIndex` (int)：当前激活的槽位索引
 - `GetCoreSlot()`：获取核心功法槽位

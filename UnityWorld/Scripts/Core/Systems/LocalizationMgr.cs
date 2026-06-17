@@ -9,7 +9,7 @@ namespace UnityWorld.Core
 {
     public class LocalizationMgr :IDomainMgrBase
     {
-        public static LocalizationMgr? Instance { get; private set; }
+        public static LocalizationMgr Instance { get; private set; }
 
         public string Name => "LocalizationMgr";
 

@@ -21,7 +21,7 @@
 
 ## 4. Region 元数据下沉
 
-- [x] 4.1 Tile 增加 RegionDefineId: string? 字段
+- [x] 4.1 Tile 增加 RegionDefineId: string 字段
 - [x] 4.2 Tile 移除或废弃 RegionId 字段
 - [x] 4.3 TileMgr 增加 GetTilesByRegionDefineId 方法
 - [x] 4.4 PlaneGenerator.Step3 简化，移除 Region 创建逻辑

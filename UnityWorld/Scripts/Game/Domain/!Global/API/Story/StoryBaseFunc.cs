@@ -90,7 +90,7 @@ namespace UnityWorld.Game.Domain
             string storyId = ctx.GetValue("StoryId", "");
             string subjectIdStr = ctx.GetValue("SubjectId", "");
 
-            object? subject = ctx.Get<object>("Subject");
+            object subject = ctx.Get<object>("Subject");
             if (!string.IsNullOrEmpty(subjectIdStr) && int.TryParse(subjectIdStr, out int npcIdVal))
             {
                 subject = NpcMgr.Instance?.GetById(npcIdVal);

@@ -290,7 +290,7 @@ virtual bool ShouldOwnerDeathTriggerFatal()
 
 ```csharp
 // 初始化自定义内部数据（克隆时调用）
-protected virtual object? InitInternalData()
+protected virtual object InitInternalData()
 
 // 获取已存储的内部数据
 protected T GetInternalData<T>()

@@ -29,7 +29,7 @@ namespace UnityWorld.Game.Data
         public float TimeFlowRate { get; set; } = 1f;
 
         /// <summary>位面级五行元气加成（叠加到每块地块上，默认全 0）</summary>
-        public TileAura? AuraBonus { get; set; } = null;
+        public TileAura AuraBonus { get; set; } = null;
 
         // ── 校验 ─────────────────────────────────────────
 
@@ -92,7 +92,7 @@ namespace UnityWorld.Game.Data
         public static PlaneDefine SubPlane(string defineId, string name,
                                            int width = 20, int height = 20,
                                            float timeFlowRate = 1f,
-                                           TileAura? auraBonus = null) => new()
+                                           TileAura auraBonus = null) => new()
         {
             ID     = defineId,
             DisplayName         = name,

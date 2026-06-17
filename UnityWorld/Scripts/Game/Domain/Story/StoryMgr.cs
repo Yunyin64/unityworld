@@ -120,7 +120,7 @@ namespace UnityWorld.Game.Domain
         /// 统一触发入口：通过 StoryId 触发一个故事事件
         /// 三池（宿命/劫缘/抉择）均通过此方法触发，屏蔽来源差异
         /// </summary>
-        public void TriggerStory(string storyId, object? subject, StoryPoolSource source = StoryPoolSource.Fate, Rng? rng = null)
+        public void TriggerStory(string storyId, object subject, StoryPoolSource source = StoryPoolSource.Fate, Rng? rng = null)
         {
             var define = StoryDefineMgr.Instance?.Get(storyId);
             if (define == null)
@@ -166,13 +166,13 @@ namespace UnityWorld.Game.Domain
         /// <summary>
         /// 通过 Tags 在全局 StoryPool 中 TagBag 匹配后触发权重最高的 Story
         /// </summary>
-        public void TriggerStoryByTags(List<string> tags, object? subject, StoryPoolSource source = StoryPoolSource.Karma, Rng? rng = null)
+        public void TriggerStoryByTags(List<string> tags, object subject, StoryPoolSource source = StoryPoolSource.Karma, Rng? rng = null)
         {
             BuildStoryTagsCache();
             if (_storyTagsCache == null || _storyTagsCache.Count == 0) return;
 
             // 简单 Include 匹配：找交集最多的 Story
-            string? bestId   = null;
+            string bestId   = null;
             int     bestScore = -1;
             var     querySet  = new HashSet<string>(tags, StringComparer.OrdinalIgnoreCase);
 

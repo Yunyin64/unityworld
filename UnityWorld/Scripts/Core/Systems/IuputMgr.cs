@@ -12,7 +12,7 @@ namespace UnityWorld.Core
         public InputMgr()
         {
         }
-        public static InputMgr? Instance { get; private set; }
+        public static InputMgr Instance { get; private set; }
 
 
         public string Desc => "";

@@ -30,9 +30,9 @@ namespace UnityWorld.Core
                 return expr;
             }
         }
-        private readonly Dictionary<string, object?> _finalCache = new();
+        private readonly Dictionary<string, object> _finalCache = new();
 
-        public Dictionary<string, object?> GetFinalCache() => _finalCache;
+        public Dictionary<string, object> GetFinalCache() => _finalCache;
         public void InitType(string Type)
         {
             StatDefineMgr.Instance.GetAll().Where(d => d.Type == Type && d.BaseType == StatBaseType.Primary).ToList().ForEach(d =>
