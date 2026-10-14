@@ -27,18 +27,26 @@ namespace UnityWorld.Game.World
         ///   3. 初始化NPC管理器
         ///   4. 初始化位面管理器
         /// </summary>
-        public static void Initialize(int seed = 12345)
+        public static void Initialize(int seed = 12345, string baseDir = null)
         {
+            if (_domains.Count != 0 || _gameplays.Count != 0)
+                throw new InvalidOperationException("世界已经初始化，请先调用 WorldMgr.End()。");
+
+            baseDir ??= AppContext.BaseDirectory;
+            if (!Directory.Exists(Path.Combine(baseDir, "Data")))
+                throw new DirectoryNotFoundException($"找不到核心数据目录：{Path.Combine(baseDir, "Data")}");
+
             _domains.Add(new LogMgr(seed));
-            _domains.Add(new LuaMgr());
+            _domains.Add(new LuaMgr(baseDir));
             _domains.Add(new APIMgr());
             _domains.Add(new EventMgr());
 
 
-            GameDataMgr.Initialize();
+            GameDataMgr.Initialize(baseDir);
             WorldTime.Initialize(seed);
-            _gameplays.Add(new GlyphMgr(seed));
-            _gameplays.Add(new AuraDaoMgr(seed));
+            _gameplays.Add(new GlyphMgr(seed, baseDir));
+            AuraDaoMgr = new AuraDaoMgr(seed);
+            _gameplays.Add(AuraDaoMgr);
             _gameplays.Add(new CombatMgr(seed));
             _gameplays.Add(new CultivationMgr(seed));
             
@@ -66,6 +74,17 @@ namespace UnityWorld.Game.World
             foreach (var mgr in _gameplays) mgr.Begin();
             
             LogMgr.Instance.Dbg("=== 世界初始化完成 ===\n");
+        }
+
+        /// <summary>宿主退出时结束各系统，释放 Lua、事件与日志资源。</summary>
+        public static void End()
+        {
+            for (int i = _gameplays.Count - 1; i >= 0; i--)
+                _gameplays[i].End();
+            for (int i = _domains.Count - 1; i >= 0; i--)
+                _domains[i].End();
+            _gameplays.Clear();
+            _domains.Clear();
         }
 
         /// <summary>

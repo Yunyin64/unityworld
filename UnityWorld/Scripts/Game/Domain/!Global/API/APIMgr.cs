@@ -233,7 +233,7 @@ namespace UnityWorld.Game.Domain
         public void Init()
         {
             ScanHandlers();
-            ExportLua();
+            // Lua 包装文件随 Data 发布；运行时不改写源码，开发工具可显式调用 ExportLua。
             LogMgr.Instance.Dbg("[APIMgr] 初始化完成，已注册 {0} 个API签名，{1} 个Handler", _apis.Count, _handlers.Count);
         }
 
@@ -285,8 +285,9 @@ namespace UnityWorld.Game.Domain
         /// 将当前已加载的 TriggerDefine、API Condition、API Action 输出为 Markdown 参考文档。
         /// </summary>
         /// <param name="outputDir">输出目录路径，默认为 tag-design-assist/docs 目录</param>
-        public void ExportDoc(string outputDir = @"F:\Openclaw\UnityWorld\UnityWorld\.codemaker\skills\tag-design-assist\docs")
+        public void ExportDoc(string outputDir = null)
         {
+            outputDir ??= Path.Combine(AppContext.BaseDirectory, "Docs");
             var sb = new StringBuilder();
             sb.AppendLine("# API 参考");
             sb.AppendLine();
@@ -397,8 +398,9 @@ namespace UnityWorld.Game.Domain
         /// <summary>
         /// 按 APIType 分组，自动生成 Lua 包装函数文件到 Data/LuaScripts/
         /// </summary>
-        public void ExportLua(string outputDir = @"F:\Openclaw\UnityWorld\UnityWorld\Data\LuaScripts")
+        public void ExportLua(string outputDir = null)
         {
+            outputDir ??= Path.Combine(AppContext.BaseDirectory, "Data", "LuaScripts");
             if (!Directory.Exists(outputDir))
             {
                 Directory.CreateDirectory(outputDir);

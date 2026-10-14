@@ -42,14 +42,14 @@ namespace UnityWorld.Game.Domain
         /// 构造 GlyphMgr，初始化 SoulData 和 Rng
         /// </summary>
         /// <param name="seed">随机种子</param>
-        public GlyphMgr(int seed)
+        public GlyphMgr(int seed, string baseDir = null)
         {
             Soul = new SoulData(seed);
             _rng = new Rng(seed);
             Instance = this;
 
             // 构造时即加载名字库（_gameplays 目前未统一调 Init）
-            string path = Path.Combine(AppContext.BaseDirectory, "Data", "NameLibrary.json");
+            string path = Path.Combine(baseDir ?? AppContext.BaseDirectory, "Data", "NameLibrary.json");
             _nameLibrary = NameLibrary.Load(path);
         }
 

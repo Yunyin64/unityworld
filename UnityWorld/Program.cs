@@ -12,8 +12,24 @@ using UnityWorld.Game.World;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-// ① 初始化世界
-WorldMgr.Initialize(DateTime.Now.Second);
-WorldMgr.Start();
-
-CombatTestRunner.RunBasicTest();
+bool smokeTest = args.Contains("--core-smoke-test");
+try
+{
+    WorldMgr.Initialize(smokeTest ? 12345 : DateTime.Now.Second);
+    WorldMgr.Start();
+    if (smokeTest)
+    {
+        for (int i = 0; i < 3; i++) WorldMgr.Tick(1f / 60f);
+        if (NpcDefineMgr.Instance.Get("test_npc_a") == null || PlaneMgr.Instance.MainPlane.Tiles.Count == 0)
+            throw new InvalidOperationException($"核心数据未成功加载：NPC={NpcDefineMgr.Instance.Get("test_npc_a") != null}, tiles={PlaneMgr.Instance.MainPlane.Tiles.Count}");
+        Console.WriteLine($"CORE_SMOKE_OK seed={WorldTime.RandomSeed} ticks={WorldTime.CurrentTick} tiles={PlaneMgr.Instance.MainPlane.Tiles.Count}");
+    }
+    else
+    {
+        CombatTestRunner.RunBasicTest();
+    }
+}
+finally
+{
+    WorldMgr.End();
+}

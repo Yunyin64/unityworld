@@ -1,0 +1,1924 @@
+[gd_scene format=3 uid="uid://d4nmp1yv0ncjl"]
+
+[ext_resource type="Texture2D" uid="uid://0vnny23xh8lb" path="res://assets/art/backgrounds/qinglan_arena.png" id="background"]
+[ext_resource type="Texture2D" uid="uid://csgwgadfmi5bs" path="res://assets/art/ui/backpack_base.png" id="backpack"]
+[ext_resource type="Texture2D" uid="uid://clubih88xkuvt" path="res://assets/art/icons/artifacts/bronze_bell.png" id="bell"]
+[ext_resource type="Texture2D" uid="uid://bgtv8ty0b4035" path="res://assets/art/icons/artifacts/spirit_gourd.png" id="gourd"]
+[ext_resource type="Texture2D" uid="uid://b2pt0vjebwphv" path="res://assets/art/ui/combat_log_panel.png" id="log"]
+[ext_resource type="Texture2D" uid="uid://cvcemg44806je" path="res://assets/art/characters/crimson_cultivator.png" id="pyromancer"]
+[ext_resource type="Script" uid="uid://btidvra5oykl3" path="res://scripts/client/AssetPreview.cs" id="Script"]
+[ext_resource type="Texture2D" uid="uid://r4dmn2qlhllk" path="res://assets/art/ui/character_stats_panel.png" id="stats"]
+[ext_resource type="Texture2D" uid="uid://kyaww7owtyqh" path="res://assets/art/icons/artifacts/jade_sword.png" id="sword"]
+[ext_resource type="Texture2D" uid="uid://jkgy44wet68s" path="res://assets/art/characters/jade_swordsman.png" id="swordsman"]
+[ext_resource type="Texture2D" uid="uid://b8dpqiyqtty8x" path="res://assets/art/icons/artifacts/fire_talisman.png" id="talisman"]
+
+[sub_resource type="SystemFont" id="Font"]
+font_names = PackedStringArray("Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif")
+
+[sub_resource type="Theme" id="Theme"]
+default_font = SubResource("Font")
+default_font_size = 20
+
+[sub_resource type="AtlasTexture" id="Texture_background"]
+atlas = ExtResource("background")
+region = Rect2(0, 0, 1672, 941)
+
+[sub_resource type="StyleBoxFlat" id="Header"]
+bg_color = Color(0.92, 0.85, 0.66, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="Dark"]
+bg_color = Color(0.16, 0.21, 0.2, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.69, 0.64, 0.45, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="AtlasTexture" id="Texture_gourd"]
+atlas = ExtResource("gourd")
+region = Rect2(160, 56, 891, 1161)
+
+[sub_resource type="AtlasTexture" id="Texture_sword"]
+atlas = ExtResource("sword")
+region = Rect2(495, 4, 264, 1245)
+
+[sub_resource type="AtlasTexture" id="Texture_talisman"]
+atlas = ExtResource("talisman")
+region = Rect2(179, 14, 961, 1232)
+
+[sub_resource type="AtlasTexture" id="Texture_bell"]
+atlas = ExtResource("bell")
+region = Rect2(121, 70, 1117, 1087)
+
+[sub_resource type="AtlasTexture" id="Texture_backpack"]
+atlas = ExtResource("backpack")
+region = Rect2(0, 0, 1122, 1402)
+
+[sub_resource type="StyleBoxFlat" id="Cell"]
+bg_color = Color(0.82, 0.78, 0.65, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.48, 0.36, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Locked"]
+bg_color = Color(0.42, 0.43, 0.34, 0.55)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.44, 0.43, 0.33, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Jade"]
+bg_color = Color(0.5, 0.7, 0.57, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.49, 0.38, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="Blue"]
+bg_color = Color(0.49, 0.67, 0.75, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.28, 0.46, 0.52, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="Gold"]
+bg_color = Color(0.85, 0.72, 0.43, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.44, 0.24, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="Red"]
+bg_color = Color(0.79, 0.54, 0.42, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.56, 0.3, 0.21, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="AtlasTexture" id="Texture_stats"]
+atlas = ExtResource("stats")
+region = Rect2(48, 107, 2077, 503)
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_face"]
+atlas = ExtResource("swordsman")
+region = Rect2(450, 260, 480, 445)
+
+[sub_resource type="StyleBoxFlat" id="BarBg"]
+bg_color = Color(0.23, 0.24, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.23, 0.24, 0.2, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Health"]
+bg_color = Color(0.72, 0.24, 0.19, 1)
+border_color = Color(0.72, 0.24, 0.19, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="Mana"]
+bg_color = Color(0.2, 0.54, 0.66, 1)
+border_color = Color(0.2, 0.54, 0.66, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="Energy"]
+bg_color = Color(0.81, 0.61, 0.23, 1)
+border_color = Color(0.81, 0.61, 0.23, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_face"]
+atlas = ExtResource("pyromancer")
+region = Rect2(205, 200, 500, 460)
+
+[sub_resource type="AtlasTexture" id="Texture_log"]
+atlas = ExtResource("log")
+region = Rect2(0, 61, 2172, 598)
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman"]
+atlas = ExtResource("swordsman")
+region = Rect2(58, 157, 1183, 991)
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer"]
+atlas = ExtResource("pyromancer")
+region = Rect2(44, 78, 1201, 1118)
+
+[node name="BattleAssetsPreview" type="Control" unique_id=4716740]
+texture_filter = 4
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = SubResource("Theme")
+script = ExtResource("Script")
+
+[node name="Arena" type="TextureRect" parent="." unique_id=1625989128]
+layout_mode = 0
+offset_right = 1600.0
+offset_bottom = 900.0
+mouse_filter = 2
+texture = SubResource("Texture_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="." unique_id=1211998134]
+layout_mode = 0
+offset_right = 1600.0
+offset_bottom = 900.0
+mouse_filter = 2
+color = Color(0.06, 0.11, 0.13, 0.16)
+
+[node name="Hud" type="Control" parent="." unique_id=780685508]
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Header" type="Panel" parent="Hud" unique_id=1846715368]
+layout_mode = 0
+offset_left = 425.0
+offset_top = 20.0
+offset_right = 1175.0
+offset_bottom = 92.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Header")
+
+[node name="Location" type="Label" parent="Hud/Header" unique_id=810182173]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 2.0
+offset_right = 730.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 29
+text = "青岚山 · 论剑台"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Environment" type="Label" parent="Hud/Header" unique_id=181851770]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 42.0
+offset_right = 730.0
+offset_bottom = 66.0
+theme_override_colors/font_color = Color(0.38, 0.4, 0.3, 1)
+theme_override_font_sizes/font_size = 16
+text = "辰时  /  微雨  /  第 08 回合"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GlobalEffects" type="Panel" parent="Hud" unique_id=1557566339]
+layout_mode = 0
+offset_left = 530.0
+offset_top = 104.0
+offset_right = 1070.0
+offset_bottom = 156.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="Icon0" type="TextureRect" parent="Hud/GlobalEffects" unique_id=1767567961]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 9.0
+offset_right = 47.0
+offset_bottom = 41.0
+mouse_filter = 2
+texture = SubResource("Texture_gourd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text0" type="Label" parent="Hud/GlobalEffects" unique_id=458732056]
+layout_mode = 0
+offset_left = 51.0
+offset_top = 4.0
+offset_right = 129.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.95, 0.91, 0.77, 1)
+theme_override_font_sizes/font_size = 18
+text = "聚灵阵"
+vertical_alignment = 1
+
+[node name="Icon1" type="TextureRect" parent="Hud/GlobalEffects" unique_id=638838443]
+layout_mode = 0
+offset_left = 146.0
+offset_top = 9.0
+offset_right = 178.0
+offset_bottom = 41.0
+mouse_filter = 2
+texture = SubResource("Texture_sword")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text1" type="Label" parent="Hud/GlobalEffects" unique_id=2061740866]
+layout_mode = 0
+offset_left = 182.0
+offset_top = 4.0
+offset_right = 260.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.95, 0.91, 0.77, 1)
+theme_override_font_sizes/font_size = 18
+text = "剑域"
+vertical_alignment = 1
+
+[node name="Icon2" type="TextureRect" parent="Hud/GlobalEffects" unique_id=38053706]
+layout_mode = 0
+offset_left = 277.0
+offset_top = 9.0
+offset_right = 309.0
+offset_bottom = 41.0
+mouse_filter = 2
+texture = SubResource("Texture_talisman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text2" type="Label" parent="Hud/GlobalEffects" unique_id=893614374]
+layout_mode = 0
+offset_left = 313.0
+offset_top = 4.0
+offset_right = 391.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.95, 0.91, 0.77, 1)
+theme_override_font_sizes/font_size = 18
+text = "火势"
+vertical_alignment = 1
+
+[node name="Icon3" type="TextureRect" parent="Hud/GlobalEffects" unique_id=654635333]
+layout_mode = 0
+offset_left = 408.0
+offset_top = 9.0
+offset_right = 440.0
+offset_bottom = 41.0
+mouse_filter = 2
+texture = SubResource("Texture_bell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text3" type="Label" parent="Hud/GlobalEffects" unique_id=757557925]
+layout_mode = 0
+offset_left = 444.0
+offset_top = 4.0
+offset_right = 522.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.95, 0.91, 0.77, 1)
+theme_override_font_sizes/font_size = 18
+text = "镇魂"
+vertical_alignment = 1
+
+[node name="PlayerBackpack" type="Control" parent="Hud" unique_id=2034898846]
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 166.0
+offset_right = 372.0
+offset_bottom = 688.0
+mouse_filter = 2
+
+[node name="Base" type="TextureRect" parent="Hud/PlayerBackpack" unique_id=289171130]
+layout_mode = 0
+offset_right = 348.0
+offset_bottom = 522.0
+mouse_filter = 2
+texture = SubResource("Texture_backpack")
+expand_mode = 1
+
+[node name="Title" type="Label" parent="Hud/PlayerBackpack" unique_id=337835763]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 29.0
+offset_right = 323.0
+offset_bottom = 73.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 24
+text = "我方 · 储物阵"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hint" type="Label" parent="Hud/PlayerBackpack" unique_id=1977375919]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 94.0
+offset_right = 324.0
+offset_bottom = 116.0
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 14
+text = "储物阵 · 五列六行"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Grid" type="Control" parent="Hud/PlayerBackpack" unique_id=1130987625]
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 130.0
+offset_right = 324.0
+offset_bottom = 490.0
+mouse_filter = 2
+
+[node name="Slot0_0" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1055627089]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 59.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_0" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1680193838]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 1.0
+offset_right = 119.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_0" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=148092671]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 1.0
+offset_right = 179.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_0" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=555946703]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 1.0
+offset_right = 239.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_0" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1297374877]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 1.0
+offset_right = 299.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_1" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1927122083]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 61.0
+offset_right = 59.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_1" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1999871257]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 61.0
+offset_right = 119.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_1" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=151340723]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 61.0
+offset_right = 179.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_1" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=821454920]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 61.0
+offset_right = 239.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_1" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=926815514]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 61.0
+offset_right = 299.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_2" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1066965551]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 121.0
+offset_right = 59.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_2" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1175850078]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 121.0
+offset_right = 119.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_2" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1886320799]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 121.0
+offset_right = 179.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_2" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1147695495]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 121.0
+offset_right = 239.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_2" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=215995181]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 121.0
+offset_right = 299.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_3" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1778645933]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 181.0
+offset_right = 59.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_3" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=864918402]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 181.0
+offset_right = 119.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_3" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=200499163]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 181.0
+offset_right = 179.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_3" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1106683490]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 181.0
+offset_right = 239.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_3" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=782885700]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 181.0
+offset_right = 299.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_4" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1100508026]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 241.0
+offset_right = 59.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_4" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=623902432]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 241.0
+offset_right = 119.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_4" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=48477389]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 241.0
+offset_right = 179.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_4" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=826559659]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 241.0
+offset_right = 239.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_4" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=595183774]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 241.0
+offset_right = 299.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_5" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=34303701]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 301.0
+offset_right = 59.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_5" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=451830164]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 301.0
+offset_right = 119.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_5" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=2094424592]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 301.0
+offset_right = 179.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_5" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1940189716]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 301.0
+offset_right = 239.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Locked")
+
+[node name="Locked3_5" type="Label" parent="Hud/PlayerBackpack/Grid" unique_id=1461899798]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 300.0
+offset_right = 240.0
+offset_bottom = 360.0
+theme_override_colors/font_color = Color(0.47, 0.46, 0.37, 1)
+theme_override_font_sizes/font_size = 22
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot4_5" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=143227541]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 301.0
+offset_right = 299.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Locked")
+
+[node name="Locked4_5" type="Label" parent="Hud/PlayerBackpack/Grid" unique_id=1922159600]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 300.0
+offset_right = 300.0
+offset_bottom = 360.0
+theme_override_colors/font_color = Color(0.47, 0.46, 0.37, 1)
+theme_override_font_sizes/font_size = 22
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot_sword" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=837834651]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 58.0
+offset_bottom = 178.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Jade")
+
+[node name="Item_sword" type="TextureRect" parent="Hud/PlayerBackpack/Grid" unique_id=1399074285]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 53.0
+offset_bottom = 173.0
+mouse_filter = 2
+texture = SubResource("Texture_sword")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot_gourd" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1022362296]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 122.0
+offset_right = 178.0
+offset_bottom = 238.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Blue")
+
+[node name="Item_gourd" type="TextureRect" parent="Hud/PlayerBackpack/Grid" unique_id=1663706319]
+layout_mode = 0
+offset_left = 67.0
+offset_top = 127.0
+offset_right = 173.0
+offset_bottom = 233.0
+mouse_filter = 2
+texture = SubResource("Texture_gourd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot_talisman" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=1195247772]
+layout_mode = 0
+offset_left = 182.0
+offset_top = 2.0
+offset_right = 238.0
+offset_bottom = 118.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Gold")
+
+[node name="Item_talisman" type="TextureRect" parent="Hud/PlayerBackpack/Grid" unique_id=1859621600]
+layout_mode = 0
+offset_left = 187.0
+offset_top = 7.0
+offset_right = 233.0
+offset_bottom = 113.0
+mouse_filter = 2
+texture = SubResource("Texture_talisman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot_bell" type="Panel" parent="Hud/PlayerBackpack/Grid" unique_id=2041004268]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 242.0
+offset_right = 118.0
+offset_bottom = 298.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Gold")
+
+[node name="Item_bell" type="TextureRect" parent="Hud/PlayerBackpack/Grid" unique_id=67079487]
+layout_mode = 0
+offset_left = 67.0
+offset_top = 247.0
+offset_right = 113.0
+offset_bottom = 293.0
+mouse_filter = 2
+texture = SubResource("Texture_bell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnemyBackpack" type="Control" parent="Hud" unique_id=467848268]
+anchors_preset = 0
+offset_left = 1228.0
+offset_top = 166.0
+offset_right = 1576.0
+offset_bottom = 688.0
+mouse_filter = 2
+
+[node name="Base" type="TextureRect" parent="Hud/EnemyBackpack" unique_id=902297696]
+layout_mode = 0
+offset_right = 348.0
+offset_bottom = 522.0
+mouse_filter = 2
+texture = SubResource("Texture_backpack")
+expand_mode = 1
+
+[node name="Title" type="Label" parent="Hud/EnemyBackpack" unique_id=1145608608]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 29.0
+offset_right = 323.0
+offset_bottom = 73.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 24
+text = "敌方 · 储物阵"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hint" type="Label" parent="Hud/EnemyBackpack" unique_id=286222428]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 94.0
+offset_right = 324.0
+offset_bottom = 116.0
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 14
+text = "储物阵 · 五列六行"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Grid" type="Control" parent="Hud/EnemyBackpack" unique_id=1302456656]
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 130.0
+offset_right = 324.0
+offset_bottom = 490.0
+mouse_filter = 2
+
+[node name="Slot0_0" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=546153837]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 59.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Locked")
+
+[node name="Locked0_0" type="Label" parent="Hud/EnemyBackpack/Grid" unique_id=2112829354]
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.47, 0.46, 0.37, 1)
+theme_override_font_sizes/font_size = 22
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot1_0" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1919689561]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 1.0
+offset_right = 119.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Locked")
+
+[node name="Locked1_0" type="Label" parent="Hud/EnemyBackpack/Grid" unique_id=1700667469]
+layout_mode = 0
+offset_left = 60.0
+offset_right = 120.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.47, 0.46, 0.37, 1)
+theme_override_font_sizes/font_size = 22
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot2_0" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=85301411]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 1.0
+offset_right = 179.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_0" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1328671570]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 1.0
+offset_right = 239.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_0" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1212283772]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 1.0
+offset_right = 299.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_1" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1079471899]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 61.0
+offset_right = 59.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_1" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1803284064]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 61.0
+offset_right = 119.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_1" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=518297392]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 61.0
+offset_right = 179.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_1" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1266979081]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 61.0
+offset_right = 239.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_1" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=65646268]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 61.0
+offset_right = 299.0
+offset_bottom = 119.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_2" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=733230301]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 121.0
+offset_right = 59.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_2" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=2022933755]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 121.0
+offset_right = 119.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_2" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1925587466]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 121.0
+offset_right = 179.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_2" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1422592781]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 121.0
+offset_right = 239.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_2" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1701511011]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 121.0
+offset_right = 299.0
+offset_bottom = 179.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_3" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1109541488]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 181.0
+offset_right = 59.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_3" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=456817162]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 181.0
+offset_right = 119.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_3" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=476470437]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 181.0
+offset_right = 179.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_3" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=457515117]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 181.0
+offset_right = 239.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_3" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=211411050]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 181.0
+offset_right = 299.0
+offset_bottom = 239.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_4" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1077255273]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 241.0
+offset_right = 59.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_4" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=638943469]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 241.0
+offset_right = 119.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_4" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=2116448248]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 241.0
+offset_right = 179.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_4" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=846735826]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 241.0
+offset_right = 239.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot4_4" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=796391311]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 241.0
+offset_right = 299.0
+offset_bottom = 299.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot0_5" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1744973865]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 301.0
+offset_right = 59.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot1_5" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1189086372]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 301.0
+offset_right = 119.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot2_5" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1603714672]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 301.0
+offset_right = 179.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Cell")
+
+[node name="Slot3_5" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1680687369]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 301.0
+offset_right = 239.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Locked")
+
+[node name="Locked3_5" type="Label" parent="Hud/EnemyBackpack/Grid" unique_id=159495605]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 300.0
+offset_right = 240.0
+offset_bottom = 360.0
+theme_override_colors/font_color = Color(0.47, 0.46, 0.37, 1)
+theme_override_font_sizes/font_size = 22
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot4_5" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1447101950]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 301.0
+offset_right = 299.0
+offset_bottom = 359.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Locked")
+
+[node name="Locked4_5" type="Label" parent="Hud/EnemyBackpack/Grid" unique_id=316746154]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 300.0
+offset_right = 300.0
+offset_bottom = 360.0
+theme_override_colors/font_color = Color(0.47, 0.46, 0.37, 1)
+theme_override_font_sizes/font_size = 22
+text = "·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot_sword" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1482670400]
+layout_mode = 0
+offset_left = 242.0
+offset_top = 62.0
+offset_right = 298.0
+offset_bottom = 238.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Red")
+
+[node name="Item_sword" type="TextureRect" parent="Hud/EnemyBackpack/Grid" unique_id=1056441898]
+layout_mode = 0
+offset_left = 247.0
+offset_top = 67.0
+offset_right = 293.0
+offset_bottom = 233.0
+mouse_filter = 2
+texture = SubResource("Texture_sword")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot_gourd" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=493316133]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 122.0
+offset_right = 118.0
+offset_bottom = 238.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Blue")
+
+[node name="Item_gourd" type="TextureRect" parent="Hud/EnemyBackpack/Grid" unique_id=681202806]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 127.0
+offset_right = 113.0
+offset_bottom = 233.0
+mouse_filter = 2
+texture = SubResource("Texture_gourd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot_talisman" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=519768533]
+layout_mode = 0
+offset_left = 122.0
+offset_top = 2.0
+offset_right = 178.0
+offset_bottom = 118.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Red")
+
+[node name="Item_talisman" type="TextureRect" parent="Hud/EnemyBackpack/Grid" unique_id=1047262319]
+layout_mode = 0
+offset_left = 127.0
+offset_top = 7.0
+offset_right = 173.0
+offset_bottom = 113.0
+mouse_filter = 2
+texture = SubResource("Texture_talisman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot_bell" type="Panel" parent="Hud/EnemyBackpack/Grid" unique_id=1781237571]
+layout_mode = 0
+offset_left = 122.0
+offset_top = 242.0
+offset_right = 178.0
+offset_bottom = 298.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Gold")
+
+[node name="Item_bell" type="TextureRect" parent="Hud/EnemyBackpack/Grid" unique_id=2130772521]
+layout_mode = 0
+offset_left = 127.0
+offset_top = 247.0
+offset_right = 173.0
+offset_bottom = 293.0
+mouse_filter = 2
+texture = SubResource("Texture_bell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlayerTechnique" type="Panel" parent="Hud" unique_id=2044481816]
+layout_mode = 0
+offset_left = 592.0
+offset_top = 200.0
+offset_right = 742.0
+offset_bottom = 375.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Header")
+
+[node name="ArtBg" type="Panel" parent="Hud/PlayerTechnique" unique_id=312122990]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 126.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Jade")
+
+[node name="Icon" type="TextureRect" parent="Hud/PlayerTechnique" unique_id=16080985]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 15.0
+offset_right = 128.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = SubResource("Texture_sword")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Hud/PlayerTechnique" unique_id=178423628]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 129.0
+offset_right = 143.0
+offset_bottom = 159.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 21
+text = "青莲剑诀"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemyTechnique" type="Panel" parent="Hud" unique_id=1910286254]
+layout_mode = 0
+offset_left = 858.0
+offset_top = 200.0
+offset_right = 1008.0
+offset_bottom = 375.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Header")
+
+[node name="ArtBg" type="Panel" parent="Hud/EnemyTechnique" unique_id=575829253]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 126.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Red")
+
+[node name="Icon" type="TextureRect" parent="Hud/EnemyTechnique" unique_id=1666189704]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 15.0
+offset_right = 128.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = SubResource("Texture_talisman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Hud/EnemyTechnique" unique_id=997693970]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 129.0
+offset_right = 143.0
+offset_bottom = 159.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 21
+text = "离火符"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Clash" type="Label" parent="Hud" unique_id=837981590]
+layout_mode = 0
+offset_left = 748.0
+offset_top = 230.0
+offset_right = 852.0
+offset_bottom = 268.0
+theme_override_colors/font_color = Color(0.94, 0.89, 0.72, 1)
+theme_override_font_sizes/font_size = 24
+text = "拼 招"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClashScore" type="Label" parent="Hud" unique_id=153641986]
+layout_mode = 0
+offset_left = 746.0
+offset_top = 273.0
+offset_right = 854.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(1, 0.91, 0.6, 1)
+theme_override_font_sizes/font_size = 25
+text = "18 : 15"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClashStatus" type="Label" parent="Hud" unique_id=1621053536]
+layout_mode = 0
+offset_left = 746.0
+offset_top = 313.0
+offset_right = 854.0
+offset_bottom = 336.0
+theme_override_colors/font_color = Color(0.92, 0.9, 0.81, 1)
+theme_override_font_sizes/font_size = 14
+text = "等待结算"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerStats" type="Control" parent="Hud" unique_id=1357447767]
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 750.0
+offset_right = 474.0
+offset_bottom = 883.0
+mouse_filter = 2
+
+[node name="Base" type="TextureRect" parent="Hud/PlayerStats" unique_id=1071302258]
+layout_mode = 0
+offset_right = 452.0
+offset_bottom = 133.0
+mouse_filter = 2
+texture = SubResource("Texture_stats")
+expand_mode = 1
+
+[node name="Portrait" type="TextureRect" parent="Hud/PlayerStats" unique_id=831539490]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 29.0
+offset_right = 99.0
+offset_bottom = 105.0
+mouse_filter = 2
+texture = SubResource("Texture_swordsman_face")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Hud/PlayerStats" unique_id=1456119905]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 13.0
+offset_right = 405.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 19
+text = "青岚剑修"
+vertical_alignment = 1
+
+[node name="Stat0" type="Label" parent="Hud/PlayerStats" unique_id=150096188]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 40.0
+offset_right = 159.0
+offset_bottom = 61.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 16
+text = "气血"
+vertical_alignment = 1
+
+[node name="Bar0" type="ProgressBar" parent="Hud/PlayerStats" unique_id=114841199]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 40.0
+offset_right = 428.0
+offset_bottom = 61.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBg")
+theme_override_styles/fill = SubResource("Health")
+value = 87.0
+show_percentage = false
+
+[node name="Value0" type="Label" parent="Hud/PlayerStats" unique_id=1538021228]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 40.0
+offset_right = 418.0
+offset_bottom = 61.0
+theme_override_colors/font_color = Color(1, 0.97, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "870 / 1000"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Stat1" type="Label" parent="Hud/PlayerStats" unique_id=272332726]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 67.0
+offset_right = 159.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 16
+text = "灵力"
+vertical_alignment = 1
+
+[node name="Bar1" type="ProgressBar" parent="Hud/PlayerStats" unique_id=1331907791]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 67.0
+offset_right = 428.0
+offset_bottom = 88.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBg")
+theme_override_styles/fill = SubResource("Mana")
+value = 68.0
+show_percentage = false
+
+[node name="Value1" type="Label" parent="Hud/PlayerStats" unique_id=1304080456]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 67.0
+offset_right = 418.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(1, 0.97, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "136 / 200"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Stat2" type="Label" parent="Hud/PlayerStats" unique_id=623953183]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 94.0
+offset_right = 159.0
+offset_bottom = 115.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 16
+text = "气势"
+vertical_alignment = 1
+
+[node name="Bar2" type="ProgressBar" parent="Hud/PlayerStats" unique_id=198041813]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 94.0
+offset_right = 428.0
+offset_bottom = 115.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBg")
+theme_override_styles/fill = SubResource("Energy")
+value = 48.0
+show_percentage = false
+
+[node name="Value2" type="Label" parent="Hud/PlayerStats" unique_id=536942368]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 94.0
+offset_right = 418.0
+offset_bottom = 115.0
+theme_override_colors/font_color = Color(1, 0.97, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "48 / 100"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="EnemyStats" type="Control" parent="Hud" unique_id=1570927438]
+anchors_preset = 0
+offset_left = 1126.0
+offset_top = 750.0
+offset_right = 1578.0
+offset_bottom = 883.0
+mouse_filter = 2
+
+[node name="Base" type="TextureRect" parent="Hud/EnemyStats" unique_id=903413917]
+layout_mode = 0
+offset_right = 452.0
+offset_bottom = 133.0
+mouse_filter = 2
+texture = SubResource("Texture_stats")
+expand_mode = 1
+
+[node name="Portrait" type="TextureRect" parent="Hud/EnemyStats" unique_id=26097117]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 28.0
+offset_right = 92.0
+offset_bottom = 104.0
+mouse_filter = 2
+texture = SubResource("Texture_pyromancer_face")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Hud/EnemyStats" unique_id=208674259]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 13.0
+offset_right = 405.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 19
+text = "赤焰修士"
+vertical_alignment = 1
+
+[node name="Stat0" type="Label" parent="Hud/EnemyStats" unique_id=613817491]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 40.0
+offset_right = 159.0
+offset_bottom = 61.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 16
+text = "气血"
+vertical_alignment = 1
+
+[node name="Bar0" type="ProgressBar" parent="Hud/EnemyStats" unique_id=397377696]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 40.0
+offset_right = 428.0
+offset_bottom = 61.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBg")
+theme_override_styles/fill = SubResource("Health")
+value = 87.0
+show_percentage = false
+
+[node name="Value0" type="Label" parent="Hud/EnemyStats" unique_id=588847330]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 40.0
+offset_right = 418.0
+offset_bottom = 61.0
+theme_override_colors/font_color = Color(1, 0.97, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "870 / 1000"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Stat1" type="Label" parent="Hud/EnemyStats" unique_id=909246804]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 67.0
+offset_right = 159.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 16
+text = "灵力"
+vertical_alignment = 1
+
+[node name="Bar1" type="ProgressBar" parent="Hud/EnemyStats" unique_id=767631461]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 67.0
+offset_right = 428.0
+offset_bottom = 88.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBg")
+theme_override_styles/fill = SubResource("Mana")
+value = 68.0
+show_percentage = false
+
+[node name="Value1" type="Label" parent="Hud/EnemyStats" unique_id=269284481]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 67.0
+offset_right = 418.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(1, 0.97, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "136 / 200"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Stat2" type="Label" parent="Hud/EnemyStats" unique_id=1457575617]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 94.0
+offset_right = 159.0
+offset_bottom = 115.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 16
+text = "气势"
+vertical_alignment = 1
+
+[node name="Bar2" type="ProgressBar" parent="Hud/EnemyStats" unique_id=1543888623]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 94.0
+offset_right = 428.0
+offset_bottom = 115.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBg")
+theme_override_styles/fill = SubResource("Energy")
+value = 48.0
+show_percentage = false
+
+[node name="Value2" type="Label" parent="Hud/EnemyStats" unique_id=1468120994]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 94.0
+offset_right = 418.0
+offset_bottom = 115.0
+theme_override_colors/font_color = Color(1, 0.97, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "48 / 100"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="CombatLog" type="Control" parent="Hud" unique_id=1755780321]
+anchors_preset = 0
+offset_left = 486.0
+offset_top = 750.0
+offset_right = 1114.0
+offset_bottom = 883.0
+mouse_filter = 2
+
+[node name="Base" type="TextureRect" parent="Hud/CombatLog" unique_id=1826472762]
+layout_mode = 0
+offset_right = 628.0
+offset_bottom = 133.0
+mouse_filter = 2
+texture = SubResource("Texture_log")
+expand_mode = 1
+
+[node name="Title" type="Label" parent="Hud/CombatLog" unique_id=700380672]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 21.0
+offset_right = 450.0
+offset_bottom = 47.0
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 21
+text = "战斗记录"
+vertical_alignment = 1
+
+[node name="Entry0" type="Label" parent="Hud/CombatLog" unique_id=561153926]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 580.0
+offset_bottom = 72.0
+theme_override_colors/font_color = Color(0.28, 0.32, 0.25, 1)
+theme_override_font_sizes/font_size = 16
+text = "·  青莲剑诀进入拼招"
+vertical_alignment = 1
+
+[node name="Entry1" type="Label" parent="Hud/CombatLog" unique_id=175199637]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 70.0
+offset_right = 580.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(0.28, 0.32, 0.25, 1)
+theme_override_font_sizes/font_size = 16
+text = "·  聚灵阵：灵力 +12"
+vertical_alignment = 1
+
+[node name="Entry2" type="Label" parent="Hud/CombatLog" unique_id=1150288006]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 90.0
+offset_right = 580.0
+offset_bottom = 112.0
+theme_override_colors/font_color = Color(0.28, 0.32, 0.25, 1)
+theme_override_font_sizes/font_size = 16
+text = "·  离火符蓄势完成"
+vertical_alignment = 1
+
+[node name="PreviewCaption" type="Label" parent="Hud" unique_id=604601822]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 13.0
+offset_right = 359.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.94, 0.96, 0.89, 1)
+theme_override_font_sizes/font_size = 16
+text = "素材预览 · 静态测试"
+vertical_alignment = 1
+
+[node name="Resolution" type="Label" parent="Hud" unique_id=1762026286]
+layout_mode = 0
+offset_left = 1224.0
+offset_top = 13.0
+offset_right = 1574.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.93, 0.95, 0.88, 1)
+theme_override_font_sizes/font_size = 13
+text = "1600 × 900   /   CLIENT ART STUDY"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Combatants" type="Control" parent="." unique_id=1848824796]
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Swordsman" type="TextureRect" parent="Combatants" unique_id=1233905192]
+layout_mode = 0
+offset_left = 458.0
+offset_top = 446.0
+offset_right = 688.0
+offset_bottom = 667.0
+mouse_filter = 2
+texture = SubResource("Texture_swordsman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CrimsonCultivator" type="TextureRect" parent="Combatants" unique_id=2070886418]
+layout_mode = 0
+offset_left = 933.0
+offset_top = 474.0
+offset_right = 1151.8286
+offset_bottom = 658.0
+mouse_filter = 2
+texture = SubResource("Texture_pyromancer")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name460" type="Label" parent="Combatants" unique_id=1994320382]
+layout_mode = 0
+offset_left = 460.0
+offset_top = 668.0
+offset_right = 670.0
+offset_bottom = 696.0
+theme_override_colors/font_color = Color(1, 0.97, 0.84, 1)
+theme_override_font_sizes/font_size = 20
+text = "青岚剑修"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Buff4600" type="Panel" parent="Combatants" unique_id=1675834581]
+layout_mode = 0
+offset_left = 480.0
+offset_top = 706.0
+offset_right = 517.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon4600" type="TextureRect" parent="Combatants" unique_id=1419442765]
+layout_mode = 0
+offset_left = 485.0
+offset_top = 711.0
+offset_right = 512.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_gourd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buff4601" type="Panel" parent="Combatants" unique_id=838949134]
+layout_mode = 0
+offset_left = 523.0
+offset_top = 706.0
+offset_right = 560.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon4601" type="TextureRect" parent="Combatants" unique_id=1730844051]
+layout_mode = 0
+offset_left = 528.0
+offset_top = 711.0
+offset_right = 555.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_sword")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buff4602" type="Panel" parent="Combatants" unique_id=1438780962]
+layout_mode = 0
+offset_left = 566.0
+offset_top = 706.0
+offset_right = 603.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon4602" type="TextureRect" parent="Combatants" unique_id=766331947]
+layout_mode = 0
+offset_left = 571.0
+offset_top = 711.0
+offset_right = 598.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_bell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buff4603" type="Panel" parent="Combatants" unique_id=1103023840]
+layout_mode = 0
+offset_left = 609.0
+offset_top = 706.0
+offset_right = 646.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon4603" type="TextureRect" parent="Combatants" unique_id=549936527]
+layout_mode = 0
+offset_left = 614.0
+offset_top = 711.0
+offset_right = 641.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_talisman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name924" type="Label" parent="Combatants" unique_id=579972005]
+layout_mode = 0
+offset_left = 924.0
+offset_top = 668.0
+offset_right = 1134.0
+offset_bottom = 696.0
+theme_override_colors/font_color = Color(1, 0.97, 0.84, 1)
+theme_override_font_sizes/font_size = 20
+text = "赤焰修士"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Buff9240" type="Panel" parent="Combatants" unique_id=1688039397]
+layout_mode = 0
+offset_left = 944.0
+offset_top = 706.0
+offset_right = 981.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon9240" type="TextureRect" parent="Combatants" unique_id=1124846038]
+layout_mode = 0
+offset_left = 949.0
+offset_top = 711.0
+offset_right = 976.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_gourd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buff9241" type="Panel" parent="Combatants" unique_id=797528817]
+layout_mode = 0
+offset_left = 987.0
+offset_top = 706.0
+offset_right = 1024.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon9241" type="TextureRect" parent="Combatants" unique_id=312852810]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 711.0
+offset_right = 1019.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_sword")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buff9242" type="Panel" parent="Combatants" unique_id=1444259764]
+layout_mode = 0
+offset_left = 1030.0
+offset_top = 706.0
+offset_right = 1067.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon9242" type="TextureRect" parent="Combatants" unique_id=1278039767]
+layout_mode = 0
+offset_left = 1035.0
+offset_top = 711.0
+offset_right = 1062.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_bell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buff9243" type="Panel" parent="Combatants" unique_id=72201454]
+layout_mode = 0
+offset_left = 1073.0
+offset_top = 706.0
+offset_right = 1110.0
+offset_bottom = 743.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Dark")
+
+[node name="BuffIcon9243" type="TextureRect" parent="Combatants" unique_id=1183678959]
+layout_mode = 0
+offset_left = 1078.0
+offset_top = 711.0
+offset_right = 1105.0
+offset_bottom = 738.0
+mouse_filter = 2
+texture = SubResource("Texture_talisman")
+expand_mode = 1
+stretch_mode = 5

@@ -18,7 +18,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             LogMgr.Instance.Dbg("=== CombatTestRunner.RunBasicTest ===");
 
-            APIMgr.Instance.ExportDoc();
+            APIMgr.Instance.ExportDoc(Path.Combine(AppContext.BaseDirectory, "Docs"));
 
             // ── 创建两个真实 NPC ─────────────────────────────
             var npcMgr = NpcMgr.Instance;

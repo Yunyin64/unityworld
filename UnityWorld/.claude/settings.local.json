@@ -2,7 +2,20 @@
   "permissions": {
     "allow": [
       "Bash(where godot:*)",
-      "Read(//c/Users/**)"
+      "Read(//c/Users/**)",
+      "Bash(python -X utf8 tools/view_tree.py)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(py \"C:\\\\Unity\\\\Game\\\\unityworld\\\\UnityWorld\\\\tools\\\\view_tree.py\")",
+      "Bash(python3 \"C:\\\\Unity\\\\Game\\\\unityworld\\\\UnityWorld\\\\tools\\\\view_tree.py\")",
+      "Bash(where python *)",
+      "Read(//c/Program Files/**)",
+      "Bash(ls \"/c/Python\"*)",
+      "Bash(\"/c/Users/Administrator/AppData/Local/Programs/Python/Python312/python\" tools/view_tree.py)",
+      "Bash(PYTHONIOENCODING=utf-8 \"/c/Users/Administrator/AppData/Local/Programs/Python/Python312/python\" tools/view_tree.py)",
+      "Bash(python tools/view_tree.py)",
+      "Bash(C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe *)",
+      "Bash(PYTHONUTF8=1 C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe *)",
+      "Bash(PYTHONUTF8=1 python *)"
     ]
   }
 }

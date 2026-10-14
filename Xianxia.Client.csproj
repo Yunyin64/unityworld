@@ -1,0 +1,15 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Xianxia.Client</AssemblyName>
+    <RootNamespace>Xianxia.Client</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- 后端通过独立 DLL 引用，不重复编译后端源码。 -->
+    <Compile Include="scripts/client/**/*.cs" />
+    <ProjectReference Include="UnityWorld/UnityWorld.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,19 +1,14 @@
 # ── 默认排除所有 ──────────────────────────────────────────
 /*
 /UnityWorld/*
-
 # ── 白名单：只跟踪以下内容 ────────────────────────────────
-
 # 根目录保留 .gitignore 自身
 !/.gitignore
-
 # UnityWorld 目录本身要放行
 !/UnityWorld/
-
 # common-cli 目录（在 UnityWorld/ 下）
 !/UnityWorld/common-cli/
 !/UnityWorld/common-cli/**
-
 # UnityWorld 下的目录白名单
 !/UnityWorld/CLAUDE.md
 !/UnityWorld/Hooks系统详解.md
@@ -30,8 +25,36 @@
 !/UnityWorld/Scripts/**
 !/UnityWorld/tools/
 !/UnityWorld/tools/**
-
 # UnityWorld 下的文件白名单
 !/UnityWorld/UnityWorld.sln
 !/UnityWorld/UnityWorld.csproj
 !/UnityWorld/Program.cs
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# 独立核心库与控制台入口
+!/UnityWorld/.gdignore
+!/UnityWorld/Console/
+!/UnityWorld/Console/**
+
+# Godot 客户端源码、场景与运行所需素材
+!/Xianxia.Client.csproj
+!/project.godot
+!/README_GODOT.md
+!/icon.svg
+!/icon.svg.import
+!/scripts/
+!/scripts/client/
+!/scripts/client/**
+!/scenes/
+!/scenes/**
+!/assets/
+!/assets/art/
+!/assets/art/**
+
+# 构建产物不进入版本库；客户端 .uid 仍正常跟踪
+**/bin/
+**/obj/
+**/Logs/
+.godot/

@@ -14,7 +14,7 @@ namespace UnityWorld.Game.Data
     public class GameDataMgr
     {
         // ── 单例 ─────────────────────────────────────────────
-        public static GameDataMgr Instance { get; private set; } = new();
+        public static GameDataMgr Instance { get; private set; }
 
         // ── 子管理器 ──────────────────────────────────────────
         private List<IDataMgrBase> _datamgrs  = new();
@@ -66,6 +66,8 @@ namespace UnityWorld.Game.Data
         public static void Initialize(string baseDir = null)
         {
             baseDir ??= AppContext.BaseDirectory;
+            // 每个宿主重新绑定数据目录，避免首次静态初始化锁定到引擎安装目录。
+            Instance = new GameDataMgr(baseDir);
 
             foreach (var mgr in Instance._datamgrs)
             {

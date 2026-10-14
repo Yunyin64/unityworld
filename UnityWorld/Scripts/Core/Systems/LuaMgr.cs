@@ -43,10 +43,10 @@ namespace UnityWorld.Game.Domain
         /// <summary>
         /// 构造 LuaMgr。
         /// </summary>
-        /// <param name="luaCardsDir">Lua 卡牌脚本目录（默认 Data/LuaCards）</param>
-        public LuaMgr()
+        /// <param name="baseDir">包含 Data 目录的宿主数据根目录。</param>
+        public LuaMgr(string baseDir = null)
         {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            baseDir ??= AppContext.BaseDirectory;
             _luaKeywordsDir = Path.Combine(baseDir, "Data", "LuaScripts", "Keywords");
             _luaInitPath = Path.Combine(baseDir, "Data", "LuaScripts", "Init.lua");
             Instance = this;
@@ -91,6 +91,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void End()
         {
+            HookToEventId.Clear();
             _keywordRegistry.Clear();
             _luaState?.Dispose();
             _luaState = null;

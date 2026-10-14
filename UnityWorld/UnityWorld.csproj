@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Program.cs;Console\**;Scripts\Tests\**" />
     <Compile Remove="Scripts\Core\Game\Boot\**" />
     <Compile Remove="Scripts\Core\Game\Domain\**" />
     <Compile Remove="Scripts\Core\Game\Save\**" />

@@ -13,7 +13,7 @@
 
 写代码时，现有的文件结构基本都是合理的，不要随意删除整个cs文件。尤其不允许直接用cmd删除文件
 
-tools\view_class.py 是看类型的好工具，cd f:\Openclaw\UnityWorld\UnityWorld && python tools\view_class.py Npc
+tools\view_class.py 是看类型的好工具，cd C:\Unity\Game\unityworld\UnityWorld && PYTHONUTF8=1 python tools\view_class.py Npc
 
 用powershell时不需要cat，这里是windows
 
@@ -29,7 +29,7 @@ tools\view_class.py 是看类型的好工具，cd f:\Openclaw\UnityWorld\UnityWo
 
 ## ！！！！！1. 高层架构总览
 
-！！！！！在开始任何任务之前，请先运行 cd f:\Openclaw\UnityWorld\UnityWorld && python tools/view_tree.py
+！！！！！在开始任何任务之前，请先运行 cd C:\Unity\Game\unityworld\UnityWorld && PYTHONUTF8=1 python tools/view_tree.py
 获得最新的项目架构
 
 
