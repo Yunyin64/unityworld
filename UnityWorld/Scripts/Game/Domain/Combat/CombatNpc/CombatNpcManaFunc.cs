@@ -4,128 +4,62 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
-        public bool TryCostMana(Dictionary<ElementType, int> cost)
-        {
-            var canAfford = CanAffordMana(cost);
-            if (canAfford)
-            {
-                ConsumeMana(cost);
-            }
-            return canAfford;
-        }
+        /// <summary>开场/本方轮末补灵入口，不再自带独立 CD。</summary>
         public void DoManaDraw(bool noCheck = false)
         {
-            if (Mp <= 0f) return;
-            bool needDraw = false;
-            if (noCheck)needDraw = true;
-            int ManaDrawCD = (int)(GetStat("ManaDrawCD")*10);
-            if(Ticks["ManaDraw"] >= ManaDrawCD )
-                {
-                    Ticks["ManaDraw"] = 0;
-                    needDraw = true;
-                }
-            if (needDraw)
-            {
-                Scene.TriggerCombatEvent("OnBaseManaDraw", new APIContext { Caster = this, Scene = Scene });
-                DrawMana((int)GetStat("ManaDrawCost"));
-            } 
-          }
+            if (!IsActive) return;
+            Scene.TriggerCombatEvent("OnBaseManaDraw", new APIContext { Caster = this, Scene = Scene });
+            DrawMana((int)GetStat("ManaDrawCost"));
+        }
 
-        public void DrawMana(int costvalue)
+        /// <summary>只按实际落入空格的数量支付 MP；每个灵元是一个有位置的实体。</summary>
+        public void DrawMana(int planned)
         {
-                int actualCost = (int)Math.Min(Mp, costvalue);
-                Mp -= actualCost;
-
-                // 按五行亲和权重随机产出灵元
-                var affinity = GetAffinity();
-                var weights = new (ElementType Key, int Weight)[]
+            if (!IsActive) return;
+            var empty = Backpack.EmptyCells();
+            var actual = Math.Min(Math.Max(0, planned), Math.Min(Math.Max(0, Mp), empty.Count));
+            var affinity = GetAffinity();
+            var weights = new (ElementType Element, int Weight)[]
+            {
+                (ElementType.Jin, Math.Max(0, affinity.Jin)),
+                (ElementType.Mu, Math.Max(0, affinity.Mu)),
+                (ElementType.Shui, Math.Max(0, affinity.Shui)),
+                (ElementType.Huo, Math.Max(0, affinity.Huo)),
+                (ElementType.Tu, Math.Max(0, affinity.Tu))
+            };
+            var total = weights.Sum(w => w.Weight);
+            for (int i = 0; i < actual; i++)
+            {
+                var index = Scene.Soul.Random(0, empty.Count);
+                var cell = empty[index];
+                empty.RemoveAt(index);
+                var chosen = weights[0].Element;
+                if (total > 0)
                 {
-                    (ElementType.Jin, affinity.Jin),
-                    (ElementType.Mu, affinity.Mu),
-                    (ElementType.Shui , affinity.Shui),
-                    (ElementType.Huo , affinity.Huo),
-                    (ElementType.Tu , affinity.Tu)
-                };
-                int totalWeight = weights.Sum(w => w.Weight);
-
-                for (int i = 0; i < weights.Length; i++)
+                    var roll = Scene.Soul.Random(0, total);
+                    foreach (var item in weights)
                     {
-                        int roll = Scene.Soul.Random(0, totalWeight);
-                        int cumulative = 0;
-                        var chosen = weights[0].Key;
-                        foreach (var w in weights)
-                        {
-                            cumulative += w.Weight;
-                            if (roll < cumulative) { chosen = w.Key; break; }
-                        }
-
-                        if (ManaPool.ContainsKey(chosen))
-                            ManaPool[chosen]++;
-                        else
-                            ManaPool[chosen] = 1;
-                    }  
-                Log($"DoManaDraw: Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
-                Scene.TriggerCombatEvent("OnManaDraw", new APIContext { Caster = this, Scene = Scene });
-        }
-        public void ManaConvert(Dictionary<ElementType, int> cost)
-        {
-            var totalConsumed = 0;
-            if (CanAffordMana(cost))
-            {
-                totalConsumed = ConsumeMana(cost);
-            }
-            ChangeMP(totalConsumed);
-            Log($"ManaConvert: Consumed={totalConsumed}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
-        }
-        
-        public int GetManaCount(ElementType element)
-        {
-            return ManaPool.TryGetValue(element, out var v) ? v : 0;
-        }
-
-        /// <summary>
-        /// 检查 NPC 的灵元池是否满足指定消耗。
-        /// </summary>
-        public bool CanAffordMana(Dictionary<ElementType, int> manaCost)
-        {
-            if (manaCost == null || manaCost.Count == 0) return true;
-
-            foreach (var (key, required) in manaCost)
-            {
-                int available = ManaPool.TryGetValue(key, out var v) ? v : 0;
-                if (available < required) return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 从 NPC 灵元池扣除消耗。
-        /// 调用前应先确认 CanAffordMana 返回 true。
-        /// </summary>
-        public int ConsumeMana(Dictionary<ElementType, int> manaCost)
-        {
-            int totalConsumed = 0;  
-            if (manaCost == null || manaCost.Count == 0) return 0;
-
-            foreach (var (key, amount) in manaCost)
-            {
-                if (ManaPool.ContainsKey(key))
-                {
-                    //Trigger:触发消耗某类灵元事件
-                    totalConsumed += amount;
-                    ManaPool[key] -= amount;
-                    
-                    if (ManaPool[key] <= 0)
-                    {
-                        //LogMgr.Instance.Warn($"[CombatNpc] 灵元 {key.ExtraTypeId} 耗尽");
-                        //Trigger:触发耗尽某类灵元事件
-                    } 
+                        roll -= item.Weight;
+                        if (roll < 0) { chosen = item.Element; break; }
+                    }
                 }
+                else chosen = weights[Scene.Soul.Random(0, weights.Length)].Element;
+                Backpack.PlaceMana(cell, chosen);
+                Log($"生成灵元 {chosen} → 格({cell.X},{cell.Y})");
             }
-            //Trigger:触发消耗灵元事件
-            //Log($"ConsumeMana: {string.Join(", ", manaCost.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}, Mp={Mp}, ManaPool={{{string.Join(", ", ManaPool.Select(kv => $"{kv.Key.ExtraTypeId}:{kv.Value}"))}}}");
-            return totalConsumed;
+            if (actual > 0) ChangeMP(-actual);
+            Log($"补灵 计划={planned} 实际={actual} MP成本={actual} 剩余MP={Mp}");
+            if (actual > 0) Scene.TriggerCombatEvent("OnManaDraw", new APIContext { Caster = this, Scene = Scene });
         }
+
+        // 旧转换/减灵特殊卡尚待内容重设计。明确拒绝旧入口，不能用聚合字典重建资源池。
+        public void ManaConvert(Dictionary<ElementType, int> cost) => throw new NotSupportedException("旧灵元转换卡需按背包位置重新设计。");
+        public int ConsumeMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池扣费，请通过背包扫描点亮卡牌。");
+        public bool CanAffordMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池资源检查。");
+        public bool TryCostMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池扣费。");
+        public int GetManaCount(ElementType element) => Backpack.Mana.Values.Count(e => e.Equals(element));
+        public IEnumerable<ElementType> GetUnassignedElements() => Backpack.Mana.Values.Distinct().ToArray();
+
         public int RecoverMP(int amount)
         {
             int final = Math.Min(amount, GetCombatMpMax() - Mp);

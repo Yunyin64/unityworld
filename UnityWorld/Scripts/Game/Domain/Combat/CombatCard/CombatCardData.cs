@@ -43,57 +43,9 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         ///灵元消耗机制
-        private Dictionary<ElementType, int> CombatManaCost = new();
-        public Dictionary<ElementType, int> GetCombatManaCost()
-        {
-            CombatManaCost.Clear();
-            foreach (var kv in GetManaCost())
-            {
-                var key = kv.Key;
-                var ID = key.ExtraTypeId;
+        /// <summary>点亮需求由 Size 等量的定义决定，不再读取资源池或旧减费属性。</summary>
+        public Dictionary<ElementType, int> GetCombatManaCost() => new(GetManaCost());
 
-                if (ID == "Min")
-                {
-                    // Min：直接取原始数量，不走属性修正
-                    int cost = Math.Max(0, kv.Value);
-                    if (cost <= 0) continue;
-                    var candidate = Owner.ManaPool
-                        .Where(x => x.Value > 0)
-                        .OrderBy(x => x.Value)
-                        .FirstOrDefault();
-                    if (candidate.Key.Kind == BaseElementType.None) continue;
-                    AddToCost(candidate.Key, cost);
-                }
-                else if (ID == "Max")
-                {
-                    // Max：直接取原始数量，不走属性修正
-                    int cost = Math.Max(0, kv.Value);
-                    if (cost <= 0) continue;
-                    var candidate = Owner.ManaPool
-                        .Where(x => x.Value > 0)
-                        .OrderByDescending(x => x.Value)
-                        .FirstOrDefault();
-                    if (candidate.Key.Kind == BaseElementType.None) continue;
-                    AddToCost(candidate.Key, cost);
-                }
-                else
-                {
-                    // 普通元素：受 ManaAdj 属性修正
-                    var final = Math.Max(0, kv.Value + (int)GetStat($"ManaAdj_{key}"));
-                    if (final <= 0) continue;
-                    AddToCost(key, final);
-                }
-            }
-            return CombatManaCost;
-        }
-
-        private void AddToCost(ElementType key, int amount)
-        {
-            if (CombatManaCost.ContainsKey(key))
-                CombatManaCost[key] += amount;
-            else
-                CombatManaCost[key] = amount;
-        }
         public int GetDeckIndex() => Owner?.GetField().IndexOf(this) ?? -1;
         public float GetCDMax()
         {

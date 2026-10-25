@@ -25,7 +25,7 @@ namespace UnityWorld.Game.Domain
                 var cost = new Dictionary<ElementType, int>();
                 if (element.Kind == BaseElementType.None)
                 {
-                    var keys = npc.ManaPool.Where(kv => kv.Value > 0).Select(kv => kv.Key).ToList();
+                    var keys = npc.GetUnassignedElements().ToList();
                     int left = maxAmount;
                     while (left > 0 && keys.Count > 0)
                     {
@@ -170,7 +170,7 @@ namespace UnityWorld.Game.Domain
                 var cost = new Dictionary<ElementType, int>();
                 if (element.Kind == BaseElementType.None)
                 {
-                    var keys = npc.ManaPool.Where(kv => kv.Value > 0).Select(kv => kv.Key).ToList();
+                    var keys = npc.GetUnassignedElements().ToList();
                     int left = amount;
                     while (left > 0 && keys.Count > 0)
                     {

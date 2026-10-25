@@ -6,6 +6,9 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatCard : Card,ICombatEntity,ILuaBindable
     {
+        private CardBaseData _combatBaseData = new();
+        /// <summary>战斗私有快照，Lua 派生关键词和临时修改不会污染世界卡。</summary>
+        public override CardBaseData BaseData => _combatBaseData;
         public LuaTable env { get; set; }
         public Dictionary<string, LuaFunction> LuaHooks { get; set; } = new();
         public HashSet<string> HookUse { get; set; } = new();
@@ -13,6 +16,10 @@ namespace UnityWorld.Game.Domain.Combat
         private CombatCardPhase Phase = CombatCardPhase.Waiting;
 
         private bool isReady = false;
+        private bool _usingFromScan;
+        private bool _awaitingApply;
+        public int UseCount { get; private set; }
+        public int ApplyCount { get; private set; }
         public void SetReady(bool ready) => isReady = ready;
         public bool IsReady() => isReady;
         public Dictionary<string, float> Ticks { get ; set ; } = new();
@@ -32,7 +39,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             Ticks["Main"] = 0;
             Ticks["CD"] = 0;
-            SetPhase(CombatCardPhase.Waiting);
+            SetPhase(BaseData.ScanActivatable ? CombatCardPhase.Waiting : CombatCardPhase.Passive);
             CallLua("Start");
         }
         public void ReLoad()
@@ -42,11 +49,16 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Tick()
         {
+            if (CheckPhase(CombatCardPhase.Passive))
+            {
+                RunKeywordHooks("OnTick");
+                this.CallLuaHook<bool>("OnPassiveTick", env, CreateCtx());
+                return;
+            }
             ReLoad();
             CallLua("Tick");
             Scene.TriggerCombatEvent("OnTick", CreateCtx());
 
-            if(CheckPhase(CombatCardPhase.InCD)) CDTick();
             CardModifierTick();
             HookUse.Clear();
             Ticks["Main"]++;
@@ -55,12 +67,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void CDTick()
         {
-            var CDadd = GetCDAdd();
-            Ticks["CD"] += CDadd;
-            if (Ticks["CD"] >= GetCDMax())
-            {
-                SetPhase(CombatCardPhase.CDFull);
-            }
+            // 兼容旧调用签名；CD 不再推进或产生出手机会。
         }
 
         private float GetCDAdd()
@@ -88,24 +95,41 @@ namespace UnityWorld.Game.Domain.Combat
 
 
 
+        internal bool TryUseFromScan()
+        {
+            if (!Owner.IsActive || !BaseData.ScanActivatable || CheckPhase(CombatCardPhase.InPending) || !Owner.Backpack.HasActivationResources(this)) return false;
+            if (this.HasHook("Contest") && Owner.PendingSlot != null) return false;
+            _usingFromScan = true;
+            _awaitingApply = true;
+            UseCount++;
+            Owner.Backpack.BeginNextActivation(Id);
+            try { Use(); }
+            finally { _usingFromScan = false; }
+            return true;
+        }
+
         public void Use()
         {
-            //Log($"[{Owner.GetName()}]使用卡牌:[{DisplayName}]");
-            //Trigger:触发使用事件
+            if (!_usingFromScan) throw new InvalidOperationException("Use 只能由逐格扫描授权。");
             Contest();
-            if(IsReady() && !CheckPhase(CombatCardPhase.InPending)) Apply();
             Scene.TriggerCombatEvent("OnUse", CreateCtx());
+            if (!CheckPhase(CombatCardPhase.InPending)) Apply();
         }
 
         public void Contest()
         {
+            if (!_usingFromScan) throw new InvalidOperationException("Contest 只能在扫描使用时产生待发数据。");
             CallLua("Contest");
         }
 
         public void Apply()
         {
+            if (BaseData.ScanActivatable && !_awaitingApply) return;
+            _awaitingApply = false;
+            ApplyCount++;
             CallLua("Apply");
             Scene.TriggerCombatEvent("OnApply", CreateCtx());
+            if (BaseData.ScanActivatable) SetPhase(CombatCardPhase.Finished);
         }
 
         /// <summary>
@@ -153,6 +177,8 @@ namespace UnityWorld.Game.Domain.Combat
 
             foreach (var kw in keywords)
             {
+                // 旧主动关键词的 CD/Ready/重复支付不参与新扫描生命周期。
+                if (kw is "FaShu" or "ZhaoShi" or "FaBao" || (kw == "Passive" && BaseData.ScanActivatable)) continue;
                 var kwTable = luaMgr.GetKeyword(kw);
                 if (kwTable == null)
                 {
@@ -191,7 +217,8 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void Log(string msg)
         {
-            CombatScene.Log($"[Card|{DisplayName}] {msg}");
+            if (Owner?.Scene != null) Owner.Scene.Trace(Owner, $"[Card|{DefineId}] {msg}");
+            else CombatScene.Log($"[Card|{DisplayName}] {msg}");
         }
 
 
@@ -202,7 +229,8 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.DefineId = card.DefineId;
             combatCard.DisplayName = card.DisplayName;
             combatCard.ParentCardId = card.ParentCardId;
-            combatCard.Stats = StatMgr.Instance.CreateBlock(card.Id, typeof(CombatCard));
+            combatCard._combatBaseData = card.BaseData.Clone();
+            combatCard.Stats = card.Stats.Snapshot();
 
 
             combatCard.Ticks.Add("Main",0);

@@ -105,6 +105,8 @@ namespace UnityWorld.Game.Domain.Combat
         /// <param name="contestValue">拼点数值（攻击值/盾值/防值）</param>
         public void TryPushToPendingSlot(ContestType contestType, ElementType element, int contestValue)
         {
+            if (!_usingFromScan) throw new InvalidOperationException("只能由本次扫描使用入槽。");
+            if (Owner.PendingSlot != null) throw new InvalidOperationException("唯一待发槽已占用。");
             // 构造 ContestData 快照
             var contestData = new ContestData
             {
@@ -136,8 +138,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public bool TryPayMana()
         {
-            var cost = GetCombatManaCost();
-            return Owner.TryCostMana(cost);
+            throw new NotSupportedException("灵元进入卡牌即点亮，不存在额外支付。");
         }
         public void Charge(int Tick)
         {

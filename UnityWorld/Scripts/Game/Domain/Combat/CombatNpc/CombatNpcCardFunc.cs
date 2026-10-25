@@ -45,19 +45,19 @@ namespace UnityWorld.Game.Domain.Combat
         
         public void DisplaceCombatCard(CombatCard card, ComabtCardDisplaceType toPlace)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Displace, card, toPlace));
+            throw new NotSupportedException("旧线性位移卡需按背包位置重新设计。");
         }
 
         /// <summary>部署：将卡从 Reserve 移入 Field（延迟执行）</summary>
         public void Deploy(CombatCard card)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Deploy, card, ComabtCardDisplaceType.None));
+            throw new NotSupportedException("候补部署的背包摆放规则待卡牌设计迁移。");
         }
 
         /// <summary>召回：将卡从 Field 移入 Reserve（延迟执行）</summary>
         public void Recall(CombatCard card)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Recall, card, ComabtCardDisplaceType.None));
+            throw new NotSupportedException("召回效果待卡牌设计迁移。");
         }
 
         // ── 招式轮转 ──────────────────────────────────────────
@@ -95,12 +95,17 @@ namespace UnityWorld.Game.Domain.Combat
                 switch (changeType)
                 {
                     case ComabtFieldChangeType.Add:
+                        var replaced = Backpack.Insert(card, card.HasKeyword("Wound"));
                         Field.Add(card);
                         card.Owner = this;
+                        card.PreStart();
+                        card.Start();
+                        foreach (var cell in replaced) Log($"伤口替代灵元 卡={card.DefineId} 格({cell.X},{cell.Y})");
                         Log($"[Field+] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
                     case ComabtFieldChangeType.Remove:
+                        Backpack.RemoveCard(card.Id);
                         Field.Remove(card);
                         Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;

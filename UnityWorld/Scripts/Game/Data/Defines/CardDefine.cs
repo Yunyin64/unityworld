@@ -21,6 +21,12 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("size")]
         public int Size { get; set; } = 1;
 
+        /// <summary>相对左上角的实际形状，数量必须等于 Size；背包卡必须显式配置。</summary>
+        public List<BackpackCell> Shape { get; set; } = [];
+
+        /// <summary>是否参与扫描激活。开启时 ManaCost 总量必须等于 Size。</summary>
+        public bool ScanActivatable { get; set; }
+
         /// <summary>冷却回合数</summary>
         [JsonPropertyName("cooldown")]
         public float Cooldown { get; set; } = 4;

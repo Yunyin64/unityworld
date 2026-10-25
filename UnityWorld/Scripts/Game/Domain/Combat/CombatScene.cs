@@ -8,8 +8,8 @@ namespace UnityWorld.Game.Domain.Combat
     /// 调用方负责构造、驱动、销毁，并将 CombatResult 回写大世界。
     ///
     /// Tick驱动模型：
-    ///   每张卡独立计时器，并行前进。
-    ///   CD就绪→攻防卡入待发槽→槽满挤出→直击/双方对拼。
+    ///   每方独立背包逐行扫描；行内逐格点亮、使用，单一待发位置。
+    ///   行切换双方对拼；本方轮末仅强制处理本方剩余待发。
     ///   每Tick检查SP溢出战斗结束条件。
     ///
     /// 标准用法：
@@ -27,6 +27,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>全部参战者列表</summary>
         private Dictionary<int,CombatNpc> Combatants = new();
+        public IReadOnlyDictionary<int, CombatNpc> GetCombatants() => Combatants;
+        private CombatResult _result;
+        public CombatResult GetResult() => _result ?? throw new InvalidOperationException("战斗尚未结束。");
         // ── 环境参数 ──────────────────────────────────────────
 
         /// <summary>Tick数上限（超过则强制结束，防止死循环）</summary>
@@ -34,6 +37,17 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>当前已进行的总Tick数</summary>
         public int CurrentTick { get; private set; } = 0;
+        public int TicksPerRow { get; init; } = 10;
+        private readonly List<string> _trace = new();
+        public IReadOnlyList<string> TraceLog => _trace.AsReadOnly();
+        private IEnumerable<CombatNpc> OrderedCombatants => Combatants.Values.OrderBy(c => c.Id);
+
+        public void Trace(CombatNpc npc, string message)
+        {
+            var line = $"Tick={CurrentTick} Npc={npc.Id} Round={npc.Backpack.Round} Row={npc.Backpack.Row} {message}";
+            _trace.Add(line);
+            if (openLog) LogMgr.Instance.Dbg(line);
+        }
 
         private static bool openLog = true;
         private static CombatScene mainScene = null;
@@ -67,6 +81,8 @@ namespace UnityWorld.Game.Domain.Combat
             AssertPhase(CombatPhase.Idle, nameof(Init));
 
             MaxTicks = maxTicks;
+            if (maxTicks < 1) throw new ArgumentOutOfRangeException(nameof(maxTicks));
+            if (TicksPerRow < 1) throw new ArgumentOutOfRangeException(nameof(TicksPerRow));
 
             Combatants = new Dictionary<int, CombatNpc>();
             foreach (var p in npcParticipants)
@@ -94,7 +110,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             AssertPhase(CombatPhase.Initialized, nameof(PreStart));
 
-            foreach (var c in Combatants.Values)
+            foreach (var c in OrderedCombatants)
             {
                 // 尝试从大世界 Npc 读取数据
                 var worldNpc = c.Owner;
@@ -125,13 +141,13 @@ namespace UnityWorld.Game.Domain.Combat
         {
             AssertPhase(CombatPhase.PreStarted, nameof(Start));
 
-            foreach (var c in Combatants.Values)
+            foreach (var c in OrderedCombatants)
             {
                 c.Start();
             }
             _phase = CombatPhase.Running;
             Log("战斗开始！");
-            foreach (var c in Combatants.Values) c.DoManaDraw(true);
+            foreach (var c in OrderedCombatants) { c.CheckDefeated(); if (c.IsActive) c.DoManaDraw(true); }
         }
 
         // ══════════════════════════════════════════════════════
@@ -144,23 +160,40 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void Tick()
         {   
-            mainScene.haslog = false;
+            mainScene = this;
+            haslog = false;
             AssertPhase(CombatPhase.Running, nameof(Tick));
-            foreach (var c in Combatants.Values) c.DoManaDraw();
-            
-            foreach (var c in Combatants.Values) c.Tick();
-
-            foreach (var c in Combatants.Values) c.UseCard();
-            foreach (var c in Combatants.Values) c.ProcessContest();
-            foreach (var c in Combatants.Values) c.DealDamage();
-            foreach (var c in Combatants.Values) c.DealFieldChange();
-            foreach (var c in Combatants.Values) c.CheckDefeated();
+            CurrentTick++;
+            foreach (var c in OrderedCombatants.Where(c => c.IsActive)) c.Tick();
+            FlushCombatChanges();
+            AssignTargets();
+            var due = OrderedCombatants.Where(c => c.IsActive && c.Backpack.AdvanceTick(TicksPerRow)).ToList();
+            foreach (var c in due) { Trace(c, "扫描行"); c.ScanRow(); }
+            // 双方先完成扫描入槽，再配对；注册顺序不产生隐式先手。
+            foreach (var c in due) c.ProcessContest();
+            var roundEnds = due.Where(c => c.Backpack.Row == c.Backpack.Height - 1).ToList();
+            foreach (var c in roundEnds) c.ForceOwnPending();
+            // 同 Tick 的双方攻击均已入伤害队列，再统一处理伤势和败退。
+            FlushCombatChanges();
+            foreach (var c in due)
+            {
+                var ended = c.Backpack.FinishRow();
+                if (!ended) continue;
+                Trace(c, "本方新轮");
+                if (c.IsActive) c.DoManaDraw();
+            }
             AssignTargets();
             CheckEndConditions();
             
 
-            CurrentTick++;
-            foreach (var c in Combatants.Values) c.Refresh();
+            foreach (var c in OrderedCombatants.Where(c => c.IsActive)) c.Refresh();
+        }
+
+        private void FlushCombatChanges()
+        {
+            foreach (var c in OrderedCombatants) c.DealDamage();
+            foreach (var c in OrderedCombatants) c.DealFieldChange();
+            foreach (var c in OrderedCombatants) c.CheckDefeated();
         }
         public CombatResult Run()
         {
@@ -176,7 +209,7 @@ namespace UnityWorld.Game.Domain.Combat
             // 清理
             this.Cleanup();
 
-            return new  CombatResult();
+            return GetResult();
         }
 
         // ══════��═══════════════════════════════════════════════
@@ -197,6 +230,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var (eventId, scope, listener) in _registeredListeners)
                 EventMgr.Instance?.RemoveEvent(eventId, scope, listener);
             _registeredListeners.Clear();
+            if (ReferenceEquals(mainScene, this)) mainScene = null;
 
 
         }
@@ -217,14 +251,14 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         private void AssignTargets()
         {
-            foreach (var c in Combatants.Values)
+            foreach (var c in OrderedCombatants)
             {
                 if (!c.IsActive) continue;
                 // Target 有效则跳过
                 if (c.GetTarget() != null && c.GetTarget().IsActive) continue;
 
                 // 选择对方阵营第一个存活敌人
-                c.ChangeTarget(Combatants.Values.FirstOrDefault(e => e.Team != c.Team && e.IsActive));
+                c.ChangeTarget(OrderedCombatants.FirstOrDefault(e => e.Team != c.Team && e.IsActive));
             }
         }
 
@@ -278,10 +312,11 @@ namespace UnityWorld.Game.Domain.Combat
                 FinalStatus = c.Status,
             }).ToList();
 
-            var result = CombatResult.CombatSceneResult(reason,winner,CurrentTick,combatantResults);
-            Log($"\n战斗结束！原因={reason}，胜者={survivors.First().GetName()}，共{CurrentTick} Tick。");
+            _result = CombatResult.CombatSceneResult(reason,winner,CurrentTick,combatantResults);
+            var winnerNames = winner == CombatTeam.None ? "无" : string.Join("、", survivors.Select(c => c.GetName()));
+            Log($"\n战斗结束！原因={reason}，胜者={winnerNames}，共{CurrentTick} Tick。");
 
-            return result;
+            return _result;
         }
 
         
@@ -325,7 +360,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         private void DispatchHookToAll(string hookName, APIContext ctx)
         {
-            foreach (var npc in Combatants.Values)
+            foreach (var npc in OrderedCombatants)
             {
                 // 卡牌
                 foreach (var card in npc.GetField())
@@ -346,7 +381,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             if (openLog)
             {
-                if (!mainScene.haslog)
+                if (mainScene != null && !mainScene.haslog)
                 {
                     mainScene.haslog = true;
                     LogMgr.Instance.Dbg($"[Tick]{mainScene.CurrentTick}");
@@ -372,7 +407,7 @@ namespace UnityWorld.Game.Domain.Combat
             float sum = 0f;
             var hookName = "OnModifierStat" + statId;
 
-            foreach (var npc in Combatants.Values)
+            foreach (var npc in OrderedCombatants)
             {
                 if (!npc.IsActive) continue;
                 foreach (var mod in npc.GetAllModifiers())

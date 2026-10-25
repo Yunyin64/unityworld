@@ -52,12 +52,14 @@ namespace UnityWorld.Game.Domain
             DataSystem.Register(card, new CardBaseData
                 {
                     Size = cardDefine.Size,
+                    Shape = [.. cardDefine.Shape],
+                    ScanActivatable = cardDefine.ScanActivatable,
                     Cooldown = cardDefine.Cooldown,
                     AmountMax = cardDefine.AmountMax,
                     StackMax = cardDefine.StackMax,
                     ManaCost = ElementType.ToDic(cardDefine.ManaCost),
-                    Keywords = cardDefine.Keywords,
-                    Tags = cardDefine.Tags,
+                    Keywords = [.. cardDefine.Keywords],
+                    Tags = [.. cardDefine.Tags],
                 });
             GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
             EquipSystem.Register(card, new CardEquipData { CardId = card.Id });

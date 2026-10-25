@@ -38,7 +38,7 @@ namespace UnityWorld.Game.Domain.Combat
             Mp = GetCombatMpMax();
             
             Log(string.Format("NPC {0}, HP={1}/{2}, MP={3}/{4}, SP={5}/{6}",GetName(),
-            Hp,GetCombatHpMax(),Mp,GetCombatMpMax(),Sp,GetCombatSpMax()));
+            Hp,GetCombatHpMax(),Mp,GetCombatMpMax(),GetSp(),GetCombatSpMax()));
         }
 
         // ── 招式轮转 ──────────────────────────────────────────

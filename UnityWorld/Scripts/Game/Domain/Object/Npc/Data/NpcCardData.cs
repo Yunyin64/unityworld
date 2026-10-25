@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain
 {
@@ -19,6 +20,11 @@ namespace UnityWorld.Game.Domain
         /// <summary>已装备的法宝卡 Id 列表（纯标记，分配 Field 时消费）</summary>
         public List<int> EquippedFaBao { get; set; } = new();
 
+        /// <summary>唯一主功法卡及其布局等级；未选择时禁止进入背包战斗。</summary>
+        public int? MainGongFaCardId { get; set; }
+        public int MainGongFaLevel { get; set; } = 1;
+        public Dictionary<int, List<BackpackCell>> Placements { get; set; } = new();
+
         public NpcCardData()
         {
             
@@ -31,6 +37,7 @@ namespace UnityWorld.Game.Domain
             copy.Field = new List<int>(Field);
             copy.Reserve = new List<int>(Reserve);
             copy.EquippedFaBao = new List<int>(EquippedFaBao);
+            copy.Placements = Placements.ToDictionary(p => p.Key, p => new List<BackpackCell>(p.Value));
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();

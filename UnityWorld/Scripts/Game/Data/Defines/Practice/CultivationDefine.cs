@@ -21,6 +21,9 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class CultivationDefine : DefineBase
     {
+        /// <summary>成为主功法时可选的等级布局；不提供通用背包回退。</summary>
+        public List<BackpackLevelDefine> BackpackLevels { get; set; } = [];
+
         /// <summary>功法描述</summary>
         public string Desc { get; set; } = "";
 

@@ -1,0 +1,13 @@
+[
+  {
+    "ID": "bp_main_6x5", "DisplayName": "长周天功", "BackpackLevels": [
+      {"Level":1,"Width":6,"Height":5,"MainCardCells":[{"X":0,"Y":0}]},
+      {"Level":2,"Width":8,"Height":5,"MainCardCells":[{"X":1,"Y":0}]}
+    ]
+  },
+  {
+    "ID": "bp_main_8x3", "DisplayName": "短周天功", "BackpackLevels": [
+      {"Level":1,"Width":8,"Height":3,"MainCardCells":[{"X":0,"Y":0}]}
+    ]
+  }
+]

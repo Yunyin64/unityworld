@@ -15,6 +15,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         public  Npc Owner{get;private set;}
 
+        private NpcCardData _loadoutSnapshot = new();
+        public CombatBackpack Backpack { get; private set; } = null!;
+
         /// <summary>所属战斗场景引用</summary>
         public CombatScene Scene { get; set; }
 
@@ -33,29 +36,29 @@ namespace UnityWorld.Game.Domain.Combat
             CombatNpc combatNpc = new CombatNpc(npc.Id);
             combatNpc.Stats = npc.Stats.Snapshot();
             combatNpc.Owner = npc;
+            combatNpc._loadoutSnapshot = npc.GetCardLoadoutSnapshot();
+            combatNpc.Backpack = new CombatBackpack(combatNpc._loadoutSnapshot);
+            combatNpc._loadoutSnapshot.AllCards = combatNpc._loadoutSnapshot.AllCards
+                .Select(c => (Card)CombatCard.CreateFromData(c)).ToList();
+            if (combatNpc.GetSpMax() > combatNpc.Backpack.Capacity)
+                throw new InvalidOperationException("SP 上限不能超过主功法背包有效格数。");
             combatNpc.Ticks.Add("Main",0);
-            combatNpc.Ticks.Add("ManaDraw",0);
-            combatNpc.Ticks.Add("Straight",0);
 
             return combatNpc;
         }
 
-        // ── 灵元池 ──────────────────────────────────────────────
-
-        /// <summary>
-        /// 战斗灵元池（元素名 → 数量），由 CombatManaHandler 在回合开始时转化填充。
-        /// </summary>
-        public Dictionary<ElementType, int> ManaPool { get; set; } = new();
-
         // ── 卡组 ──────────────────────────────────────────────
 
-        public Queue<ContestData> PendingSlot { get; set; } = new();
+        /// <summary>唯一待发位置；null 表示空槽。</summary>
+        public ContestData PendingSlot { get; private set; }
+        public BackpackManaTargetSelector ManaTargetSelector { get; set; } = new();
 
         private Queue<DamageInfo> damageInfos { get; set; } = new();
 
         public void Tick()
         {
-            CDTick();
+            if (!IsActive) return;
+            Ticks["Main"]++;
             ModifierTick();
             foreach (var card in Field) card.Tick();
         }
@@ -65,20 +68,9 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var card in Field) card.ReLoad();
         }
 
-        private void CDTick()
-        {
-            Ticks["Main"]++;
-            Ticks["ManaDraw"]++;
-            Ticks["Straight"]++;
-        }
-
         public void UseCard()
         {
-            var readyCards = Field.Where(c => c.IsReady()).ToList();  
-            foreach (var card in readyCards)
-            {
-                card.Use();
-            }
+            throw new NotSupportedException("卡牌只通过背包逐格扫描使用，不再收集 Ready 卡。");
         }
         // ── 目标 ──────────────────────────────────────────────
 
@@ -177,18 +169,15 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 card.PreStart();
             }
-            // 3. ManaPool 初始化为空（由 DoManaConvert 统一按亲和权重转化）
-            ManaPool = new Dictionary<ElementType, int>();
         }
 
         public void Start()
         {
+            InitData();
             foreach (var card in Field)
             {
                 card.Start();
             }
-            InitData();
-            InitZhaoShiRotation();
         }
 
 
@@ -203,7 +192,8 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Log(string msg)
         {
-            CombatScene.Log($"[Npc|{GetName()}]{msg}");
+            if (Scene != null) Scene.Trace(this, msg);
+            else CombatScene.Log($"[Npc|{GetName()}]{msg}");
         }
 
 

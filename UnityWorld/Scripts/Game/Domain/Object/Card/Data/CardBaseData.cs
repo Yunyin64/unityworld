@@ -15,6 +15,8 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>卡牌体量（占用 SP 的大小）</summary>
         public int Size { get; set; } = 1;
+        public List<BackpackCell> Shape { get; set; } = [];
+        public bool ScanActivatable { get; set; }
 
         /// <summary>冷却时间（秒）</summary>
         public float Cooldown { get; set; } = 3f;
@@ -51,6 +53,7 @@ namespace UnityWorld.Game.Domain
         {
             var copy = (CardBaseData)MemberwiseClone();
             copy.ManaCost = new Dictionary<ElementType, int>(ManaCost);
+            copy.Shape = [.. Shape];
             copy.Tags = new List<string>(Tags);
             copy.Keywords = new List<string>(Keywords);
             return copy;
@@ -84,7 +87,7 @@ namespace UnityWorld.Game.Domain
     {
         /// <summary>父卡 Id（招式卡 → 所属法宝卡 Id，-1 表示无父卡）</summary>
         public int ParentCardId { get; set; } = -1;
-        public CardBaseData BaseData => CardMgr.Instance.DataSystem.GetData(Id);
+        public virtual CardBaseData BaseData => CardMgr.Instance.DataSystem.GetData(Id);
         public float GetCooldown() => BaseData.Cooldown;
         public int GetSize() => BaseData.Size;
 

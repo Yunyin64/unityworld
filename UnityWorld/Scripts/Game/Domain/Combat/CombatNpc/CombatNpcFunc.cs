@@ -18,7 +18,8 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void ChangeTarget(CombatNpc target)
         {
-            if(target != null && target.IsActive)
+            if (target == null) { Target = null; return; }
+            if(target.IsActive)
             {
                 Target = target;
                 Log($"目标变更：{target.GetName()}");
@@ -53,22 +54,25 @@ namespace UnityWorld.Game.Domain.Combat
             if (sp > spMax && Status == CombatantStatus.Active)
             {
                 Status = CombatantStatus.Defeated;
+                PendingSlot = null;
                 Log($"当前SP={sp}/{spMax}，状态：{Status}");
             } 
         }
 
         public void InitDeck()
         {
-            var fieldIds = Owner.GetFieldIds();
-            var reserveIds = Owner.GetReserveIds();
-            var allCards = Owner.GetAllCards();
+            var fieldIds = _loadoutSnapshot.Field;
+            var reserveIds = _loadoutSnapshot.Reserve;
+            var allCards = _loadoutSnapshot.AllCards;
+            if (Field.Count > 0 || Reserve.Count > 0)
+                throw new InvalidOperationException("战斗卡组不能重复初始化。");
 
             // Field → Field（运转池）
             foreach (var cardId in fieldIds)
             {
                 var card = allCards.Find(c => c.Id == cardId);
                 if (card == null) continue;
-                var combatCard = CombatCard.CreateFromData(card);
+                var combatCard = (CombatCard)card;
                 combatCard.Owner = this;
                 Field.Add(combatCard);
             }
@@ -78,7 +82,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 var card = allCards.Find(c => c.Id == cardId);
                 if (card == null) continue;
-                var combatCard = CombatCard.CreateFromData(card);
+                var combatCard = (CombatCard)card;
                 combatCard.Owner = this;
                 Reserve.Add(combatCard);
             }
@@ -89,14 +93,26 @@ namespace UnityWorld.Game.Domain.Combat
         public void ProcessContest()
         {
             var target = Target;
-            while (PendingSlot.Count > 0 && target.PendingSlot.Count > 0)
-                ResolveContest(PendingSlot.Dequeue(), target.PendingSlot.Dequeue());
-            while (PendingSlot.Count > GetStat("PendingSlotMax"))
-            {
-                if (Ticks["Straight"] >= GetStat("StraightCD") )
-                    Straight(PendingSlot.Dequeue());
-                else break;
-            }
+            if (!IsActive || target == null || !target.IsActive || PendingSlot == null || target.PendingSlot == null) return;
+            var own = TakePending();
+            var other = target.TakePending();
+            Log($"行切换对拼 owner={Id} 对手={target.Id}");
+            ResolveContest(own, other);
+        }
+
+        /// <summary>本方轮末只处理自己剩余的一份；空槽不会触发对手。</summary>
+        internal void ForceOwnPending()
+        {
+            if (!IsActive || PendingSlot == null) return;
+            Log($"轮末强制 owner={Id} 卡={PendingSlot.SourceCard.DefineId}");
+            Straight(TakePending());
+        }
+
+        private ContestData TakePending()
+        {
+            var data = PendingSlot;
+            PendingSlot = null;
+            return data;
         }
         /// <summary>
         /// 直击处理：攻击直击=全额伤害，防御直击=无事发生。
@@ -106,6 +122,7 @@ namespace UnityWorld.Game.Domain.Combat
             var attacker = contestData.OwnerNpc;
             var target = attacker.Target;
             var ret = new CombatResult();
+            if (target == null || !target.IsActive) { contestData.SourceCard.Apply(); return ret; }
 
                 Scene.TriggerCombatEvent("OnStraight", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene });
             if (contestData.IsAttackType)
@@ -123,7 +140,6 @@ namespace UnityWorld.Game.Domain.Combat
             }
 
             contestData.SourceCard.Apply();
-            Ticks["Straight"] = 0;
             return ret;
         }
 
@@ -131,7 +147,9 @@ namespace UnityWorld.Game.Domain.Combat
         public void AddContestData(ContestData data)
         {
             // Modifier 修正拼点数值;
-            PendingSlot.Enqueue(data);
+            if (data.OwnerNpc != this) throw new InvalidOperationException("待发数据所属者不匹配。");
+            if (PendingSlot != null) throw new InvalidOperationException("每方待发槽只有一个位置。");
+            PendingSlot = data;
         }
         public void AddDamage(DamageInfo dmg)
         {
@@ -144,7 +162,7 @@ namespace UnityWorld.Game.Domain.Combat
             damageInfos.Enqueue(dmg);
         }
         /// <summary>
-        /// 对拼结算：统一差值制。攻击赢→差值伤害，防御赢→无事。广播 OnContestOverflow。
+        /// 对拼结算：同类非射击攻击胜出取全额，其他攻击胜出取差值。广播 OnContestOverflow。
         /// </summary>
         public CombatResult ResolveContest(ContestData contestA, ContestData contestB)
         {
@@ -219,7 +237,6 @@ namespace UnityWorld.Game.Domain.Combat
             ctx.Set("LoserCard", loserContest.SourceCard);
             Scene.TriggerCombatEvent("OnContestOverflow", ctx);
 
-            Ticks["Straight"] = 0;
             contestA.SourceCard.Apply();
             contestB.SourceCard.Apply();
 
@@ -265,21 +282,14 @@ namespace UnityWorld.Game.Domain.Combat
         {
             // 通过 CardMgr 从 Define 实例化完整的 CardData（含 Effect/Action）
             var injuryCard = CardMgr.Instance?.InstantiateFromDefine(woundCardId);
-            if (injuryCard == null)
-            {
-                // 兜底：如果 Define 缺失，用最基础的伤口
-                Log($"  [警告] 找不到伤势卡 Define：{woundCardId}，使用默认 card_wound_slash");
-                injuryCard = CardMgr.Instance?.InstantiateFromDefine("card_wound_slash");
-            }
+            if (injuryCard == null) throw new InvalidOperationException($"缺少完整伤口卡定义：{woundCardId}。");
             // 伤势卡塞入卡组
             var card = CombatCard.CreateFromData(injuryCard);
             AddCombatCard(card);
             return card;
         }
         /// <summary>
-        /// 根据 DamageInfo 的元素和物理类型，选择对应的伤势卡 DefineId。
-        /// 优先级：有元素伤害时选元素伤势卡，否则按物理类型选；
-        /// 重伤（FinalDamage > 25）覆盖为 card_wound_severe。
+        /// 沿用伤害与体魄的轻重伤选择，只从具备完整形状的新伤口定义中抽取。
         /// </summary>
         private string ResolveWoundCardId(DamageInfo ctx)
         {
@@ -287,21 +297,20 @@ namespace UnityWorld.Game.Domain.Combat
             Func<CardDefine, bool> func = c => true;
             if(ctx.Damage > GetTiPo())
             {
-               func = c => c.Keywords.Contains("Wound") && c.Size == 2;
+               func = c => c.Keywords.Contains("Wound") && c.Size == 2 && c.Shape.Count == c.Size;
             }
             else
             {
-               func = c => c.Keywords.Contains("Wound") && c.Size == 1;
+               func = c => c.Keywords.Contains("Wound") && c.Size == 1 && c.Shape.Count == c.Size;
             }
             var woundCards = CardDefineMgr.Instance?.Query(func).ToList();
-            if(woundCards.Count > 0)
+            if(woundCards != null && woundCards.Count > 0)
             {
                 return woundCards[Scene.Soul.Random(0,woundCards.Count)].ID;
             }
             
             
-            // 兜底
-            return "card_wound_slash";
+            throw new InvalidOperationException("缺少符合轻重伤条件且具备完整形状的伤口卡定义。");
             
         }
 

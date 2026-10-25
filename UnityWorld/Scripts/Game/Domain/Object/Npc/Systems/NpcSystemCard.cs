@@ -54,6 +54,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void RemoveCard(NpcCardData data, Card card)
         {
+            GuardMainCard(data, card.Id);
+            data.Placements.Remove(card.Id);
             data.AllCardIds.Remove(card.Id);
             data.AllCards.Remove(card);
             data.Field.Remove(card.Id);
@@ -65,6 +67,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void AssignToField(NpcCardData data, int cardId)
         {
+            if (data.MainGongFaCardId != null && !data.Placements.ContainsKey(cardId))
+                throw new InvalidOperationException("背包卡请通过 PlaceBackpackCard 显式指定位置。");
             data.Reserve.Remove(cardId);
             if (!data.Field.Contains(cardId))
                 data.Field.Add(cardId);
@@ -75,6 +79,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void AssignToReserve(NpcCardData data, int cardId)
         {
+            GuardMainCard(data, cardId);
+            data.Placements.Remove(cardId);
             data.Field.Remove(cardId);
             if (!data.Reserve.Contains(cardId))
                 data.Reserve.Add(cardId);
@@ -85,6 +91,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void UnassignCard(NpcCardData data, int cardId)
         {
+            GuardMainCard(data, cardId);
+            data.Placements.Remove(cardId);
             data.Field.Remove(cardId);
             data.Reserve.Remove(cardId);
         }
@@ -101,6 +109,12 @@ namespace UnityWorld.Game.Domain
                 if (card != null) size += card.GetSize();
             }
             return size;
+        }
+
+        private static void GuardMainCard(NpcCardData data, int cardId)
+        {
+            if (data.MainGongFaCardId == cardId)
+                throw new InvalidOperationException("不能移除或候补当前主功法，请先显式选择另一主功法。");
         }
 
         public int GetAllCardSize(NpcCardData data)
@@ -193,6 +207,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void AssignAllToField()
         {
+            if (CardData.MainGongFaCardId != null)
+                throw new InvalidOperationException("背包布局必须逐张显式摆放，不能 AssignAllToField。");
             // 先把已有卡全入 Field
             foreach (var cardId in CardData.AllCardIds)
             {
