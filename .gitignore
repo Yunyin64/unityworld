@@ -1,5 +1,7 @@
 # ── 默认排除所有 ──────────────────────────────────────────
 /*
+!/skills/
+!/skills/**
 /UnityWorld/*
 # ── 白名单：只跟踪以下内容 ────────────────────────────────
 # 根目录保留 .gitignore 自身
@@ -58,3 +60,13 @@
 **/obj/
 **/Logs/
 .godot/
+
+# 本机共享技能入口由 skills/Connect-Skills.ps1 建立
+/UnityWorld/.claude/skills/ask
+/UnityWorld/.claude/skills/data
+/UnityWorld/.claude/skills/feature-req-analysis
+/UnityWorld/.claude/skills/generator_pack
+/UnityWorld/.claude/skills/git
+/UnityWorld/.claude/skills/init
+/UnityWorld/.claude/skills/tag-design-assist
+/UnityWorld/.claude/skills/game-data-helper
