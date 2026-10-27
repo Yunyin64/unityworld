@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "cards": {
+    "card_fabao_jian": {
+      "texture": "res://assets/art/icons/artifacts/jade_sword.png",
+      "region": [
+        495,
+        4,
+        264,
+        1245
+      ],
+      "displayScale": 1.0,
+      "source": "reused",
+      "transpose": true
+    },
+    "jin_fa": {
+      "texture": "res://assets/art/cards/jin_fa.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "huo_fa": {
+      "texture": "res://assets/art/cards/huo_fa.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "card_jin_slash": {
+      "texture": "res://assets/art/cards/card_jin_slash.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "card_mu_haste": {
+      "texture": "res://assets/art/cards/card_mu_haste.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "card_huo_burst": {
+      "texture": "res://assets/art/cards/card_huo_burst.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "card_shui_freeze": {
+      "texture": "res://assets/art/cards/card_shui_freeze.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "card_tu_slow": {
+      "texture": "res://assets/art/cards/card_tu_slow.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "card_huo_shot": {
+      "texture": "res://assets/art/cards/card_huo_shot.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "bp_wound_small": {
+      "texture": "res://assets/art/cards/bp_wound_small.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "bp_wound_wide": {
+      "texture": "res://assets/art/cards/bp_wound_wide.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    }
+  }
+}

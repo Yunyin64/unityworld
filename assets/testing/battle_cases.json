@@ -1,0 +1,16 @@
+[
+  {
+    "id": "console-basic-template",
+    "name": "正式模板 A / B",
+    "sourceMethod": "UnityWorld/Scripts/Tests/CombatTestRunner.cs::RunBasicTest",
+    "worldSeed": 12345,
+    "combatSeed": 12345,
+    "maxTicks": 5000,
+    "ticksPerRow": 10,
+    "participants": [
+      { "templateId": "test_npc_a", "team": "TeamA" },
+      { "templateId": "test_npc_b", "team": "TeamB" }
+    ],
+    "operations": []
+  }
+]

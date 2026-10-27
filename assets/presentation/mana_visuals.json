@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "elements": {
+    "Jin": {
+      "texture": "res://assets/art/icons/mana/mana_jin.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "Mu": {
+      "texture": "res://assets/art/icons/mana/mana_mu.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "Shui": {
+      "texture": "res://assets/art/icons/mana/mana_shui.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "Huo": {
+      "texture": "res://assets/art/icons/mana/mana_huo.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    },
+    "Tu": {
+      "texture": "res://assets/art/icons/mana/mana_tu.png",
+      "region": null,
+      "displayScale": 1.0,
+      "source": "generated"
+    }
+  }
+}
