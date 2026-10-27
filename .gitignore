@@ -54,6 +54,18 @@
 !/assets/
 !/assets/art/
 !/assets/art/**
+!/assets/presentation/
+!/assets/presentation/**
+!/assets/testing/
+!/assets/testing/**
+
+# 战斗观察器的客户端验证工具
+!/tools/
+!/tools/client-observer/
+!/tools/client-observer/**
+
+# 根目录开发资料不进入版本库
+/docs/
 
 # 构建产物不进入版本库；客户端 .uid 仍正常跟踪
 **/bin/
@@ -70,3 +82,22 @@
 /UnityWorld/.claude/skills/init
 /UnityWorld/.claude/skills/tag-design-assist
 /UnityWorld/.claude/skills/game-data-helper
+
+# 本地验收材料与测试结果
+/tools/client-observer/verification-results.json
+/UnityWorld/openspec/changes/archive/2026-10-27-migrate-backpack-combat-mechanics/evidence-*.md
+/.local-verification/
+
+# 运行日志与临时文件（置于白名单之后，避免被重新放行）
+*.log
+*.log.*
+*.tmp
+*.temp
+[Ll]ogs/
+[Tt]emp/
+[Tt]mp/
+
+# 自动生成的 Python 缓存与 Node.js 依赖
+__pycache__/
+*.py[cod]
+node_modules/

@@ -1,81 +1,110 @@
-# Godot 客户端与独立 C# 核心库
+# Godot 战斗观察客户端
 
-用 Godot 4.7.2 .NET 打开根目录 `project.godot`，按 F5 运行。
-主场景已设置为 `res://scenes/tests/battle_assets_preview.tscn`。
-主场景仍是素材展示，数值和日志是示例文本，没有背包交互。自动加载的 `GameBootstrap` 会从 `UnityWorld.dll` 初始化真实世界，并在物理帧驱动 `WorldMgr.Tick()`；展示界面尚未绑定核心战斗结果。
+使用 Godot 4.7.2 .NET 打开根目录 `project.godot`，按 F5 进入真实战斗观察界面。默认场景已设置为 `res://scenes/battle/battle_observer.tscn`。原静态预览保留在 `res://scenes/tests/battle_assets_preview.tscn`，仍可选中后按 F6 单独运行。
 
-## 核心库与启动方式
+观察器使用原控制台默认案例 `console-basic-template`：世界和战斗种子均为 12345，依次装配 `test_npc_a`、`test_npc_b`，上限 5000 Tick。双方真实背包为 5×5，角色数值、格上灵元、卡片点亮、冻结、待发和战报均来自核心模拟。人物立绘仅为客户端展示形象。
 
-- `UnityWorld/UnityWorld.csproj`：纯 .NET 8 类库，输出 `UnityWorld.dll`，不引用 Godot。
-- `UnityWorld/Console/UnityWorld.Console.csproj`：独立控制台宿主，链接原有 `Program.cs` 和测试代码，不复制或移动现有 C# 文件。
-- `Xianxia.Client.csproj`：Godot 宿主，通过 `ProjectReference` 引用核心库；修改后端后正常构建即可自动更新 DLL，无须手动复制。
-- 核心的 `Data/**/*.json`、`Data/**/*.lua` 自动复制到各宿主输出目录。Godot 编辑器运行时直接读取 `UnityWorld/Data`，发布版约定读取可执行文件旁的 `Data` 目录，由宿主把路径传入核心；退出时调用 `WorldMgr.End()`。
-- `UnityWorld/.gdignore` 阻止 Godot 扫描整个后端目录，不影响 .NET 编译。后端不需要 `.uid`；客户端脚本的 `.uid` 仍需提交。
-- `bin/`、`obj/`、`.godot/` 不提交。这里验证的是本机 .NET / Godot 运行；正式 Godot 导出包仍需另行验证数据文件和 NLua 原生依赖的打包。
+## 运行与操作
 
 在仓库根目录执行：
 
 ```powershell
-dotnet build UnityWorld/UnityWorld.sln
-dotnet run --project UnityWorld/Console/UnityWorld.Console.csproj
 dotnet build Xianxia.Client.csproj
+# 将 godot 替换为本机 Godot .NET 可执行文件路径。
+godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 ```
 
-不跑完整战斗的核心接入检查：
+- 开场流程结束后停在 **Tick 0，已暂停**。观察模式不推进背景世界。
+- **播放**：每秒推进 10 个完整战斗 Tick；蓝白横向光线按双方各自扫描进度向下移动。
+- **暂停**：停止逻辑时钟，光线停在已提交位置，继续播放不补跑暂停期间的时间。
+- **单步 +1**：暂停时推进一个完整 Tick。充能可令一步扫过多行，仍只增加一个 Tick。
+- **重开当前案例（重启观察器）**：启动新的游戏窗口并退出旧窗口，保留完整案例、双种子、参与者顺序、步数配置及数据/核心版本。数据版本变化会停止重放并显示诊断；不会换回另一套默认数据。
+- 悬停卡片查看实例 ID、真实占格、点亮需求、冻结及累计使用/生效次数。两张同定义射击共用图片，但状态独立。
+
+属性区当前显示 HP、MP、护盾和 **SP 占用**，没有动态上限比例条。核心上限 getter 可能更新缓存或进入公式计算；初始缓存参考值仅保存在验证快照，不冒充最终上限。HP 归零后加伤口并恢复 HP 是核心行为，失败以核心结果为准。
+
+光线扫过的短暂受光属于表现；持续点亮、灵元消失、卡牌使用取自真实快照或已有事件。现有接口未提供完整资源移动路径和每次最终伤害金额，因此不推算灵元飞行线路或伤害飘字。正常结束后仍可查看战报或重开。
+
+## 会话日志
+
+每个游戏进程使用独立的 `user://Logs/observer/<UTC时间>-<进程ID>/` 目录，保存 `input.json`、`core.log`、`records.jsonl`，错误时另写 `failure.txt`。实际路径出现在控制台 `[BattleObserver] ready ... logs=...` 和底部状态提示中；当前 Windows 项目位于 `%APPDATA%\Godot\app_userdata\修仙slg\Logs\observer\`。
+
+底部卷轴显示最近两条完整行摘要，悬停可看原文；点击“展开”可滚动查看全部原始战报，点击“收起”返回战斗。完整记录仍在会话文件中。重开采用新进程，是为了隔离核心静态 ID 和监听状态；不反射清理核心私有状态。
+
+## 核心独立与共享验证
+
+- `UnityWorld/UnityWorld.csproj` 输出纯 .NET 8 `UnityWorld.dll`，不引用 Godot。本变更不修改核心源码、JSON/Lua、原控制台或玩法规格。
+- `Xianxia.Client.csproj` 通过 ProjectReference 引用核心，客户端代码位于 `scripts/client/`。
+- `scripts/client/battle/` 为纯 C# 观察会话/值快照；`assets/testing/battle_cases.json` 保存共享案例输入。Godot 和 `tools/client-observer/` 编译同一份适配代码，不复制 NPC 数值或卡位。
+- 原 `UnityWorld/Console/UnityWorld.Console.csproj` 保留原测试入口作为兼容基线，没有改成读取新案例清单。
+- Godot 编辑器直接加载 `UnityWorld/Data`；原控制台加载构建输出目录 Data。验证比较实际 JSON/Lua 文件集与 SHA-256，不只比较模板 ID 和种子。
+
+以下命令分别创建全新的验证进程，并比较完整输入、Tick 0 到结束的状态与原始 Trace：
+
+```powershell
+dotnet run --project UnityWorld/Console/UnityWorld.Console.csproj
+dotnet run --project tools/client-observer/ClientObserver.csproj -- --root=. --output=.local-verification/battle-observer/check-a.jsonl --no-event-observer
+dotnet run --project tools/client-observer/ClientObserver.csproj -- --root=. --output=.local-verification/battle-observer/check-b.jsonl --observe-repeat=25 --mode=play
+dotnet run --project tools/client-observer/ClientObserver.csproj -- compare .local-verification/battle-observer/check-a.jsonl .local-verification/battle-observer/check-b.jsonl
+```
+
+输出配套 `.case.json` 保存完整输入，`.identity.json` 保存源文件指纹，`.records.jsonl` 保存观察记录。Compare 要求双方都有 `.case.json`，差异会输出第一处字段路径；成功示例为 `OBSERVER_MATCH frames=741`。指定 `--case-input=<某次.jsonl.case.json>` 可在新进程重放保存的完整案例；只检查前几步时可加 `--stop-tick=20`。
+
+保留的核心加载烟测：
 
 ```powershell
 dotnet run --project UnityWorld/Console/UnityWorld.Console.csproj -- --core-smoke-test
-# 将 godot 替换为本机 Godot .NET 可执行文件路径：
 godot --headless --path . -- --core-smoke-test
 ```
 
-两个宿主都以固定种子初始化、加载实际数据并推进 3 个 Tick，成功时输出 `CORE_SMOKE_OK`。
+两个宿主加载真实世界并推进 3 Tick，成功输出 `CORE_SMOKE_OK seed=12345 ticks=3 tiles=40000`。烟测模式优先于观察模式，测试结束会退出。
 
-## DLL 拆分验证（2026-10-14）
+## Godot 自动验证入口
 
-- 核心/控制台解决方案及 Godot 项目编译通过，0 个错误；原有 C# 警告与 NCalcSync 依赖警告仍存在。
-- 控制台、Godot headless 均输出 `CORE_SMOKE_OK seed=12345 ticks=3 tiles=40000`，实际加载 Lua 初始化文件和 12 个 Keyword。
-- 控制台原有战斗流程完成；Godot 正常渲染主场景、加载 10 张素材并成功截图。
-- 重新导入 Godot 后，`UnityWorld/` 下 `.uid` 数量仍为 0；客户端 `.uid` 正常保留。
-- 数据里原有的重复 Trigger ID、缺少 ExtraElementDefines/Item 提示仍保留，本次没有修改玩法数据。
-- API 文档/Lua 包装导出改为开发工具显式调用，正常启动不再写入旧电脑的 `F:\Openclaw` 路径。`ExportLua(outputDir)` 可用于重新生成包装文件。
-- 本地检查日志、截图及清理前的 UID 备份放在根目录 `.local-verification/`，不进入 Git。
+有画面的验证会保存初始/扫描/伤口候选时点/结果截图及逐 Tick JSONL：
 
-## 目录
-
-```text
-unityworld/
-├── UnityWorld/                引擎无关核心 DLL、数据和独立 Console 宿主
-├── assets/
-│   └── art/
-│       ├── backgrounds/       青岚山背景 × 1
-│       ├── characters/        透明底示例人物 × 2
-│       ├── ui/                背包、战斗记录、属性面板 × 3
-│       └── icons/artifacts/   玉剑、葫芦、火符、铜铃 × 4
-├── scenes/tests/              可编辑的素材加载测试场景
-├── scripts/client/            Godot 启动适配、素材加载检查与可选截图
-├── docs/art/                  素材清单、生成提示词、实际运行截图
-├── Xianxia.Client.csproj      编译客户端并引用核心项目
-└── project.godot              Godot 工程入口
+```powershell
+$verifyDir = Join-Path (Get-Location) '.local-verification/battle-observer/godot-check'
+godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--observer-verify=$verifyDir" --observer-mode=step
 ```
 
-## 素材与显示
+`--observer-mode=auto` 使用实际播放时钟；`--observer-restarts=3` 在完成后连续启动三个新观察器进程并携带当前输入。每次运行写 `godot-<模式>-<编号>.jsonl` 和同名 `.jsonl.case.json`，可与共享 CLI 基线严格比较。窗口尺寸可用 Godot 的 `--resolution 1600x900` 参数；默认窗口为 1440×810。
 
-- 共 10 张独立 PNG：背景不透明，其余 9 张保留透明通道。
-- 左右面板复用同一份素材；物品图标、人物、背景均可独立替换。
-- 网格由 60 个独立 Panel 控件组成，每侧 5 列 × 6 行。占格底色和物品贴图也分别独立。
-- 文字是 Label，红蓝黄条是 ProgressBar；不是整张 UI 图片。
-- 人物为静态单帧，不包含动画；面板为完整底图，未制作九宫格切片。
-- 场景中的 AtlasTexture 只调整透明留白和头像显示区域，原始 PNG 不受影响。
-- 基准布局为 1600 × 900，默认窗口为 1440 × 810。使用项目的 canvas_items 缩放。
-- 中文使用系统字体回退（微软雅黑、Noto Sans CJK SC、Noto Sans SC）。发行时建议再指定可随游戏分发的字体。
-- 场景树中 `Hud` 下放置 UI，`Combatants` 下放置人物。均可直接在编辑器中调整。
+自动操作通过 viewport 注入鼠标移动、按下和释放，经过 Godot GUI 命中检测，覆盖实际按钮回调和坐标路径；它不是操作系统鼠标控制，也不是人工验收。自动播放验证另保存连续 18 个显示帧、光线位置样本及暂停稳定检查，用于检查插值而不是只看逻辑 Tick 截图。各次验证是否通过以输出证据为准，不以入口存在、编译或启动成功代替验收。
 
-## 原素材预览验证记录（拆分前）
+## 素材与目录
 
-已完成 `dotnet build Xianxia.Client.csproj`：0 个警告、0 个错误。
-实际使用 Godot 4.7.2 .NET、D3D12 Forward+ 运行根目录主场景，日志确认 10 张素材全部加载。
-实际截图见 `docs/art/battle_assets_preview.png`。
-对 `UnityWorld/` 的 1639 个原有文件做了前后 SHA-256 校验，没有新增、删除或内容变化。
+| 路径 | 内容 |
+| --- | --- |
+| `assets/art/cards/` | 已确认首批 10 张卡图的项目资源目录 |
+| `assets/art/icons/mana/` | 金、木、水、火、土 5 张灵元图标 |
+| `assets/art/icons/artifacts/jade_sword.png` | 原有玉剑，复用于长剑，原图保留 |
+| `assets/presentation/card_visuals.json` | Card 定义 ID → 图片/裁切/朝向；状态仍按实例 ID 管理 |
+| `assets/presentation/mana_visuals.json` | 既有元素 ID → 图标；激活亮度由客户端绘制 |
+| `docs/art/card_asset_manifest.json` | 全量 88 个 Card 和独立 5 元素台账、提示词、来源及检查状态 |
+| `docs/art/battle_asset_gaps.md` | 其余卡图、UI、动作帧和特效缺口；后续批次待确认 |
+| `docs/art/battle_observer_integration.md` | 字段白名单、事件缺口、案例覆盖及详细基线 |
+| `docs/art/observer-evidence/` | 本次结构化验证摘要、源码边界与复核记录 |
+| `.local-verification/battle-observer/` | 本机完整运行日志、逐 Tick 大文件和画面证据 |
 
-生成方式为内置 imagegen，提示词见 `docs/art/generation_prompts.md`，路径/尺寸/透明信息见 `docs/art/asset_manifest.json`。
+缺图时保留卡名/元素名和真实布局，不隐藏卡或停止战斗。首批范围为 15 张新增图片 + 1 张长剑复用；生成、落盘、加载和格内可读性分别记在台账中，其余 17 种已迁移卡及其他旧卡没有获得自动生成许可。人物仍是静态单帧，蓝白扫描和受光由客户端绘制，并不代表完整角色动作帧已具备。
+
+## 当前验证与保留事项
+
+2026-10-27 原控制台默认案例实际完成：TeamB（苏灵儿）胜，`AllDefeated`，740 Tick。源/输出 Data 各 166 文件且完全相同；原控制台 565 条战斗 Trace 与共享适配器逐条相同。共享适配器的两次新进程、每 Tick 25 次读取、自动多 Tick 推进及完整输入重放均获得 741 帧一致结果。
+
+本轮原有回归合计 487 条断言通过；Godot 烟测通过。最终自动播放、单步及三次重开均与基线完整输入和 741 帧一致；另用不同双种子、案例 ID 和 30 Tick 上限验证重开没有回退默认输入。连续 18 个显示帧证实同 Tick 内插值与双方独立扫描，暂停后保持稳定；1440×810 和 1600×900 均完成画面检查。443 个受保护文件哈希无变化。
+
+最终摘要见 `docs/art/observer-evidence/godot-data-comparisons.json` 和 `visual-verification.json`，画面在同目录的 `screenshots/`。11 种卡和 5 种灵元均通过加载与静态素材图集验收；重伤在默认战斗中未产生，按明确标注的两格素材预览核验，没有改核心数据强行制造战斗画面。
+
+原有 C# 告警、NuGet/NCalcSync 告警、重复 Trigger ID、缺 ExtraElementDefines/Item 及两张主功法 Lua 的“未 return table”提示均保留，详见接入说明。`UnityWorld/.gdignore` 阻止后端被 Godot 导入，后端不需要 `.uid`。正式导出包的数据和 NLua 原生依赖打包尚不在本次验证范围。
+
+旧素材预览曾于 2026-10-14 完成 Godot .NET 运行和 10 张原素材加载验证，截图保留在 `docs/art/battle_assets_preview.png`，来源见 `asset_manifest.json`、`generation_prompts.md`。旧预览的 5×6 示例布局、数值和日志不是本观察器的战斗数据。
+
+## 旧预览视觉组件复用
+
+观察器现复用 `scenes/tests/battle_assets_preview.tscn` 的 Theme、卷轴背包、画像属性框、战报框、待发牌面和人物 Atlas 裁切。`ObserverPreviewSkin` 只提取资源，不把预览节点加入场景树，也不运行其静态示例脚本。原预览文件保留原样。
+
+两侧背包、中央人物、上方待发与底部信息沿用旧构图，真实数据仍是当前五乘五布局。顶部提供播放/暂停/单步/当前案例重开。小格保留名称、点亮数与冻结/使用提示，悬停查看完整实例信息；属性框使用当前值，不显示未经审核的比例。
+
+新画面见 `docs/art/observer-evidence/screenshots-preview-skin/`；本轮对照结果见 `preview-skin-verification.json`。

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="修仙slg"
-run/main_scene="res://scenes/tests/battle_assets_preview.tscn"
+run/main_scene="res://scenes/battle/battle_observer.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
