@@ -1,3 +1,7 @@
+## Purpose
+
+规定五行正负面状态的添加与移除接口，明确指定元素和随机元素两种选择方式、逐次增减层数以及无匹配状态时安全终止的行为，让卡牌和状态脚本能够使用一致的角色目标规则。
+
 ## ADDED Requirements
 
 ### Requirement: AddElementBuff API

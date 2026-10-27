@@ -1,3 +1,7 @@
+## Purpose
+
+规定世界侧卡牌消耗品的堆叠数量、容量定义与读取方式，将堆叠语义限制在 Consume 关键词下，保持普通卡牌默认行为不变；本规格不宣称旧消耗品已经完成背包战斗效果迁移。
+
 ## ADDED Requirements
 
 ### Requirement: CardBaseData 新增 Stack 字段

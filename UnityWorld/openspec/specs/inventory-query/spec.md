@@ -1,4 +1,10 @@
-## ADDED Requirements
+# inventory-query Specification
+
+## Purpose
+
+规定角色物品清单从现有卡牌数据中查询的方式，以物品身份筛选统一卡牌集合并正确处理空结果，保留背包子系统的扩展入口，避免维护另一份容易失去一致性的物品编号列表。
+
+## Requirements
 
 ### Requirement: NpcInventoryData 改为查询接口
 `NpcInventoryData` SHALL 移除 `List<string> ItemIds` 字段，改为提供查询方法从 NPC 的 CardData 中筛选所有 Item 卡。
