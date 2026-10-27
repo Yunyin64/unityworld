@@ -16,8 +16,24 @@ namespace UnityWorld.Game.Domain.Combat
         private CombatCardPhase Phase = CombatCardPhase.Waiting;
 
         private bool isReady = false;
-        private bool _usingFromScan;
+        private bool _usingActiveOpportunity;
         private bool _awaitingApply;
+        private APIContext _activationEvent;
+        public bool IsFrozen { get; private set; }
+        public bool Freeze()
+        {
+            if (IsFrozen) return false;
+            IsFrozen = true;
+            Log("冻结：下次完整扫描跳过后解除");
+            return true;
+        }
+        internal bool ConsumeFreezeAtScanEnd()
+        {
+            if (!IsFrozen) return false;
+            IsFrozen = false;
+            Log("完整扫描：跳过主动机会并解冻");
+            return true;
+        }
         public int UseCount { get; private set; }
         public int ApplyCount { get; private set; }
         public void SetReady(bool ready) => isReady = ready;
@@ -39,7 +55,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             Ticks["Main"] = 0;
             Ticks["CD"] = 0;
-            SetPhase(BaseData.ScanActivatable ? CombatCardPhase.Waiting : CombatCardPhase.Passive);
+            SetPhase(BaseData.HasActiveAbility ? CombatCardPhase.Waiting : CombatCardPhase.Passive);
             CallLua("Start");
         }
         public void ReLoad()
@@ -49,16 +65,12 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Tick()
         {
-            if (CheckPhase(CombatCardPhase.Passive))
-            {
-                RunKeywordHooks("OnTick");
-                this.CallLuaHook<bool>("OnPassiveTick", env, CreateCtx());
-                return;
-            }
             ReLoad();
-            CallLua("Tick");
-            Scene.TriggerCombatEvent("OnTick", CreateCtx());
-
+            var ctx = CreateCtx();
+            if (BaseData.HasActiveAbility) InvokeOwnHook("Tick", ctx);
+            // Tick/OnTick 是同一生命周期的两种历史拼写，只选一个。
+            RunKeywordHooks("OnTick", ctx, "Tick");
+            if (!BaseData.HasActiveAbility || HasKeyword("Passive")) InvokeOwnHook("OnPassiveTick", ctx);
             CardModifierTick();
             HookUse.Clear();
             Ticks["Main"]++;
@@ -97,39 +109,100 @@ namespace UnityWorld.Game.Domain.Combat
 
         internal bool TryUseFromScan()
         {
-            if (!Owner.IsActive || !BaseData.ScanActivatable || CheckPhase(CombatCardPhase.InPending) || !Owner.Backpack.HasActivationResources(this)) return false;
-            if (this.HasHook("Contest") && Owner.PendingSlot != null) return false;
-            _usingFromScan = true;
+            return BaseData.HasScanOpportunity && TryCommitUse(null);
+        }
+
+        /// <summary>返回本事件是否接收该机会；两通道收集完后按位置统一提交，不代表已成功 Use。</summary>
+        public bool TryUseFromEvent(APIContext eventCtx)
+        {
+            if (!BaseData.HasEventOpportunity || eventCtx == null || eventCtx.Scene != Scene || eventCtx.EventId == 0 || !Scene.IsCurrentEvent(eventCtx)) return false;
+            if (eventCtx.SuccessfulEventCards.Contains(Id) || !HasUseEligibility()) return false;
+            return Scene.RequestEventOpportunity(this, eventCtx);
+        }
+
+        internal bool TryCommitEventOpportunity(APIContext eventCtx)
+        {
+            if (!Scene.IsCurrentEvent(eventCtx) || eventCtx.SuccessfulEventCards.Contains(Id)) return false;
+            return TryCommitUse(eventCtx);
+        }
+
+        private bool HasUseEligibility()
+        {
+            return !Scene.IsFinished && Owner.IsActive && BaseData.HasActiveAbility && !IsFrozen && !_usingActiveOpportunity
+                && !_awaitingApply && !CheckPhase(CombatCardPhase.InPending) && Owner.Backpack.HasActivationResources(this)
+                && (!(BaseData.ProducesContest ?? this.HasHook("Contest")) || Owner.PendingSlot == null);
+        }
+
+        private bool TryCommitUse(APIContext eventCtx)
+        {
+            Scene.ThrowIfEventAborted();
+            if (!HasUseEligibility()) return false;
+            // 只有本来能够提交的机会才可能构成循环；缺灵/冻结等自然停止不能误杀。
+            if (eventCtx != null && eventCtx.ActivationPath.Contains(Id))
+            {
+                if (eventCtx.ActivationPath.LastOrDefault() == Id)
+                {
+                    Log($"拒绝自身派生事件重入 Event={eventCtx.EventId} Chain={eventCtx.ChainId}");
+                    return false;
+                }
+                Scene.AbortEventChain($"主动事件循环 Card={Id}:{DefineId} path={string.Join(" -> ", eventCtx.ActivationPath)} -> {Id}");
+            }
+            _usingActiveOpportunity = true;
             _awaitingApply = true;
+            _activationEvent = eventCtx;
+            eventCtx?.SuccessfulEventCards.Add(Id);
             UseCount++;
+            Log(eventCtx == null ? "扫描机会提交 Use" : $"条件机会提交 Use Event={eventCtx.EventId} Chain={eventCtx.ChainId} Trigger={eventCtx.EventName} Caster={eventCtx.Caster?.Id} Source={eventCtx.SourceCard?.Id}:{eventCtx.SourceCard?.DefineId}");
             Owner.Backpack.BeginNextActivation(Id);
+            Scene.BeginActivation(this, eventCtx);
             try { Use(); }
-            finally { _usingFromScan = false; }
+            finally
+            {
+                try { Scene.EndActivation(); }
+                finally { _usingActiveOpportunity = false; }
+            }
             return true;
         }
 
         public void Use()
         {
-            if (!_usingFromScan) throw new InvalidOperationException("Use 只能由逐格扫描授权。");
-            Contest();
+            if (!_usingActiveOpportunity) throw new InvalidOperationException("Use 只能由扫描或条件机会授权。");
+            if (BaseData.ProducesContest ?? this.HasHook("Contest")) Contest();
             Scene.TriggerCombatEvent("OnUse", CreateCtx());
             if (!CheckPhase(CombatCardPhase.InPending)) Apply();
         }
 
         public void Contest()
         {
-            if (!_usingFromScan) throw new InvalidOperationException("Contest 只能在扫描使用时产生待发数据。");
+            if (!_usingActiveOpportunity) throw new InvalidOperationException("Contest 只能在受控主动使用时产生待发数据。");
             CallLua("Contest");
         }
 
         public void Apply()
         {
-            if (BaseData.ScanActivatable && !_awaitingApply) return;
-            _awaitingApply = false;
-            ApplyCount++;
-            CallLua("Apply");
-            Scene.TriggerCombatEvent("OnApply", CreateCtx());
-            if (BaseData.ScanActivatable) SetPhase(CombatCardPhase.Finished);
+            if (BaseData.HasActiveAbility && !_awaitingApply) return;
+            var ownsScope = !_usingActiveOpportunity;
+            if (ownsScope)
+            {
+                _usingActiveOpportunity = true;
+                Scene.BeginActivation(this, _activationEvent);
+            }
+            try
+            {
+                _awaitingApply = false;
+                ApplyCount++;
+                CallLua("Apply");
+                Scene.TriggerCombatEvent("OnApply", CreateCtx());
+                if (BaseData.HasActiveAbility) SetPhase(CombatCardPhase.Finished);
+            }
+            finally
+            {
+                if (ownsScope)
+                {
+                    try { Scene.EndActivation(); }
+                    finally { _usingActiveOpportunity = false; }
+                }
+            }
         }
 
         /// <summary>
@@ -139,7 +212,8 @@ namespace UnityWorld.Game.Domain.Combat
         {
             SourceCard = this,
             Caster = Owner,
-            Scene = Owner?.Scene
+            Scene = Owner?.Scene,
+            TriggerEvent = _activationEvent
         };
         private APIContext CreateCtx<T>(string key,T value)
         {
@@ -167,7 +241,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// 遍历卡牌 Keywords 列表，查 LuaMgr 注册表调用对应 hook 函数。
         /// keyword 未注册 → 报错日志；keyword 存在但无对应 hook → 静默跳过。
         /// </summary>
-        private void RunKeywordHooks(string hookName)
+        private void RunKeywordHooks(string hookName, APIContext ctx, string fallback = null)
         {
             var keywords = GetKeywords();
             if (keywords == null || keywords.Count == 0) return;
@@ -175,10 +249,8 @@ namespace UnityWorld.Game.Domain.Combat
             var luaMgr = LuaMgr.Instance;
             if (luaMgr == null) return;
 
-            foreach (var kw in keywords)
+            foreach (var kw in keywords.Distinct().ToArray())
             {
-                // 旧主动关键词的 CD/Ready/重复支付不参与新扫描生命周期。
-                if (kw is "FaShu" or "ZhaoShi" or "FaBao" || (kw == "Passive" && BaseData.ScanActivatable)) continue;
                 var kwTable = luaMgr.GetKeyword(kw);
                 if (kwTable == null)
                 {
@@ -187,14 +259,17 @@ namespace UnityWorld.Game.Domain.Combat
                 }
 
                 var func = kwTable[hookName] as NLua.LuaFunction;
+                if (func == null && fallback != null) func = kwTable[fallback] as NLua.LuaFunction;
                 if (func == null) continue; // hook 不存在，静默跳过
 
                 try
                 {
-                    func.Call(this, CreateCtx());
+                    func.Call(this, ctx);
+                    Scene?.ThrowIfEventAborted();
                 }
                 catch (Exception ex)
                 {
+                    Scene?.ThrowIfEventAborted();
                     Log($"Keyword '{kw}' hook '{hookName}' 异常: {ex.Message}");
                 }
             }
@@ -203,8 +278,15 @@ namespace UnityWorld.Game.Domain.Combat
         public void CallLua(string hookName,APIContext eventCtx = null)
         {
             if(eventCtx == null) eventCtx = CreateCtx();
-            this.CallLuaHook<bool>(hookName, env, eventCtx);
-            RunKeywordHooks(hookName);
+            string alias = hookName is "PreStart" or "Start" ? "On" + hookName : null;
+            InvokeOwnHook(this.HasHook(hookName) ? hookName : alias ?? hookName, eventCtx);
+            RunKeywordHooks(hookName, eventCtx, alias);
+        }
+
+        private void InvokeOwnHook(string hookName, APIContext ctx)
+        {
+            this.CallLuaHook<bool>(hookName, env, ctx);
+            Scene?.ThrowIfEventAborted();
         }
 
         public void End()

@@ -15,6 +15,9 @@ namespace UnityWorld.Game.Domain
         {
             return _dataTable[npcId];
         }
+        public virtual void Unregister(int npcId) => _dataTable.Remove(npcId);
+        public bool Contains(int npcId) => _dataTable.ContainsKey(npcId);
+        public int RegisteredCount => _dataTable.Count;
 
         public abstract void OnTick(Npc npc, float deltaTime);
 

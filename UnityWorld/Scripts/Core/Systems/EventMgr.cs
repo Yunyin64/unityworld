@@ -193,6 +193,7 @@ namespace UnityWorld.Core
             }
             catch (Exception ex)
             {
+                if (args is UnityWorld.Game.Domain.APIContext ctx) ctx.Scene?.ThrowIfEventAborted();
                 LogMgr.Instance.Err("[EventMgr] TriggerEvent({0}) 发生异常：{1}", eventId, ex);
             }
             finally
@@ -277,6 +278,7 @@ namespace UnityWorld.Core
                 }
                 catch (Exception ex)
                 {
+                    if (args is UnityWorld.Game.Domain.APIContext ctx) ctx.Scene?.ThrowIfEventAborted();
                     LogMgr.Instance.Err("[EventMgr] 监听者 {0} 处理事件 {1} 时抛出异常：{2}",
                         entry.ListenerKey, eventId, ex);
                 }

@@ -14,7 +14,10 @@
     "Tags": [
       "怪物素材",
       "狼"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_monster_shoupi",
@@ -30,7 +33,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_monster_sheya",
@@ -46,7 +52,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   },
   {
     "ID": "card_monster_shepi",
@@ -62,7 +71,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   },
   {
     "ID": "card_monster_shedan",
@@ -78,7 +90,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   },
   {
     "ID": "card_monster_niaoyu",
@@ -94,7 +109,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   },
   {
     "ID": "card_monster_niaohui",
@@ -110,7 +128,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   },
   {
     "ID": "card_monster_yingyan",
@@ -127,7 +148,10 @@
     ],
     "Keywords": [
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   },
   {
     "ID": "card_monster_meat",
@@ -144,6 +168,9 @@
     "Keywords": [
       "Passive",
       "Item"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧物品特殊事件/消耗或相邻选择效果未迁移。"
   }
 ]

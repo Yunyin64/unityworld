@@ -40,6 +40,9 @@ namespace UnityWorld.Game.Domain
         // ── 从 Define 实例化 ──────────────────────────────────
         public Card InstantiateFromDefine(CardDefine cardDefine)
         {
+            if (cardDefine.ManaCost.Keys.Any(k => k is "Min" or "Max"))
+                throw new InvalidOperationException($"卡 {cardDefine.ID} 的 Min/Max 灵元需求已 Deprecated，禁止实例化以免变成免费或无效费用。");
+            var shape = cardDefine.GetShape();
             var cardid = Soul.NewId();
             var card = new Card
             {
@@ -52,8 +55,11 @@ namespace UnityWorld.Game.Domain
             DataSystem.Register(card, new CardBaseData
                 {
                     Size = cardDefine.Size,
-                    Shape = [.. cardDefine.Shape],
+                    Shape = shape,
                     ScanActivatable = cardDefine.ScanActivatable,
+                    ProducesContest = cardDefine.ProducesContest,
+                    CompatibilityStatus = cardDefine.CompatibilityStatus,
+                    CompatibilityReason = cardDefine.CompatibilityReason,
                     Cooldown = cardDefine.Cooldown,
                     AmountMax = cardDefine.AmountMax,
                     StackMax = cardDefine.StackMax,
@@ -67,6 +73,16 @@ namespace UnityWorld.Game.Domain
 
             Add(card.Id,card);
             return card;
+        }
+
+        /// <summary>撤销未完成模板装配产生的全部卡注册。</summary>
+        public void UnregisterCard(int cardId)
+        {
+            DataSystem.Unregister(cardId); GongFaSystem.Unregister(cardId);
+            EquipSystem.Unregister(cardId); ItemSystem.Unregister(cardId);
+            GongFaMgr.Instance?.Remove(cardId); EquipMgr.Instance?.Remove(cardId);
+            StatMgr.Instance.RemoveBlock(cardId, GetType());
+            Remove(cardId);
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
 [
   {
     "ID": "ling_foundation_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "筑基真经",
     "Desc": "筑基期修炼功法，凝练真元，铸造道基。",
     "pathType": "Ling",
@@ -16,6 +18,8 @@
   },
   {
     "ID": "ling_golden_core_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "金丹大道",
     "Desc": "金丹期修炼功法，真元化丹，寿元大增。",
     "pathType": "Ling",
@@ -31,6 +35,8 @@
   },
   {
     "ID": "wu_copper_skin_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "金刚铜皮功",
     "Desc": "铜皮期修炼功法，修炼皮肤坚如金刚铜铁。",
     "pathType": "Wu",
@@ -46,6 +52,8 @@
   },
   {
     "ID": "wu_iron_bone_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "不灭铁骨功",
     "Desc": "铁骨期修炼功法，骨骼坚硬如铁，力大无穷。",
     "pathType": "Wu",
@@ -61,6 +69,8 @@
   },
   {
     "ID": "hun_telekinesis_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "御物心经",
     "Desc": "御物期修炼功法，以神魂之力操纵外物。",
     "pathType": "Hun",
@@ -76,6 +86,8 @@
   },
   {
     "ID": "hun_soul_manifest_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "神魂显化术",
     "Desc": "显化期修炼功法，神魂可离体而行，千里杀人。",
     "pathType": "Hun",
@@ -92,6 +104,8 @@
 
   {
     "ID": "ling_flame_heart",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "烈焰心法",
     "Desc": "灵修火攻流功法，以烈焰之力焚尽万敌。",
     "pathType": "Ling",
@@ -107,6 +121,8 @@
   },
   {
     "ID": "ling_spring_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "清泉诀",
     "Desc": "灵修水守流功法，以水之柔韧化解百般攻势。",
     "pathType": "Ling",
@@ -122,6 +138,8 @@
   },
   {
     "ID": "ling_golden_blade",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "金锋剑典",
     "Desc": "灵修金锐流功法，以金之锋锐斩破一切。",
     "pathType": "Ling",
@@ -138,6 +156,8 @@
 
   {
     "ID": "wu_tiger_fist",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "猛虎拳经",
     "Desc": "武修拳术流功法，以虎之威猛震慑对手。",
     "pathType": "Wu",
@@ -153,6 +173,8 @@
   },
   {
     "ID": "wu_iron_spear",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "铁枪谱",
     "Desc": "武修枪术流功法，一寸长一寸强，枪出如龙。",
     "pathType": "Wu",
@@ -168,6 +190,8 @@
   },
   {
     "ID": "wu_stone_body",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "磐石体",
     "Desc": "武修防御流功法，身如磐石，坚不可摧。",
     "pathType": "Wu",
@@ -184,6 +208,8 @@
 
   {
     "ID": "hun_frost_mind",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "寒冰心经",
     "Desc": "魂修控制流功法，以冰寒之力冻结敌手行动。",
     "pathType": "Hun",
@@ -199,6 +225,8 @@
   },
   {
     "ID": "hun_vitality_art",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "生机诀",
     "Desc": "魂修辅助流功法，调动天地生机，护佑己身。",
     "pathType": "Hun",
@@ -214,6 +242,8 @@
   },
   {
     "ID": "hun_soul_erode",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "蚀魂术",
     "Desc": "魂修削弱流功法，侵蚀敌手神魂，令其力竭气衰。",
     "pathType": "Hun",

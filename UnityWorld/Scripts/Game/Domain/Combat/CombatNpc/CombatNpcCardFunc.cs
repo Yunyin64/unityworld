@@ -100,12 +100,13 @@ namespace UnityWorld.Game.Domain.Combat
                         card.Owner = this;
                         card.PreStart();
                         card.Start();
-                        foreach (var cell in replaced) Log($"伤口替代灵元 卡={card.DefineId} 格({cell.X},{cell.Y})");
+                        foreach (var cell in replaced) Log($"伤口替代灵元 卡={card.DefineId} 格({cell.X + 1},{cell.Y + 1})");
                         Log($"[Field+] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
                     case ComabtFieldChangeType.Remove:
                         Backpack.RemoveCard(card.Id);
+                        card.Position = null;
                         Field.Remove(card);
                         Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;

@@ -18,6 +18,7 @@ namespace UnityWorld.Game.Domain
             var npc = context.MainNpc;
             var cardData = new NpcCardData();
             Register(npc, cardData);
+            if (context.AssemblySource == NpcAssemblySource.Template) return;
 
             var InitCardDeck = context.Get<string[]>("InitCardDeck");
             if (InitCardDeck != null && InitCardDeck.Length > 0)
@@ -44,6 +45,7 @@ namespace UnityWorld.Game.Domain
         
         public Card GainCard(NpcCardData data, Card card)
         {
+            if (card == null) throw new InvalidOperationException("不能获得不存在的卡定义。");
             data.AllCardIds.Add(card.Id);
             data.AllCards.Add(card);
             return card;
@@ -55,6 +57,7 @@ namespace UnityWorld.Game.Domain
         public void RemoveCard(NpcCardData data, Card card)
         {
             GuardMainCard(data, card.Id);
+            card.Position = null;
             data.Placements.Remove(card.Id);
             data.AllCardIds.Remove(card.Id);
             data.AllCards.Remove(card);
@@ -80,6 +83,7 @@ namespace UnityWorld.Game.Domain
         public void AssignToReserve(NpcCardData data, int cardId)
         {
             GuardMainCard(data, cardId);
+            data.AllCards.Single(c => c.Id == cardId).Position = null;
             data.Placements.Remove(cardId);
             data.Field.Remove(cardId);
             if (!data.Reserve.Contains(cardId))
@@ -92,6 +96,7 @@ namespace UnityWorld.Game.Domain
         public void UnassignCard(NpcCardData data, int cardId)
         {
             GuardMainCard(data, cardId);
+            data.AllCards.Single(c => c.Id == cardId).Position = null;
             data.Placements.Remove(cardId);
             data.Field.Remove(cardId);
             data.Reserve.Remove(cardId);

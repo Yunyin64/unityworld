@@ -9,24 +9,62 @@
     "InitAge": 5,
     "InitCultivationLevel": 0,
     "InitialTraits": [],
-    "InitCardDeck": [
-      "card_monster_langya",
-      "card_monster_shoupi",
-      "card_monster_meat"
-    ],
+    "InitCardDeck": [],
     "InitStat": {
       "QiXue": 6,
       "TiPo": 6,
       "QiGan": 6,
       "LingJi": 6,
-      "ShenShi": 6,
+      "ShenShi": 8,
       "WuXing": 6,
       "JiYuan": 6,
       "MeiLi": 6
     },
-    "InitGongFa": [],
-    "InitEquip": [
-      { "CardID": "card_monster_lizhao", "EquipID": "monster_claw" }
+    "InitGongFa": [
+      {
+        "DefineId": "jin_fa",
+        "PlacementIndex": 1,
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [],
+    "MainGongFaId": "jin_fa",
+    "InitCardPlacements": [
+      {
+        "Key": "jin_fa",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "card_jin_slash",
+        "Value": {
+          "X": 1,
+          "Y": 1
+        }
+      },
+      {
+        "Key": "card_jin_slash",
+        "Value": {
+          "X": 1,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "card_monster_langya",
+        "Value": {
+          "X": 4,
+          "Y": 1
+        }
+      },
+      {
+        "Key": "card_monster_shoupi",
+        "Value": {
+          "X": 4,
+          "Y": 2
+        }
+      }
     ]
   }
 ]

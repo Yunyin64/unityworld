@@ -3,6 +3,28 @@ namespace UnityWorld.Game.Data
     /// <summary>背包坐标，从左上角 (0, 0) 起，X 向右、Y 向下。</summary>
     public readonly record struct BackpackCell(int X, int Y);
 
+    /// <summary>公开的卡实例锚点，从左上角 (1, 1) 起。与内部几何坐标分离。</summary>
+    public readonly record struct BackpackPosition(int X, int Y)
+    {
+        public override string ToString() => $"({X},{Y})";
+    }
+
+    public static class BackpackCoordinates
+    {
+        public static BackpackCell ToCell(BackpackPosition position)
+        {
+            if (position.X < 1 || position.Y < 1)
+                throw new InvalidOperationException($"背包公开坐标必须从 (1,1) 起：{position}。");
+            return new(position.X - 1, position.Y - 1);
+        }
+        public static BackpackPosition ToPosition(BackpackCell cell) => new(cell.X + 1, cell.Y + 1);
+        public static List<BackpackCell> HorizontalShape(int size)
+        {
+            if (size < 1) throw new InvalidOperationException("卡牌 Size 必须为正数，旧零格定义需要明确迁移。");
+            return Enumerable.Range(0, size).Select(x => new BackpackCell(x, 0)).ToList();
+        }
+    }
+
     /// <summary>主功法某一级的空间及主卡固定位置；空 ValidCells 表示完整矩形。</summary>
     public class BackpackLevelDefine
     {

@@ -24,7 +24,7 @@ namespace UnityWorld.Tests
         /// <summary>显式绑定主功法；不猜选已有修炼槽，也不为普通 NPC 自动补默认主功法。</summary>
         public static Npc CreateNpc(string mainId = "bp_main_6x5")
         {
-            var npc = NpcMgr.Instance.Assemble(NpcDefineMgr.Instance.Get("test_npc_a"));
+            var npc = NpcMgr.Instance.AssembleGenerated(new NpcDefine { ID = "geometry-test", InitStat = new() { ["QiXue"] = 10, ["TiPo"] = 10, ["QiGan"] = 10, ["LingJi"] = 10, ["ShenShi"] = 10, ["WuXing"] = 10, ["JiYuan"] = 10, ["MeiLi"] = 10 } });
             var main = npc.GainCard(mainId);
             GongFaMgr.Instance.InstantiateFromDefine(main.Id, CultivationDefineMgr.Instance.Get(mainId));
             npc.SelectMainGongFa(main.Id);
@@ -33,7 +33,7 @@ namespace UnityWorld.Tests
         public static Card Place(Npc npc, string definition, int x, int y)
         {
             var card = npc.GainCard(definition);
-            npc.PlaceBackpackCard(card.Id, x, y);
+            npc.PlaceBackpackCardInternal(card.Id, x, y);
             return card;
         }
         private static CombatNpc Snapshot(Npc npc)
@@ -57,7 +57,7 @@ namespace UnityWorld.Tests
 
         private static void Layouts()
         {
-            var missing = NpcMgr.Instance.Assemble(NpcDefineMgr.Instance.Get("test_npc_a"));
+            var missing = NpcMgr.Instance.AssembleGenerated(new NpcDefine { ID = "geometry-test", InitStat = new() { ["QiXue"] = 10, ["TiPo"] = 10, ["QiGan"] = 10, ["LingJi"] = 10, ["ShenShi"] = 10, ["WuXing"] = 10, ["JiYuan"] = 10, ["MeiLi"] = 10 } });
             Reject(() => CombatNpc.CreateCombatNpc(missing), "没有主功法");
             var a = CreateNpc();
             var b = CreateNpc("bp_main_8x3");
@@ -66,24 +66,24 @@ namespace UnityWorld.Tests
             Check(da.Width == 6 && da.Height == 5 && da.GetValidCells().Count == 30, "宽6高5");
             Check(db.Width == 8 && db.Height == 3 && db.GetValidCells().Count == 24, "宽8高3");
             var main = a.GetCardLoadoutSnapshot().MainGongFaCardId.Value;
-            Reject(() => a.PlaceBackpackCard(main, 1, 0), "移动主功法");
+            Reject(() => a.PlaceBackpackCardInternal(main, 1, 0), "移动主功法");
             Reject(() => a.AssignToReserve(main), "候补主功法");
             Reject(() => a.UnassignCard(main), "取消主功法");
             Reject(() => a.RemoveCard(a.GetAllCards().Single(c => c.Id == main)), "移除主功法");
             var card = Place(a, "bp_charge", 2, 1);
             Check(a.GetFieldSize() == 4, "三格卡占三SP，主卡占一SP");
-            Reject(() => a.PlaceBackpackCard(card.Id, 0, 0), "覆盖主功法");
-            Reject(() => a.PlaceBackpackCard(card.Id, 5, 4), "越界");
+            Reject(() => a.PlaceBackpackCardInternal(card.Id, 0, 0), "覆盖主功法");
+            Reject(() => a.PlaceBackpackCardInternal(card.Id, 5, 4), "越界");
             var other = Place(a, "bp_attack", 1, 1);
-            Reject(() => a.PlaceBackpackCard(other.Id, 2, 1), "重叠");
+            Reject(() => a.PlaceBackpackCardInternal(other.Id, 2, 1), "重叠");
             Check(a.GetCardLoadoutSnapshot().Placements[other.Id][0] == new BackpackCell(1, 1), "失败编辑回滚");
             a.AssignToReserve(other.Id);
             Check(!a.GetCardLoadoutSnapshot().Placements.ContainsKey(other.Id) && a.GetReserveIds().Contains(other.Id), "候补移除占格");
-            a.PlaceBackpackCard(other.Id, 4, 4);
+            a.PlaceBackpackCardInternal(other.Id, 4, 4);
             Check(!a.GetReserveIds().Contains(other.Id), "放置移回Field");
             var secondary = a.GainCard("bp_main_8x3");
             GongFaMgr.Instance.InstantiateFromDefine(secondary.Id, CultivationDefineMgr.Instance.Get("bp_main_8x3"));
-            a.PlaceBackpackCard(secondary.Id, 5, 4);
+            a.PlaceBackpackCardInternal(secondary.Id, 5, 4);
             Check(a.ValidateBackpackLayout().GetValidCells().Count == 30, "副功法不扩包");
             var cloned = a.GetCardLoadoutSnapshot();
             cloned.Placements[card.Id].Clear();

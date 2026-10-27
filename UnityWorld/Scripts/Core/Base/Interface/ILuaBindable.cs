@@ -91,6 +91,7 @@ public static class LuaBindableExtensions
         }
         catch (System.Exception ex)
         {
+            foreach (var ctx in args.OfType<APIContext>()) ctx.Scene?.ThrowIfEventAborted();
             UnityWorld.Core.LogMgr.Instance.Err("[ILuaBindable]{0} hook '{1}' 异常: {2}",self.GetOwnerID(), hookName, ex.Message);
         }
         return default;

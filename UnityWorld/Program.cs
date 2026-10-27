@@ -15,6 +15,10 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 bool smokeTest = args.Contains("--core-smoke-test");
 bool backpackModelTests = args.Contains("--backpack-model-tests");
 bool backpackTests = args.Contains("--backpack-tests");
+bool timingTests = args.Contains("--backpack-timing-tests");
+bool effectTests = args.Contains("--effect-tests");
+bool activationTests = args.Contains("--activation-migration-tests");
+bool templateTests = args.Contains("--template-tests");
 try
 {
     WorldMgr.Initialize(12345);
@@ -25,6 +29,22 @@ try
         if (NpcDefineMgr.Instance.Get("test_npc_a") == null || PlaneMgr.Instance.MainPlane.Tiles.Count == 0)
             throw new InvalidOperationException($"核心数据未成功加载：NPC={NpcDefineMgr.Instance.Get("test_npc_a") != null}, tiles={PlaneMgr.Instance.MainPlane.Tiles.Count}");
         Console.WriteLine($"CORE_SMOKE_OK seed={WorldTime.RandomSeed} ticks={WorldTime.CurrentTick} tiles={PlaneMgr.Instance.MainPlane.Tiles.Count}");
+    }
+    else if (activationTests)
+    {
+        UnityWorld.Tests.ActivationMigrationTests.Run();
+    }
+    else if (templateTests)
+    {
+        UnityWorld.Tests.TemplateBackpackTests.Run();
+    }
+    else if (effectTests)
+    {
+        UnityWorld.Tests.EffectMigrationTests.Run();
+    }
+    else if (timingTests)
+    {
+        UnityWorld.Tests.BackpackTimingTests.Run();
     }
     else if (backpackModelTests || backpackTests)
     {

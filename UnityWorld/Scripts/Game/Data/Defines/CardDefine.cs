@@ -21,11 +21,24 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("size")]
         public int Size { get; set; } = 1;
 
-        /// <summary>相对左上角的实际形状，数量必须等于 Size；背包卡必须显式配置。</summary>
+        /// <summary>仅专用几何测试可自定义；正式内容从 Size 自动派生横条。</summary>
         public List<BackpackCell> Shape { get; set; } = [];
+        public bool UseCustomShapeForTests { get; set; }
 
         /// <summary>是否参与扫描激活。开启时 ManaCost 总量必须等于 Size。</summary>
         public bool ScanActivatable { get; set; }
+        public bool? ProducesContest { get; set; }
+        public string CompatibilityStatus { get; set; } = "Migrated";
+        public string CompatibilityReason { get; set; } = "";
+
+        public List<BackpackCell> GetShape()
+        {
+            var horizontal = BackpackCoordinates.HorizontalShape(Size);
+            if (UseCustomShapeForTests) return [.. Shape];
+            if (Shape.Count != 0 && !Shape.SequenceEqual(horizontal))
+                throw new InvalidOperationException($"卡 {ID} 正式形状必须由 Size 自动生成横条。");
+            return horizontal;
+        }
 
         /// <summary>冷却回合数</summary>
         [JsonPropertyName("cooldown")]

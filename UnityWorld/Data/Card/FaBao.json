@@ -10,14 +10,17 @@
       "FaBao"
     ],
     "ManaCost": {
-      "Jin": 1
+      "Jin": 2
     },
     "Tags": [
       "武器",
       "攻击",
       "斩",
       "剑"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_fabao_kaijia",
@@ -38,7 +41,10 @@
       "武器",
       "防御",
       "护甲"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_monster_lizhao",
@@ -57,6 +63,9 @@
     "Keywords": [
       "FaBao",
       "Passive"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   }
 ]

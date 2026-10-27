@@ -21,8 +21,22 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public class CultivationDefine : DefineBase
     {
-        /// <summary>成为主功法时可选的等级布局；不提供通用背包回退。</summary>
+        public int BackpackWidth { get; set; } = 5;
+        public int BackpackHeight { get; set; } = 5;
+        /// <summary>显式等级/几何测试布局优先；正式默认单格主功法固定公开 (3,3)。</summary>
         public List<BackpackLevelDefine> BackpackLevels { get; set; } = [];
+
+        public BackpackLevelDefine GetBackpackDefinition(int level)
+        {
+            if (BackpackLevels.Count > 0)
+            {
+                var matching = BackpackLevels.Where(d => d.Level == level).ToList();
+                if (matching.Count != 1) throw new InvalidOperationException($"功法 {ID} 等级 {level} 必须有唯一背包布局。");
+                return matching[0].Clone();
+            }
+            if (level != 1) throw new InvalidOperationException($"功法 {ID} 没有等级 {level} 的背包布局。");
+            return new BackpackLevelDefine { Width = BackpackWidth, Height = BackpackHeight, MainCardCells = [BackpackCoordinates.ToCell(new(3, 3))] };
+        }
 
         /// <summary>功法描述</summary>
         public string Desc { get; set; } = "";

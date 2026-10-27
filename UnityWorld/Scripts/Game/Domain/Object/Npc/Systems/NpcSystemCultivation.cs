@@ -72,7 +72,7 @@ namespace UnityWorld.Game.Domain
             
             // InitGongFa：从 NpcDefine 预配的功法列表，逐一装配
             var initGongFa = context.Get<List<InitGongFaEntry>>("InitGongFa");
-            if (initGongFa != null && initGongFa.Count > 0)
+            if (context.AssemblySource != NpcAssemblySource.Template && initGongFa != null && initGongFa.Count > 0)
             {
                 foreach (var entry in initGongFa)
                 {

@@ -44,7 +44,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void Trace(CombatNpc npc, string message)
         {
-            var line = $"Tick={CurrentTick} Npc={npc.Id} Round={npc.Backpack.Round} Row={npc.Backpack.Row} {message}";
+            var line = $"Tick={CurrentTick} Npc={npc.Id} Round={npc.Backpack.Round} Row={npc.Backpack.Row + 1} {message}";
             _trace.Add(line);
             if (openLog) LogMgr.Instance.Dbg(line);
         }
@@ -164,26 +164,58 @@ namespace UnityWorld.Game.Domain.Combat
             haslog = false;
             AssertPhase(CombatPhase.Running, nameof(Tick));
             CurrentTick++;
+            // 先读取 Tick 开始时已有的速度，行内/回调中新加效果从下个真实 Tick 生效。
+            foreach (var c in OrderedCombatants.Where(c => c.IsActive)) c.Backpack.AdvanceNaturalTick();
             foreach (var c in OrderedCombatants.Where(c => c.IsActive)) c.Tick();
             FlushCombatChanges();
             AssignTargets();
-            var due = OrderedCombatants.Where(c => c.IsActive && c.Backpack.AdvanceTick(TicksPerRow)).ToList();
-            foreach (var c in due) { Trace(c, "扫描行"); c.ScanRow(); }
-            // 双方先完成扫描入槽，再配对；注册顺序不产生隐式先手。
-            foreach (var c in due) c.ProcessContest();
-            var roundEnds = due.Where(c => c.Backpack.Row == c.Backpack.Height - 1).ToList();
-            foreach (var c in roundEnds) c.ForceOwnPending();
-            // 同 Tick 的双方攻击均已入伤害队列，再统一处理伤势和败退。
-            FlushCombatChanges();
-            foreach (var c in due)
+            var batches = 0;
+            while (!IsFinished)
             {
-                var ended = c.Backpack.FinishRow();
-                if (!ended) continue;
-                Trace(c, "本方新轮");
-                if (c.IsActive) c.DoManaDraw();
+                var due = OrderedCombatants.Where(c => c.IsActive && c.Backpack.ScanProgress >= TicksPerRow).ToList();
+                if (due.Count == 0) break;
+                // 诊断保护而非玩法次数限制：异常进度循环明确终止，不截掉行继续战斗。
+                if (++batches > 10000)
+                {
+                    SetPhaseFinished();
+                    throw new InvalidOperationException($"扫描进度循环：Tick={CurrentTick} batches={batches}; " +
+                        string.Join("; ", due.Select(c => $"Npc={c.Id} progress={c.Backpack.ScanProgress}")) +
+                        "；最近事件/扫描：" + string.Join(" | ", TraceLog.TakeLast(20)));
+                }
+                foreach (var c in due)
+                {
+                    c.Backpack.TryTakeRow(TicksPerRow);
+                    Trace(c, $"扫描行 余量={c.Backpack.ScanProgress}");
+                    c.ScanRow();
+                }
+                // 同批双方先完成各自一行，再对拼、各自轮末；充能不会重入当前行。
+                var paired = new HashSet<int>();
+                var boundaryPairs = new List<(CombatNpc Owner, ContestData Own, CombatNpc Target, ContestData Other)>();
+                foreach (var c in due)
+                {
+                    var target = c.GetTarget();
+                    if (target == null || c.PendingSlot == null || target.PendingSlot == null ||
+                        paired.Contains(c.Id) || paired.Contains(target.Id)) continue;
+                    paired.Add(c.Id); paired.Add(target.Id);
+                    boundaryPairs.Add((c, c.PendingSlot, target, target.PendingSlot));
+                }
+                foreach (var pair in boundaryPairs) pair.Owner.ProcessContestAtBoundary(pair.Own, pair.Target, pair.Other);
+                foreach (var c in due.Where(c => c.Backpack.Row == c.Backpack.Height - 1)) c.ForceOwnPending();
+                FlushCombatChanges();
+                foreach (var c in due)
+                {
+                    if (!c.Backpack.FinishRow()) continue;
+                    Trace(c, "本方新轮");
+                    if (c.IsActive) c.DoManaDraw();
+                }
+                FlushCombatChanges();
+                AssignTargets();
+                // 败退立即阻止后续充能行；时间上限在本 Tick 全部合法行处理完后判定。
+                if (OrderedCombatants.Where(c => c.IsActive).Select(c => c.Team).Distinct().Count() <= 1)
+                    CheckEndConditions();
             }
             AssignTargets();
-            CheckEndConditions();
+            if (!IsFinished) CheckEndConditions();
             
 
             foreach (var c in OrderedCombatants.Where(c => c.IsActive)) c.Refresh();
@@ -334,25 +366,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <param name="source">事件来源 NPC</param>
         public void TriggerCombatEvent(string eventId, APIContext ctx)
         {
-            // 通道1：ILuaBindable hook 分发
-            DispatchHookToAll(eventId, ctx);
-
-            // 通道2：EventMgr 广播
-            if (ctx.SourceCard != null)
-            {
-                EventMgr.Instance?.TriggerEvent(
-                    eventId,
-                    ctx,
-                    (Scope.CombatNpc, ctx.Caster.Id.ToString()),
-                    (Scope.CombatCard, ctx.SourceCard.Id.ToString()));
-            }
-            else
-            {
-                EventMgr.Instance?.TriggerEvent(
-                    eventId,
-                    ctx,
-                    (Scope.CombatNpc, ctx.Caster.Id.ToString()));
-            }
+            EnqueueCombatEvent(eventId, ctx);
         }
 
         /// <summary>
@@ -363,10 +377,12 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var npc in OrderedCombatants)
             {
                 // 卡牌
-                foreach (var card in npc.GetField())
+                foreach (var card in npc.GetField().OrderBy(c => c.Position?.Y ?? int.MaxValue)
+                    .ThenBy(c => c.Position?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
                 {
-                    if (card.HasHook(hookName))
-                        card.CallLua(hookName,ctx);
+                    // Keyword 可以单独监听；不能要求卡自身同时定义同名 hook。
+                    card.CallLua(hookName,ctx);
+                    ThrowIfEventAborted();
                 }
 
                 // Modifier
@@ -374,6 +390,7 @@ namespace UnityWorld.Game.Domain.Combat
                 {
                     if (mod.HasHook(hookName))
                         mod.CallLuaHook<bool>(hookName, mod.env, ctx);
+                    ThrowIfEventAborted();
                 }
             }
         }

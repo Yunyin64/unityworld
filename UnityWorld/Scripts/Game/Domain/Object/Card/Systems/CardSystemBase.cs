@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     {
         /// <summary>以 cardId 为键的数据表</summary>
         protected abstract Dictionary<int, T> _dataTable { get; set; }
+        public int RegisteredCount => _dataTable.Count;
 
         /// <summary>注册一张 Card 的数据</summary>
         public virtual void Register(Card card, T data)

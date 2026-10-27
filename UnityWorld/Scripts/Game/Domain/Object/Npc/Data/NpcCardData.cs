@@ -33,7 +33,7 @@ namespace UnityWorld.Game.Domain
         {
             var copy = (NpcCardData)MemberwiseClone();
             copy.AllCardIds = new List<int>(AllCardIds);
-            copy.AllCards = new List<Card>(AllCards);
+            copy.AllCards = AllCards.Select(c => c.CreateDataSnapshot()).ToList();
             copy.Field = new List<int>(Field);
             copy.Reserve = new List<int>(Reserve);
             copy.EquippedFaBao = new List<int>(EquippedFaBao);

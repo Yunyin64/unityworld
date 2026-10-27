@@ -40,7 +40,7 @@ namespace UnityWorld.Game.Domain
         {
             var caster = ctx.Caster;
             if (caster == null) return new();
-            var cards = caster.GetField().Where(c => c.CheckPhase(CombatCardPhase.InCD)).ToList();
+            var cards = caster.GetField().OrderBy(c => c.Id).ToList();
             if (cards.Count == 0) return new();
             var idx = caster.Scene.Soul.Random(0, cards.Count);
             return new() { cards[idx] };
@@ -84,10 +84,12 @@ namespace UnityWorld.Game.Domain
             var caster = ctx.Caster;
             var source = ctx.SourceCard;
             if (caster == null || source == null) return new();
-            var field = caster.GetField();
-            int index = caster.GetIndexByCard(source);
-            if (index <= 0) return new();
-            return field.Take(index).ToList();
+            if (!caster.Backpack.Placements.TryGetValue(source.Id, out var sourceCells)) return new();
+            var top = sourceCells.Min(c => c.Y);
+            return caster.GetField().DistinctBy(c => c.Id)
+                .Where(c => caster.Backpack.Placements.TryGetValue(c.Id, out var cells) && cells.Max(p => p.Y) < top)
+                .OrderBy(c => caster.Backpack.Placements[c.Id].Min(p => p.Y))
+                .ThenBy(c => caster.Backpack.Placements[c.Id].Min(p => p.X)).ThenBy(c => c.Id).ToList();
         }
 
         private List<CombatCard> GetBelowOneCard(APIContext ctx)

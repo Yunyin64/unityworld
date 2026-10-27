@@ -1,6 +1,7 @@
 using UnityWorld.Core;
 namespace UnityWorld.Game.Domain
 {
+        public enum NpcAssemblySource { Generated, Player, Template }
         // ── BirthContext ─────────────────────────────────
         /// <summary>
         /// NPC 诞生上下文：携带创建过程中各子系统需要的信息。
@@ -9,5 +10,6 @@ namespace UnityWorld.Game.Domain
         public class BirthContext : ContextBase
         {
                 public Npc MainNpc;
+                public NpcAssemblySource AssemblySource { get; set; } = NpcAssemblySource.Generated;
         }
 }

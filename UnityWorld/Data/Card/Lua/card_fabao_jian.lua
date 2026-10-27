@@ -1,11 +1,11 @@
 -- 长剑法宝：当主人抽取灵元时，造成<武器>点<武器>系射击伤害
 local card = setmetatable({}, { __index = CardBase })
-card.CardData = { Size = 2, Cooldown = 0, CardType = "FaBao", ManaCost = { Jin = 1 } }
+card.CardData = { Size = 2, Cooldown = 0, CardType = "FaBao", ManaCost = { Jin = 2 } }
 card.Keywords = {}
 
 function card:OnBaseManaDraw(ctx)
     if ctx.Caster ~= self.m_Owner then return end
-    self:UseFabao()
+    self:UseFabao(ctx)
 end
 
 function card:Contest(ctx)

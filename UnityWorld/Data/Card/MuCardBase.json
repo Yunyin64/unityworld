@@ -6,15 +6,20 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Mu": 1
-    }, 
+    },
     "Tags": [
       "木",
       "刺",
       "攻击"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_mu_convert",
@@ -23,30 +28,40 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 120,
-    "Keywords": ["FaShu"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {},
     "Tags": [
       "木",
       "辅助",
       "转化"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_mu_haste",
     "DisplayName": "木灵",
-    "Desc": "加速上方一张卡（CD累计速率提升100%），可叠加",
+    "Desc": "己方背包双速1秒（10个真实Tick），同类加时",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Mu": 1
-    }, 
+    },
     "Tags": [
       "木",
       "辅助",
       "加速"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_mu_vulnerable",
@@ -55,15 +70,20 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Mu": 1
-    }, 
+    },
     "Tags": [
       "木",
       "控制",
       "易伤"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_mu_heal_wound",
@@ -72,14 +92,19 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 150,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Mu": 2
-    }, 
+    },
     "Tags": [
       "木",
       "治疗",
       "疗伤"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   }
 ]

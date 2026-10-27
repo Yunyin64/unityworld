@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain.Combat;
 
 namespace UnityWorld.Game.Domain
@@ -6,51 +7,26 @@ namespace UnityWorld.Game.Domain
     public  static partial class CombatBaseFunc
     {
         
+        private static string FormatManaCells(IReadOnlyList<KeyValuePair<BackpackCell, ElementType>> cells) =>
+            string.Join(",", cells.Select(p => $"({p.Key.X + 1},{p.Key.Y + 1}):{p.Value}"));
+
         // ── 灵元转化类 ────────────────────────────────────────
 
         /// <summary>将灵元转化回蓝条MP（1:1）。参数：Domain(String), Element(String), MaxAmount(Int)</summary>
-        [APIFunc("Convert", APIType.Action,"灵元转化回蓝条MP",Scope.CombatNpc, "Domain:String", "Element:String", "MaxAmount:Int")]
+        [APIFunc("Convert", APIType.Action,"回收格上灵元为MP（1:1，受MP空缺限制，不换元素）",Scope.CombatNpc, "Domain:String", "Element:String", "MaxAmount:Int")]
         public static APIContext Convert(APIContext ctx)
         {
-            var caster = ctx.Caster;
-            var Scene = ctx.Scene;
-            if (caster == null) return ctx;
-            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
-
-            ElementType element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
-            int maxAmount = ctx.GetValue("MaxAmount", 1);
-
+            if (ctx.Caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx).DistinctBy(n => n.Id).ToList();
+            var element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
+            int requested = Math.Max(0, ctx.GetValue("MaxAmount", 1));
             foreach (var npc in ctx.NpcTargets)
             {
-                var cost = new Dictionary<ElementType, int>();
-                if (element.Kind == BaseElementType.None)
-                {
-                    var keys = npc.GetUnassignedElements().ToList();
-                    int left = maxAmount;
-                    while (left > 0 && keys.Count > 0)
-                    {
-                        int idx = Scene.Soul.Random(0, keys.Count);
-                        var key = keys[idx];
-                        int available = npc.GetManaCount(key) - (cost.TryGetValue(key, out var used) ? used : 0);
-                        if (available <= 0)
-                        {
-                            keys.RemoveAt(idx);
-                            continue;
-                        }
-                        if (!cost.ContainsKey(key)) cost[key] = 0;
-                        cost[key]++;
-                        left--;
-                        if (cost[key] >= npc.GetManaCount(key))
-                            keys.RemoveAt(idx);
-                    }
-                }
-                else
-                {
-                    cost[element] = Math.Min(npc.GetManaCount(element), maxAmount);
-                }
-                npc.ManaConvert(cost);
+                var amount = Math.Min(requested, Math.Max(0, npc.GetCombatMpMax() - npc.GetMp()));
+                var removed = npc.Backpack.RemoveMana(amount, element.Kind == BaseElementType.None ? null : element, ctx.Scene.Soul);
+                var restored = removed.Count > 0 ? npc.RecoverMP(removed.Count) : 0;
+                npc.Log($"回收灵元 请求={requested} 实际={removed.Count} MP差额=+{restored} 格={FormatManaCells(removed)}");
             }
-
             return ctx;
         }
 
@@ -153,53 +129,18 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>减少目标指定元素的灵元。参数：Domain(String), Element(String), Amount(Int)</summary>
-        [APIFunc("ReduceMana", APIType.Action, "减少目标指定元素的灵元", Scope.CombatNpc, "Domain:String", "Element:String", "Amount:Int")]
+        [APIFunc("ReduceMana", APIType.Action, "移除格上指定元素灵元（不足部分成功，不触碰卡上点亮）", Scope.CombatNpc, "Domain:String", "Element:String", "Amount:Int")]
         public static APIContext ReduceMana( APIContext ctx)
         {
-            var caster = ctx.Caster;
-            var Scene = ctx.Scene;
-            if (caster == null) return ctx;
-            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
-
-            ElementType element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
-            int amount = ctx.GetValue("Amount", 0);
-            if (amount <= 0) return ctx;
-
+            if (ctx.Caster == null) return ctx;
+            ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx).DistinctBy(n => n.Id).ToList();
+            var element = ElementType.GetElementType(ctx.GetValue("Element", "None"));
+            var requested = Math.Max(0, ctx.GetValue("Amount", 0));
             foreach (var npc in ctx.NpcTargets)
             {
-                var cost = new Dictionary<ElementType, int>();
-                if (element.Kind == BaseElementType.None)
-                {
-                    var keys = npc.GetUnassignedElements().ToList();
-                    int left = amount;
-                    while (left > 0 && keys.Count > 0)
-                    {
-                        int idx = Scene.Soul.Random(0, keys.Count);
-                        var key = keys[idx];
-                        int available = npc.GetManaCount(key) - (cost.TryGetValue(key, out var used) ? used : 0);
-                        if (available <= 0)
-                        {
-                            keys.RemoveAt(idx);
-                            continue;
-                        }
-                        if (!cost.ContainsKey(key)) cost[key] = 0;
-                        cost[key]++;
-                        left--;
-                        if (cost[key] >= npc.GetManaCount(key))
-                            keys.RemoveAt(idx);
-                    }
-                }
-                else
-                {
-                    cost[element] = amount;
-                }
-
-                if (npc.CanAffordMana(cost))
-                {
-                    npc.ConsumeMana(cost);
-                }
+                var removed = npc.Backpack.RemoveMana(requested, element.Kind == BaseElementType.None ? null : element, ctx.Scene.Soul);
+                npc.Log($"减灵 请求={requested} 实际={removed.Count} MP差额=0 格={FormatManaCells(removed)}");
             }
-
             return ctx;
         }
         

@@ -39,6 +39,8 @@ namespace UnityWorld.Game.Data
             ctx.Set("InitTraits", define.InitialTraits);
             ctx.Set("InitGongFa", define.InitGongFa);
             ctx.Set("InitEquip", define.InitEquip);
+            ctx.Set("MainGongFaId", define.MainGongFaId);
+            ctx.Set("InitCardPlacements", define.InitCardPlacements);
             return ctx;
         }
     }

@@ -2,29 +2,64 @@
   {
     "ID": "action_convert",
     "DisplayName": "灵元转化",
-    "Desc": "{Domain}将{Element}灵元转化回蓝条MP，最多{MaxAmount}点",
+    "Desc": "{Domain}回收格上{Element}灵元为MP（1:1），最多{MaxAmount}个并受MP空缺限制，不换元素",
     "FuncName": "Convert",
-    "Tags": ["灵元", "回蓝"],
+    "Tags": [
+      "灵元",
+      "回蓝"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "Domain",
         "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          0,
+          0
+        ]
       },
       {
         "Name": "Element",
         "Type": "String",
-        "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"],
-        "Score": [0, 0, 0, 0, 0, 0]
+        "Value": [
+          "None",
+          "Jin",
+          "Mu",
+          "Shui",
+          "Huo",
+          "Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       },
       {
         "Name": "MaxAmount",
         "Type": "Int",
-        "Value": [1, 2, 3, 4, 5],
-        "Score": [1, 2, 3, 4, 5]
+        "Value": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "Score": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
       }
     ],
     "LuaTemplate": "Convert(ctx, \"{Domain}\", \"{Element}\", {MaxAmount})"
@@ -34,21 +69,40 @@
     "DisplayName": "汲灵",
     "Desc": "{Domain}立刻抽取{Amount}点MP为灵元",
     "FuncName": "Draw",
-    "Tags": ["灵元", "抽取"],
+    "Tags": [
+      "灵元",
+      "抽取"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "Domain",
         "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          0,
+          0
+        ]
       },
       {
         "Name": "Amount",
         "Type": "Int",
-        "Value": [1, 2, 3, 4],
-        "Score": [1, 2, 3, 4]
+        "Value": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "Score": [
+          1,
+          2,
+          3,
+          4
+        ]
       }
     ],
     "LuaTemplate": "Draw(ctx, \"{Domain}\", {Amount})"
@@ -56,29 +110,64 @@
   {
     "ID": "action_reduce_mana",
     "DisplayName": "灵元消耗",
-    "Desc": "减少{Domain}{Element}灵元{Amount}点",
+    "Desc": "从{Domain}格上移除至多{Amount}个{Element}灵元，不足部分成功，不扣卡上点亮",
     "FuncName": "ReduceMana",
-    "Tags": ["灵元", "代价"],
+    "Tags": [
+      "灵元",
+      "代价"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "Domain",
         "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          0,
+          0
+        ]
       },
       {
         "Name": "Element",
         "Type": "String",
-        "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"],
-        "Score": [0, 0, 0, 0, 0, 0]
+        "Value": [
+          "None",
+          "Jin",
+          "Mu",
+          "Shui",
+          "Huo",
+          "Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       },
       {
         "Name": "Amount",
         "Type": "Int",
-        "Value": [1, 2, 3, 4, 5],
-        "Score": [-1, -2, -3, -4, -5]
+        "Value": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "Score": [
+          -1,
+          -2,
+          -3,
+          -4,
+          -5
+        ]
       }
     ],
     "LuaTemplate": "ReduceMana(ctx, \"{Domain}\", \"{Element}\", {Amount})"

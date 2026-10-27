@@ -122,7 +122,7 @@ namespace UnityWorld.Tests
             a = Npc(); b = Npc("bp_main_8x3");
             var horizontal = a.GainCard("bp_charge");
             horizontal.BaseData.Shape = [new(0, 0), new(2, 0), new(3, 0)];
-            a.PlaceBackpackCard(horizontal.Id, 1, 0);
+            a.PlaceBackpackCard(horizontal.Id, 2, 1);
             scene = Scene(a, b); npc = scene.GetCombatants()[a.Id]; active = Card(scene, a, horizontal);
             Light(npc, active, 2); npc.Backpack.PlaceMana(new(2, 0), ElementType.Jin);
             To(scene, 10);
@@ -213,6 +213,7 @@ namespace UnityWorld.Tests
             var before = npc.Backpack.Mana.Count; var wound = npc.AddWound("bp_wound_small"); npc.DealFieldChange();
             Check(npc.Backpack.Mana.Count == before - 1 && npc.GetSp() == 2 && npc.Backpack.Placements[wound.Id].Count == 1, "满背包伤口替代一个灵元计SP");
             Check(wound.env != null && wound.Ticks.ContainsKey("Main"), "新伤口初始化Lua与Start");
+            Check(wound.Position == BackpackCoordinates.ToPosition(npc.Backpack.Placements[wound.Id][0]), "动态伤口实例位置与空间索引一致");
             var wide = npc.AddWound("bp_wound_wide"); npc.DealFieldChange(); var cells = npc.Backpack.Placements[wide.Id];
             Check(cells.Count == 2 && cells[0].Y == cells[1].Y && cells[1].X == cells[0].X + 1 && npc.Backpack.Mana.Count == before - 3, "多格伤口保持完整形状");
             Check(cells.All(c => !npc.Backpack.Mana.ContainsKey(c)), "被替代灵元不再存在"); scene.Cleanup();

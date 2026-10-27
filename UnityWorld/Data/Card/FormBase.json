@@ -4,7 +4,7 @@
     "DisplayName": "剑斩",
     "Desc": "基础剑招，造成<武器>点斩伤",
     "Rarity": 0,
-    "Size": 0,
+    "Size": 1,
     "Cooldown": 50,
     "Keywords": [
       "ZhaoShi"
@@ -15,14 +15,17 @@
       "攻击",
       "斩",
       "剑"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_jian_ci",
     "DisplayName": "剑刺",
     "Desc": "基础剑招，造成<武器>点刺伤",
     "Rarity": 0,
-    "Size": 0,
+    "Size": 1,
     "Cooldown": 45,
     "Keywords": [
       "ZhaoShi"
@@ -33,14 +36,17 @@
       "攻击",
       "刺",
       "剑"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_jian_qi",
     "DisplayName": "剑气",
     "Desc": "基础剑招，造成<武器>点射伤",
     "Rarity": 0,
-    "Size": 0,
+    "Size": 1,
     "Cooldown": 55,
     "Keywords": [
       "ZhaoShi"
@@ -51,7 +57,10 @@
       "攻击",
       "射击",
       "剑"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_dao_zhan",
@@ -69,7 +78,10 @@
       "攻击",
       "斩",
       "刀"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_dao_qi",
@@ -87,7 +99,10 @@
       "攻击",
       "射击",
       "刀"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_dao_da",
@@ -105,7 +120,10 @@
       "攻击",
       "打",
       "刀"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_quan_da",
@@ -123,7 +141,10 @@
       "攻击",
       "打",
       "拳"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_quan_feng",
@@ -141,7 +162,10 @@
       "攻击",
       "射击",
       "拳"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_ci_quan",
@@ -159,7 +183,10 @@
       "攻击",
       "刺",
       "拳"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_qiang_ci",
@@ -177,7 +204,10 @@
       "攻击",
       "刺",
       "枪"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_qiang_sao",
@@ -195,7 +225,10 @@
       "攻击",
       "斩",
       "枪"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_qiang_za",
@@ -213,7 +246,10 @@
       "攻击",
       "打",
       "枪"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_fist_block",
@@ -231,7 +267,10 @@
       "防御",
       "格挡",
       "拳"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_blade_block",
@@ -249,7 +288,10 @@
       "防御",
       "格挡",
       "刀"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_form_strike",
@@ -267,6 +309,9 @@
       "攻击",
       "刺",
       "爪"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   }
 ]

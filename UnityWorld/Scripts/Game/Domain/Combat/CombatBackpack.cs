@@ -18,7 +18,15 @@ namespace UnityWorld.Game.Domain.Combat
         public int MainCardId { get; }
         public int Round { get; private set; } = 1;
         public int Row { get; private set; }
-        public int TicksInRow { get; private set; }
+        private decimal _scanProgress;
+        /// <summary>以正常速度 Tick 为单位的精确行进度，跨行保留余量。</summary>
+        public decimal ScanProgress => _scanProgress;
+        /// <summary>旧查询适配；完整精度请读取 ScanProgress。</summary>
+        public int TicksInRow => (int)_scanProgress;
+        /// <summary>加速剩余真实战斗 Tick，同类只累加持续时间。</summary>
+        public int HasteTicks { get; private set; }
+        /// <summary>减速剩余真实战斗 Tick，与加速独立计时。</summary>
+        public int SlowTicks { get; private set; }
         public IReadOnlyDictionary<BackpackCell, ElementType> Mana { get; }
         public IReadOnlyDictionary<int, IReadOnlyList<BackpackCell>> Placements { get; }
 
@@ -54,7 +62,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void PlaceMana(BackpackCell cell, ElementType element)
         {
             if (!_validCells.Contains(cell) || _cardCells.ContainsKey(cell) || _mana.ContainsKey(cell))
-                throw new InvalidOperationException($"灵元无法占据格 ({cell.X},{cell.Y})。");
+                throw new InvalidOperationException($"灵元无法占据格 ({cell.X + 1},{cell.Y + 1})。");
             if (element.Equals(ElementType.None)) throw new InvalidOperationException("灵元必须有元素。");
             _mana.Add(cell, element);
         }
@@ -62,7 +70,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>只接收仍缺少的匹配元素；数量和匹配要求来自卡的资源定义。</summary>
         public bool CanAccept(CombatCard card, ElementType element)
         {
-            return card.BaseData.ScanActivatable && !card.CheckPhase(CombatCardPhase.InPending) && _assigned.TryGetValue(card.Id, out var resources) &&
+            return card.BaseData.HasActiveAbility && !card.CheckPhase(CombatCardPhase.InPending) && _assigned.TryGetValue(card.Id, out var resources) &&
                 resources.Count < card.GetSize() && card.GetManaCost().TryGetValue(element, out var required) &&
                 resources.Count(e => e.Equals(element)) < required;
         }
@@ -76,18 +84,71 @@ namespace UnityWorld.Game.Domain.Combat
             return true;
         }
 
-        public bool HasActivationResources(CombatCard card) => card.BaseData.ScanActivatable &&
+        public bool HasActivationResources(CombatCard card) => card.BaseData.HasActiveAbility &&
             _assigned.TryGetValue(card.Id, out var resources) && resources.Count == card.GetSize() &&
             card.GetManaCost().All(cost => resources.Count(e => e.Equals(cost.Key)) == cost.Value);
 
-        /// <summary>只推进扫描时钟；轮次变更不清空、不搬动资源。</summary>
+        /// <summary>加速按真实 Tick 延时，不叠加倍率。</summary>
+        public void AddHaste(int ticks)
+        {
+            if (ticks > 0) HasteTicks = checked(HasteTicks + ticks);
+        }
+
+        /// <summary>减速按真实 Tick 延时，不抵消加速时长。</summary>
+        public void AddSlow(int ticks)
+        {
+            if (ticks > 0) SlowTicks = checked(SlowTicks + ticks);
+        }
+
+        /// <summary>充能增加正常速度折算的进度，不应用速度倍率或消耗持续时间。</summary>
+        public void Charge(double baselineTicks)
+        {
+            if (!double.IsFinite(baselineTicks)) throw new ArgumentOutOfRangeException(nameof(baselineTicks));
+            if (baselineTicks > 0) _scanProgress += (decimal)baselineTicks;
+        }
+
+        /// <summary>真实 Tick 开始时调用一次；随后新加的速度效果从下个自然 Tick 生效。</summary>
+        public void AdvanceNaturalTick()
+        {
+            _scanProgress += (HasteTicks > 0 ? 2m : 1m) * (SlowTicks > 0 ? 0.5m : 1m);
+            if (HasteTicks > 0) HasteTicks--;
+            if (SlowTicks > 0) SlowTicks--;
+        }
+
+        /// <summary>消费一行进度，保留充能和自然推进的所有余量。</summary>
+        public bool TryTakeRow(int ticksPerRow = 10)
+        {
+            if (ticksPerRow < 1) throw new ArgumentOutOfRangeException(nameof(ticksPerRow));
+            if (_scanProgress < ticksPerRow) return false;
+            _scanProgress -= ticksPerRow;
+            return true;
+        }
+
+        /// <summary>单步时钟测试适配；实际场景使用自然 Tick 与逐批消费行分离的入口。</summary>
         public bool AdvanceTick(int ticksPerRow = 10)
         {
             if (ticksPerRow < 1) throw new ArgumentOutOfRangeException(nameof(ticksPerRow));
-            TicksInRow++;
-            if (TicksInRow < ticksPerRow) return false;
-            TicksInRow = 0;
-            return true;
+            AdvanceNaturalTick();
+            return TryTakeRow(ticksPerRow);
+        }
+
+        /// <summary>从格上实体稳定排序后不放回抽取并移除，数量不足部分成功，不触碰卡上点亮。</summary>
+        public IReadOnlyList<KeyValuePair<BackpackCell, ElementType>> RemoveMana(int amount, ElementType? element, SoulData soul)
+        {
+            if (amount <= 0) return Array.Empty<KeyValuePair<BackpackCell, ElementType>>();
+            var candidates = _mana.Where(p => !element.HasValue || p.Value.Equals(element.Value))
+                .OrderBy(p => p.Key.Y).ThenBy(p => p.Key.X).ToList();
+            var count = Math.Min(amount, candidates.Count);
+            var removed = new List<KeyValuePair<BackpackCell, ElementType>>(count);
+            for (int i = 0; i < count; i++)
+            {
+                var index = soul.Random(0, candidates.Count);
+                var selected = candidates[index];
+                candidates.RemoveAt(index);
+                _mana.Remove(selected.Key);
+                removed.Add(selected);
+            }
+            return removed.AsReadOnly();
         }
 
         /// <summary>完成当前行后调用；返回是否完成了本方一轮。</summary>
@@ -124,6 +185,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var cell in cells) { _mana.Remove(cell); _cardCells.Add(cell, card.Id); }
             _placements.Add(card.Id, Array.AsReadOnly(cells.OrderBy(c => c.Y).ThenBy(c => c.X).ToArray()));
             _assigned.Add(card.Id, []);
+            card.BaseData.Position = BackpackCoordinates.ToPosition(new BackpackCell(cells.Min(c => c.X), cells.Min(c => c.Y)));
             return Array.AsReadOnly(replaced);
         }
 

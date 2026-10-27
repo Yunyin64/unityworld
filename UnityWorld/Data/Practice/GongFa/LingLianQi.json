@@ -1,6 +1,8 @@
 [
   {
     "ID": "jin_fa",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "金法",
     "Desc": "以金行之力修炼的基础功法，金气锐利，善攻伐。",
     "pathType": "Ling",
@@ -16,6 +18,8 @@
   },
   {
     "ID": "mu_fa",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "木法",
     "Desc": "以木行之力修炼的基础功法，木气生发，善恢复。",
     "pathType": "Ling",
@@ -31,6 +35,8 @@
   },
   {
     "ID": "shui_fa",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "水法",
     "Desc": "以水行之力修炼的基础功法，水气柔韧，善防御。",
     "pathType": "Ling",
@@ -46,6 +52,8 @@
   },
   {
     "ID": "huo_fa",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "火法",
     "Desc": "以火行之力修炼的基础功法，火气暴烈，善爆发。",
     "pathType": "Ling",
@@ -61,6 +69,8 @@
   },
   {
     "ID": "tu_fa",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "土法",
     "Desc": "以土行之力修炼的基础功法，土气厚重，善承受。",
     "pathType": "Ling",
@@ -76,6 +86,8 @@
   },
   {
     "ID": "wu_xing_lun_zhuan",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "五行轮转功",
     "Desc": "五行相生相克循环不息，灵活切换五行属性。",
     "pathType": "Ling",
@@ -92,6 +104,8 @@
   },
   {
     "ID": "hun_yuan_gong",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "混元功",
     "Desc": "融合五行之力的高阶功法，五气朝元，威能浑厚。",
     "pathType": "Ling",
@@ -108,6 +122,8 @@
   },
   {
     "ID": "qing_ling_jue",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "清灵诀",
     "Desc": "凝神静气的辅助功法，提升灵力恢复速度。",
     "pathType": "Ling",
@@ -123,6 +139,8 @@
   },
   {
     "ID": "tan_ling_shu",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "探灵术",
     "Desc": "感知周围灵气波动的探查功法，可侦测隐匿之物。",
     "pathType": "Ling",
@@ -138,6 +156,8 @@
   },
   {
     "ID": "gu_yuan_gong",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
     "DisplayName": "固元功",
     "Desc": "固本培元的防御功法，强化体魄根基。",
     "pathType": "Ling",

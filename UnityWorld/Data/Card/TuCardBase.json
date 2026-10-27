@@ -6,7 +6,9 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Tu": 1
     },
@@ -14,7 +16,10 @@
       "土",
       "打",
       "攻击"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_tu_block",
@@ -23,22 +28,29 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {},
     "Tags": [
       "土",
       "防御",
       "格挡"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_tu_slow",
     "DisplayName": "土缚",
-    "Desc": "减速敌方随机一张卡（CD累计速率降低50%），可叠加",
+    "Desc": "敌方背包半速1秒（10个真实Tick），同类加时",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Tu": 1
     },
@@ -46,7 +58,10 @@
       "土",
       "控制",
       "减速"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_tu_armor",
@@ -55,15 +70,20 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 50,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
-      "Tu": 1
+      "Tu": 2
     },
     "Tags": [
       "土",
       "防御",
       "护甲"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua依赖不存在的buff_armor，护甲特殊效果尚未迁移。"
   },
   {
     "ID": "card_tu_stun",
@@ -72,7 +92,9 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 80,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Tu": 1
     },
@@ -80,6 +102,9 @@
       "土",
       "控制",
       "眩晕"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "眩晕停止旧CD的语义未迁移。"
   }
 ]

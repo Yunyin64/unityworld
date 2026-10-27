@@ -17,6 +17,13 @@ namespace UnityWorld.Game.Domain
         public int Size { get; set; } = 1;
         public List<BackpackCell> Shape { get; set; } = [];
         public bool ScanActivatable { get; set; }
+        public BackpackPosition? Position { get; set; }
+        public bool? ProducesContest { get; set; }
+        public string CompatibilityStatus { get; set; } = "Migrated";
+        public string CompatibilityReason { get; set; } = "";
+        public bool HasScanOpportunity => ScanActivatable || Keywords.Contains("FaShu") || Keywords.Contains("ZhaoShi");
+        public bool HasEventOpportunity => Keywords.Contains("FaBao");
+        public bool HasActiveAbility => HasScanOpportunity || HasEventOpportunity;
 
         /// <summary>冷却时间（秒）</summary>
         public float Cooldown { get; set; } = 3f;
@@ -72,6 +79,7 @@ namespace UnityWorld.Game.Domain
                 : "无";
             LogMgr.Instance.Dbg("┌── BaseData · 基础属性 ──────────────────────");
             LogMgr.Instance.Dbg("│  体量:    {0}", Size);
+            LogMgr.Instance.Dbg("│  位置:    {0}", Position?.ToString() ?? "未放置");
             LogMgr.Instance.Dbg("│  冷却:    {0:F1}s", Cooldown);
             LogMgr.Instance.Dbg("│  灵元:    {0}", mana);
             LogMgr.Instance.Dbg("│  标签:    [{0}]", string.Join(", ", Tags));
@@ -88,6 +96,21 @@ namespace UnityWorld.Game.Domain
         /// <summary>父卡 Id（招式卡 → 所属法宝卡 Id，-1 表示无父卡）</summary>
         public int ParentCardId { get; set; } = -1;
         public virtual CardBaseData BaseData => CardMgr.Instance.DataSystem.GetData(Id);
+        public BackpackPosition? Position { get => BaseData.Position; set => BaseData.Position = value; }
+
+        /// <summary>独立的世界布局快照，编辑候选位置不接触管理器里的原实例。</summary>
+        public Card CreateDataSnapshot() => new SnapshotCard(this);
+        private sealed class SnapshotCard : Card
+        {
+            private readonly CardBaseData _data;
+            public override CardBaseData BaseData => _data;
+            public SnapshotCard(Card source)
+            {
+                Id = source.Id; DefineId = source.DefineId; DisplayName = source.DisplayName;
+                ParentCardId = source.ParentCardId; Stats = source.Stats.Snapshot();
+                _data = source.BaseData.Clone();
+            }
+        }
         public float GetCooldown() => BaseData.Cooldown;
         public int GetSize() => BaseData.Size;
 

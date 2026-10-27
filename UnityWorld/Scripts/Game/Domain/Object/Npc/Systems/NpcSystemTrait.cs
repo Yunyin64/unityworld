@@ -23,7 +23,7 @@ namespace UnityWorld.Game.Domain
             => _dataTable.TryAdd(id, new NpcTraitData());
 
         /// <summary>NPC 销毁时释放数据</summary>
-        public void Unregister(int id)
+        public override void Unregister(int id)
             => _dataTable.Remove(id);
 
         // ── 添加 ──────────────────────────────────────────

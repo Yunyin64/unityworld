@@ -1,22 +1,3 @@
--- FaShu Keyword
--- 法术卡：标准循环（消耗灵元 → CD → Contest → Apply）
+-- FaShu 仅声明扫描机会；资格、资源和入槽由 C# 统一提交。
 local FaShu = setmetatable({}, { __index = KeywordBase })
-
-function FaShu.Tick(card, ctx)
-    if card:CheckPhase(CombatCardPhase.Waiting)  then
-        if card:TryPayMana() then
-            card:SetPhase(CombatCardPhase.InCD)
-        end
-    end
-    if card:CheckPhase(CombatCardPhase.CDFull) then
-        card:ResetCD()
-        card:SetReady(true)
-    end
-end
-
-function FaShu.Contest(card, ctx)
-    card:SetReady(false)
-    card:SetPhase(CombatCardPhase.Finished)
-end
-
 LuaMgr:RegisterKeyword("FaShu", FaShu)

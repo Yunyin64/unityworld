@@ -94,6 +94,14 @@ namespace UnityWorld.Game.Domain.Combat
         {
             var target = Target;
             if (!IsActive || target == null || !target.IsActive || PendingSlot == null || target.PendingSlot == null) return;
+            ProcessContestAtBoundary(PendingSlot, target, target.PendingSlot);
+        }
+
+        /// <summary>只结算本批行边界快照中的槽；结算事件新产生的槽留给后续边界。</summary>
+        internal void ProcessContestAtBoundary(ContestData expectedOwn, CombatNpc target, ContestData expectedOther)
+        {
+            if (!IsActive || !target.IsActive || expectedOwn == null || expectedOther == null ||
+                !ReferenceEquals(PendingSlot, expectedOwn) || !ReferenceEquals(target.PendingSlot, expectedOther)) return;
             var own = TakePending();
             var other = target.TakePending();
             Log($"行切换对拼 owner={Id} 对手={target.Id}");
@@ -297,11 +305,11 @@ namespace UnityWorld.Game.Domain.Combat
             Func<CardDefine, bool> func = c => true;
             if(ctx.Damage > GetTiPo())
             {
-               func = c => c.Keywords.Contains("Wound") && c.Size == 2 && c.Shape.Count == c.Size;
+               func = c => c.Keywords.Contains("Wound") && c.Size == 2 && c.GetShape().Count == c.Size && c.CompatibilityStatus == "Migrated";
             }
             else
             {
-               func = c => c.Keywords.Contains("Wound") && c.Size == 1 && c.Shape.Count == c.Size;
+               func = c => c.Keywords.Contains("Wound") && c.Size == 1 && c.GetShape().Count == c.Size && c.CompatibilityStatus == "Migrated";
             }
             var woundCards = CardDefineMgr.Instance?.Query(func).ToList();
             if(woundCards != null && woundCards.Count > 0)

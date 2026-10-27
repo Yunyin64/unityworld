@@ -2,7 +2,7 @@
   { "ID": "bp_main_6x5", "DisplayName": "长周天功", "Size": 1, "Shape": [{"X":0,"Y":0}], "Cooldown": 0, "Keywords": [] },
   { "ID": "bp_main_8x3", "DisplayName": "短周天功", "Size": 1, "Shape": [{"X":0,"Y":0}], "Cooldown": 0, "Keywords": [] },
   { "ID": "bp_attack", "DisplayName": "背包试招", "Size": 1, "Shape": [{"X":0,"Y":0}], "ScanActivatable": true, "ManaCost": {"Jin":1}, "Keywords": [] },
-  { "ID": "bp_charge", "DisplayName": "三格蓄灵", "Size": 3, "Shape": [{"X":0,"Y":0},{"X":0,"Y":1},{"X":0,"Y":2}], "ScanActivatable": true, "ManaCost": {"Jin":3}, "Keywords": [] },
+  { "ID": "bp_charge", "UseCustomShapeForTests": true, "DisplayName": "三格蓄灵", "Size": 3, "Shape": [{"X":0,"Y":0},{"X":0,"Y":1},{"X":0,"Y":2}], "ScanActivatable": true, "ManaCost": {"Jin":3}, "Keywords": [] },
   { "ID": "bp_guard", "DisplayName": "背包守御", "Size": 1, "Shape": [{"X":0,"Y":0}], "ScanActivatable": true, "ManaCost": {"Jin":1}, "Keywords": [] },
   { "ID": "bp_focus", "DisplayName": "凝神护体", "Size": 1, "Shape": [{"X":0,"Y":0}], "ScanActivatable": true, "ManaCost": {"Jin":1}, "Keywords": [] },
   { "ID": "bp_wound_small", "DisplayName": "伤口", "Size": 1, "Shape": [{"X":0,"Y":0}], "Keywords": ["Wound"] },

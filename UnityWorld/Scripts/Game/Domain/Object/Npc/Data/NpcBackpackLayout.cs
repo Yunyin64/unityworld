@@ -11,22 +11,38 @@ namespace UnityWorld.Game.Domain
                 throw new InvalidOperationException("背包必须显式选择一张已持有的主功法卡。");
             var gongFa = GongFaMgr.Instance.GetById(mainId);
             var define = gongFa == null ? null : CultivationDefineMgr.Instance.Get(gongFa.DefineId);
-            var levels = define?.BackpackLevels.Where(d => d.Level == data.MainGongFaLevel).ToList();
-            if (levels == null || levels.Count != 1)
-                throw new InvalidOperationException($"主功法 {mainId} 等级 {data.MainGongFaLevel} 必须有且仅有一个背包定义。");
-            return levels[0].Clone();
+            if (define == null) throw new InvalidOperationException($"主功法 {mainId} 没有有效功法绑定。");
+            return define.GetBackpackDefinition(data.MainGongFaLevel);
         }
 
         /// <summary>验证形状、资源总数；被动卡也必须占用正数格子。</summary>
         public static void ValidateCard(Card card)
         {
             var data = card.BaseData;
+            if (data.CompatibilityStatus != "Migrated")
+                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 不可装配：{data.CompatibilityStatus}，{data.CompatibilityReason}");
+            if (data.Keywords.Any(k => k is "Min" or "Max" || k.StartsWith("ManaAdj", StringComparison.Ordinal)) ||
+                data.ManaCost.Keys.Any(k => k.ToString() is "Min" or "Max"))
+                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 依赖 Deprecated 的 Min/Max/ManaAdj，禁止装配。");
             if (data.Size < 1 || data.Shape.Count != data.Size || data.Shape.Distinct().Count() != data.Size ||
                 data.Shape.Any(p => p.X < 0 || p.Y < 0) || data.Shape.Min(p => p.X) != 0 || data.Shape.Min(p => p.Y) != 0)
                 throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 的形状必须规范化、无重复且占格数等于正数 Size。");
-            if (data.ScanActivatable && (data.ManaCost.Values.Any(n => n <= 0) || data.ManaCost.Values.Sum() != data.Size))
+            if (data.HasActiveAbility && (data.ManaCost.Values.Any(n => n <= 0) || data.ManaCost.Values.Sum() != data.Size))
                 throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 的激活灵元总数必须等于 Size。");
         }
+
+        public static List<BackpackCell> CellsFromPosition(Card card)
+        {
+            if (card.Position is not BackpackPosition position)
+                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 缺少实例位置。");
+            var origin = BackpackCoordinates.ToCell(position);
+            return card.BaseData.Shape.Select(c => new BackpackCell(origin.X + c.X, origin.Y + c.Y)).ToList();
+        }
+
+        /// <summary>空间索引仅由实例位置生成，调用者必须完成全部原子校验后才提交。</summary>
+        public static void RebuildIndex(NpcCardData data)
+            => data.Placements = data.AllCards.Where(c => data.Field.Contains(c.Id) && c.Position != null)
+                .ToDictionary(c => c.Id, CellsFromPosition);
 
         /// <summary>校验装配快照；编辑中的布局可暂有未放置 Field 卡，战斗入口必须完整。</summary>
         public static BackpackLevelDefine Validate(NpcCardData data, bool requireComplete = true)
@@ -44,7 +60,10 @@ namespace UnityWorld.Game.Domain
             if (!data.Field.Contains(mainId))
                 throw new InvalidOperationException("主功法必须在 Field 内。");
             if (!data.Placements.TryGetValue(mainId, out var fixedCells) || !fixedCells.ToHashSet().SetEquals(definition.MainCardCells))
-                throw new InvalidOperationException("主功法固定位置不能移动或省略。");
+            {
+                var main = data.AllCards.Single(c => c.Id == mainId);
+                throw new InvalidOperationException($"主功法 {main.DefineId}/{mainId} 位置 {main.Position} 与固定格 {string.Join(",", definition.MainCardCells.Select(BackpackCoordinates.ToPosition))} 冲突，不能移动或省略。");
+            }
             if (requireComplete && !data.Placements.Keys.ToHashSet().SetEquals(data.Field))
                 throw new InvalidOperationException("每张 Field 卡必须有且仅有一份摆放，Reserve 卡不能占格。");
             var occupied = new HashSet<BackpackCell>();
@@ -53,13 +72,15 @@ namespace UnityWorld.Game.Domain
                 if (!data.Field.Contains(id)) throw new InvalidOperationException($"摆放的卡 {id} 不在 Field。");
                 var card = data.AllCards.Single(c => c.Id == id);
                 ValidateCard(card);
+                if (!cells.ToHashSet().SetEquals(CellsFromPosition(card)))
+                    throw new InvalidOperationException($"卡 {card.DefineId}/{id} 的实例位置 {card.Position} 与占格索引不一致。");
                 if (cells.Count != card.GetSize() || cells.Distinct().Count() != cells.Count)
                     throw new InvalidOperationException($"卡 {id} 占格数量不等于 Size，或存在重复格。");
-                if (cells.Any(c => !valid.Contains(c))) throw new InvalidOperationException($"卡 {id} 越出背包有效空间。");
+                if (cells.Any(c => !valid.Contains(c))) throw new InvalidOperationException($"卡 {card.DefineId}/{id} 位置 {card.Position} 越出背包有效空间。");
                 var origin = new BackpackCell(cells.Min(c => c.X), cells.Min(c => c.Y));
                 var relative = cells.Select(c => new BackpackCell(c.X - origin.X, c.Y - origin.Y)).ToHashSet();
                 if (!relative.SetEquals(card.BaseData.Shape)) throw new InvalidOperationException($"卡 {id} 摆放不符合定义形状。");
-                if (cells.Any(c => !occupied.Add(c))) throw new InvalidOperationException($"卡 {id} 与其他卡重叠。");
+                if (cells.Any(c => !occupied.Add(c))) throw new InvalidOperationException($"卡 {card.DefineId}/{id} 位置 {card.Position} 与其他卡重叠。");
             }
             return definition;
         }
@@ -77,6 +98,7 @@ namespace UnityWorld.Game.Domain
             if (candidate.MainGongFaCardId is int oldId && oldId != cardId)
             {
                 candidate.Placements.Remove(oldId);
+                candidate.AllCards.Single(c => c.Id == oldId).Position = null;
                 candidate.Field.Remove(oldId);
                 if (!candidate.Reserve.Contains(oldId)) candidate.Reserve.Add(oldId);
             }
@@ -85,12 +107,14 @@ namespace UnityWorld.Game.Domain
             var definition = NpcBackpackLayout.GetDefinition(candidate);
             candidate.Reserve.Remove(cardId);
             if (!candidate.Field.Contains(cardId)) candidate.Field.Add(cardId);
-            candidate.Placements[cardId] = [.. definition.MainCardCells];
+            var main = candidate.AllCards.Single(c => c.Id == cardId);
+            main.Position = BackpackCoordinates.ToPosition(new(definition.MainCardCells.Min(c => c.X), definition.MainCardCells.Min(c => c.Y)));
+            NpcBackpackLayout.RebuildIndex(candidate);
             NpcBackpackLayout.Validate(candidate, false);
             CommitBackpackLayout(candidate);
         }
 
-        /// <summary>按定义形状从原点摆放普通卡，同时由 Reserve/未分配移入 Field。</summary>
+        /// <summary>公开坐标从 (1,1) 起，按形状摆放并由 Reserve/未分配移入 Field。</summary>
         public void PlaceBackpackCard(int cardId, int x, int y)
         {
             if (CardData.MainGongFaCardId == cardId) throw new InvalidOperationException("主功法固定卡不可移动。");
@@ -100,15 +124,25 @@ namespace UnityWorld.Game.Domain
             NpcBackpackLayout.ValidateCard(card);
             candidate.Reserve.Remove(cardId);
             if (!candidate.Field.Contains(cardId)) candidate.Field.Add(cardId);
-            candidate.Placements[cardId] = card.BaseData.Shape.Select(c => new BackpackCell(c.X + x, c.Y + y)).ToList();
+            card.Position = new BackpackPosition(x, y);
+            NpcBackpackLayout.RebuildIndex(candidate);
             NpcBackpackLayout.Validate(candidate, false);
             CommitBackpackLayout(candidate);
+        }
+
+        /// <summary>专用几何回归入口：接受内部零起始坐标，不用于模板或公开配置。</summary>
+        public void PlaceBackpackCardInternal(int cardId, int x, int y)
+        {
+            var position = BackpackCoordinates.ToPosition(new(x, y));
+            PlaceBackpackCard(cardId, position.X, position.Y);
         }
 
         public BackpackLevelDefine ValidateBackpackLayout() => NpcBackpackLayout.Validate(CardData);
 
         private void CommitBackpackLayout(NpcCardData candidate)
         {
+            foreach (var card in CardData.AllCards)
+                card.Position = candidate.AllCards.Single(c => c.Id == card.Id).Position;
             CardData.MainGongFaCardId = candidate.MainGongFaCardId;
             CardData.MainGongFaLevel = candidate.MainGongFaLevel;
             CardData.Field = candidate.Field;

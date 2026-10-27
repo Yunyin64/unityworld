@@ -6,14 +6,19 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Shui": 1
-    }, 
+    },
     "Tags": [
       "水",
       "治疗"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_shui_shield",
@@ -22,32 +27,42 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Shui": 1
-    }, 
+    },
     "Tags": [
       "水",
       "防御",
       "盾"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_shui_freeze",
     "DisplayName": "冻结",
-    "Desc": "冻结敌方随机一张正在CD中的卡牌，暂停其CD 1 tick",
+    "Desc": "优先冻结敌方未冻结卡，下次完整扫描跳过并解冻，不叠加",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 30,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
-      "Shui": 1
-    }, 
+      "Shui": 2
+    },
     "Tags": [
       "水",
       "控制",
       "冻结"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_shui_weakness",
@@ -56,15 +71,20 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Shui": 1
-    }, 
+    },
     "Tags": [
       "水",
       "控制",
       "虚弱"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
   },
   {
     "ID": "card_shui_displace",
@@ -73,14 +93,19 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 100,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Shui": 2
-    }, 
+    },
     "Tags": [
       "水",
       "控制",
       "位移"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "Displace属于待定神修背包操作，保留并禁用。"
   }
 ]

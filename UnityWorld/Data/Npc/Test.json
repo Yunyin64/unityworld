@@ -12,15 +12,81 @@
     "InitialTraits": [],
     "InitCardDeck": [],
     "InitStat": {
-      "QiXue": 10,
+      "QiXue": 8,
       "TiPo": 10,
-      "QiGan": 10,
+      "QiGan": 30,
       "LingJi": 10,
-      "ShenShi": 10,
+      "ShenShi": 11,
       "WuXing": 10,
       "JiYuan": 10,
       "MeiLi": 10
-    }
+    },
+    "MainGongFaId": "jin_fa",
+    "InitCardPlacements": [
+      {
+        "Value": {
+          "X": 3,
+          "Y": 3
+        },
+        "Key": "jin_fa"
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 1
+        },
+        "Key": "card_jin_slash"
+      },
+      {
+        "Value": {
+          "X": 3,
+          "Y": 1
+        },
+        "Key": "card_fabao_jian"
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 2
+        },
+        "Key": "card_mu_haste"
+      },
+      {
+        "Value": {
+          "X": 3,
+          "Y": 2
+        },
+        "Key": "card_huo_burst"
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 4
+        },
+        "Key": "card_shui_freeze"
+      },
+      {
+        "Value": {
+          "X": 4,
+          "Y": 4
+        },
+        "Key": "card_tu_slow"
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "jin_fa",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 3,
+        "CardID": "card_fabao_jian",
+        "EquipID": "long_sword"
+      }
+    ]
   },
   {
     "ID": "test_npc_b",
@@ -35,9 +101,9 @@
     "InitialTraits": [],
     "InitCardDeck": [],
     "InitStat": {
-      "QiXue": 10,
+      "QiXue": 8,
       "TiPo": 10,
-      "QiGan": 10,
+      "QiGan": 30,
       "LingJi": 10,
       "ShenShi": 10,
       "WuXing": 10,
@@ -45,8 +111,49 @@
       "MeiLi": 10
     },
     "InitGongFa": [
-      { "DefineId": "ling_flame_heart", "CurrentPoint": 350 },
-      { "DefineId": "hun_frost_mind", "CurrentPoint": 150 }
+      {
+        "PlacementIndex": 1,
+        "DefineId": "huo_fa",
+        "CurrentPoint": 100
+      }
+    ],
+    "MainGongFaId": "huo_fa",
+    "InitCardPlacements": [
+      {
+        "Value": {
+          "X": 3,
+          "Y": 3
+        },
+        "Key": "huo_fa"
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 1
+        },
+        "Key": "card_huo_shot"
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 2
+        },
+        "Key": "card_huo_shot"
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 4
+        },
+        "Key": "card_shui_freeze"
+      },
+      {
+        "Value": {
+          "X": 4,
+          "Y": 4
+        },
+        "Key": "card_tu_slow"
+      }
     ]
   }
 ]

@@ -102,6 +102,7 @@ namespace UnityWorld.Game.Domain
             ctx.NpcTargets = APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx);
 
             string statId = ctx.GetValue("StatId", "");
+            LegacyCombatCompatibility.RequireSupportedStat(statId);
             float value = ctx.GetValue("Value", 0f);
             string modifierType = ctx.GetValue("ModifierType", "Flat");
             string sourceId = ctx.GetValue("SourceId", "");
@@ -152,21 +153,7 @@ namespace UnityWorld.Game.Domain
         [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.CombatCard, "Domain:String", "Position:String")]
         public static APIContext Displace(APIContext ctx)
         {
-            var caster = ctx.Caster;
-            if (caster == null) return ctx;
-            ctx.CardTargets = APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx);
-
-            string posStr = ctx.GetValue("Position", "Random");
-            if (!Enum.TryParse<ComabtCardDisplaceType>(posStr, true, out var pos))
-                pos = ComabtCardDisplaceType.Random;
-
-            foreach (var card in ctx.CardTargets)
-            {
-                var owner = card.Owner;
-                if (owner == null) continue;
-                owner.DisplaceCombatCard(card, pos);
-                LogMgr.Instance.Dbg("[Displace] {0} 的卡牌 {1} 位移至 {2}", owner.GetName(), card.DisplayName, pos);
-            }
+            LegacyCombatCompatibility.RejectPending("Displace");
             return ctx;
         }
 

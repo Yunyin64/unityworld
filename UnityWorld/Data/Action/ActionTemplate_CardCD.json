@@ -2,23 +2,42 @@
   {
     "ID": "Charge",
     "DisplayName": "充能",
-    "Desc": "充能{DoMain}目标卡牌，减少{ReduceTick}tick CD",
+    "Desc": "对{DoMain}整包增加{ReduceTick}个基准Tick进度，不受倍率影响",
     "FuncName": "Charge",
-    "Tags": ["辅助", "充能", "CD"],
+    "Tags": [
+      "辅助",
+      "充能"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "DoMain",
         "Type": "String",
-        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
-        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          1,
+          1
+        ]
       },
       {
         "Name": "ReduceTick",
         "Type": "Int",
-        "Value": [5, 10, 15, 20],
-        "Score": [1, 2, 3, 4]
+        "Value": [
+          5,
+          10,
+          15,
+          20
+        ],
+        "Score": [
+          1,
+          2,
+          3,
+          4
+        ]
       }
     ],
     "LuaTemplate": "Charge(ctx, \"{DoMain}\", {ReduceTick})"
@@ -26,23 +45,46 @@
   {
     "ID": "action_freeze",
     "DisplayName": "冻结",
-    "Desc": "冻结{DoMain}目标卡牌{FreezeTime}tick",
+    "Desc": "冻结{DoMain}范围内未冻结卡，下一次完整扫描跳过并解冻，不叠加",
     "FuncName": "Freeze",
-    "Tags": ["控制", "冻结", "CD"],
+    "Tags": [
+      "控制",
+      "冻结"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "DoMain",
         "Type": "String",
-        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
-        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
+        "Value": [
+          "Self",
+          "Random",
+          "Other",
+          "AboveAll",
+          "All",
+          "TargetAll",
+          "TargetRandom"
+        ],
+        "Score": [
+          1,
+          2,
+          2,
+          3,
+          4,
+          5,
+          4
+        ]
       },
       {
         "Name": "FreezeTime",
         "Type": "Int",
-        "Value": [5, 10, 15, 20, 30],
-        "Score": [1, 2, 3, 4, 5]
+        "Value": [
+          0
+        ],
+        "Score": [
+          1
+        ]
       }
     ],
     "LuaTemplate": "Freeze(ctx, \"{DoMain}\", {FreezeTime})"
@@ -50,49 +92,83 @@
   {
     "ID": "action_slow",
     "DisplayName": "减速",
-    "Desc": "减速{DoMain}目标卡牌{Stack}层",
+    "Desc": "对{DoMain}整包施加半速{DurationTicks}个真实Tick，同类只加时",
     "FuncName": "Slow",
-    "Tags": ["控制", "减速", "CD"],
+    "Tags": [
+      "控制",
+      "减速"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "DoMain",
         "Type": "String",
-        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
-        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          1,
+          1
+        ]
       },
       {
-        "Name": "Stack",
+        "Name": "DurationTicks",
         "Type": "Int",
-        "Value": [1, 2, 3],
-        "Score": [1, 2, 3]
+        "Value": [
+          10,
+          20,
+          30
+        ],
+        "Score": [
+          1,
+          2,
+          3
+        ]
       }
     ],
-    "LuaTemplate": "Slow(ctx, \"{DoMain}\", {Stack})"
+    "LuaTemplate": "Slow(ctx, \"{DoMain}\", {DurationTicks})"
   },
   {
     "ID": "action_haste",
     "DisplayName": "加速",
-    "Desc": "加速{DoMain}目标卡牌{Stack}层",
+    "Desc": "对{DoMain}整包施加双速{DurationTicks}个真实Tick，同类只加时",
     "FuncName": "Haste",
-    "Tags": ["辅助", "加速", "CD"],
+    "Tags": [
+      "辅助",
+      "加速"
+    ],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
         "Name": "DoMain",
         "Type": "String",
-        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
-        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          1,
+          1
+        ]
       },
       {
-        "Name": "Stack",
+        "Name": "DurationTicks",
         "Type": "Int",
-        "Value": [1, 2, 3],
-        "Score": [1, 2, 3]
+        "Value": [
+          10,
+          20,
+          30
+        ],
+        "Score": [
+          1,
+          2,
+          3
+        ]
       }
     ],
-    "LuaTemplate": "Haste(ctx, \"{DoMain}\", {Stack})"
+    "LuaTemplate": "Haste(ctx, \"{DoMain}\", {DurationTicks})"
   }
 ]

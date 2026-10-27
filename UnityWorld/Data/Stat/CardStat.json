@@ -8,8 +8,9 @@
     "MaxValue": 10000,
     "DisplayFormat": "Integer",
     "Category": "战斗",
-    "Description": ""
-  },{
+    "Description": "Legacy：保留旧CD查询定义；迁移主动机会不使用该属性推进出手，整包时间效果由背包负责。"
+  },
+  {
     "ID": "CDSpeed",
     "DisplayName": "CD加速层数。计算方式是特殊的，加速10就是快100%（变为二倍），加速-10就是慢100%（变为一半）。",
     "Type": "Card",
@@ -18,8 +19,9 @@
     "MaxValue": 100,
     "DisplayFormat": "Percent",
     "Category": "战斗",
-    "Description": ""
-  },{
+    "Description": "Legacy：保留旧CD查询定义；迁移主动机会不使用该属性推进出手，整包时间效果由背包负责。"
+  },
+  {
     "ID": "ManaAdj_Jin",
     "DisplayName": "Mana修正金",
     "Type": "Card",
@@ -28,8 +30,9 @@
     "MaxValue": 100,
     "DisplayFormat": "Integer",
     "Category": "战斗",
-    "Description": ""
-  },{
+    "Description": "Deprecated：背包点亮费用修正已废弃，保留定义供旧内容诊断；战斗装配与运行禁止使用。"
+  },
+  {
     "ID": "ManaAdj_Mu",
     "DisplayName": "Mana修正木",
     "Type": "Card",
@@ -38,8 +41,9 @@
     "MaxValue": 100,
     "DisplayFormat": "Integer",
     "Category": "战斗",
-    "Description": ""
-  },{
+    "Description": "Deprecated：背包点亮费用修正已废弃，保留定义供旧内容诊断；战斗装配与运行禁止使用。"
+  },
+  {
     "ID": "ManaAdj_Shui",
     "DisplayName": "Mana修正水",
     "Type": "Card",
@@ -48,8 +52,9 @@
     "MaxValue": 100,
     "DisplayFormat": "Integer",
     "Category": "战斗",
-    "Description": ""
-  },{
+    "Description": "Deprecated：背包点亮费用修正已废弃，保留定义供旧内容诊断；战斗装配与运行禁止使用。"
+  },
+  {
     "ID": "ManaAdj_Huo",
     "DisplayName": "Mana修正火",
     "Type": "Card",
@@ -58,8 +63,9 @@
     "MaxValue": 100,
     "DisplayFormat": "Integer",
     "Category": "战斗",
-    "Description": ""
-  },{
+    "Description": "Deprecated：背包点亮费用修正已废弃，保留定义供旧内容诊断；战斗装配与运行禁止使用。"
+  },
+  {
     "ID": "ManaAdj_Tu",
     "DisplayName": "Mana修正土",
     "Type": "Card",
@@ -68,6 +74,6 @@
     "MaxValue": 100,
     "DisplayFormat": "Integer",
     "Category": "战斗",
-    "Description": ""
+    "Description": "Deprecated：背包点亮费用修正已废弃，保留定义供旧内容诊断；战斗装配与运行禁止使用。"
   }
 ]

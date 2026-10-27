@@ -45,15 +45,15 @@ namespace UnityWorld.Game.Domain.Combat
                 }
                 else chosen = weights[Scene.Soul.Random(0, weights.Length)].Element;
                 Backpack.PlaceMana(cell, chosen);
-                Log($"生成灵元 {chosen} → 格({cell.X},{cell.Y})");
+                //Log($"生成灵元 {chosen} → 格({cell.X + 1},{cell.Y + 1})");
             }
             if (actual > 0) ChangeMP(-actual);
             Log($"补灵 计划={planned} 实际={actual} MP成本={actual} 剩余MP={Mp}");
             if (actual > 0) Scene.TriggerCombatEvent("OnManaDraw", new APIContext { Caster = this, Scene = Scene });
         }
 
-        // 旧转换/减灵特殊卡尚待内容重设计。明确拒绝旧入口，不能用聚合字典重建资源池。
-        public void ManaConvert(Dictionary<ElementType, int> cost) => throw new NotSupportedException("旧灵元转换卡需按背包位置重新设计。");
+        // 字典支付签名保留并拒绝；Convert/ReduceMana API直接操作背包格实体。
+        public void ManaConvert(Dictionary<ElementType, int> cost) => throw new NotSupportedException("旧字典转换入口已禁用；请通过 Convert API 回收格上灵元。");
         public int ConsumeMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池扣费，请通过背包扫描点亮卡牌。");
         public bool CanAffordMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池资源检查。");
         public bool TryCostMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池扣费。");
@@ -62,16 +62,16 @@ namespace UnityWorld.Game.Domain.Combat
 
         public int RecoverMP(int amount)
         {
-            int final = Math.Min(amount, GetCombatMpMax() - Mp);
+            int final = Math.Min(Math.Max(0, amount), Math.Max(0, GetCombatMpMax() - Mp));
             Log($"回复{final}MP ");
-            ChangeMP(final);
+            if (final > 0) ChangeMP(final);
             return final;
         }
         public int ReduceMP(int amount)
         {
-            int final = Math.Min(amount, Mp);
+            int final = Math.Min(Math.Max(0, amount), Math.Max(0, Mp));
             Log($"消耗{final}MP ");
-            ChangeMP(-final);
+            if (final > 0) ChangeMP(-final);
             return final;
         }
         private void ChangeMP(int amount)

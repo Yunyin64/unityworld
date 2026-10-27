@@ -8,6 +8,8 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public struct InitGongFaEntry
     {
+        /// <summary>可选的 1 起始位置条目序号，用于同定义实例绑定。</summary>
+        public int? PlacementIndex { get; set; }
         /// <summary>功法定义ID（对应 CultivationDefine.ID）</summary>
         public string DefineId { get; set; }
 
@@ -20,11 +22,21 @@ namespace UnityWorld.Game.Data
     /// </summary>
     public struct InitEquipEntry
     {
+        /// <summary>可选的 1 起始位置条目序号；重复 CardID 时必须指定。</summary>
+        public int? PlacementIndex { get; set; }
         /// <summary>装备卡定义ID（对应 CardDefine.ID，作为法宝/武器卡）</summary>
         public string CardID { get; set; }
 
         /// <summary>装备模板ID（对应 EquipDefine.ID，提供攻防数值和招式列表）</summary>
         public string EquipID { get; set; }
+    }
+
+    public sealed class InitCardPlacement
+    {
+        public string Key { get; set; } = "";
+        public BackpackPosition? Value { get; set; }
+        /// <summary>显式招式的父装备条目序号，1 起始；不会自动生成招式。</summary>
+        public int? ParentPlacementIndex { get; set; }
     }
 
     /// <summary>
@@ -52,6 +64,8 @@ namespace UnityWorld.Game.Data
         /// </summary>
         public string[] InitialTraits { get; set; } = [];
         public string[] InitCardDeck { get; set; } = [];
+        public string MainGongFaId { get; set; } = "";
+        public List<InitCardPlacement> InitCardPlacements { get; set; } = [];
 
         public Dictionary<string,int> InitStat  { get; set; } = new();
 

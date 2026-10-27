@@ -6,30 +6,40 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 20,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Jin": 1
-    }, 
+    },
     "Tags": [
       "金",
       "斩",
       "攻击"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_jin_charge",
     "DisplayName": "加速",
-    "Desc": "充能上方卡牌，使其CD减少1 tick",
+    "Desc": "己方背包充能10个基准Tick（旧空费用待定，未迁移禁用）",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
-    "Keywords": ["FaShu"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {},
     "Tags": [
       "金",
       "辅助",
       "充能"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_jin_heavy_slash",
@@ -38,15 +48,20 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 40,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
-      "Jin": 1
-    }, 
+      "Jin": 2
+    },
     "Tags": [
       "金",
       "斩",
       "攻击"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_jin_whirlwind",
@@ -55,14 +70,19 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 80,
-    "Keywords": ["FaShu"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {},
     "Tags": [
       "金",
       "斩",
       "攻击",
       "充能"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_jin_armor_break",
@@ -71,12 +91,17 @@
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 50,
-    "Keywords": ["FaShu"],
-    "ManaCost": {}, 
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {},
     "Tags": [
       "金",
       "破甲"
-    ]
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Unmigrated",
+    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
   },
   {
     "ID": "card_jin_armor",
@@ -85,15 +110,20 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 80,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
-      "Jin": 2
-    }, 
+      "Jin": 1
+    },
     "Tags": [
       "金",
       "防御",
       "盾"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_jin_needle",
@@ -102,14 +132,19 @@
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 20,
-    "Keywords": ["FaShu"],
+    "Keywords": [
+      "FaShu"
+    ],
     "ManaCost": {
       "Jin": 1
-    }, 
+    },
     "Tags": [
       "金",
       "刺",
       "攻击"
-    ]
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Deprecated",
+    "CompatibilityReason": "依赖已废弃ManaAdj_Jin；保留脚本并禁止装配和调用。"
   }
 ]

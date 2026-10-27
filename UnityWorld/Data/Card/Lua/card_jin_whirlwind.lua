@@ -1,6 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
 -- 回旋斩
--- 3点物理斩击，己方每次攻击时为自己充能10 tick
+-- 3点物理斩击，己方每次攻击时为己方背包充能10 tick
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -22,10 +22,10 @@ end
 --end
 
 function card:OnAttack(ctx)
-    -- 己方攻击时，为自己充能 10 tick
+    -- 己方攻击时，为己方背包充能 10 tick
     local self_card = self.m_Self
     if ctx.Caster == self.m_Owner then
-        Charge(ctx,self_card , 10)
+        Charge(ctx, "Self", 10)
     end
 end
 

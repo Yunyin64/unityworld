@@ -105,7 +105,8 @@ namespace UnityWorld.Game.Domain.Combat
         /// <param name="contestValue">拼点数值（攻击值/盾值/防值）</param>
         public void TryPushToPendingSlot(ContestType contestType, ElementType element, int contestValue)
         {
-            if (!_usingFromScan) throw new InvalidOperationException("只能由本次扫描使用入槽。");
+            if (!_usingActiveOpportunity) throw new InvalidOperationException("只能由本次受控主动使用入槽。");
+            if (BaseData.ProducesContest == false) throw new InvalidOperationException($"{DefineId} 声明无拼点却尝试入槽。");
             if (Owner.PendingSlot != null) throw new InvalidOperationException("唯一待发槽已占用。");
             // 构造 ContestData 快照
             var contestData = new ContestData
@@ -142,9 +143,8 @@ namespace UnityWorld.Game.Domain.Combat
         }
         public void Charge(int Tick)
         {
-            var old = Ticks["CD"];
-            Ticks["CD"] = Math.Min(Ticks["CD"]+Tick,GetCDMax());
-            Log($"  [{Owner.GetName()}] 充能: {old} +{Tick}-> {Ticks["CD"]} | {GetCDMax()}  ");
+            Owner.Backpack.Charge(Tick);
+            Log($"背包充能基准进度 +{Math.Max(0, Tick)}");
         }
     }
 }

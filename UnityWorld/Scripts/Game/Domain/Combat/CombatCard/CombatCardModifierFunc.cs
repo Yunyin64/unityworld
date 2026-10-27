@@ -115,6 +115,8 @@ namespace UnityWorld.Game.Domain.Combat
         public void AddCardBuff(CardModifier modifier)
         {
             if (modifier == null) return;
+            if (modifier.StatModifiers != null)
+                foreach (var stat in modifier.StatModifiers) LegacyCombatCompatibility.RequireSupportedStat(stat.StatId);
 
             // 查重：同 Id 叠层
             var existing = CardModifiers.FirstOrDefault(m => m.Id == modifier.Id);

@@ -9,7 +9,7 @@ card.CardData = {
     Size = 2,
     Cooldown = 4,
     CardType = "FaShu",
-    ManaCost = { Jin = 1 },
+    ManaCost = { Jin = 2 },
 }
 
 card.Keywords = {}

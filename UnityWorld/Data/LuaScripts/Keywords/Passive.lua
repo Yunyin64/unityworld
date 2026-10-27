@@ -1,17 +1,12 @@
--- Passive Keyword
--- 被动卡：Cooldown <= 0 时自动激活，跳过 CD 循环
+-- Passive 是可组合能力；不再由 Cooldown 派生，也不覆盖混合卡主动状态。
 local Passive = setmetatable({}, { __index = KeywordBase })
-
-function Passive.CheckCondition(card)
-    return card:GetCooldown() <= 0
-end
-
 function Passive.PreStart(card, ctx)
-    card:SetPhase(CombatCardPhase.Passive)
+    if not card.BaseData.HasActiveAbility then
+        card:SetPhase(CombatCardPhase.Passive)
+    end
 end
-
 function Passive.Start(card, ctx)
-    card:Apply()
+    -- 仅纯被动保留原来的开场 Apply；混合卡必须取得合法主动机会。
+    if not card.BaseData.HasActiveAbility then card:Apply() end
 end
-
 LuaMgr:RegisterKeyword("Passive", Passive)

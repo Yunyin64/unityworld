@@ -1,27 +1,6 @@
--- ══════════════════════════════════════════════════════════════
--- 冻结
--- 冻结敌方随机一张正在CD中的卡牌，暂停其CD 1 tick
--- ══════════════════════════════════════════════════════════════
-
+-- 优先冻结敌方范围内未冻结卡；下一次完整扫描跳过并解冻，不计时、不叠加。
 local card = setmetatable({}, { __index = CardBase })
-
-card.CardData = {
-    Size = 2,
-    Cooldown = 3,
-    CardType = "FaShu",
-    ManaCost = { Shui = 1 },
-}
-
-card.Keywords = {}
-
-function card:Contest(ctx)
-end
-
 function card:Apply(ctx)
-    Freeze(ctx, "TargetRandom", 10)
+    Freeze(ctx, "TargetRandom", 0)
 end
-
---function card:Tick(ctx)
---end
-
 return card
