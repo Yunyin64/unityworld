@@ -76,6 +76,7 @@
 # 本机共享技能入口由 skills/Connect-Skills.ps1 建立
 /UnityWorld/.claude/skills/ask
 /UnityWorld/.claude/skills/data
+/UnityWorld/.claude/skills/extract-md-excerpt
 /UnityWorld/.claude/skills/feature-req-analysis
 /UnityWorld/.claude/skills/generator_pack
 /UnityWorld/.claude/skills/git
