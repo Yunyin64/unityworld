@@ -16,24 +16,24 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 
 - 开场流程结束后停在 **Tick 0，已暂停**。观察模式不推进背景世界。
 - **播放**：每秒推进 10 个完整战斗 Tick；蓝白横向光线按双方各自扫描进度向下移动。
-- **暂停**：停止逻辑时钟，光线停在已提交位置，继续播放不补跑暂停期间的时间。
+- **暂停**：立即停止逻辑时钟，已提交的短动画收尾后静止；继续播放不补跑暂停期间的时间。
 - **单步 +1**：暂停时推进一个完整 Tick。充能可令一步扫过多行，仍只增加一个 Tick。
 - **重开当前案例（重启观察器）**：启动新的游戏窗口并退出旧窗口，保留完整案例、双种子、参与者顺序、步数配置及数据/核心版本。数据版本变化会停止重放并显示诊断；不会换回另一套默认数据。
 - 悬停卡片查看实例 ID、真实占格、点亮需求、冻结及累计使用/生效次数。两张同定义射击共用图片，但状态独立。
 
-属性区当前显示 HP、MP、护盾和 **SP 占用**，没有动态上限比例条。核心上限 getter 可能更新缓存或进入公式计算；初始缓存参考值仅保存在验证快照，不冒充最终上限。HP 归零后加伤口并恢复 HP 是核心行为，失败以核心结果为准。
+属性区显示气血 当前/上限、灵力 当前/上限、SP 占用/角色上限，以及护盾当前值。上限通过核心只读投影取得，不修改原属性缓存；SP 上限不是背包格数。不可用上限显示 ? 并提供诊断。HP 归零后加伤口并恢复 HP 是核心行为，失败以核心结果为准。
 
-光线扫过的短暂受光属于表现；持续点亮、灵元消失、卡牌使用取自真实快照或已有事件。现有接口未提供完整资源移动路径和每次最终伤害金额，因此不推算灵元飞行线路或伤害飘字。正常结束后仍可查看战报或重开。
+光线扫过的受光与真实点亮分开：核心按 Tick 提交终态快照和有序表现事实，客户端据此播放源格灵元飞入、分段底色点亮、通用新卡入包、待发槽内容对撞、头顶伤害和“卡名 · 生效”。卡面不再显示点亮 x/x，悬停仍可查看。待发槽底框与背包卡不移动；伤害来自实际扣血记录。正常结束会播完末步表现，再停留供查看或重开。
 
 ## 会话日志
 
-每个游戏进程使用独立的 `user://Logs/observer/<UTC时间>-<进程ID>/` 目录，保存 `input.json`、`core.log`、`records.jsonl`，错误时另写 `failure.txt`。实际路径出现在控制台 `[BattleObserver] ready ... logs=...` 和底部状态提示中；当前 Windows 项目位于 `%APPDATA%\Godot\app_userdata\修仙slg\Logs\observer\`。
+每个游戏进程使用独立的 `user://Logs/observer/<UTC时间>-<进程ID>/` 目录，保存 `input.json`、`core.log`、`records.jsonl`、`presentation-v1.jsonl`，错误时另写 `failure.txt`。实际路径出现在控制台 `[BattleObserver] ready ... logs=...` 和底部状态提示中；当前 Windows 项目位于 `%APPDATA%\Godot\app_userdata\修仙slg\Logs\observer\`。
 
 底部卷轴显示最近两条完整行摘要，悬停可看原文；点击“展开”可滚动查看全部原始战报，点击“收起”返回战斗。完整记录仍在会话文件中。重开采用新进程，是为了隔离核心静态 ID 和监听状态；不反射清理核心私有状态。
 
 ## 核心独立与共享验证
 
-- `UnityWorld/UnityWorld.csproj` 输出纯 .NET 8 `UnityWorld.dll`，不引用 Godot。本变更不修改核心源码、JSON/Lua、原控制台或玩法规格。
+- `UnityWorld/UnityWorld.csproj` 输出纯 .NET 8 `UnityWorld.dll`，不引用 Godot。核心仅增加纯观察记录及无副作用属性投影；JSON/Lua、原控制台入口与玩法规则保持不变。
 - `Xianxia.Client.csproj` 通过 ProjectReference 引用核心，客户端代码位于 `scripts/client/`。
 - `scripts/client/battle/` 为纯 C# 观察会话/值快照；`assets/testing/battle_cases.json` 保存共享案例输入。Godot 和 `tools/client-observer/` 编译同一份适配代码，不复制 NPC 数值或卡位。
 - 原 `UnityWorld/Console/UnityWorld.Console.csproj` 保留原测试入口作为兼容基线，没有改成读取新案例清单。
@@ -105,6 +105,22 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--
 
 观察器现复用 `scenes/tests/battle_assets_preview.tscn` 的 Theme、卷轴背包、画像属性框、战报框、待发牌面和人物 Atlas 裁切。`ObserverPreviewSkin` 只提取资源，不把预览节点加入场景树，也不运行其静态示例脚本。原预览文件保留原样。
 
-两侧背包、中央人物、上方待发与底部信息沿用旧构图，真实数据仍是当前五乘五布局。顶部提供播放/暂停/单步/当前案例重开。小格保留名称、点亮数与冻结/使用提示，悬停查看完整实例信息；属性框使用当前值，不显示未经审核的比例。
+两侧背包、中央人物、上方待发与底部信息沿用旧构图，真实数据仍是当前五乘五布局。顶部提供播放/暂停/单步/当前案例重开。小格保留名称、分段底色点亮与冻结/使用反馈，悬停查看完整实例信息；属性框显示当前值/真实上限。
 
 新画面见 `docs/art/observer-evidence/screenshots-preview-skin/`；本轮对照结果见 `preview-skin-verification.json`。
+
+## 2026-10-31 战斗表现扩展
+
+实现说明及当前验证证据见 `tools/client-observer/PRESENTATION.md`；核心事件、纯属性读取、UI 组件分别见同目录 `CORE_PRESENTATION.md`、`STAT_PROJECTION.md`、`UI_PRESENTATION.md`。上文 2026-10-27 数量与文件哈希是历史首版证据。
+
+新增验证入口：
+
+```powershell
+dotnet run --project tools/client-observer/ClientObserver.csproj -- --root=. --check-presentation-core
+dotnet run --project tools/client-observer/ClientObserver.csproj -- --root=. --verify-stat-projection
+dotnet run --project tools/client-observer/ClientObserver.csproj -- --root=. --check-presentation-player
+```
+
+`--observer-no-animations` 关闭客户端动画但继续显示完整状态。Godot 的 `--observer-presentation-fixture=<绝对目录>` 运行明确标注的纯值视觉案例，覆盖两格水卡半亮、混色冻结、通用入包和双槽平局等；不替代真实战斗验证。
+
+用户实测修正：扫描光线独立跟随最新逻辑进度；跨 Tick 的无关动画并行，生效名称与伤害淡出不阻塞新事件。同一多格卡的底色与图片合并连续绘制，长剑不再被内部格线切断。

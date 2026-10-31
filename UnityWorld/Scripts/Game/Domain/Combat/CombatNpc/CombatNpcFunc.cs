@@ -46,6 +46,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             if(amount <= 0) return;
             Hp += amount;
+            Scene?.MarkPresentationEffect();
         }
         public void CheckDefeated()
         {
@@ -54,6 +55,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (sp > spMax && Status == CombatantStatus.Active)
             {
                 Status = CombatantStatus.Defeated;
+                if (PendingSlot != null) RecordPending(PendingSlot, false, "Defeated");
                 PendingSlot = null;
                 Log($"当前SP={sp}/{spMax}，状态：{Status}");
             } 
@@ -120,13 +122,19 @@ namespace UnityWorld.Game.Domain.Combat
         {
             var data = PendingSlot;
             PendingSlot = null;
+            if (data != null) RecordPending(data, false, "Taken");
             return data;
         }
+        private void RecordPending(ContestData data, bool entered, string reason) =>
+            Scene.RecordPresentation(CombatPresentationKind.PendingChanged, this, data.SourceCard,
+                new PresentationOrigin(data.PresentationActionId, null, data.PresentationContestId, null),
+                pending: new PendingPresentation(entered, reason, data.ContestType.ToString(), data.Element.ToString(), data.ContestValue));
         /// <summary>
         /// 直击处理：攻击直击=全额伤害，防御直击=无事发生。
         /// </summary>
         public CombatResult Straight(ContestData contestData)
         {
+            using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(contestData.PresentationActionId, null, null, null));
             var attacker = contestData.OwnerNpc;
             var target = attacker.Target;
             var ret = new CombatResult();
@@ -158,9 +166,11 @@ namespace UnityWorld.Game.Domain.Combat
             if (data.OwnerNpc != this) throw new InvalidOperationException("待发数据所属者不匹配。");
             if (PendingSlot != null) throw new InvalidOperationException("每方待发槽只有一个位置。");
             PendingSlot = data;
+            RecordPending(data, true, "Entered");
         }
         public void AddDamage(DamageInfo dmg)
         {
+            dmg.PresentationOrigin ??= Scene.CapturePresentationOrigin();
             if (dmg.SourceNpc != null)
             {
                 var ctx = new APIContext { Caster = dmg.SourceNpc, SourceCard = dmg.SourceCard, Scene = Scene };
@@ -168,6 +178,7 @@ namespace UnityWorld.Game.Domain.Combat
                 dmg.SourceNpc.ModifyHook("DamageOut", ctx);
             }
             damageInfos.Enqueue(dmg);
+            if (dmg.Damage > 0) Scene.MarkPresentationEffect();
         }
         /// <summary>
         /// 对拼结算：同类非射击攻击胜出取全额，其他攻击胜出取差值。广播 OnContestOverflow。
@@ -187,6 +198,19 @@ namespace UnityWorld.Game.Domain.Combat
 
             int valueA = contestA.ContestValue;
             int valueB = contestB.ContestValue;
+            var contestId = Scene.NextPresentationIdentity();
+            contestA.PresentationContestId = contestB.PresentationContestId = contestId;
+            contestA.SourceCard.PresentationContestId = contestB.SourceCard.PresentationContestId = contestId;
+            using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(null, null, contestId, null));
+            if (Scene.PresentationRecordingEnabled)
+            {
+                ContestSidePresentation Side(ContestData data) => new(data.OwnerNpc.Id,
+                    CombatScene.PresentationCard(data.SourceCard), data.PresentationActionId,
+                    data.ContestType.ToString(), data.Element.ToString(), data.ContestValue);
+                Scene.RecordPresentation(CombatPresentationKind.ContestResolved, npcA, contestA.SourceCard,
+                    contest: new ContestPresentation(Side(contestA), Side(contestB), valueA == valueB ? null : valueA > valueB ? npcA.Id : npcB.Id,
+                        Math.Abs(valueA - valueB)));
+            }
 
             Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
 

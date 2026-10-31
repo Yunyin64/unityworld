@@ -1,11 +1,12 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Xianxia.Client.Battle;
 
 Console.OutputEncoding = Encoding.UTF8;
 try
 {
-    if (args.Length >= 3 && args[0] == "compare") return Compare(args[1], args[2]);
+    if (args.Length >= 3 && args[0] is "compare" or "compare-legacy") return Compare(args[1], args[2], args[0] == "compare-legacy");
     if (args.Contains("--help"))
     {
         Console.WriteLine("ClientObserver --root=<repo> --output=<frames.jsonl> [--observe-repeat=25] [--mode=play|step] [--no-event-observer] [--case-input=<full-case.json>] [--data-root=<directory-containing-Data>] [--stop-tick=N]\nClientObserver compare <baseline.jsonl> <candidate.jsonl>");
@@ -22,11 +23,30 @@ try
     var outputPath = Path.GetFullPath(Option("--output", Path.Combine(root, ".local-verification/battle-observer/frames.jsonl")));
     Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
     var dataRoot = Path.GetFullPath(Option("--data-root", Path.Combine(root, "UnityWorld")));
+    // 每组核心验证独占新进程，不能与默认战斗共享静态 ID/监听。
+    var check = args.Contains("--verify-stat-projection") ? "StatProjectionChecks"
+        : args.Contains("--check-presentation-core") ? "PresentationCoreChecks"
+        : args.Contains("--check-presentation-player") ? "PresentationPlayerChecks" : null;
+    if (check != null)
+    {
+        var type = typeof(BattleObserverSession).Assembly.GetType("Xianxia.Client.Battle." + check)
+            ?? throw new InvalidOperationException("未包含验证入口：" + check);
+        var run = type.GetMethod("Run")!;
+        run.Invoke(null, run.GetParameters().Length == 0 ? null : new object[] { check == "PresentationCoreChecks" ? root : dataRoot });
+        return 0;
+    }
     var repeat = int.Parse(Option("--observe-repeat", "0"));
     var stopTick = int.Parse(Option("--stop-tick", input.MaxTicks.ToString()));
     var mode = Option("--mode", "step");
     if (repeat < 0 || stopTick < 0 || mode is not ("step" or "play")) throw new ArgumentException("无效的观察次数、结束步数或播放模式。");
-    using var session = new BattleObserverSession(!args.Contains("--no-event-observer"));
+    using var session = new BattleObserverSession(!args.Contains("--no-event-observer"), !args.Contains("--no-presentation"));
+    using var presentationOutput = new StreamWriter(outputPath + ".presentation.jsonl", false, new UTF8Encoding(false));
+    var presentationFrames = 0;
+    session.PresentationCommitted += batch =>
+    {
+        if (batch.Tick != presentationFrames++) throw new InvalidOperationException("表现批次缺帧。");
+        presentationOutput.WriteLine(JsonSerializer.Serialize(batch, BattleJson.Options));
+    };
     session.Initialize(input, dataRoot);
     File.WriteAllText(outputPath + ".case.json", session.Case.ToJson(), new UTF8Encoding(false));
     File.WriteAllText(outputPath + ".identity.json", JsonSerializer.Serialize(new
@@ -117,7 +137,7 @@ catch (Exception error)
     return 1;
 }
 
-static int Compare(string baseline, string candidate)
+static int Compare(string baseline, string candidate, bool legacy = false)
 {
     if (!File.Exists(baseline + ".case.json") || !File.Exists(candidate + ".case.json"))
     {
@@ -126,8 +146,8 @@ static int Compare(string baseline, string candidate)
     }
     else
     {
-        using var leftCase = JsonDocument.Parse(File.ReadAllText(baseline + ".case.json"));
-        using var rightCase = JsonDocument.Parse(File.ReadAllText(candidate + ".case.json"));
+        using var leftCase = JsonDocument.Parse(Normalize(File.ReadAllText(baseline + ".case.json"), legacy, true));
+        using var rightCase = JsonDocument.Parse(Normalize(File.ReadAllText(candidate + ".case.json"), legacy, true));
         var identityDifference = FirstDifference(leftCase.RootElement, rightCase.RootElement, "case");
         if (identityDifference != null) { Console.Error.WriteLine("OBSERVER_DIFF " + identityDifference); return 2; }
     }
@@ -140,11 +160,23 @@ static int Compare(string baseline, string candidate)
         if (!hasLeft && !hasRight) { Console.WriteLine($"OBSERVER_MATCH frames={line}"); return 0; }
         line++;
         if (hasLeft != hasRight) { Console.Error.WriteLine($"OBSERVER_DIFF line={line} frame count baseline={hasLeft} candidate={hasRight}"); return 2; }
-        using var leftJson = JsonDocument.Parse(left.Current);
-        using var rightJson = JsonDocument.Parse(right.Current);
+        using var leftJson = JsonDocument.Parse(Normalize(left.Current, legacy, false));
+        using var rightJson = JsonDocument.Parse(Normalize(right.Current, legacy, false));
         var difference = FirstDifference(leftJson.RootElement, rightJson.RootElement, "$");
         if (difference != null) { Console.Error.WriteLine($"OBSERVER_DIFF line={line} {difference}"); return 2; }
     }
+}
+
+// 迁移对照只忽略明确新增的展示字段与已知改变的程序集身份；其它输入/玩法/Trace 严格比较。
+static string Normalize(string json, bool legacy, bool input)
+{
+    if (!legacy) return json;
+    var node = JsonNode.Parse(json)!;
+    if (input) node.AsObject().Remove("coreVersion");
+    else if (node["snapshot"]?["participants"] is JsonArray participants)
+        foreach (var npc in participants)
+            foreach (var key in new[] { "hpMax", "mpMax", "spMax", "statReadError" }) npc!.AsObject().Remove(key);
+    return node.ToJsonString();
 }
 
 static string? FirstDifference(JsonElement a, JsonElement b, string path)

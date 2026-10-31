@@ -38,6 +38,7 @@ namespace UnityWorld.Game.Domain.Combat
             combatNpc.Owner = npc;
             combatNpc._loadoutSnapshot = npc.GetCardLoadoutSnapshot();
             combatNpc.Backpack = new CombatBackpack(combatNpc._loadoutSnapshot);
+            combatNpc.Backpack.PresentationOwner = combatNpc;
             combatNpc._loadoutSnapshot.AllCards = combatNpc._loadoutSnapshot.AllCards
                 .Select(c => (Card)CombatCard.CreateFromData(c)).ToList();
             if (combatNpc.GetSpMax() > combatNpc.Backpack.Capacity)
@@ -115,16 +116,26 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void ApplyDamage(DamageInfo info)
         {
+            using var presentationOrigin = Scene.EnterPresentationOrigin(info.PresentationOrigin);
             // 守方减伤管线
             var ctx = new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene };
             ctx.Set("DamageInfo", info);
             this.ModifyHook("DamageIn", ctx);
 
+            var hpBefore = Hp;
+            var shieldBefore = ShieldValue;
             var finalval = info.Damage;
             finalval = ApplyShieldAbsorb(info);
             if(finalval > 0)
             {
                 Hp -= finalval;
+            }
+            // 必须先保存本次扣血事实，OnDamage 和伤口恢复随后可能再次改变 HP。
+            Scene.RecordPresentation(CombatPresentationKind.DamageResolved, this, info.SourceCard, info.PresentationOrigin,
+                damage: new DamagePresentation(info.SourceNpc?.Id, info.SourceCard == null ? null : CombatScene.PresentationCard(info.SourceCard),
+                    Id, hpBefore, Hp, Math.Max(0, hpBefore - Hp), Math.Max(0, shieldBefore - ShieldValue), info.damageType.ToString(), info.ElementType.ToString()));
+            if(finalval > 0)
+            {
                 Scene.TriggerCombatEvent("OnDamage" , new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene });
             }
             Log($"受到伤害: {finalval}，剩余 HP: {Hp}");

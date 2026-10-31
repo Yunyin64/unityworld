@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="*Checks.cs" />
     <Compile Include="../../scripts/client/battle/**/*.cs" LinkBase="Battle" />
     <ProjectReference Include="../../UnityWorld/UnityWorld.csproj" />
   </ItemGroup>

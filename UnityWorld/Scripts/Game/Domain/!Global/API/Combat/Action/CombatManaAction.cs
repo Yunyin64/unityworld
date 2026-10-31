@@ -103,7 +103,9 @@ namespace UnityWorld.Game.Domain
                     if (candidates.Count == 0) break;
 
                     var picked = candidates[Scene.Soul.Random(0, candidates.Count)];
+                    var before = picked.CurrentStack;
                     picked.ReduceStack(1);
+                    if (picked.CurrentStack != before) Scene.MarkPresentationEffect();
                 }
             }
             return ctx;

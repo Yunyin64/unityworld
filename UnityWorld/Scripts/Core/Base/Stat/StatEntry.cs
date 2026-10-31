@@ -104,6 +104,23 @@ namespace UnityWorld.Core
 
         private void Recalculate()
         {
+            var result = Evaluate(_addValue, _modifiers, _ownerBlock.GetFinalCache(), isolatedExpression: false);
+            _isDirty = false;
+            _ownerBlock.GetFinalCache()[_statId] = result;
+        }
+
+        /// <summary>干净条目读原缓存；脏条目只对值副本求值，不改变原来的失效语义。</summary>
+        internal float GetReadOnlyFinalValue()
+        {
+            if (!_isDirty) return _cachedFinalValue;
+            return Evaluate(_addValue, _modifiers.ToArray(),
+                new Dictionary<string, object>(_ownerBlock.GetFinalCache()), isolatedExpression: true);
+        }
+
+        // 两条读取路径共用运算顺序；只有正常读取借用旧 Expression 并在外层写回。
+        private float Evaluate(float addValue, IEnumerable<StatModifier> modifiers,
+            Dictionary<string, object> parameters, bool isolatedExpression)
+        {
             // ① Primary 属性 baseValue=0（由 AddValue 承载基础值）；非 Primary 从 Define 读 DefaultValue
             var define = StatDefineMgr.Instance?.Get(_statId);
             float baseValue = (define != null && define.BaseType == StatBaseType.Primary)
@@ -112,8 +129,8 @@ namespace UnityWorld.Core
             var formulaStr = define.ExtraBase;
             if (!string.IsNullOrEmpty(formulaStr))
             {
-                var expr = StatBlock.GetExpression(formulaStr);
-                expr.Parameters = _ownerBlock.GetFinalCache();
+                var expr = isolatedExpression ? new Expression(formulaStr) : StatBlock.GetExpression(formulaStr);
+                expr.Parameters = parameters;
                 baseValue = Convert.ToSingle(expr.Evaluate()) + baseValue;
             }
 
@@ -125,7 +142,7 @@ namespace UnityWorld.Core
             float clampMin = float.MinValue;
             float clampMax = float.MaxValue;
 
-            foreach (var mod in _modifiers)
+            foreach (var mod in modifiers)
             {
                 switch (mod.Type)
                 {
@@ -152,7 +169,7 @@ namespace UnityWorld.Core
             float result = (baseValue + flatSum) * (1f + percentSum);
 
             // ③ + AddValue
-            result += _addValue;
+            result += addValue;
 
             // ④ Override（在 AddValue 之后！）
             if (hasOverride)
@@ -164,8 +181,7 @@ namespace UnityWorld.Core
             result = MathF.Max(clampMin, MathF.Min(clampMax, result));
 
             // ⑥ Define 的 MinValue/MaxValue 硬夹紧在 StatBlock.Get 中应用
-            _isDirty = false;
-            _ownerBlock.GetFinalCache()[_statId] = result; // 更新缓存
+            return result;
         }
     }
 }

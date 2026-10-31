@@ -77,6 +77,7 @@ namespace UnityWorld.Game.Domain.Combat
         private void ChangeMP(int amount)
         {
             Mp += amount;
+            if (amount != 0) Scene?.MarkPresentationEffect();
             Scene.TriggerCombatEvent("OnMPChanged", new APIContext { Caster = this, Scene = Scene });
         }
 

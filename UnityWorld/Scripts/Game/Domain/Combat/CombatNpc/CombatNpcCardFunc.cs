@@ -10,7 +10,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>候补池：静默，不Tick、不占SP</summary>
         protected List<CombatCard> Reserve { get; set; } = new();
 
-        private Queue<(ComabtFieldChangeType,CombatCard,ComabtCardDisplaceType)> _changes = new();
+        private Queue<(ComabtFieldChangeType,CombatCard,ComabtCardDisplaceType,PresentationOrigin)> _changes = new();
 
         public List<CombatCard> GetField()
         {
@@ -35,12 +35,20 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void RemoveCombatCard(CombatCard card)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Remove, card, ComabtCardDisplaceType.None));
+            _changes.Enqueue((ComabtFieldChangeType.Remove, card, ComabtCardDisplaceType.None, Scene.CapturePresentationOrigin()));
+            if (Field.Contains(card)) Scene.MarkPresentationEffect();
         }
 
         public void AddCombatCard(CombatCard card)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Add, card, ComabtCardDisplaceType.None));
+            _changes.Enqueue((ComabtFieldChangeType.Add, card, ComabtCardDisplaceType.None, Scene.CapturePresentationOrigin()));
+            if (Scene.PresentationRecordingEnabled && CanObserveAdd(card)) Scene.MarkPresentationEffect();
+        }
+        // 只做无副作用的请求有效性检查；验证失败仍由原 DealFieldChange 路径负责抛出。
+        private bool CanObserveAdd(CombatCard card)
+        {
+            try { return card != null && !Backpack.Placements.ContainsKey(card.Id) && Backpack.FindPlacement(card, card.HasKeyword("Wound")) != null; }
+            catch { return false; }
         }
         
         public void DisplaceCombatCard(CombatCard card, ComabtCardDisplaceType toPlace)
@@ -91,15 +99,21 @@ namespace UnityWorld.Game.Domain.Combat
         {
             while (_changes.Count > 0)
             {
-                var (changeType, card, displaceType) = _changes.Dequeue();
+                var (changeType, card, displaceType, origin) = _changes.Dequeue();
+                using var presentationOrigin = Scene.EnterPresentationOrigin(origin);
                 switch (changeType)
                 {
                     case ComabtFieldChangeType.Add:
+                        var manaBefore = Scene.PresentationRecordingEnabled ? Backpack.Mana.ToDictionary(p => p.Key, p => p.Value) : null;
                         var replaced = Backpack.Insert(card, card.HasKeyword("Wound"));
                         Field.Add(card);
                         card.Owner = this;
                         card.PreStart();
                         card.Start();
+                        if (manaBefore != null)
+                            Scene.RecordPresentation(CombatPresentationKind.CardAddedToBackpack, this, card, origin,
+                                added: new CardAddedPresentation(CombatScene.PresentationCopy(replaced.Select(c =>
+                                    new PresentationManaCell(new PresentationCell(c.X, c.Y), manaBefore[c].ToString())))));
                         foreach (var cell in replaced) Log($"伤口替代灵元 卡={card.DefineId} 格({cell.X + 1},{cell.Y + 1})");
                         Log($"[Field+] {card.DisplayName}，当前SP={GetSp()}");
                         break;

@@ -8,6 +8,7 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public class DamageInfo:ContextBase
     {
+        internal PresentationOrigin PresentationOrigin { get; set; }
         // ── 来源 / 目标 ──────────────────────────────────
         public CombatNpc SourceNpc { get; set; }
         public CombatCard SourceCard { get; set; }
@@ -36,6 +37,7 @@ namespace UnityWorld.Game.Domain.Combat
             TargetNpc = data.OwnerNpc.GetTarget();
             damageType = data.ToDamageType();
             ElementType = data.Element;
+            PresentationOrigin = new PresentationOrigin(data.PresentationActionId, null, data.PresentationContestId, null);
 
         }
         public DamageInfo(CombatNpc source, CombatCard sourceCard, CombatNpc target,

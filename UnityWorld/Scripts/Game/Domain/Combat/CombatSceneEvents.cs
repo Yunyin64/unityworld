@@ -7,6 +7,8 @@ namespace UnityWorld.Game.Domain.Combat
         // 诊断上限，不是发动次数或冷却规则；正常独立事件各自建立新链。
         public const int EventChainBudget = 10000;
         private readonly Queue<APIContext> _eventQueue = new();
+        // 关联旁表与玩法队列同步释放，不改变 APIContext 或事件排序。
+        private readonly Dictionary<long, PresentationOrigin> _eventPresentationOrigins = new();
         private readonly Queue<string> _eventHistory = new();
         private readonly Stack<(long ChainId, List<int> Path)> _activationFrames = new();
         private long _nextEventId;
@@ -46,6 +48,8 @@ namespace UnityWorld.Game.Domain.Combat
             ctx.Scene = this;
             ctx.EventName = eventName;
             ctx.EventId = ++_nextEventId;
+            var presentationOrigin = CapturePresentationOrigin();
+            if (presentationOrigin != null) _eventPresentationOrigins[ctx.EventId] = presentationOrigin;
             if (_activationFrames.TryPeek(out var frame))
             {
                 ctx.ChainId = frame.ChainId;
@@ -71,6 +75,8 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 while (_eventQueue.TryDequeue(out var ctx))
                 {
+                    _eventPresentationOrigins.Remove(ctx.EventId, out var presentationOrigin);
+                    using var presentation = EnterPresentationOrigin(presentationOrigin);
                     _currentEvent = ctx;
                     counts.TryGetValue(ctx.ChainId, out int count);
                     counts[ctx.ChainId] = ++count;
@@ -100,7 +106,7 @@ namespace UnityWorld.Game.Domain.Combat
                 _collectingEventOpportunities = false;
                 _eventOpportunities.Clear();
                 _drainingEvents = false;
-                if (EventFailure != null) _eventQueue.Clear();
+                if (EventFailure != null) { _eventQueue.Clear(); _eventPresentationOrigins.Clear(); }
             }
         }
 

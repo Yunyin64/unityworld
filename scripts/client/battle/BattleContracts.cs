@@ -25,7 +25,14 @@ public sealed record BackpackSnapshot(int Width, int Height, int Capacity, int M
 /// <summary>Copied current numbers. Nullable maxima are only initial existing-cache references, never final dynamic limits.</summary>
 public sealed record NpcSnapshot(int Id, string Name, string Team, string Status, int Hp, int Mp, int Sp, int Shield,
     float? HpMaxReference, float? MpMaxReference, float? SpMaxReference, BackpackSnapshot Backpack,
-    IReadOnlyList<CardSnapshot> Cards, IReadOnlyList<BuffSnapshot> Buffs, PendingSnapshot? Pending);
+    IReadOnlyList<CardSnapshot> Cards, IReadOnlyList<BuffSnapshot> Buffs, PendingSnapshot? Pending)
+{
+    // 参考字段保留以兼容旧逐 Tick 基线；显示使用当前只读求值结果。
+    public int? HpMax { get; init; }
+    public int? MpMax { get; init; }
+    public int? SpMax { get; init; }
+    public string? StatReadError { get; init; }
+}
 /// <summary>One participant's explicit core result.</summary>
 public sealed record CombatantResultSnapshot(int NpcId, string Team, string Status);
 /// <summary>A normal core result; runtime failure is represented separately.</summary>

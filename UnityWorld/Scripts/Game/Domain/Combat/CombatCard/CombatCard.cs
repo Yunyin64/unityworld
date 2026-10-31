@@ -19,11 +19,14 @@ namespace UnityWorld.Game.Domain.Combat
         private bool _usingActiveOpportunity;
         private bool _awaitingApply;
         private APIContext _activationEvent;
+        internal long? PresentationActionId { get; private set; }
+        internal long? PresentationContestId { get; set; }
         public bool IsFrozen { get; private set; }
         public bool Freeze()
         {
             if (IsFrozen) return false;
             IsFrozen = true;
+            Scene?.MarkPresentationEffect();
             Log("冻结：下次完整扫描跳过后解除");
             return true;
         }
@@ -152,8 +155,19 @@ namespace UnityWorld.Game.Domain.Combat
             _activationEvent = eventCtx;
             eventCtx?.SuccessfulEventCards.Add(Id);
             UseCount++;
+            var parentOrigin = Scene.CapturePresentationOrigin();
+            PresentationActionId = Scene.NextPresentationIdentity();
+            PresentationContestId = null;
+            using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(PresentationActionId,
+                parentOrigin?.ActionId, parentOrigin?.ContestId, null));
             Log(eventCtx == null ? "扫描机会提交 Use" : $"条件机会提交 Use Event={eventCtx.EventId} Chain={eventCtx.ChainId} Trigger={eventCtx.EventName} Caster={eventCtx.Caster?.Id} Source={eventCtx.SourceCard?.Id}:{eventCtx.SourceCard?.DefineId}");
+            var resourcesBefore = Scene.PresentationRecordingEnabled
+                ? CombatScene.PresentationCopy(Owner.Backpack.AssignedTo(Id).Select(e => e.ToString())) : null;
             Owner.Backpack.BeginNextActivation(Id);
+            if (resourcesBefore != null)
+                Scene.RecordPresentation(CombatPresentationKind.CardUsed, Owner, this,
+                    origin: new PresentationOrigin(PresentationActionId, parentOrigin?.ActionId, parentOrigin?.ContestId, null),
+                    used: new CardUsedPresentation(resourcesBefore, Array.AsReadOnly(Array.Empty<string>())));
             Scene.BeginActivation(this, eventCtx);
             try { Use(); }
             finally
@@ -189,11 +203,13 @@ namespace UnityWorld.Game.Domain.Combat
             }
             try
             {
+                using var presentation = Scene.BeginPresentationEffect(this, "Apply", active: true);
                 _awaitingApply = false;
                 ApplyCount++;
                 CallLua("Apply");
                 Scene.TriggerCombatEvent("OnApply", CreateCtx());
                 if (BaseData.HasActiveAbility) SetPhase(CombatCardPhase.Finished);
+                presentation?.Complete();
             }
             finally
             {
@@ -264,8 +280,10 @@ namespace UnityWorld.Game.Domain.Combat
 
                 try
                 {
+                    using var presentation = Scene?.BeginPresentationEffect(this, "Keyword:" + kw + ":" + hookName);
                     func.Call(this, ctx);
                     Scene?.ThrowIfEventAborted();
+                    presentation?.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -285,8 +303,10 @@ namespace UnityWorld.Game.Domain.Combat
 
         private void InvokeOwnHook(string hookName, APIContext ctx)
         {
+            using var presentation = Scene?.BeginPresentationEffect(this, hookName);
             this.CallLuaHook<bool>(hookName, env, ctx);
             Scene?.ThrowIfEventAborted();
+            presentation?.Complete();
         }
 
         public void End()

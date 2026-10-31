@@ -26,7 +26,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void ConsumeAmount(int num = 1)
         {
+            var before = CurrentAmount;
             CurrentAmount = Math.Max(0, CurrentAmount - num);
+            if (CurrentAmount != before) Scene?.MarkPresentationEffect();
             //Trigger:触发消耗弹药事件
             
             //Trigger:如果弹药耗尽，触发耗尽弹药事件

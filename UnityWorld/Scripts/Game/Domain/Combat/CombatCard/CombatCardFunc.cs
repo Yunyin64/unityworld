@@ -116,6 +116,7 @@ namespace UnityWorld.Game.Domain.Combat
                 ContestValue = contestValue,
                 SourceCard = this
             };
+            contestData.PresentationActionId = PresentationActionId;
 
 
             // 入槽即切换阶段，防止下一 Tick 再次被收集

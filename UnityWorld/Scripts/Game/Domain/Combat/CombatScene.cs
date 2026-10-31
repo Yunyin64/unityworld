@@ -262,6 +262,8 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var (eventId, scope, listener) in _registeredListeners)
                 EventMgr.Instance?.RemoveEvent(eventId, scope, listener);
             _registeredListeners.Clear();
+            ClearPresentationEvents();
+            _eventPresentationOrigins.Clear();
             if (ReferenceEquals(mainScene, this)) mainScene = null;
 
 

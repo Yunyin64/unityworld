@@ -27,6 +27,7 @@ namespace UnityWorld.Game.Domain.Combat
         private void OnCardBuffTriggerEvent(string eventId, ScopeKey scope, object args)
         {
             if (CardModifiers.Count == 0) return;
+            using var presentation = Scene?.BeginPresentationEffect(this, "CardBuffTrigger:" + eventId);
 
             var toRemove = new List<CardModifier>();
 
@@ -41,7 +42,9 @@ namespace UnityWorld.Game.Domain.Combat
                 }
                 else
                 {
+                    var before = mod.CurrentStack;
                     mod.ReduceStack(1);
+                    if (mod.CurrentStack != before) Scene?.MarkPresentationEffect();
                     if (mod.IsExpired())
                     {
                         toRemove.Add(mod);
@@ -53,8 +56,10 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 UnregisterCardBuffTrigger(mod);
                 CardModifiers.Remove(mod);
+                Scene?.MarkPresentationEffect();
                 Log($"[CardBuff] 触发器移除: {mod.Id} (trigger={eventId})");
             }
+            presentation?.Complete();
         }
 
         // ══════════════════════════════════════════════════════════
@@ -122,15 +127,20 @@ namespace UnityWorld.Game.Domain.Combat
             var existing = CardModifiers.FirstOrDefault(m => m.Id == modifier.Id);
             if (existing != null)
             {
+                var before = (existing.CurrentStack, existing.RemainingTime);
                 existing.AddStack(modifier.CurrentStack);
+                if (before != (existing.CurrentStack, existing.RemainingTime) && HasPresentationContribution(existing)) Scene?.MarkPresentationEffect();
                 Log($"[CardBuff] 叠层: {modifier.Id} (Stack={existing.CurrentStack})");
                 return;
             }
 
             CardModifiers.Add(modifier);
+            if (HasPresentationContribution(modifier)) Scene?.MarkPresentationEffect();
             RegisterCardBuffTrigger(modifier);
             Log($"[CardBuff] 添加: {modifier.Id} (Stack={modifier.CurrentStack}, Expire={modifier.ExpirePolicy})");
         }
+        private static bool HasPresentationContribution(CardModifier modifier) => modifier.StatModifiers?.Any(s =>
+            s.Value != 0 || s.Type is ModifierType.Override or ModifierType.ClampMin or ModifierType.ClampMax) == true;
 
         // ══════════════════════════════════════════════════════════
         //  RemoveCardBuff
@@ -145,6 +155,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (modifier == null) return;
             UnregisterCardBuffTrigger(modifier);
             CardModifiers.Remove(modifier);
+            Scene?.MarkPresentationEffect();
             Log($"[CardBuff] 移除: {id}");
         }
 

@@ -9,6 +9,8 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public class ContestData:IDomainDataBase
     {
+        internal long? PresentationActionId { get; set; }
+        internal long? PresentationContestId { get; set; }
         /// <summary>拼点类型（Zhan/Ci/Da/SheJi/Shield/Block）</summary>
         public ContestType ContestType { get; set; } = ContestType.Zhan;
 

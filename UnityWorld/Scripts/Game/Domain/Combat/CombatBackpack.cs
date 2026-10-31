@@ -7,6 +7,7 @@ namespace UnityWorld.Game.Domain.Combat
     /// <summary>单场战斗独有的空间、灵元和扫描状态。没有世界数据引用。</summary>
     public sealed class CombatBackpack
     {
+        internal CombatNpc PresentationOwner { get; set; }
         private readonly HashSet<BackpackCell> _validCells;
         private readonly Dictionary<BackpackCell, int> _cardCells = new();
         private readonly Dictionary<int, IReadOnlyList<BackpackCell>> _placements = new();
@@ -65,6 +66,7 @@ namespace UnityWorld.Game.Domain.Combat
                 throw new InvalidOperationException($"灵元无法占据格 ({cell.X + 1},{cell.Y + 1})。");
             if (element.Equals(ElementType.None)) throw new InvalidOperationException("灵元必须有元素。");
             _mana.Add(cell, element);
+            PresentationOwner?.Scene?.MarkPresentationEffect();
         }
 
         /// <summary>只接收仍缺少的匹配元素；数量和匹配要求来自卡的资源定义。</summary>
@@ -79,8 +81,15 @@ namespace UnityWorld.Game.Domain.Combat
         public bool TryAssign(BackpackCell cell, CombatCard card)
         {
             if (!_mana.TryGetValue(cell, out var element) || !CanAccept(card, element)) return false;
+            var scene = card.Scene;
+            var before = scene?.PresentationRecordingEnabled == true
+                ? CombatScene.PresentationCopy(_assigned[card.Id].Select(e => e.ToString())) : null;
             _mana.Remove(cell);
             _assigned[card.Id].Add(element);
+            if (before != null)
+                scene.RecordPresentation(CombatPresentationKind.ManaAssigned, card.Owner, card,
+                    mana: new ManaAssignedPresentation(new PresentationCell(cell.X, cell.Y), element.ToString(), before,
+                        CombatScene.PresentationCopy(_assigned[card.Id].Select(e => e.ToString()))));
             return true;
         }
 
@@ -91,20 +100,20 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>加速按真实 Tick 延时，不叠加倍率。</summary>
         public void AddHaste(int ticks)
         {
-            if (ticks > 0) HasteTicks = checked(HasteTicks + ticks);
+            if (ticks > 0) { HasteTicks = checked(HasteTicks + ticks); PresentationOwner?.Scene?.MarkPresentationEffect(); }
         }
 
         /// <summary>减速按真实 Tick 延时，不抵消加速时长。</summary>
         public void AddSlow(int ticks)
         {
-            if (ticks > 0) SlowTicks = checked(SlowTicks + ticks);
+            if (ticks > 0) { SlowTicks = checked(SlowTicks + ticks); PresentationOwner?.Scene?.MarkPresentationEffect(); }
         }
 
         /// <summary>充能增加正常速度折算的进度，不应用速度倍率或消耗持续时间。</summary>
         public void Charge(double baselineTicks)
         {
             if (!double.IsFinite(baselineTicks)) throw new ArgumentOutOfRangeException(nameof(baselineTicks));
-            if (baselineTicks > 0) _scanProgress += (decimal)baselineTicks;
+            if (baselineTicks > 0) { _scanProgress += (decimal)baselineTicks; PresentationOwner?.Scene?.MarkPresentationEffect(); }
         }
 
         /// <summary>真实 Tick 开始时调用一次；随后新加的速度效果从下个自然 Tick 生效。</summary>
@@ -148,6 +157,7 @@ namespace UnityWorld.Game.Domain.Combat
                 _mana.Remove(selected.Key);
                 removed.Add(selected);
             }
+            if (removed.Count > 0) PresentationOwner?.Scene?.MarkPresentationEffect();
             return removed.AsReadOnly();
         }
 

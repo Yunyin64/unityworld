@@ -26,9 +26,11 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void ChangeShield(int val)
         {
+            var before = ShieldValue;
             //可能要加入护盾上限值，待定
             ShieldValue += val;
             ShieldValue = Math.Clamp(ShieldValue, 0, int.MaxValue);
+            if (ShieldValue != before) Scene?.MarkPresentationEffect();
             Log($"护盾值变更：{val:+0.##;-0.##;0}，当前护盾={ShieldValue:0.##}");
         }
         public void InitData()

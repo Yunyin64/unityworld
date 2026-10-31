@@ -120,6 +120,7 @@ namespace UnityWorld.Game.Domain.Combat
             
             modifier.CallLuaHook<bool>("Apply", modifier.env, CreateModifierCtx(modifier));
             Modifiers.Add(modifier);
+            Scene?.MarkPresentationEffect();
 
             // 注册触发器事件监听
             RegisterTriggerEvent(modifier);
@@ -132,7 +133,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         private void StackModifier(CombatNpcModifier modifier, int stacks)
         {
+            var before = (modifier.CurrentStack, modifier.RemainingTime);
             modifier.AddStack(stacks);
+            if (before != (modifier.CurrentStack, modifier.RemainingTime)) Scene?.MarkPresentationEffect();
 
             // 调用 OnStack hook
             modifier.CallLuaHook<bool>("OnStack", modifier.env, CreateModifierCtx(modifier));
@@ -207,6 +210,7 @@ namespace UnityWorld.Game.Domain.Combat
             modifier.CallLuaHook<bool>("OnRemove", modifier.env, CreateModifierCtx(modifier));
             UnregisterTriggerEvent(modifier);
             Modifiers.Remove(modifier);
+            Scene?.MarkPresentationEffect();
         }
 
         // ══════════════════════════════════════════════════════════

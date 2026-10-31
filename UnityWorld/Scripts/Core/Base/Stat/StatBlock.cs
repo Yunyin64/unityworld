@@ -73,6 +73,21 @@ namespace UnityWorld.Core
         }
 
         /// <summary>
+        /// 观察用只读查询：保留当前缓存有效性，不清脏、不写缓存，也不触发玩法 Hook。
+        /// 脏条目使用独立公式参数；缺失条目仍按 Get 的惰性默认值语义处理。
+        /// </summary>
+        public float GetReadOnly(string statId, float defaultValue = 0f)
+        {
+            var define = StatDefineMgr.Instance?.Get(statId);
+            if (define == null) return defaultValue;
+
+            var rawValue = _stats.TryGetValue(statId, out var entry)
+                ? entry.GetReadOnlyFinalValue()
+                : define.DefaultValue;
+            return ApplyDefineClamp(statId, rawValue);
+        }
+
+        /// <summary>
         /// 永久修改属性基础值（仅 Primary 属性）
         /// 用于升级成长、永久道具、不可逆奖励等场景
         /// Derived 属性请勿调用此方法（其 Base 由公式驱动）

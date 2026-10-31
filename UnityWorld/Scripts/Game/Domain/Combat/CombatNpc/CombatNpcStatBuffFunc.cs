@@ -29,6 +29,8 @@ namespace UnityWorld.Game.Domain.Combat
             }
 
             Stats.AddModifier(statId, new StatModifier(modifierType, value, sourceId));
+            if (value != 0 || modifierType is ModifierType.Override or ModifierType.ClampMin or ModifierType.ClampMax)
+                Scene?.MarkPresentationEffect();
             Log($"[StatBuff] +{statId} ({modifierType} {value:+0.##;-0.##;0}) source={sourceId}");
         }
 
@@ -44,7 +46,10 @@ namespace UnityWorld.Game.Domain.Combat
         {
             if (string.IsNullOrEmpty(sourceId)) return;
 
+            var removed = Scene?.PresentationRecordingEnabled == true && UnityWorld.Game.Data.StatDefineMgr.Instance.GetAll()
+                .Any(d => Stats.GetEntry(d.ID)?.GetModifiers().Any(m => m.SourceId == sourceId) == true);
             Stats.RemoveModifiersBySource(sourceId);
+            if (removed) Scene.MarkPresentationEffect();
             Log($"[StatBuff] 移除 source={sourceId}");
         }
     }
