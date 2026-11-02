@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "rainforest", "DisplayName": "雨林", "Description": "开发样例：雨林代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["林木", "湿润", "炎热"], "Color": "#285b42", "Symbol": "雨",
+    "InitialAura": {"Jin": 0.6, "Mu": 3, "Shui": 1.8, "Huo": 0.8, "Tu": 0.8}, "AllowFill": true, "FillWeight": 4,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0.5, "Max": 1}, "Temperature": {"Min": 0.55, "Max": 1},
+      "PreferredElevation": 0.4, "PreferredMoisture": 0.9, "PreferredTemperature": 0.9, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "rainforest": 8, "forest": 1.6, "forest_mountain": 1.6, "volcano": 1.6, "wetland": 1.6, "karst": 1.6,
+      "bamboo_forest": 1.6, "dry_valley": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 2.4, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

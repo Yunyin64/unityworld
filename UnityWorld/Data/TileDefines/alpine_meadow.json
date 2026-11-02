@@ -1,0 +1,15 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "alpine_meadow", "DisplayName": "高山草甸",
+    "Description": "开发样例：高山草甸代表一片地域，包含格内小尺度景观；不等同真实中国位置。", "Tags": ["高地", "草地", "寒冷"], "Color": "#9da884", "Symbol": "高",
+    "InitialAura": {"Jin": 1, "Mu": 1.6, "Shui": 1, "Huo": 0.2, "Tu": 1.2}, "AllowFill": true, "FillWeight": 3,
+    "Environment": {
+      "Elevation": {"Min": 0.35, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.78, "PreferredMoisture": 0.55, "PreferredTemperature": 0.28, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {"alpine_meadow": 8, "snow_mountain": 1.6, "plateau": 1.6, "grassland": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 1.7, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

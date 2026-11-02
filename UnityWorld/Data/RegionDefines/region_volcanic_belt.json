@@ -1,0 +1,13 @@
+[
+  {
+    "ID": "region_volcanic_belt", "DisplayName": "东荒火山带", "MaxCount": 2, "SpawnWeight": 5.0, "Width": 8, "Height": 8,
+    "TerrainLayout": {
+      "0,0": "desert", "1,0": "desert", "0,1": "desert", "-1,0": "mountain", "0,-1": "mountain"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_volcanic_pillar"
+    },
+    "ExtraTerrainIds": ["volcanic_zone"], "AuraProfile": {"Jin": 0.0, "Mu": 0.0, "Shui": 0.0, "Huo": 3.0, "Tu": 1.0},
+    "Tags": ["火", "荒漠", "危险", "东荒"], "SchemaVersion": 2, "MinCount": 0, "PlacementTypeIds": []
+  }
+]

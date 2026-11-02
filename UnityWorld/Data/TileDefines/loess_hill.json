@@ -1,0 +1,15 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "loess_hill", "DisplayName": "黄土丘陵", "Description": "开发样例：黄土丘陵代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["丘陵", "干旱"], "Color": "#c2a15e", "Symbol": "黄",
+    "InitialAura": {"Jin": 1.2, "Mu": 0.6, "Shui": 0.6, "Huo": 1, "Tu": 2.2}, "AllowFill": true, "FillWeight": 4,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.32, "PreferredTemperature": 0.55, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {"loess_hill": 8, "hill": 1.6, "desert": 1.6, "barren_mountain": 1.6, "gobi": 1.6, "dry_valley": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 1.6, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

@@ -23,7 +23,22 @@ namespace UnityWorld.Game.Domain
 
         public TileModifier(string id, string sourceId, TileAura auraData, float duration = -1f)   
         {
-            AuraData = auraData;
+            ArgumentNullException.ThrowIfNull(auraData);
+            if (!float.IsFinite(duration) || duration < -1f)
+                throw new ArgumentOutOfRangeException(nameof(duration));
+            Id = id;
+            SourceId = sourceId;
+            Duration = duration;
+            RemainingTime = duration;
+            AuraData = new TileAura
+            {
+                Jin = auraData.Jin, Mu = auraData.Mu, Shui = auraData.Shui,
+                Huo = auraData.Huo, Tu = auraData.Tu,
+            };
+            StatModifiers = new();
+            MaxStack = CurrentStack = 1;
+            RemoveTriggerId = string.Empty;
+            ExpirePolicy = duration > 0f ? ExpirePolicy.TimeBased : ExpirePolicy.Never;
         }
     }
 }

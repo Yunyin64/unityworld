@@ -1,0 +1,7 @@
+[
+  {
+    "ID": "building_sect_gate", "DisplayName": "宗门山门", "IsNatural": false, "IsSingleton": false, "SpawnWeight": 0,
+    "PlacementExtraTerrains": [], "ModifierDefineIds": [], "Tags": ["宗门", "建筑", "人类"], "SchemaVersion": 2,
+    "PlacementTypeIds": [], "PlacementTags": [], "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}
+  }
+]

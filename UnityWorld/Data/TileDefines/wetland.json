@@ -1,0 +1,14 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "wetland", "DisplayName": "湿地", "Description": "开发样例：湿地代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["湿润"], "Color": "#608f7e", "Symbol": "湿",
+    "InitialAura": {"Jin": 0.5, "Mu": 1.8, "Shui": 2, "Huo": 0.3, "Tu": 1.2}, "AllowFill": true, "FillWeight": 3,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 0.65}, "Moisture": {"Min": 0.45, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.22, "PreferredMoisture": 0.86, "PreferredTemperature": 0.65, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [], "NeighborWeights": {"wetland": 8, "rainforest": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 2.2, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

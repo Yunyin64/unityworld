@@ -1,4 +1,10 @@
-## MODIFIED Requirements
+# plane-generation
+
+## Purpose
+
+本规范定义 plane-generation 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: PlaneGenerator 支持完整5步世界生成
 原 `PlaneGenerator.Fill(plane, auraDaoMgr)` 方法仅做坐标填充。现修改为：`PlaneGenerator` 新增静态方法 `Generate(plane, rng, regionMgr, landMarkMgr, auraDaoMgr)`，内部顺序执行5步生成流程。原 `Fill()` 方法保留（作为 Step1 被内部调用），`PlaneMgr.CreatePlane` 改为调用 `Generate()`。

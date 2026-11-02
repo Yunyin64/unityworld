@@ -1,0 +1,15 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "gobi", "DisplayName": "戈壁", "Description": "开发样例：戈壁代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["干旱"], "Color": "#bba88a", "Symbol": "戈",
+    "InitialAura": {"Jin": 1.7, "Mu": 0.2, "Shui": 0.2, "Huo": 1.5, "Tu": 1.8}, "AllowFill": true, "FillWeight": 4,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 0.62}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.56, "PreferredMoisture": 0.12, "PreferredTemperature": 0.5, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {"gobi": 8, "desert": 1.6, "barren_mountain": 1.6, "loess_hill": 1.6, "dry_valley": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 1.8, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

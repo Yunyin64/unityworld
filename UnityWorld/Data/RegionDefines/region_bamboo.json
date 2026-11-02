@@ -1,0 +1,35 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_bamboo", "DisplayName": "蜀南竹海样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 11, "Width": 9, "Height": 9,
+    "TerrainLayout": {
+      "0,-4": "forest", "1,-4": "forest", "2,-4": "forest", "3,-4": "forest", "4,-4": "forest",
+      "-1,-3": "forest", "0,-3": "forest", "1,-3": "forest", "2,-3": "forest", "3,-3": "forest",
+      "4,-3": "forest", "-2,-2": "forest", "-1,-2": "forest", "0,-2": "bamboo_forest", "1,-2": "bamboo_forest",
+      "2,-2": "bamboo_forest", "3,-2": "forest", "4,-2": "forest", "-3,-1": "forest", "-2,-1": "forest",
+      "-1,-1": "bamboo_forest", "0,-1": "bamboo_forest", "1,-1": "bamboo_forest", "2,-1": "bamboo_forest", "3,-1": "forest",
+      "4,-1": "forest", "-4,0": "forest", "-3,0": "forest", "-2,0": "bamboo_forest", "-1,0": "bamboo_forest",
+      "0,0": "bamboo_forest", "1,0": "bamboo_forest", "2,0": "bamboo_forest", "3,0": "forest", "4,0": "forest",
+      "-4,1": "forest", "-3,1": "forest", "-2,1": "bamboo_forest", "-1,1": "bamboo_forest", "0,1": "bamboo_forest",
+      "1,1": "bamboo_forest", "2,1": "forest", "3,1": "forest", "-4,2": "forest", "-3,2": "forest",
+      "-2,2": "bamboo_forest", "-1,2": "bamboo_forest", "0,2": "bamboo_forest", "1,2": "forest", "2,2": "forest",
+      "-4,3": "forest", "-3,3": "forest", "-2,3": "forest", "-1,3": "forest", "0,3": "forest",
+      "1,3": "forest", "-4,4": "forest", "-3,4": "forest", "-2,4": "forest", "-1,4": "forest",
+      "0,4": "forest"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_ancient_tree"
+    },
+    "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.42, "PreferredMoisture": 0.76, "PreferredTemperature": 0.69, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.42, "PreferredMoisture": 0.76, "PreferredTemperature": 0.69, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

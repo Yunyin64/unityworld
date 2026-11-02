@@ -1,0 +1,14 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "grassland", "DisplayName": "草原", "Description": "开发样例：草原代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["草地"], "Color": "#9ab75e", "Symbol": "草",
+    "InitialAura": {"Jin": 0.8, "Mu": 1.8, "Shui": 0.8, "Huo": 0.7, "Tu": 1}, "AllowFill": true, "FillWeight": 5,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.43, "PreferredMoisture": 0.4, "PreferredTemperature": 0.52, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [], "NeighborWeights": {"grassland": 8, "alpine_meadow": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 1.2, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

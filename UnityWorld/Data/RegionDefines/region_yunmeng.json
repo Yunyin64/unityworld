@@ -1,0 +1,34 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_yunmeng", "DisplayName": "云梦湿地样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 11, "Width": 9, "Height": 9,
+    "TerrainLayout": {
+      "0,-4": "plain", "1,-4": "plain", "2,-4": "plain", "3,-4": "plain", "4,-4": "plain",
+      "-1,-3": "plain", "0,-3": "plain", "1,-3": "plain", "2,-3": "plain", "3,-3": "plain",
+      "4,-3": "plain", "-2,-2": "plain", "-1,-2": "plain", "0,-2": "wetland", "1,-2": "wetland",
+      "2,-2": "wetland", "3,-2": "plain", "4,-2": "plain", "-3,-1": "plain", "-2,-1": "plain",
+      "-1,-1": "wetland", "0,-1": "wetland", "2,-1": "wetland", "3,-1": "plain", "4,-1": "plain",
+      "-4,0": "plain", "-3,0": "plain", "-2,0": "wetland", "-1,0": "wetland", "0,0": "wetland",
+      "1,0": "wetland", "2,0": "wetland", "3,0": "plain", "4,0": "plain", "-4,1": "plain",
+      "-3,1": "plain", "-1,1": "wetland", "0,1": "wetland", "1,1": "wetland", "2,1": "plain",
+      "3,1": "plain", "-4,2": "plain", "-3,2": "plain", "-2,2": "wetland", "-1,2": "wetland",
+      "0,2": "wetland", "1,2": "plain", "2,2": "plain", "-4,3": "plain", "-3,3": "plain",
+      "-2,3": "plain", "-1,3": "plain", "0,3": "plain", "1,3": "plain", "-4,4": "plain",
+      "-3,4": "plain", "-2,4": "plain", "-1,4": "plain", "0,4": "plain"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_reed_marsh"
+    },
+    "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.25, "PreferredMoisture": 0.82, "PreferredTemperature": 0.65, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.25, "PreferredMoisture": 0.82, "PreferredTemperature": 0.65, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

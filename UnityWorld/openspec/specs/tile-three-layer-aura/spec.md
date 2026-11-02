@@ -1,4 +1,10 @@
-## ADDED Requirements
+# tile-three-layer-aura
+
+## Purpose
+
+本规范定义 tile-three-layer-aura 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: Tile 持有当前层元气
 Tile 实体 SHALL 持有一个 `CurrentAura`（`TileAura` 实例），表示该地块当前的五行元气实时数值。`CurrentAura` 是唯一在 Tile 上存储的元气数据，不存在"原初锚点"等历史数据。

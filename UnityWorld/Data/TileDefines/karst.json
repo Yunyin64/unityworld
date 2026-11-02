@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "karst", "DisplayName": "喀斯特峰林", "Description": "开发样例：喀斯特峰林代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["山类", "林木"], "Color": "#769580", "Symbol": "喀",
+    "InitialAura": {"Jin": 1.3, "Mu": 1.3, "Shui": 1.6, "Huo": 0.5, "Tu": 1.3}, "AllowFill": true, "FillWeight": 3,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.6, "PreferredMoisture": 0.78, "PreferredTemperature": 0.75, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "karst": 8, "mountain": 1.6, "forest": 1.6, "forest_mountain": 1.6, "barren_mountain": 1.6, "volcano": 1.6,
+      "snow_mountain": 1.6, "rainforest": 1.6, "red_cliff": 1.6, "bamboo_forest": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 2.2, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

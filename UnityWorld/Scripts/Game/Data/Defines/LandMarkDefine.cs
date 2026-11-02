@@ -1,56 +1,32 @@
-using System.Text.Json.Serialization;
 using UnityWorld.Core;
 using UnityWorld.Game.Domain;
 
-namespace UnityWorld.Game.Data
+namespace UnityWorld.Game.Data;
+
+/// <summary>自然／人工只决定创世快照阶段；运行后新增的两类地标均动态影响元气。</summary>
+public class LandMarkDefine : DefineBase
 {
+    /// <summary>地图配置格式版本；当前为 2。</summary>
+    public int SchemaVersion { get; set; } = 2;
+    /// <summary>绝对 Offset 固定位置；创世最前预留，实际实例仍按自然→快照→人工阶段创建。</summary>
+    public List<OffsetPointDefine> ForcedPositions { get; set; } = new();
+    /// <summary>创世自然地标先于快照生成；人工地标后于快照生成，名称沿用自然／人工。</summary>
+    public bool IsNatural { get; set; } = true;
+    /// <summary>全局最多一个有效地标实例。</summary>
+    public bool IsSingleton { get; set; }
+    /// <summary>合法可选候选的相对生成权重。</summary>
+    public double SpawnWeight { get; set; } = 1;
+    /// <summary>独立散布允许的类型 ID；空列表不限。</summary>
+    public List<string> PlacementTypeIds { get; set; } = new();
+    /// <summary>独立散布要求类型同时包含的标签。</summary>
+    public List<string> PlacementTags { get; set; } = new();
+    /// <summary>保留的地区拓展标签限制；不静默丢弃。</summary>
+    public List<string> PlacementExtraTerrains { get; set; } = new();
+    /// <summary>未来每秒速率修正定义引用。</summary>
+    public List<string> ModifierDefineIds { get; set; } = new();
     /// <summary>
-    /// 地标静态配置模板。
-    /// 描述一种地标（自然奇观或后天建筑）的属性、生成条件及对地块的元气影响。
-    /// 运行时由 <see cref="LandMarkMgr"/> 实例化为 <see cref="LandMark"/>。
+    /// 唯一元气偏移：创世自然地标一次性计入原初浓度；其余放置按每秒变化量累积，移除即停止。
+    /// 即使 IsNatural=true，世界运行后新增也不瞬间改浓度、不重拍快照。
     /// </summary>
-    public class LandMarkDefine : DefineBase
-    {
-        // ── 分类 ──────────────────────────────────────────
-
-        /// <summary>
-        /// 是否为自然奇观。
-        /// true = 世界原生（计入原初快照）；false = 后天建造（不计入原初快照）。
-        /// </summary>
-        [JsonPropertyName("IsNatural")]
-        public bool IsNatural { get; set; } = true;
-
-        /// <summary>全图唯一（同一 DefineId 最多生成 1 个实例）</summary>
-        [JsonPropertyName("IsSingleton")]
-        public bool IsSingleton { get; set; } = false;
-
-        // ── 生成规则 ──────────────────────────────────────
-
-        /// <summary>散布生成权重（0 = 不参与独立散布随机；仅在 Step4 生效）</summary>
-        [JsonPropertyName("SpawnWeight")]
-        public float SpawnWeight { get; set; } = 1f;
-
-        /// <summary>
-        /// 允许生成的基础地形列表（空列表 = 不限地形）。
-        /// Step4 散布时，只在列表内的地形上尝试生成。
-        /// </summary>
-        [JsonPropertyName("PlacementTerrains")]
-        public List<TerrainType> PlacementTerrains { get; set; } = new();
-
-        /// <summary>
-        /// 要求区域持有的拓展地形标签 ID（空列表 = 不限）。
-        /// 地块所属 Region 必须包含列表中所有标签，才能在该地块生成此地标。
-        /// </summary>
-        [JsonPropertyName("PlacementExtraTerrains")]
-        public List<string> PlacementExtraTerrains { get; set; } = new();
-
-        // ── 元气影响 ──────────────────────────────────────
-
-        /// <summary>
-        /// 该地标对所在地块施加的元气修正 Define ID 列表。
-        /// 生成时从 <see cref="TileModifierDefineMgr"/> 取出对应 Define，实例化为 TileModifier 挂载到 Tile。
-        /// </summary>
-        [JsonPropertyName("ModifierDefineIds")]
-        public List<string> ModifierDefineIds { get; set; } = new();
-    }
+    public TileAura AuraOffset { get; set; } = new() { Jin = 0, Mu = 0, Shui = 0, Huo = 0, Tu = 0 };
 }

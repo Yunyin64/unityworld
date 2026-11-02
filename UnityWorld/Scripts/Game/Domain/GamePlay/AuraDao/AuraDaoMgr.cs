@@ -18,8 +18,8 @@ namespace UnityWorld.Game.Domain
         public static AuraDaoMgr Instance { get; private set; }
         // ── 原初快照 ─────────────────────────────────────
 
-        /// <summary>原初元气快照：Key=TileId，Value=自然态 TileAura 深拷贝</summary>
-        private readonly Dictionary<TileId, TileAura> _originSnapshot = new();
+        /// <summary>原初值以位面和坐标复合定位，内部值从不向查询方直接暴露。</summary>
+        private readonly Dictionary<(PlaneId Plane, TileId Tile), TileAura> _originSnapshot = new();
 
         // ── 已注册位面 ────────────────────────────────────
 
@@ -43,34 +43,59 @@ namespace UnityWorld.Game.Domain
         // ── 快照 ──────────────────────────────────────────
 
         /// <summary>
-        /// 为指定位面拍摄元气原初快照（应在自然地标生成完毕后、任何后天 Modifier 添加前调用）
+        /// 为指定位面拍摄元气原初快照（创世自然地标生成完毕、人工地标尚未生成时调用）
         /// </summary>
         public void TakeSnapshot(Plane plane)
         {
-            foreach (var (id, tile) in plane.Tiles)
-            {
-                var snapshot = new TileAura
-                {
-                    Jin = tile.CurrentAura.Jin,
-                    Mu   = tile.CurrentAura.Mu,
-                    Shui = tile.CurrentAura.Shui,
-                    Huo  = tile.CurrentAura.Huo,
-                    Tu   = tile.CurrentAura.Tu,
-                };
-                _originSnapshot[id] = snapshot;
-            }
+            RegisterSnapshot(plane, PrepareSnapshot(plane));
+        }
 
-            if (!_registeredPlanes.Contains(plane))
-                _registeredPlanes.Add(plane);
+        /// <summary>仅准备自然值的深拷贝，不登记位面或任何公开快照。</summary>
+        public static Dictionary<TileId, TileAura> PrepareSnapshot(Plane plane)
+            => plane.Tiles.ToDictionary(pair => pair.Key, pair => Copy(pair.Value.CurrentAura));
 
+        /// <summary>发布候选的自然快照；先完整校验和复制，再写入任何公开记录。</summary>
+        public void RegisterSnapshot(Plane plane, IReadOnlyDictionary<TileId, TileAura> values)
+        {
+            if (_registeredPlanes.Any(p => p.Id == plane.Id))
+                throw new InvalidOperationException($"位面 {plane.Id} 已登记原初快照。");
+            if (values.Count != plane.TileCount || values.Keys.Any(id => !plane.HasTile(id)))
+                throw new InvalidOperationException("自然快照必须与位面实际地块完全对应。");
+            var prepared = values.ToDictionary(pair => pair.Key, pair => Copy(pair.Value));
+            foreach (var pair in prepared) _originSnapshot.Add((plane.Id, pair.Key), pair.Value);
+            _registeredPlanes.Add(plane);
             _cacheValid = false;
+        }
+
+        /// <summary>是否已登记该位面，包括明确允许的空位面。</summary>
+        public bool HasSnapshot(PlaneId planeId) => _registeredPlanes.Any(p => p.Id == planeId);
+
+        /// <summary>同时注销原初值与收支遍历引用，其他位面不受影响。</summary>
+        public void UnregisterPlane(PlaneId planeId)
+        {
+            foreach (var key in _originSnapshot.Keys.Where(key => key.Plane == planeId).ToArray())
+                _originSnapshot.Remove(key);
+            _registeredPlanes.RemoveAll(plane => plane.Id == planeId);
+            _cacheValid = false;
+        }
+
+        private static TileAura Copy(TileAura value)
+        {
+            if (value == null || !float.IsFinite(value.Jin) || !float.IsFinite(value.Mu)
+                || !float.IsFinite(value.Shui) || !float.IsFinite(value.Huo) || !float.IsFinite(value.Tu))
+                throw new InvalidDataException("元气快照必须包含有限的五行数值。");
+            return new TileAura { Jin = value.Jin, Mu = value.Mu, Shui = value.Shui, Huo = value.Huo, Tu = value.Tu };
         }
 
         /// <summary>
         /// 获取指定地块的原初元气快照；不存在时返回 null
         /// </summary>
         public TileAura? GetOrigin(TileId id)
-            => _originSnapshot.TryGetValue(id, out var aura) ? aura : null;
+            => GetOrigin(0, id);
+
+        /// <summary>跨位面查询原初值；返回可独立修改的副本，不存在时返回 null。</summary>
+        public TileAura? GetOrigin(PlaneId planeId, TileId id)
+            => _originSnapshot.TryGetValue((planeId, id), out var aura) ? Copy(aura) : null;
 
         // ── 收支计算 ──────────────────────────────────────
 
@@ -94,7 +119,7 @@ namespace UnityWorld.Game.Domain
             {
                 foreach (var (id, tile) in plane.Tiles)
                 {
-                    if (!_originSnapshot.TryGetValue(id, out var origin)) continue;
+                    if (!_originSnapshot.TryGetValue((plane.Id, id), out var origin)) continue;
 
                     balance[BaseElementType.Jin] += tile.CurrentAura.Jin - origin.Jin;
                     balance[BaseElementType.Mu]   += tile.CurrentAura.Mu   - origin.Mu;
@@ -167,7 +192,11 @@ namespace UnityWorld.Game.Domain
 
         public void End()
         {
-             
+            _originSnapshot.Clear();
+            _registeredPlanes.Clear();
+            _imbalanceWeightCache.Clear();
+            _cacheValid = false;
+            if (ReferenceEquals(Instance, this)) Instance = null;
         }
 
         public void Log()

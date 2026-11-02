@@ -1,135 +1,94 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using UnityWorld.Core;
 using UnityWorld.Game.Domain;
 
-namespace UnityWorld.Game.Data
+namespace UnityWorld.Game.Data;
+
+/// <summary>固定朝向地区；TerrainLayout 的键集合是唯一占地真相。</summary>
+public class RegionDefine : DefineBase
 {
-    /// <summary>
-    /// 区域静态配置模板。
-    /// 描述一种区域的生成规则、占用形状、内部地形/地标布局及五行倾向。
-    /// 运行时由 <see cref="PlaneGenerator"/> 在世界生成 Step3 中实例化为 <see cref="Region"/>。
-    ///
-    /// <para><b>布局坐标说明</b>：TerrainLayout 和 LandMarkLayout 的键使用
-    /// 相对中心点的 Axial 偏移 (dq, dr)，序列化格式为字符串 "dq,dr"（如 "0,0"、"1,-1"）。</para>
-    /// </summary>
-    public class RegionDefine : DefineBase
+    /// <summary>地图配置格式版本；当前为 2。</summary>
+    public int SchemaVersion { get; set; } = 2;
+    /// <summary>绝对 Offset 固定锚点；每个位置完整放一份拼图，最先放置，不参加普通随机筛选。</summary>
+    public List<OffsetPointDefine> ForcedPositions { get; set; } = new();
+    /// <summary>固定地区为后续环境生成提供的锚定值；没有固定锚点时不使用。</summary>
+    public MapEnvironment FixedEnvironment { get; set; } = new() { Elevation = .5, Moisture = .5, Temperature = .5 };
+    /// <summary>每个位面必须完整放置的最少实例数。</summary>
+    public int MinCount { get; set; }
+    /// <summary>每个位面的最多实例数；-1 表示不限。</summary>
+    public int MaxCount { get; set; } = -1;
+    /// <summary>合法可选候选的相对生成权重。</summary>
+    public double SpawnWeight { get; set; } = 1;
+    /// <summary>同类实例锚点之间的最小六边形距离。</summary>
+    public int MinSpacing { get; set; } = 8;
+    /// <summary>宽度；大陆固定为 200，地区中只作展示元信息。</summary>
+    public int Width { get; set; }
+    /// <summary>地图高度；大陆固定为 200，地区中只作展示元信息。</summary>
+    public int Height { get; set; }
+    [JsonConverter(typeof(AxialOffsetStringDictConverter))]
+    /// <summary>实际占地集合及逐格固定类型，键为相对 Axial 坐标。</summary>
+    public Dictionary<(int dq, int dr), string> TerrainLayout { get; set; } = new();
+    [JsonConverter(typeof(AxialOffsetStringDictConverter))]
+    /// <summary>随地区原子生成的固定地标布局。</summary>
+    public Dictionary<(int dq, int dr), string> LandMarkLayout { get; set; } = new();
+    /// <summary>保留的地区拓展语义标签，不增加隐式地形。</summary>
+    public List<string> ExtraTerrainIds { get; set; } = new();
+    /// <summary>保留的兼容功能：对实际占地应用一次偏移；正式内容默认全零，不作为地区玩法依赖。</summary>
+    public TileAura AuraProfile { get; set; } = new() { Jin = 0, Mu = 0, Shui = 0, Huo = 0, Tu = 0 };
+    /// <summary>地区锚点必须满足的环境条件。</summary>
+    public EnvironmentRule AnchorEnvironment { get; set; } = new();
+    /// <summary>对实际 footprint 统计满足比例的环境条件。</summary>
+    public EnvironmentRule OverallEnvironment { get; set; } = new();
+    /// <summary>整体环境条件要求的占地满足比例。</summary>
+    public double RequiredEnvironmentFraction { get; set; } = 1;
+    /// <summary>指定关键格的独立环境硬条件。</summary>
+    public List<RegionEnvironmentPoint> KeyEnvironment { get; set; } = new();
+    /// <summary>作者显式声明的局部环境偏移，默认不调整。</summary>
+    public List<EnvironmentAdjustment> EnvironmentAdjustments { get; set; } = new();
+    /// <summary>地区固定的有向跨格河段。</summary>
+    public List<RegionRiverCell> RiverCells { get; set; } = new();
+    /// <summary>连接地区外部水系的固定边缘端口。</summary>
+    public List<RegionRiverPort> RiverPorts { get; set; } = new();
+    /// <summary>供通行组引用的地区内部关键位置。</summary>
+    public List<RegionKeyPoint> KeyPoints { get; set; } = new();
+    /// <summary>旧锚点类型限制的显式迁移；非空时按对应类型的环境条件判定。</summary>
+    public List<string> PlacementTypeIds { get; set; } = new();
+    /// <summary>旧调用兼容属性；实际生成以 MinCount 为准。</summary>
+    [JsonIgnore] public bool IsGuaranteed { get => MinCount > 0; set { if (value) MinCount = Math.Max(1, MinCount); } }
+}
+
+/// <summary>严格解析相对 Axial 坐标；不再吞掉坏键、重复键或数字旧类型。</summary>
+public class AxialOffsetStringDictConverter : JsonConverter<Dictionary<(int, int), string>>
+{
+    /// <summary>以文化无关格式解析 dq,dr，拒绝不完整或越界数字。</summary>
+    public static (int, int) Parse(string key)
     {
-        // ── 生成规则 ──────────────────────────────────────
-
-        /// <summary>必然生成（世界宿命地点，优先于随机区域放置）</summary>
-        [JsonPropertyName("IsGuaranteed")]
-        public bool IsGuaranteed { get; set; } = false;
-
-        /// <summary>全图最多实例数（-1 = 不限）</summary>
-        [JsonPropertyName("MaxCount")]
-        public int MaxCount { get; set; } = -1;
-
-        /// <summary>随机放置权重（IsGuaranteed=true 时忽略）</summary>
-        [JsonPropertyName("SpawnWeight")]
-        public float SpawnWeight { get; set; } = 1f;
-
-        /// <summary>
-        /// 中心点允许落在的地形类型（空列表 = 不限）。
-        /// 生成时检查中心点地块是否在列表内。
-        /// </summary>
-        [JsonPropertyName("PlacementTerrains")]
-        public List<TerrainType> PlacementTerrains { get; set; } = new();
-
-        // ── 占用形状 ──────────────────────────────────────
-
-        /// <summary>区域占用长方形的宽（Offset 列数）</summary>
-        [JsonPropertyName("Width")]
-        public int Width { get; set; } = 5;
-
-        /// <summary>区域占用长方形的高（Offset 行数）</summary>
-        [JsonPropertyName("Height")]
-        public int Height { get; set; } = 5;
-
-        // ── 内容布局（相对中心点 Axial 偏移） ─────────────
-
-        /// <summary>
-        /// 地形覆盖布局。
-        /// Key 格式：JSON 中为 "dq,dr" 字符串，运行时解析为 (int dq, int dr)。
-        /// Value：覆盖后的地形类型。
-        /// </summary>
-        [JsonPropertyName("TerrainLayout")]
-        [JsonConverter(typeof(AxialOffsetTerrainDictConverter))]
-        public Dictionary<(int dq, int dr), TerrainType> TerrainLayout { get; set; } = new();
-
-        /// <summary>
-        /// 固定地标布局。
-        /// Key 格式：JSON 中为 "dq,dr" 字符串，运行时解析为 (int dq, int dr)。
-        /// Value：LandMarkDefine ID（区域落地时必然在该偏移处生成）。
-        /// </summary>
-        [JsonPropertyName("LandMarkLayout")]
-        [JsonConverter(typeof(AxialOffsetStringDictConverter))]
-        public Dictionary<(int dq, int dr), string> LandMarkLayout { get; set; } = new();
-
-        // ── 区域属性 ──────────────────────────────────────
-
-        /// <summary>区域持有的拓展地形语义标签 ID 列表（如 "volcanic_zone"、"leyline_dense"）</summary>
-        [JsonPropertyName("ExtraTerrainIds")]
-        public List<string> ExtraTerrainIds { get; set; } = new();
-
-        /// <summary>区域整体五行浓度偏向（叠加到区域内所有地块的 CurrentAura）</summary>
-        [JsonPropertyName("AuraProfile")]
-        public TileAura AuraProfile { get; set; } = new TileAura { Jin=0,Mu=0,Shui=0,Huo=0,Tu=0 };
-
-        /// <summary>叙事标签</summary>
-        [JsonPropertyName("Tags")]
-        public List<string> Tags { get; set; } = new();
+        var parts = key.Split(',');
+        if (parts.Length != 2 || !int.TryParse(parts[0], NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var q)
+            || !int.TryParse(parts[1], NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var r))
+            throw new JsonException($"Invalid axial coordinate '{key}'; expected dq,dr.");
+        return (q, r);
     }
-
-    // ── JSON 自定义转换器 ──────────────────────────────────
-
-    /// <summary>将 "dq,dr" 字符串 key 转换为 (int,int) ValueTuple 的字典（Value 为 TerrainType）</summary>
-    public class AxialOffsetTerrainDictConverter : JsonConverter<Dictionary<(int, int), TerrainType>>
+    /// <summary>读取固定布局并拒绝旧数字类型与归一化后重复的坐标。</summary>
+    public override Dictionary<(int, int), string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override Dictionary<(int, int), TerrainType> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var result = new Dictionary<(int, int), string>();
+        using var doc = JsonDocument.ParseValue(ref reader);
+        foreach (var prop in doc.RootElement.EnumerateObject())
         {
-            var result = new Dictionary<(int, int), TerrainType>();
-            using var doc = JsonDocument.ParseValue(ref reader);
-            foreach (var prop in doc.RootElement.EnumerateObject())
-            {
-                var parts = prop.Name.Split(',');
-                if (parts.Length == 2 && int.TryParse(parts[0], out var dq) && int.TryParse(parts[1], out var dr))
-                    result[(dq, dr)] = (TerrainType)prop.Value.GetInt32();
-            }
-            return result;
+            if (prop.Value.ValueKind != JsonValueKind.String) throw new JsonException($"Terrain at '{prop.Name}' must be a type ID; run map migration for legacy numbers.");
+            if (!result.TryAdd(Parse(prop.Name), prop.Value.GetString() ?? "")) throw new JsonException($"Duplicate axial coordinate '{prop.Name}'.");
         }
-
-        public override void Write(Utf8JsonWriter writer, Dictionary<(int, int), TerrainType> value, JsonSerializerOptions options)
-        {
-            writer.WriteStartObject();
-            foreach (var kv in value)
-                writer.WriteNumber($"{kv.Key.Item1},{kv.Key.Item2}", (int)kv.Value);
-            writer.WriteEndObject();
-        }
+        return result;
     }
-
-    /// <summary>将 "dq,dr" 字符串 key 转换为 (int,int) ValueTuple 的字典（Value 为 string）</summary>
-    public class AxialOffsetStringDictConverter : JsonConverter<Dictionary<(int, int), string>>
+    /// <summary>按 r、q 稳定次序保存坐标，避免字典插入顺序改变摘要。</summary>
+    public override void Write(Utf8JsonWriter writer, Dictionary<(int, int), string> value, JsonSerializerOptions options)
     {
-        public override Dictionary<(int, int), string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var result = new Dictionary<(int, int), string>();
-            using var doc = JsonDocument.ParseValue(ref reader);
-            foreach (var prop in doc.RootElement.EnumerateObject())
-            {
-                var parts = prop.Name.Split(',');
-                if (parts.Length == 2 && int.TryParse(parts[0], out var dq) && int.TryParse(parts[1], out var dr))
-                    result[(dq, dr)] = prop.Value.GetString() ?? string.Empty;
-            }
-            return result;
-        }
-
-        public override void Write(Utf8JsonWriter writer, Dictionary<(int, int), string> value, JsonSerializerOptions options)
-        {
-            writer.WriteStartObject();
-            foreach (var kv in value)
-                writer.WriteString($"{kv.Key.Item1},{kv.Key.Item2}", kv.Value);
-            writer.WriteEndObject();
-        }
+        writer.WriteStartObject();
+        foreach (var pair in value.OrderBy(x => x.Key.Item2).ThenBy(x => x.Key.Item1))
+            writer.WriteString(FormattableString.Invariant($"{pair.Key.Item1},{pair.Key.Item2}"), pair.Value);
+        writer.WriteEndObject();
     }
 }

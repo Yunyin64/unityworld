@@ -1,0 +1,39 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_loess", "DisplayName": "黄土沟壑样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 13, "Width": 11, "Height": 11,
+    "TerrainLayout": {
+      "0,-5": "grassland", "1,-5": "grassland", "2,-5": "grassland", "3,-5": "grassland", "4,-5": "grassland",
+      "5,-5": "grassland", "-1,-4": "grassland", "0,-4": "grassland", "1,-4": "grassland", "2,-4": "grassland",
+      "3,-4": "grassland", "4,-4": "grassland", "5,-4": "grassland", "-2,-3": "grassland", "-1,-3": "grassland",
+      "0,-3": "loess_hill", "1,-3": "loess_hill", "2,-3": "loess_hill", "3,-3": "loess_hill", "4,-3": "grassland",
+      "5,-3": "grassland", "-3,-2": "grassland", "-2,-2": "grassland", "-1,-2": "loess_hill", "0,-2": "loess_hill",
+      "1,-2": "loess_hill", "2,-2": "loess_hill", "3,-2": "loess_hill", "4,-2": "grassland", "5,-2": "grassland",
+      "-4,-1": "grassland", "-3,-1": "grassland", "-2,-1": "loess_hill", "-1,-1": "loess_hill", "0,-1": "loess_hill",
+      "1,-1": "loess_hill", "2,-1": "loess_hill", "3,-1": "loess_hill", "4,-1": "grassland", "5,-1": "grassland",
+      "-5,0": "grassland", "-4,0": "grassland", "-3,0": "loess_hill", "-2,0": "loess_hill", "-1,0": "loess_hill",
+      "0,0": "loess_hill", "1,0": "loess_hill", "2,0": "loess_hill", "3,0": "loess_hill", "4,0": "grassland",
+      "5,0": "grassland", "-5,1": "grassland", "-4,1": "grassland", "-3,1": "loess_hill", "-2,1": "loess_hill",
+      "-1,1": "loess_hill", "0,1": "loess_hill", "1,1": "loess_hill", "2,1": "loess_hill", "3,1": "grassland",
+      "4,1": "grassland", "-5,2": "grassland", "-4,2": "grassland", "-3,2": "loess_hill", "-2,2": "loess_hill",
+      "-1,2": "loess_hill", "0,2": "loess_hill", "1,2": "loess_hill", "2,2": "grassland", "3,2": "grassland",
+      "-5,3": "grassland", "-4,3": "grassland", "-3,3": "loess_hill", "-2,3": "loess_hill", "-1,3": "loess_hill",
+      "0,3": "loess_hill", "1,3": "grassland", "2,3": "grassland", "-5,4": "grassland", "-4,4": "grassland",
+      "-3,4": "grassland", "-2,4": "grassland", "-1,4": "grassland", "0,4": "grassland", "1,4": "grassland",
+      "-5,5": "grassland", "-4,5": "grassland", "-3,5": "grassland", "-2,5": "grassland", "-1,5": "grassland",
+      "0,5": "grassland"
+    },
+    "LandMarkLayout": {}, "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
+    "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.52, "PreferredMoisture": 0.32, "PreferredTemperature": 0.53, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.52, "PreferredMoisture": 0.32, "PreferredTemperature": 0.53, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

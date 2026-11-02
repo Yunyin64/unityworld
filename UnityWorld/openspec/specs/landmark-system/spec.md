@@ -1,4 +1,10 @@
-## ADDED Requirements
+# landmark-system
+
+## Purpose
+
+本规范定义 landmark-system 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: LandMarkId 唯一标识
 系统 SHALL 提供 `LandMarkId` 值类型（struct），用于唯一标识运行时地标实例，支持 `==`、`!=` 比较和字典键。

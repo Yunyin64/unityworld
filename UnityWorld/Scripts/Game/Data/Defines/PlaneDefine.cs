@@ -43,11 +43,8 @@ namespace UnityWorld.Game.Data
 
             if (Kind == PlaneTypes.PlaneKind.MainPlane)
             {
-                // 主世界：Width/Height 必须显式填写
-                if (Width  <= 0) throw new InvalidOperationException(
-                    $"[PlaneDefine:{ID}] 主世界 Width 必须 > 0（当前：{Width}）");
-                if (Height <= 0) throw new InvalidOperationException(
-                    $"[PlaneDefine:{ID}] 主世界 Height 必须 > 0（当前：{Height}）");
+                if (Width != 200 || Height != 200) throw new InvalidOperationException(
+                    $"[PlaneDefine:{ID}] 主大陆必须为 200×200（当前：{Width}×{Height}）");
             }
             else
             {
@@ -61,7 +58,7 @@ namespace UnityWorld.Game.Data
         /// 将本定义转换为 <see cref="PlaneConfig"/> 供 PlaneMgr 使用。
         /// 调用前会先执行 <see cref="Validate"/>。
         /// </summary>
-        public PlaneConfig ToConfig()
+        public PlaneConfig ToConfig(string generationProfileId = "china-inspired-v1", int generationSeed = 12345)
         {
             Validate();
             return new PlaneConfig
@@ -72,13 +69,17 @@ namespace UnityWorld.Game.Data
                 Height       = Height,
                 TimeFlowRate = TimeFlowRate,
                 AuraBonus    = AuraBonus,
+                GenerationMode = Kind == PlaneTypes.PlaneKind.MainPlane
+                    ? PlaneGenerationMode.Continent : PlaneGenerationMode.BasicFill,
+                GenerationProfileId = generationProfileId,
+                GenerationSeed = generationSeed,
             };
         }
 
         // ── 内置工厂（开发期使用，未来可从 JSON 加载替代）────────
 
-        /// <summary>默认主世界（100×60）</summary>
-        public static PlaneDefine MainWorld(int width = 100, int height = 60) => new()
+        /// <summary>主大陆固定 200×200；传入其他尺寸会在 Validate/ToConfig 时拒绝。</summary>
+        public static PlaneDefine MainWorld(int width = 200, int height = 200) => new()
         {
             ID     = "main_world",
             DisplayName         = "主世界",

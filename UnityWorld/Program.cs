@@ -12,6 +12,13 @@ using UnityWorld.Game.World;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+// 地图诊断先解析参数，仅在明确的运行时验证分支启动整个世界。
+if (args.Any(a => a.StartsWith("--map-", StringComparison.Ordinal)))
+{
+    Environment.ExitCode = UnityWorld.ConsoleHost.MapConsole.Run(args);
+    return;
+}
+
 bool smokeTest = args.Contains("--core-smoke-test");
 bool backpackModelTests = args.Contains("--backpack-model-tests");
 bool backpackTests = args.Contains("--backpack-tests");

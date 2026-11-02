@@ -1,0 +1,14 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "plain", "DisplayName": "平原", "Description": "开发样例：平原代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["平野"], "Color": "#b9c77c", "Symbol": "平", "InitialAura": {"Jin": 1, "Mu": 1, "Shui": 1, "Huo": 1, "Tu": 1},
+    "AllowFill": true, "FillWeight": 3,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.3, "PreferredMoisture": 0.5, "PreferredTemperature": 0.6, "PreferenceStrength": 3
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [], "NeighborWeights": {"plain": 8, "basin": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 1, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

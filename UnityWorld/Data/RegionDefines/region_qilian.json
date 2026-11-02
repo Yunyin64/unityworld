@@ -1,0 +1,35 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_qilian", "DisplayName": "祁连荒山样例", "MinCount": 1, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 11, "Width": 9, "Height": 9,
+    "TerrainLayout": {
+      "0,-4": "gobi", "1,-4": "gobi", "2,-4": "gobi", "3,-4": "gobi", "4,-4": "gobi",
+      "-1,-3": "gobi", "0,-3": "gobi", "1,-3": "gobi", "2,-3": "gobi", "3,-3": "gobi",
+      "4,-3": "gobi", "-2,-2": "gobi", "-1,-2": "gobi", "0,-2": "barren_mountain", "1,-2": "barren_mountain",
+      "2,-2": "barren_mountain", "3,-2": "gobi", "4,-2": "gobi", "-3,-1": "gobi", "-2,-1": "gobi",
+      "-1,-1": "barren_mountain", "0,-1": "barren_mountain", "1,-1": "barren_mountain", "2,-1": "barren_mountain", "3,-1": "gobi",
+      "4,-1": "gobi", "-4,0": "gobi", "-3,0": "gobi", "-2,0": "barren_mountain", "-1,0": "barren_mountain",
+      "0,0": "barren_mountain", "1,0": "barren_mountain", "2,0": "barren_mountain", "3,0": "gobi", "4,0": "gobi",
+      "-4,1": "gobi", "-3,1": "gobi", "-2,1": "barren_mountain", "-1,1": "barren_mountain", "0,1": "barren_mountain",
+      "1,1": "barren_mountain", "2,1": "gobi", "3,1": "gobi", "-4,2": "gobi", "-3,2": "gobi",
+      "-2,2": "barren_mountain", "-1,2": "barren_mountain", "0,2": "barren_mountain", "1,2": "gobi", "2,2": "gobi",
+      "-4,3": "gobi", "-3,3": "gobi", "-2,3": "gobi", "-1,3": "gobi", "0,3": "gobi",
+      "1,3": "gobi", "-4,4": "gobi", "-3,4": "gobi", "-2,4": "gobi", "-1,4": "gobi",
+      "0,4": "gobi"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_mineral_vein"
+    },
+    "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0.26, "Max": 1}, "Moisture": {"Min": 0, "Max": 0.72}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.7, "PreferredMoisture": 0.25, "PreferredTemperature": 0.4, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0.26, "Max": 1}, "Moisture": {"Min": 0, "Max": 0.72}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.7, "PreferredMoisture": 0.25, "PreferredTemperature": 0.4, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

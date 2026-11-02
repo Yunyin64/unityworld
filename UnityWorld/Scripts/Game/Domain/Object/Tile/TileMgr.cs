@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain
 {
@@ -29,6 +30,38 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public Tile? GetTile(int planeId, TileId tileId)
             => PlaneMgr.Instance?.GetPlaneById(planeId)?.GetTile(tileId);
+
+        /// <summary>按独立类型 ID 查询，不自动包含同标签的其他变体。</summary>
+        public IEnumerable<Tile> GetByType(int planeId, string typeId)
+            => (PlaneMgr.Instance?.GetPlaneById(planeId)?.Tiles.Values ?? Enumerable.Empty<Tile>())
+                .Where(tile => tile.TypeId == typeId);
+
+        /// <summary>按共同标签查询所有匹配类型。</summary>
+        public IEnumerable<Tile> GetByTag(int planeId, string tag)
+        {
+            var catalog = GameDataMgr.Instance?.MapCatalog;
+            return (PlaneMgr.Instance?.GetPlaneById(planeId)?.Tiles.Values ?? Enumerable.Empty<Tile>())
+                .Where(tile => catalog?.Tiles.TryGetValue(tile.TypeId, out var define) == true && define.Tags.Contains(tag));
+        }
+
+        /// <summary>查询地区所属位面的实际拥有格；未知地区返回空集合。</summary>
+        public IEnumerable<Tile> GetByRegion(int regionId)
+        {
+            var region = RegionMgr.Instance?.GetById(regionId);
+            var plane = region == null ? null : PlaneMgr.Instance?.GetPlaneById(region.PlaneId);
+            return plane == null ? Enumerable.Empty<Tile>() : region.OwnedTiles
+                .Select(plane.GetTile).Where(tile => tile != null);
+        }
+
+        /// <summary>无地区归属包括固定边界与基础填充，不把两种来源混同。</summary>
+        public IEnumerable<Tile> GetWithNoRegion(int planeId)
+            => (PlaneMgr.Instance?.GetPlaneById(planeId)?.Tiles.Values ?? Enumerable.Empty<Tile>())
+                .Where(tile => !tile.RegionId.HasValue);
+
+        /// <summary>在指定位面内按固定边界、地区或基础填充来源筛选。</summary>
+        public IEnumerable<Tile> GetBySource(int planeId, TileGenerationSource source)
+            => (PlaneMgr.Instance?.GetPlaneById(planeId)?.Tiles.Values ?? Enumerable.Empty<Tile>())
+                .Where(tile => tile.Source == source);
 
 
         // ── IDomainMgrBase 接口 ───────────────────────────

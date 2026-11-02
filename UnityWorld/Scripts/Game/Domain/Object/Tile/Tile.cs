@@ -13,6 +13,19 @@ namespace UnityWorld.Game.Domain
         /// <summary>地块唯一坐标ID（Axial 坐标）</summary>
         public TileId Id { get; }
 
+        /// <summary>独立地域类型 ID，与共同筛选标签分别表达。</summary>
+        public string TypeId { get; internal set; } = "plain";
+        /// <summary>唯一生成来源，固定边界不归入无地区的基础填充。</summary>
+        public TileGenerationSource Source { get; internal set; } = TileGenerationSource.Fill;
+        public int? RegionId { get; internal set; }
+        public int? LandMarkId { get; internal set; }
+        public bool IsFixed { get; internal set; }
+        public bool HasForcedLandmark { get; internal set; }
+        public MapEnvironment Environment { get; internal set; } = new();
+        public MapWater Water { get; internal set; } = new();
+        public bool BlockAllMovement { get; internal set; }
+        public IReadOnlyList<string> AllowedMovement { get; internal set; } = Array.Empty<string>();
+
         // ── 五行元气 ──────────────────────────────────────
 
         /// <summary>地块当前五行元气浓度（实时值，由 TileSystemAura 每 Tick 根据修正源累积更新）</summary>
@@ -23,11 +36,6 @@ namespace UnityWorld.Game.Domain
         /// <summary>作用于本地块的修正源列表（地标、NPC 影响、事件等）</summary>
         public List<TileModifier> Modifiers { get; } = new();
 
-        // ── 预留扩展区 ────────────────────────────────────
-        // TODO: 地形类型（平原、山地、河流、海洋、林地等）
-        // TODO: 建筑/地标（城镇、宗门、洞府等）
-        // TODO: 资源节点（矿脉、灵草地等）
-        // TODO: 是否可通行
 
         // ── 构造 ──────────────────────────────────────────
 
@@ -59,6 +67,10 @@ namespace UnityWorld.Game.Domain
         {
             Modifiers.Remove(modifier);
         }
+
+        /// <summary>移除指定来源的全部未来速率，不撤销已经累积的元气。</summary>
+        public int RemoveModifiersFromSource(string sourceId)
+            => Modifiers.RemoveAll(modifier => modifier.SourceId == sourceId);
 
         // ── 工具 ──────────────────────────────────────────
 

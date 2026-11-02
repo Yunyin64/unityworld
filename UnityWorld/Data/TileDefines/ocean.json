@@ -1,0 +1,14 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "ocean", "DisplayName": "东海", "Description": "开发样例：东海代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["水系"], "Color": "#356a97", "Symbol": "东",
+    "InitialAura": {"Jin": 0.5, "Mu": 0.8, "Shui": 4, "Huo": 0.3, "Tu": 0.5}, "AllowFill": false, "FillWeight": 0,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.03, "PreferredMoisture": 0.92, "PreferredTemperature": 0.55, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {"ocean": 8, "river_lake": 1.6, "lake": 1.6}, "MovementModes": ["boat", "fly"], "MovementCost": 3,
+    "WaterKind": "ocean", "BlocksAllMovement": false, "ResourceRefs": [], "EncounterRefs": []
+  }
+]

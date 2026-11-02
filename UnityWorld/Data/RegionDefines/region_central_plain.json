@@ -1,0 +1,46 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_central_plain", "DisplayName": "中州平野样例", "MinCount": 0, "MaxCount": -1,
+    "SpawnWeight": 5, "MinSpacing": 15, "Width": 13, "Height": 13,
+    "TerrainLayout": {
+      "0,-6": "grassland", "1,-6": "grassland", "2,-6": "grassland", "3,-6": "grassland", "4,-6": "grassland",
+      "5,-6": "grassland", "6,-6": "grassland", "-1,-5": "grassland", "0,-5": "grassland", "1,-5": "grassland",
+      "2,-5": "grassland", "3,-5": "grassland", "4,-5": "grassland", "5,-5": "grassland", "6,-5": "grassland",
+      "-2,-4": "grassland", "-1,-4": "grassland", "0,-4": "plain", "1,-4": "plain", "2,-4": "plain",
+      "3,-4": "plain", "4,-4": "plain", "5,-4": "grassland", "6,-4": "grassland", "-3,-3": "grassland",
+      "-2,-3": "grassland", "-1,-3": "plain", "0,-3": "plain", "1,-3": "plain", "2,-3": "plain",
+      "3,-3": "plain", "4,-3": "plain", "5,-3": "grassland", "6,-3": "grassland", "-4,-2": "grassland",
+      "-3,-2": "grassland", "-2,-2": "plain", "-1,-2": "plain", "0,-2": "plain", "1,-2": "plain",
+      "2,-2": "plain", "3,-2": "plain", "4,-2": "plain", "5,-2": "grassland", "6,-2": "grassland",
+      "-5,-1": "grassland", "-4,-1": "grassland", "-3,-1": "plain", "-2,-1": "plain", "-1,-1": "plain",
+      "0,-1": "plain", "1,-1": "plain", "2,-1": "plain", "3,-1": "plain", "4,-1": "plain",
+      "5,-1": "grassland", "6,-1": "grassland", "-6,0": "grassland", "-5,0": "grassland", "-4,0": "plain",
+      "-3,0": "plain", "-2,0": "plain", "-1,0": "plain", "0,0": "plain", "1,0": "plain",
+      "2,0": "plain", "3,0": "plain", "4,0": "plain", "5,0": "grassland", "6,0": "grassland",
+      "-6,1": "grassland", "-5,1": "grassland", "-4,1": "plain", "-3,1": "plain", "-2,1": "plain",
+      "-1,1": "plain", "0,1": "plain", "1,1": "plain", "2,1": "plain", "3,1": "plain",
+      "4,1": "grassland", "5,1": "grassland", "-6,2": "grassland", "-5,2": "grassland", "-4,2": "plain",
+      "-3,2": "plain", "-2,2": "plain", "-1,2": "plain", "0,2": "plain", "1,2": "plain",
+      "2,2": "plain", "3,2": "grassland", "4,2": "grassland", "-6,3": "grassland", "-5,3": "grassland",
+      "-4,3": "plain", "-3,3": "plain", "-2,3": "plain", "-1,3": "plain", "0,3": "plain",
+      "1,3": "plain", "2,3": "grassland", "3,3": "grassland", "-6,4": "grassland", "-5,4": "grassland",
+      "-4,4": "plain", "-3,4": "plain", "-2,4": "plain", "-1,4": "plain", "0,4": "plain",
+      "1,4": "grassland", "2,4": "grassland", "-6,5": "grassland", "-5,5": "grassland", "-4,5": "grassland",
+      "-3,5": "grassland", "-2,5": "grassland", "-1,5": "grassland", "0,5": "grassland", "1,5": "grassland",
+      "-6,6": "grassland", "-5,6": "grassland", "-4,6": "grassland", "-3,6": "grassland", "-2,6": "grassland",
+      "-1,6": "grassland", "0,6": "grassland"
+    },
+    "LandMarkLayout": {}, "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
+    "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.32, "PreferredMoisture": 0.48, "PreferredTemperature": 0.58, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.32, "PreferredMoisture": 0.48, "PreferredTemperature": 0.58, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

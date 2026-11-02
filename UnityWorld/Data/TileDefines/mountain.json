@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "mountain", "DisplayName": "山地", "Description": "开发样例：山地代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["山类"], "Color": "#8a907c", "Symbol": "山",
+    "InitialAura": {"Jin": 2, "Mu": 0.5, "Shui": 0.8, "Huo": 0.8, "Tu": 1.2}, "AllowFill": true, "FillWeight": 5,
+    "Environment": {
+      "Elevation": {"Min": 0.35, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.72, "PreferredMoisture": 0.42, "PreferredTemperature": 0.45, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "mountain": 8, "forest_mountain": 1.6, "barren_mountain": 1.6, "volcano": 1.6, "snow_mountain": 1.6, "karst": 1.6,
+      "red_cliff": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 2.2, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

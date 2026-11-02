@@ -1,0 +1,8 @@
+[
+  {
+    "ID": "natural_volcanic_pillar", "DisplayName": "天火圣柱", "IsNatural": true, "IsSingleton": false, "SpawnWeight": 1.0,
+    "PlacementExtraTerrains": [], "ModifierDefineIds": ["aura_volcanic_heat"], "Tags": ["火", "奇观", "危险"],
+    "SchemaVersion": 2, "PlacementTypeIds": ["desert"], "PlacementTags": [],
+    "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "great_wall", "DisplayName": "绝界长城", "Description": "开发样例：绝界长城代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["世界边界"], "Color": "#514f56", "Symbol": "绝",
+    "InitialAura": {"Jin": 2, "Mu": 0.1, "Shui": 0.1, "Huo": 0.1, "Tu": 3}, "AllowFill": false, "FillWeight": 0,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.75, "PreferredMoisture": 0.25, "PreferredTemperature": 0.5, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [], "NeighborWeights": {"great_wall": 8}, "MovementModes": [],
+    "MovementCost": 1, "WaterKind": "none", "BlocksAllMovement": true, "ResourceRefs": [], "EncounterRefs": []
+  }
+]

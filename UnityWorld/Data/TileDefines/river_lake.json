@@ -1,0 +1,14 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "river_lake", "DisplayName": "河谷", "Description": "开发样例：河谷代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["水系"], "Color": "#509bb6", "Symbol": "河",
+    "InitialAura": {"Jin": 0.8, "Mu": 1.2, "Shui": 2.5, "Huo": 0.5, "Tu": 0.8}, "AllowFill": true, "FillWeight": 8,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.3, "PreferredMoisture": 0.7, "PreferredTemperature": 0.55, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {"river_lake": 8, "ocean": 1.6, "lake": 1.6}, "MovementModes": ["boat", "fly"],
+    "MovementCost": 2.5, "WaterKind": "river", "BlocksAllMovement": false, "ResourceRefs": [], "EncounterRefs": []
+  }
+]

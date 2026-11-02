@@ -1,0 +1,7 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "natural_mineral_vein", "DisplayName": "露天矿脉", "IsNatural": true, "IsSingleton": false,
+    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["山类"], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [], "AuraOffset": {"Jin": 3, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 2}, "Tags": ["开发样例", "自然奇观"]
+  }
+]

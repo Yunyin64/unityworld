@@ -8,15 +8,13 @@ namespace UnityWorld.Game.Data
     /// 由策划在 JSON 中配置，运行时通过 <see cref="CreateModifier"/> 实例化为 <see cref="TileModifier"/>
     /// 挂载到地块上。
     ///
-    /// <para><b>语义说明</b>：<see cref="AuraData"/> 是「目标浓度偏移量」，不是每秒速率。
-    /// 它代表该修正源希望将地块元气向目标值推动的量，
-    /// 实际变化速度由 <c>TileSystemAura</c> 的灵气变化速度常量控制。</para>
+    /// <para><b>语义说明</b>：<see cref="AuraData"/> 是每秒元气变化率。
+    /// <c>TileSystemAura</c> 按传入的 deltaTime 累积，不作为地图生成初值。</para>
     /// </summary>
     public class TileModifierDefine : DefineBase
     {
         /// <summary>
-        /// 目标浓度偏移量（各五行的累加量）。
-        /// 非每秒速率，是对地块元气的固定目标偏移。
+        /// 每秒五行元气变化量，可正可负；保留的附加修正，不替代地标 AuraOffset 的阶段规则。
         /// </summary>
         public TileAura AuraData { get; set; } = new();
 

@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "volcano", "DisplayName": "火山", "Description": "开发样例：火山代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["山类", "炎热"], "Color": "#9c5547", "Symbol": "火",
+    "InitialAura": {"Jin": 1, "Mu": 0.1, "Shui": 0.2, "Huo": 4, "Tu": 2}, "AllowFill": false, "FillWeight": 0,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.75, "PreferredMoisture": 0.2, "PreferredTemperature": 0.85, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "volcano": 8, "mountain": 1.6, "forest_mountain": 1.6, "barren_mountain": 1.6, "snow_mountain": 1.6,
+      "rainforest": 1.6, "karst": 1.6, "red_cliff": 1.6, "dry_valley": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 3.5, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

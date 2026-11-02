@@ -1,0 +1,39 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_gobi", "DisplayName": "大漠戈壁样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 13, "Width": 11, "Height": 11,
+    "TerrainLayout": {
+      "0,-5": "desert", "1,-5": "desert", "2,-5": "desert", "3,-5": "desert", "4,-5": "desert",
+      "5,-5": "desert", "-1,-4": "desert", "0,-4": "desert", "1,-4": "desert", "2,-4": "desert",
+      "3,-4": "desert", "4,-4": "desert", "5,-4": "desert", "-2,-3": "desert", "-1,-3": "desert",
+      "0,-3": "gobi", "1,-3": "gobi", "2,-3": "gobi", "3,-3": "gobi", "4,-3": "desert",
+      "5,-3": "desert", "-3,-2": "desert", "-2,-2": "desert", "-1,-2": "gobi", "0,-2": "gobi",
+      "1,-2": "gobi", "2,-2": "gobi", "3,-2": "gobi", "4,-2": "desert", "5,-2": "desert",
+      "-4,-1": "desert", "-3,-1": "desert", "-2,-1": "gobi", "-1,-1": "gobi", "0,-1": "gobi",
+      "1,-1": "gobi", "2,-1": "gobi", "3,-1": "gobi", "4,-1": "desert", "5,-1": "desert",
+      "-5,0": "desert", "-4,0": "desert", "-3,0": "gobi", "-2,0": "gobi", "-1,0": "gobi",
+      "0,0": "gobi", "1,0": "gobi", "2,0": "gobi", "3,0": "gobi", "4,0": "desert",
+      "5,0": "desert", "-5,1": "desert", "-4,1": "desert", "-3,1": "gobi", "-2,1": "gobi",
+      "-1,1": "gobi", "0,1": "gobi", "1,1": "gobi", "2,1": "gobi", "3,1": "desert",
+      "4,1": "desert", "-5,2": "desert", "-4,2": "desert", "-3,2": "gobi", "-2,2": "gobi",
+      "-1,2": "gobi", "0,2": "gobi", "1,2": "gobi", "2,2": "desert", "3,2": "desert",
+      "-5,3": "desert", "-4,3": "desert", "-3,3": "gobi", "-2,3": "gobi", "-1,3": "gobi",
+      "0,3": "gobi", "1,3": "desert", "2,3": "desert", "-5,4": "desert", "-4,4": "desert",
+      "-3,4": "desert", "-2,4": "desert", "-1,4": "desert", "0,4": "desert", "1,4": "desert",
+      "-5,5": "desert", "-4,5": "desert", "-3,5": "desert", "-2,5": "desert", "-1,5": "desert",
+      "0,5": "desert"
+    },
+    "LandMarkLayout": {}, "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
+    "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.48, "PreferredMoisture": 0.18, "PreferredTemperature": 0.6, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.48, "PreferredMoisture": 0.18, "PreferredTemperature": 0.6, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

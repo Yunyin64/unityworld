@@ -1,4 +1,10 @@
-## ADDED Requirements
+# world-generation
+
+## Purpose
+
+本规范定义 world-generation 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: 5步世界生成流程
 `PlaneGenerator` SHALL 将世界生成扩展为顺序执行的5个步骤，统一由 `PlaneGenerator.Generate(plane, config)` 入口调用，原有 `Fill()` 方法保留为 Step1 内部实现。

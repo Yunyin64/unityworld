@@ -1,0 +1,8 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "natural_ancient_tree", "DisplayName": "千年古木", "IsNatural": true, "IsSingleton": false,
+    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["林木"], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": ["aura_ancient_forest"], "AuraOffset": {"Jin": 0, "Mu": 4, "Shui": 1, "Huo": 0, "Tu": 0},
+    "Tags": ["开发样例", "自然奇观"]
+  }
+]

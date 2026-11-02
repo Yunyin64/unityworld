@@ -1,0 +1,41 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_lingnan", "DisplayName": "岭南雨林样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 13, "Width": 11, "Height": 11,
+    "TerrainLayout": {
+      "0,-5": "karst", "1,-5": "karst", "2,-5": "karst", "3,-5": "karst", "4,-5": "karst",
+      "5,-5": "karst", "-1,-4": "karst", "0,-4": "karst", "1,-4": "karst", "2,-4": "karst",
+      "3,-4": "karst", "4,-4": "karst", "5,-4": "karst", "-2,-3": "karst", "-1,-3": "karst",
+      "0,-3": "rainforest", "1,-3": "rainforest", "2,-3": "rainforest", "3,-3": "rainforest", "4,-3": "karst",
+      "5,-3": "karst", "-3,-2": "karst", "-2,-2": "karst", "-1,-2": "rainforest", "0,-2": "rainforest",
+      "1,-2": "rainforest", "2,-2": "rainforest", "3,-2": "rainforest", "4,-2": "karst", "5,-2": "karst",
+      "-4,-1": "karst", "-3,-1": "karst", "-2,-1": "rainforest", "-1,-1": "rainforest", "0,-1": "rainforest",
+      "1,-1": "rainforest", "2,-1": "rainforest", "3,-1": "rainforest", "4,-1": "karst", "5,-1": "karst",
+      "-5,0": "karst", "-4,0": "karst", "-3,0": "rainforest", "-2,0": "rainforest", "-1,0": "rainforest",
+      "0,0": "rainforest", "1,0": "rainforest", "2,0": "rainforest", "3,0": "rainforest", "4,0": "karst",
+      "5,0": "karst", "-5,1": "karst", "-4,1": "karst", "-3,1": "rainforest", "-2,1": "rainforest",
+      "-1,1": "rainforest", "0,1": "rainforest", "1,1": "rainforest", "2,1": "rainforest", "3,1": "karst",
+      "4,1": "karst", "-5,2": "karst", "-4,2": "karst", "-3,2": "rainforest", "-2,2": "rainforest",
+      "-1,2": "rainforest", "0,2": "rainforest", "1,2": "rainforest", "2,2": "karst", "3,2": "karst",
+      "-5,3": "karst", "-4,3": "karst", "-3,3": "rainforest", "-2,3": "rainforest", "-1,3": "rainforest",
+      "0,3": "rainforest", "1,3": "karst", "2,3": "karst", "-5,4": "karst", "-4,4": "karst",
+      "-3,4": "karst", "-2,4": "karst", "-1,4": "karst", "0,4": "karst", "1,4": "karst",
+      "-5,5": "karst", "-4,5": "karst", "-3,5": "karst", "-2,5": "karst", "-1,5": "karst",
+      "0,5": "karst"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_ancient_tree"
+    },
+    "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0.4, "Max": 1}, "Temperature": {"Min": 0.5, "Max": 1},
+      "PreferredElevation": 0.43, "PreferredMoisture": 0.83, "PreferredTemperature": 0.84, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0.4, "Max": 1}, "Temperature": {"Min": 0.5, "Max": 1},
+      "PreferredElevation": 0.43, "PreferredMoisture": 0.83, "PreferredTemperature": 0.84, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "fixed_south_rainforest", "DisplayName": "南境雨林", "Width": 10, "Height": 10,
+    "ForcedPositions": [
+      {"Col": 80, "Row": 190}, {"Col": 90, "Row": 190}, {"Col": 100, "Row": 190}, {"Col": 110, "Row": 190},
+      {"Col": 120, "Row": 190}, {"Col": 130, "Row": 190}, {"Col": 140, "Row": 190}, {"Col": 150, "Row": 190},
+      {"Col": 160, "Row": 190}, {"Col": 170, "Row": 190}, {"Col": 180, "Row": 190}
+    ],
+    "FixedEnvironment": {"Elevation": 0.35, "Moisture": 0.92, "Temperature": 0.9},
+    "TerrainLayout": {
+      "0,0": "rainforest", "1,0": "rainforest", "2,0": "rainforest", "3,0": "rainforest", "4,0": "rainforest",
+      "5,0": "rainforest", "6,0": "rainforest", "7,0": "rainforest", "8,0": "rainforest", "9,0": "rainforest",
+      "0,1": "rainforest", "1,1": "rainforest", "2,1": "rainforest", "3,1": "rainforest", "4,1": "rainforest",
+      "5,1": "rainforest", "6,1": "rainforest", "7,1": "rainforest", "8,1": "rainforest", "9,1": "rainforest",
+      "-1,2": "rainforest", "0,2": "rainforest", "1,2": "rainforest", "2,2": "rainforest", "3,2": "rainforest",
+      "4,2": "rainforest", "5,2": "rainforest", "6,2": "rainforest", "7,2": "rainforest", "8,2": "rainforest",
+      "-1,3": "rainforest", "0,3": "rainforest", "1,3": "rainforest", "2,3": "rainforest", "3,3": "rainforest",
+      "4,3": "rainforest", "5,3": "rainforest", "6,3": "rainforest", "7,3": "rainforest", "8,3": "rainforest",
+      "-2,4": "rainforest", "-1,4": "rainforest", "0,4": "rainforest", "1,4": "rainforest", "2,4": "rainforest",
+      "3,4": "rainforest", "4,4": "rainforest", "5,4": "rainforest", "6,4": "rainforest", "7,4": "rainforest",
+      "-2,5": "rainforest", "-1,5": "rainforest", "0,5": "rainforest", "1,5": "rainforest", "2,5": "rainforest",
+      "3,5": "rainforest", "4,5": "rainforest", "5,5": "rainforest", "6,5": "rainforest", "7,5": "rainforest",
+      "-3,6": "rainforest", "-2,6": "rainforest", "-1,6": "rainforest", "0,6": "rainforest", "1,6": "rainforest",
+      "2,6": "rainforest", "3,6": "rainforest", "4,6": "rainforest", "5,6": "rainforest", "6,6": "rainforest",
+      "-3,7": "rainforest", "-2,7": "rainforest", "-1,7": "rainforest", "0,7": "rainforest", "1,7": "rainforest",
+      "2,7": "rainforest", "3,7": "rainforest", "4,7": "rainforest", "5,7": "rainforest", "6,7": "rainforest",
+      "-4,8": "rainforest", "-3,8": "rainforest", "-2,8": "rainforest", "-1,8": "rainforest", "0,8": "rainforest",
+      "1,8": "rainforest", "2,8": "rainforest", "3,8": "rainforest", "4,8": "rainforest", "5,8": "rainforest",
+      "-4,9": "rainforest", "-3,9": "rainforest", "-2,9": "rainforest", "-1,9": "rainforest", "0,9": "rainforest",
+      "1,9": "rainforest", "2,9": "rainforest", "3,9": "rainforest", "4,9": "rainforest", "5,9": "rainforest"
+    },
+    "LandMarkLayout": {}, "SpawnWeight": 0, "MaxCount": 0, "MinSpacing": 999, "Tags": ["开发样例", "固定地区"]
+  }
+]

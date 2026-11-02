@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 namespace UnityWorld.Game.Domain
 {
+    public enum PlaneGenerationMode { BasicFill, Continent }
+
     /// <summary>
     /// 创建位面时的配置参数，传给 PlaneMgr.CreatePlane 使用
     /// </summary>
@@ -35,16 +37,25 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public IEnumerable<Tile>? InitialTiles { get; set; } = null;
 
+        public PlaneGenerationMode GenerationMode { get; set; } = PlaneGenerationMode.BasicFill;
+        public string GenerationProfileId { get; set; } = "china-inspired-v1";
+        public int GenerationSeed { get; set; } = 12345;
+        /// <summary>可选的普通生成参数；为空时使用代码默认预设，没有额外的 Define JSON。</summary>
+        public UnityWorld.Game.Data.WorldGenerationOptions GenerationOptions { get; set; }
+
         // ── 快捷工厂方法 ────────────────────────────────────
 
         /// <summary>创建主世界配置</summary>
-        public static PlaneConfig ForMainPlane(string name = "主世界") => new()
+        public static PlaneConfig ForMainPlane(string name = "主世界", string profileId = "china-inspired-v1", int seed = 12345) => new()
         {
             Name = name,
-            Width = 200,   // 主世界默认 200×200（可修改）
+            Width = 200,   // 主大陆固定 200×200，其他位面显式选择 BasicFill。
             Height = 200,
             Kind = PlaneTypes.PlaneKind.MainPlane,
             TimeFlowRate = 1f,
+            GenerationMode = PlaneGenerationMode.Continent,
+            GenerationProfileId = profileId,
+            GenerationSeed = seed,
         };
 
         /// <summary>创建小世界配置</summary>
@@ -123,6 +134,9 @@ namespace UnityWorld.Game.Domain
         /// <summary>当前地块数量</summary>
         public int TileCount => _tiles.Count;
 
+        /// <summary>发布的结构计划用于预览与运行时入口一致性核验，不参与 Tick。</summary>
+        public GeneratedWorld GenerationResult { get; internal set; }
+
         // ── NPC列表 ───────────────────────────────────────
 
         private readonly HashSet<int> _npcIds = new();
@@ -156,7 +170,10 @@ namespace UnityWorld.Game.Domain
 
             if (config.InitialTiles != null)
                 foreach (var tile in config.InitialTiles)
-                    _tiles[tile.Id] = tile;
+                {
+                    if (!IsInBounds(tile.Id) || !_tiles.TryAdd(tile.Id, tile))
+                        throw new ArgumentException($"初始地块坐标重复或越界：{tile.Id}");
+                }
         }
 
         // ── 坐标工具 ──────────────────────────────────────

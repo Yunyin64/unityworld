@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "dry_valley", "DisplayName": "干热河谷", "Description": "开发样例：干热河谷代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["干旱", "炎热"], "Color": "#b29567", "Symbol": "干",
+    "InitialAura": {"Jin": 1, "Mu": 0.7, "Shui": 0.5, "Huo": 2, "Tu": 1.5}, "AllowFill": true, "FillWeight": 3,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.3, "PreferredMoisture": 0.3, "PreferredTemperature": 0.82, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "dry_valley": 8, "desert": 1.6, "barren_mountain": 1.6, "volcano": 1.6, "loess_hill": 1.6, "rainforest": 1.6,
+      "gobi": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 1.5, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

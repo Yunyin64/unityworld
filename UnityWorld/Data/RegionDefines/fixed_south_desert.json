@@ -1,0 +1,25 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "fixed_south_desert", "DisplayName": "南境沙漠", "Width": 5, "Height": 10,
+    "ForcedPositions": [
+      {"Col": 5, "Row": 190}, {"Col": 10, "Row": 190}, {"Col": 15, "Row": 190}, {"Col": 20, "Row": 190},
+      {"Col": 25, "Row": 190}, {"Col": 30, "Row": 190}, {"Col": 35, "Row": 190}, {"Col": 40, "Row": 190},
+      {"Col": 45, "Row": 190}, {"Col": 50, "Row": 190}, {"Col": 55, "Row": 190}, {"Col": 60, "Row": 190},
+      {"Col": 65, "Row": 190}, {"Col": 70, "Row": 190}, {"Col": 75, "Row": 190}
+    ],
+    "FixedEnvironment": {"Elevation": 0.4, "Moisture": 0.12, "Temperature": 0.92},
+    "TerrainLayout": {
+      "0,0": "desert", "1,0": "desert", "2,0": "desert", "3,0": "desert", "4,0": "desert",
+      "0,1": "desert", "1,1": "desert", "2,1": "desert", "3,1": "desert", "4,1": "desert",
+      "-1,2": "desert", "0,2": "desert", "1,2": "desert", "2,2": "desert", "3,2": "desert",
+      "-1,3": "desert", "0,3": "desert", "1,3": "desert", "2,3": "desert", "3,3": "desert",
+      "-2,4": "desert", "-1,4": "desert", "0,4": "desert", "1,4": "desert", "2,4": "desert",
+      "-2,5": "desert", "-1,5": "desert", "0,5": "desert", "1,5": "desert", "2,5": "desert",
+      "-3,6": "desert", "-2,6": "desert", "-1,6": "desert", "0,6": "desert", "1,6": "desert",
+      "-3,7": "desert", "-2,7": "desert", "-1,7": "desert", "0,7": "desert", "1,7": "desert",
+      "-4,8": "desert", "-3,8": "desert", "-2,8": "desert", "-1,8": "desert", "0,8": "desert",
+      "-4,9": "desert", "-3,9": "desert", "-2,9": "desert", "-1,9": "desert", "0,9": "desert"
+    },
+    "LandMarkLayout": {}, "SpawnWeight": 0, "MaxCount": 0, "MinSpacing": 999, "Tags": ["开发样例", "固定地区"]
+  }
+]

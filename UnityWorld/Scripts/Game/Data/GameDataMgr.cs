@@ -18,6 +18,7 @@ namespace UnityWorld.Game.Data
 
         // ── 子管理器 ──────────────────────────────────────────
         private List<IDataMgrBase> _datamgrs  = new();
+        public MapCatalog MapCatalog { get; private set; }
 
         // ── 初始化 ────────────────────────────────────────────
 
@@ -26,6 +27,12 @@ namespace UnityWorld.Game.Data
             baseDir ??= AppContext.BaseDirectory;
             // 注册到列表，方便统一调用 Load
         var dataDir = Path.Combine(baseDir, "Data");
+        // 地图使用独立严格加载器：解析、重复 ID、引用错误均抛出，不接受旧加载器的忽略行为。
+        MapCatalog = MapCatalog.Load(baseDir);
+        _datamgrs.Add(new TileDefineMgr(Path.Combine(dataDir, "TileDefines")));
+        _datamgrs.Add(new RegionDefineMgr(Path.Combine(dataDir, "RegionDefines")));
+        _datamgrs.Add(new LandMarkDefineMgr(Path.Combine(dataDir, "LandMarkDefines")));
+        _datamgrs.Add(new TileModifierDefineMgr(Path.Combine(dataDir, "TileModifierDefines.json")));
         _datamgrs.Add(new SocialRoleMgr(Path.Combine(dataDir, "SocialRoles.json")));
         _datamgrs.Add(new TraitDefineMgr(Path.Combine(dataDir, "Traits.json")));
         _datamgrs.Add(new NpcDefineMgr(Path.Combine(dataDir, "Npc")));
@@ -56,7 +63,6 @@ namespace UnityWorld.Game.Data
         // ── 物品定义（按分类分文件存放在 Data/Item/ 文件夹下）────
         _datamgrs.Add(new ItemDefineMgr(Path.Combine(dataDir, "Item")));
 
-            Instance = this;
         }
 
         /// <summary>
@@ -67,12 +73,13 @@ namespace UnityWorld.Game.Data
         {
             baseDir ??= AppContext.BaseDirectory;
             // 每个宿主重新绑定数据目录，避免首次静态初始化锁定到引擎安装目录。
-            Instance = new GameDataMgr(baseDir);
+            var candidate = new GameDataMgr(baseDir);
 
-            foreach (var mgr in Instance._datamgrs)
+            foreach (var mgr in candidate._datamgrs)
             {
                 mgr.Load();
             }
+            Instance = candidate;
             LogMgr.Instance.Dbg("[GameDataMgr] 所有数据加载完成");
         }
     }

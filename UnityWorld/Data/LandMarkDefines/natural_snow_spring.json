@@ -1,0 +1,7 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "natural_snow_spring", "DisplayName": "冰川灵泉", "IsNatural": true, "IsSingleton": false,
+    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["寒冷"], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [], "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 4, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "自然奇观"]
+  }
+]

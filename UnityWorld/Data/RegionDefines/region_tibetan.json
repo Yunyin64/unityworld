@@ -1,0 +1,45 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_tibetan", "DisplayName": "高原草甸样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 15, "Width": 13, "Height": 13,
+    "TerrainLayout": {
+      "0,-6": "plateau", "1,-6": "plateau", "2,-6": "plateau", "3,-6": "plateau", "4,-6": "plateau",
+      "5,-6": "plateau", "6,-6": "plateau", "-1,-5": "plateau", "0,-5": "plateau", "1,-5": "plateau",
+      "2,-5": "plateau", "3,-5": "plateau", "4,-5": "plateau", "5,-5": "plateau", "6,-5": "plateau",
+      "-2,-4": "plateau", "-1,-4": "plateau", "0,-4": "alpine_meadow", "1,-4": "alpine_meadow", "2,-4": "alpine_meadow",
+      "3,-4": "alpine_meadow", "4,-4": "alpine_meadow", "5,-4": "plateau", "6,-4": "plateau", "-3,-3": "plateau",
+      "-2,-3": "plateau", "-1,-3": "alpine_meadow", "0,-3": "alpine_meadow", "1,-3": "alpine_meadow", "2,-3": "alpine_meadow",
+      "3,-3": "alpine_meadow", "4,-3": "alpine_meadow", "5,-3": "plateau", "6,-3": "plateau", "-4,-2": "plateau",
+      "-3,-2": "plateau", "-2,-2": "alpine_meadow", "-1,-2": "alpine_meadow", "0,-2": "alpine_meadow", "1,-2": "alpine_meadow",
+      "2,-2": "alpine_meadow", "3,-2": "alpine_meadow", "4,-2": "alpine_meadow", "5,-2": "plateau", "6,-2": "plateau",
+      "-5,-1": "plateau", "-4,-1": "plateau", "-3,-1": "alpine_meadow", "-2,-1": "alpine_meadow", "-1,-1": "alpine_meadow",
+      "0,-1": "alpine_meadow", "2,-1": "alpine_meadow", "3,-1": "alpine_meadow", "4,-1": "alpine_meadow", "5,-1": "plateau",
+      "6,-1": "plateau", "-6,0": "plateau", "-5,0": "plateau", "-4,0": "alpine_meadow", "-3,0": "alpine_meadow",
+      "-2,0": "alpine_meadow", "-1,0": "alpine_meadow", "0,0": "plateau", "1,0": "alpine_meadow", "2,0": "alpine_meadow",
+      "3,0": "alpine_meadow", "4,0": "alpine_meadow", "5,0": "plateau", "6,0": "plateau", "-6,1": "plateau",
+      "-5,1": "plateau", "-4,1": "alpine_meadow", "-3,1": "alpine_meadow", "-1,1": "alpine_meadow", "0,1": "alpine_meadow",
+      "1,1": "alpine_meadow", "2,1": "alpine_meadow", "3,1": "alpine_meadow", "4,1": "plateau", "5,1": "plateau",
+      "-6,2": "plateau", "-5,2": "plateau", "-4,2": "alpine_meadow", "-3,2": "alpine_meadow", "-2,2": "alpine_meadow",
+      "-1,2": "alpine_meadow", "0,2": "alpine_meadow", "1,2": "alpine_meadow", "2,2": "alpine_meadow", "3,2": "plateau",
+      "4,2": "plateau", "-6,3": "plateau", "-5,3": "plateau", "-4,3": "alpine_meadow", "-3,3": "alpine_meadow",
+      "-2,3": "alpine_meadow", "-1,3": "alpine_meadow", "0,3": "alpine_meadow", "1,3": "alpine_meadow", "2,3": "plateau",
+      "3,3": "plateau", "-6,4": "plateau", "-5,4": "plateau", "-4,4": "alpine_meadow", "-3,4": "alpine_meadow",
+      "-2,4": "alpine_meadow", "-1,4": "alpine_meadow", "0,4": "alpine_meadow", "1,4": "plateau", "2,4": "plateau",
+      "-6,5": "plateau", "-5,5": "plateau", "-4,5": "plateau", "-3,5": "plateau", "-2,5": "plateau",
+      "-1,5": "plateau", "0,5": "plateau", "1,5": "plateau", "-6,6": "plateau", "-5,6": "plateau",
+      "-4,6": "plateau", "-3,6": "plateau", "-2,6": "plateau", "-1,6": "plateau", "0,6": "plateau"
+    },
+    "LandMarkLayout": {}, "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
+    "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0.26, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.76, "PreferredMoisture": 0.42, "PreferredTemperature": 0.28, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0.26, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.76, "PreferredMoisture": 0.42, "PreferredTemperature": 0.28, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

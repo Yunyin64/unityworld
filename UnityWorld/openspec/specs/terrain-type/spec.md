@@ -1,4 +1,10 @@
-## ADDED Requirements
+# terrain-type
+
+## Purpose
+
+本规范定义 terrain-type 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: 定义基础地形枚举
 系统 SHALL 提供 `TerrainType` 枚举，包含 7 种固定基础地形：`Plain`（平原）、`Hill`（丘陵）、`Mountain`（山地）、`RiverLake`（河湖）、`Ocean`（海洋）、`Desert`（荒漠）、`Forest`（森林）。

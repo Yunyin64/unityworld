@@ -1,3 +1,5 @@
+using UnityWorld.Game.Data;
+
 namespace UnityWorld.Game.Domain
 {
     /// <summary>
@@ -6,6 +8,72 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public static class PlaneGenerator
     {
+        internal sealed class PreparedContent
+        {
+            public List<Region> Regions { get; } = new();
+            public List<LandMark> LandMarks { get; } = new();
+            public Dictionary<TileId, TileAura> NaturalSnapshot { get; set; }
+        }
+
+        /// <summary>地块类型与基础元气 → 自然地标 → 原初快照 → 人工地标；绝不推进 Tick。</summary>
+        internal static PreparedContent BuildContinent(Plane plane, MapCatalog catalog, GeneratedWorld world,
+            RegionMgr regions, LandMarkMgr landMarks)
+        {
+            if (world.Width != plane.Width || world.Height != plane.Height || world.Cells.Length != plane.Capacity)
+                throw new InvalidDataException("候选地图尺寸不完整。");
+            var prepared = new PreparedContent();
+            var regionByIndex = new Dictionary<int, Region>();
+            foreach (var plan in world.Regions.OrderBy(r => r.Index))
+            {
+                var region = regions.Prepare(plane.Id, plan, world);
+                if (!regionByIndex.TryAdd(plan.Index, region)) throw new InvalidDataException("重复地区生成序号。");
+                prepared.Regions.Add(region);
+            }
+            foreach (var cell in world.Cells)
+            {
+                var definition = catalog.Tiles[cell.TileDefineId];
+                var tile = new Tile(cell.Id, definition.InitialAura)
+                {
+                    TypeId = cell.TileDefineId, Source = cell.Source,
+                    IsFixed = cell.IsFixed, HasForcedLandmark = cell.HasForcedLandmark,
+                    Environment = cell.Environment.Copy(), Water = cell.Water.Copy(),
+                    BlockAllMovement = cell.BlockAllMovement || definition.BlocksAllMovement,
+                    AllowedMovement = (cell.AllowedMovement ?? definition.MovementModes).ToArray(),
+                };
+                if (cell.RegionIndex.HasValue)
+                {
+                    var region = regionByIndex[cell.RegionIndex.Value];
+                    if (!region.OwnedTiles.Contains(cell.Id)) throw new InvalidDataException("地区格子归属不一致。");
+                    tile.RegionId = region.Id;
+                    tile.CurrentAura.AddFrom(catalog.Regions[region.DefineId].AuraProfile);
+                }
+                if (plane.HasTile(tile.Id) || !plane.IsInBounds(tile.Id)) throw new InvalidDataException("候选地块重复或越界。");
+                plane.SetTile(tile);
+            }
+
+            var singletons = new HashSet<string>(landMarks.ReservedSingletons, StringComparer.Ordinal);
+            void PrepareLandmarks(bool isNatural)
+            {
+                // 地区附带和独立散布都只提供位置计划，按同一个 IsNatural 阶段创建实际实体。
+                foreach (var cell in world.Cells.Where(c => c.LandMarkDefineId != null))
+                {
+                    var define = catalog.LandMarks[cell.LandMarkDefineId];
+                    if (define.IsNatural != isNatural) continue;
+                    if (define.IsSingleton && !singletons.Add(define.ID)) throw new InvalidDataException($"重复单例地标 {define.ID}");
+                    var tile = plane.GetTile(cell.Id);
+                    var phase = isNatural ? LandMarkPlacementPhase.CreationNatural : LandMarkPlacementPhase.Dynamic;
+                    var landmark = landMarks.Prepare(plane, tile, define.ID, phase);
+                    prepared.LandMarks.Add(landmark);
+                    if (cell.RegionIndex.HasValue) regionByIndex[cell.RegionIndex.Value].AddLandMark(landmark.Id);
+                }
+            }
+            PrepareLandmarks(isNatural: true);
+            prepared.NaturalSnapshot = AuraDaoMgr.PrepareSnapshot(plane);
+            PrepareLandmarks(isNatural: false);
+            plane.GenerationResult = world;
+            return prepared;
+        }
+
         /// <summary>
         /// 为指定位面填充所有地块（Width × Height 格）。
         /// 若位面 Width 或 Height 为 0，则跳过生成（空位面）。

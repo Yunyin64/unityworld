@@ -1,0 +1,25 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "fixed_north_gobi", "DisplayName": "北境大漠", "Width": 5, "Height": 10,
+    "ForcedPositions": [
+      {"Col": 115, "Row": 0}, {"Col": 120, "Row": 0}, {"Col": 125, "Row": 0}, {"Col": 130, "Row": 0},
+      {"Col": 135, "Row": 0}, {"Col": 140, "Row": 0}, {"Col": 145, "Row": 0}, {"Col": 150, "Row": 0},
+      {"Col": 155, "Row": 0}, {"Col": 160, "Row": 0}, {"Col": 165, "Row": 0}, {"Col": 170, "Row": 0},
+      {"Col": 175, "Row": 0}, {"Col": 180, "Row": 0}, {"Col": 185, "Row": 0}
+    ],
+    "FixedEnvironment": {"Elevation": 0.6, "Moisture": 0.12, "Temperature": 0.25},
+    "TerrainLayout": {
+      "0,0": "gobi", "1,0": "gobi", "2,0": "gobi", "3,0": "gobi", "4,0": "gobi",
+      "0,1": "gobi", "1,1": "gobi", "2,1": "gobi", "3,1": "gobi", "4,1": "gobi",
+      "-1,2": "gobi", "0,2": "gobi", "1,2": "gobi", "2,2": "gobi", "3,2": "gobi",
+      "-1,3": "gobi", "0,3": "gobi", "1,3": "gobi", "2,3": "gobi", "3,3": "gobi",
+      "-2,4": "gobi", "-1,4": "gobi", "0,4": "gobi", "1,4": "gobi", "2,4": "gobi",
+      "-2,5": "gobi", "-1,5": "gobi", "0,5": "gobi", "1,5": "gobi", "2,5": "gobi",
+      "-3,6": "gobi", "-2,6": "gobi", "-1,6": "gobi", "0,6": "gobi", "1,6": "gobi",
+      "-3,7": "gobi", "-2,7": "gobi", "-1,7": "gobi", "0,7": "gobi", "1,7": "gobi",
+      "-4,8": "gobi", "-3,8": "gobi", "-2,8": "gobi", "-1,8": "gobi", "0,8": "gobi",
+      "-4,9": "gobi", "-3,9": "gobi", "-2,9": "gobi", "-1,9": "gobi", "0,9": "gobi"
+    },
+    "LandMarkLayout": {}, "SpawnWeight": 0, "MaxCount": 0, "MinSpacing": 999, "Tags": ["开发样例", "固定地区"]
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "barren_mountain", "DisplayName": "荒山",
+    "Description": "开发样例：荒山代表一片地域，包含格内小尺度景观；不等同真实中国位置。", "Tags": ["山类", "干旱"], "Color": "#a59480", "Symbol": "荒",
+    "InitialAura": {"Jin": 2, "Mu": 0.2, "Shui": 0.3, "Huo": 1.2, "Tu": 1.6}, "AllowFill": true, "FillWeight": 4,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 0.62}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.7, "PreferredMoisture": 0.2, "PreferredTemperature": 0.6, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "barren_mountain": 8, "mountain": 1.6, "desert": 1.6, "forest_mountain": 1.6, "volcano": 1.6, "snow_mountain": 1.6,
+      "loess_hill": 1.6, "gobi": 1.6, "karst": 1.6, "red_cliff": 1.6, "dry_valley": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 2.4, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

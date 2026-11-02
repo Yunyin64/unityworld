@@ -1,0 +1,14 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "basin", "DisplayName": "盆地", "Description": "开发样例：盆地代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
+    "Tags": ["平野"], "Color": "#a0b379", "Symbol": "盆",
+    "InitialAura": {"Jin": 0.8, "Mu": 1.3, "Shui": 1.2, "Huo": 0.8, "Tu": 1.8}, "AllowFill": true, "FillWeight": 3,
+    "Environment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.24, "PreferredMoisture": 0.58, "PreferredTemperature": 0.62, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [], "NeighborWeights": {"basin": 8, "plain": 1.6},
+    "MovementModes": ["walk", "fly"], "MovementCost": 1.2, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]

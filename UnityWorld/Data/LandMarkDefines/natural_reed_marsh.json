@@ -1,0 +1,7 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "natural_reed_marsh", "DisplayName": "芦荡灵泽", "IsNatural": true, "IsSingleton": false,
+    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["湿润"], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [], "AuraOffset": {"Jin": 0, "Mu": 2, "Shui": 3, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "自然奇观"]
+  }
+]

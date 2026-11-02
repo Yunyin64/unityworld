@@ -1,0 +1,8 @@
+[
+  {
+    "ID": "natural_leyline_eye", "DisplayName": "灵脉眼", "IsNatural": true, "IsSingleton": false, "SpawnWeight": 2.0,
+    "PlacementExtraTerrains": [], "ModifierDefineIds": ["aura_leyline_spring"], "Tags": ["圣地", "灵脉", "修炼"],
+    "SchemaVersion": 2, "PlacementTypeIds": [], "PlacementTags": [],
+    "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}
+  }
+]

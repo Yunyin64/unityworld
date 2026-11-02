@@ -1,0 +1,7 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "natural_stone_gate", "DisplayName": "天门石阙", "IsNatural": true, "IsSingleton": false,
+    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["山类"], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [], "AuraOffset": {"Jin": 2, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 1}, "Tags": ["开发样例", "自然奇观"]
+  }
+]

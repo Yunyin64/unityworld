@@ -1,4 +1,10 @@
-## ADDED Requirements
+# aura-dao
+
+## Purpose
+
+本规范定义 aura-dao 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: AuraDaoMgr 持有全局原初元气快照
 `AuraDaoMgr` SHALL 持有一个 `Dictionary<TileId, TileAura>` 作为原初快照（OriginSnapshot），在世界生成完成后由 PlaneGenerator 一次性写入，之后只读。任何代码 MUST NOT 在运行时修改此快照。

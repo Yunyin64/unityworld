@@ -1,4 +1,10 @@
-## ADDED Requirements
+# tile-modifier-define
+
+## Purpose
+
+本规范定义 tile-modifier-define 能力对世界与调用方提供的行为、数据一致性和可验证场景。以下要求保留既有地图与元气系统约定，后续行为修改通过对应变更的增量规格进行维护。
+
+## Requirements
 
 ### Requirement: TileModifierDefine 静态配置
 系统 SHALL 提供 `TileModifierDefine`（继承 `DefineBase`）作为元气修正的静态配置模板，含以下字段：

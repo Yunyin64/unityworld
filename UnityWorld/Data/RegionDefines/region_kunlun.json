@@ -1,0 +1,41 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_kunlun", "DisplayName": "昆仑雪山样例", "MinCount": 0, "MaxCount": -1, "SpawnWeight": 5,
+    "MinSpacing": 13, "Width": 11, "Height": 11,
+    "TerrainLayout": {
+      "0,-5": "alpine_meadow", "1,-5": "alpine_meadow", "2,-5": "alpine_meadow", "3,-5": "alpine_meadow", "4,-5": "alpine_meadow",
+      "5,-5": "alpine_meadow", "-1,-4": "alpine_meadow", "0,-4": "alpine_meadow", "1,-4": "alpine_meadow", "2,-4": "alpine_meadow",
+      "3,-4": "alpine_meadow", "4,-4": "alpine_meadow", "5,-4": "alpine_meadow", "-2,-3": "alpine_meadow", "-1,-3": "alpine_meadow",
+      "0,-3": "snow_mountain", "1,-3": "snow_mountain", "2,-3": "snow_mountain", "3,-3": "snow_mountain", "4,-3": "alpine_meadow",
+      "5,-3": "alpine_meadow", "-3,-2": "alpine_meadow", "-2,-2": "alpine_meadow", "-1,-2": "snow_mountain", "0,-2": "snow_mountain",
+      "1,-2": "snow_mountain", "2,-2": "snow_mountain", "3,-2": "snow_mountain", "4,-2": "alpine_meadow", "5,-2": "alpine_meadow",
+      "-4,-1": "alpine_meadow", "-3,-1": "alpine_meadow", "-2,-1": "snow_mountain", "-1,-1": "snow_mountain", "0,-1": "snow_mountain",
+      "1,-1": "snow_mountain", "2,-1": "snow_mountain", "3,-1": "snow_mountain", "4,-1": "alpine_meadow", "5,-1": "alpine_meadow",
+      "-5,0": "alpine_meadow", "-4,0": "alpine_meadow", "-3,0": "snow_mountain", "-2,0": "snow_mountain", "-1,0": "snow_mountain",
+      "0,0": "snow_mountain", "1,0": "snow_mountain", "2,0": "snow_mountain", "3,0": "snow_mountain", "4,0": "alpine_meadow",
+      "5,0": "alpine_meadow", "-5,1": "alpine_meadow", "-4,1": "alpine_meadow", "-3,1": "snow_mountain", "-2,1": "snow_mountain",
+      "-1,1": "snow_mountain", "0,1": "snow_mountain", "1,1": "snow_mountain", "2,1": "snow_mountain", "3,1": "alpine_meadow",
+      "4,1": "alpine_meadow", "-5,2": "alpine_meadow", "-4,2": "alpine_meadow", "-3,2": "snow_mountain", "-2,2": "snow_mountain",
+      "-1,2": "snow_mountain", "0,2": "snow_mountain", "1,2": "snow_mountain", "2,2": "alpine_meadow", "3,2": "alpine_meadow",
+      "-5,3": "alpine_meadow", "-4,3": "alpine_meadow", "-3,3": "snow_mountain", "-2,3": "snow_mountain", "-1,3": "snow_mountain",
+      "0,3": "snow_mountain", "1,3": "alpine_meadow", "2,3": "alpine_meadow", "-5,4": "alpine_meadow", "-4,4": "alpine_meadow",
+      "-3,4": "alpine_meadow", "-2,4": "alpine_meadow", "-1,4": "alpine_meadow", "0,4": "alpine_meadow", "1,4": "alpine_meadow",
+      "-5,5": "alpine_meadow", "-4,5": "alpine_meadow", "-3,5": "alpine_meadow", "-2,5": "alpine_meadow", "-1,5": "alpine_meadow",
+      "0,5": "alpine_meadow"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_snow_spring"
+    },
+    "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "中国地貌参考"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0.26, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 0.5},
+      "PreferredElevation": 0.82, "PreferredMoisture": 0.4, "PreferredTemperature": 0.2, "PreferenceStrength": 3
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0.26, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 0.5},
+      "PreferredElevation": 0.82, "PreferredMoisture": 0.4, "PreferredTemperature": 0.2, "PreferenceStrength": 3
+    },
+    "RequiredEnvironmentFraction": 0.65, "KeyEnvironment": [], "EnvironmentAdjustments": [], "RiverCells": [],
+    "RiverPorts": [], "KeyPoints": [{"ID": "center", "Dq": 0, "Dr": 0}], "PlacementTypeIds": []
+  }
+]

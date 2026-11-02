@@ -1,0 +1,7 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "building_old_observatory", "DisplayName": "古观星台", "IsNatural": false,
+    "IsSingleton": false, "SpawnWeight": 0, "PlacementTypeIds": [], "PlacementTags": [], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [], "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 3, "Tu": 0}, "Tags": ["开发样例", "人工建筑"]
+  }
+]

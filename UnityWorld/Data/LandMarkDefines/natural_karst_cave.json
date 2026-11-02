@@ -1,0 +1,7 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "natural_karst_cave", "DisplayName": "溶洞天窗", "IsNatural": true, "IsSingleton": false,
+    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["山类"], "PlacementExtraTerrains": [],
+    "ModifierDefineIds": [], "AuraOffset": {"Jin": 1, "Mu": 0, "Shui": 2, "Huo": 0, "Tu": 1}, "Tags": ["开发样例", "自然奇观"]
+  }
+]

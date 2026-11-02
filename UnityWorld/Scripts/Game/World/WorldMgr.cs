@@ -23,11 +23,11 @@ namespace UnityWorld.Game.World
         /// <summary>
         /// 初始化世界（游戏启动时调用）：
         ///   1. 加载外部数据定义（GameDataMgr）
-        ///   2. 初始化世界时间
-        ///   3. 初始化NPC管理器
-        ///   4. 初始化位面管理器
+        ///   2. 初始化全部地图查询、地区、地标及天道依赖
+        ///   3. 候选主大陆完成校验、初值与快照后原子发布
+        ///   4. 成功后初始化世界时间；任何失败不推进或重置旧时间
         /// </summary>
-        public static void Initialize(int seed = 12345, string baseDir = null)
+        public static void Initialize(int seed = 12345, string baseDir = null, string mapProfileId = "china-inspired-v1")
         {
             if (_domains.Count != 0 || _gameplays.Count != 0)
                 throw new InvalidOperationException("世界已经初始化，请先调用 WorldMgr.End()。");
@@ -36,36 +36,52 @@ namespace UnityWorld.Game.World
             if (!Directory.Exists(Path.Combine(baseDir, "Data")))
                 throw new DirectoryNotFoundException($"找不到核心数据目录：{Path.Combine(baseDir, "Data")}");
 
-            _domains.Add(new LogMgr(seed));
-            _domains.Add(new LuaMgr(baseDir));
-            _domains.Add(new APIMgr());
-            _domains.Add(new EventMgr());
+            try
+            {
+                _domains.Add(new LogMgr(seed));
+                _domains.Add(new LuaMgr(baseDir));
+                _domains.Add(new APIMgr());
+                _domains.Add(new EventMgr());
 
 
-            GameDataMgr.Initialize(baseDir);
-            WorldTime.Initialize(seed);
-            _gameplays.Add(new GlyphMgr(seed, baseDir));
-            AuraDaoMgr = new AuraDaoMgr(seed);
-            _gameplays.Add(AuraDaoMgr);
-            _gameplays.Add(new CombatMgr(seed));
-            _gameplays.Add(new CultivationMgr(seed));
+                GameDataMgr.Initialize(baseDir);
+                _gameplays.Add(new GlyphMgr(seed, baseDir));
+                AuraDaoMgr = new AuraDaoMgr(seed);
+                _gameplays.Add(AuraDaoMgr);
+                _gameplays.Add(new CombatMgr(seed));
+                _gameplays.Add(new CultivationMgr(seed));
             
             
             
-            _domains.Add(new StatMgr(seed));
-            _domains.Add(new NpcMgr(seed));
-            _domains.Add(new PlaneMgr());
+                _domains.Add(new StatMgr(seed));
+                _domains.Add(new NpcMgr(seed));
+                _domains.Add(new TileMgr());
+                _domains.Add(new RegionMgr());
+                var landMarks = new LandMarkMgr();
+                landMarks.SetCatalog(GameDataMgr.Instance.MapCatalog);
+                landMarks.SetRng(new Rng(seed));
+                _domains.Add(landMarks);
+                _domains.Add(new PlaneMgr());
 
-            // ── 叙事系统 ──────────────────────────────────────
-            _domains.Add(new StoryMgr(seed));
-            _domains.Add(new BehaviorCardMgr());
-            _domains.Add(new CardMgr(seed));
-            _domains.Add(new GongFaMgr(seed));
-            _domains.Add(new EquipMgr());
-            _domains.Add(new ItemMgr(seed));
+                // ── 叙事系统 ──────────────────────────────────────
+                _domains.Add(new StoryMgr(seed));
+                _domains.Add(new BehaviorCardMgr());
+                _domains.Add(new CardMgr(seed));
+                _domains.Add(new GongFaMgr(seed));
+                _domains.Add(new EquipMgr());
+                _domains.Add(new ItemMgr(seed));
 
-            foreach (var mgr in _domains) mgr.Init();  // 无耦合的初始化
-            foreach (var mgr in _gameplays) mgr.Init();
+                foreach (var mgr in _domains) mgr.Init();  // 注册依赖，不在 PlaneMgr.Init 中生成主世界。
+                foreach (var mgr in _gameplays) mgr.Init();
+                PlaneMgr.Instance.CreateMainPlane(seed, mapProfileId);
+                // 所有可能失败的加载与地图发布成功之后才建立新世界时间。
+                WorldTime.Initialize(seed);
+            }
+            catch
+            {
+                End();
+                throw;
+            }
         }
 
         public static void Start()

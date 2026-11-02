@@ -1,0 +1,18 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "forest_mountain", "DisplayName": "林山",
+    "Description": "开发样例：林山代表一片地域，包含格内小尺度景观；不等同真实中国位置。", "Tags": ["山类", "林木"], "Color": "#496b4e", "Symbol": "林",
+    "InitialAura": {"Jin": 1.5, "Mu": 2, "Shui": 0.9, "Huo": 0.5, "Tu": 1.1}, "AllowFill": true, "FillWeight": 5,
+    "Environment": {
+      "Elevation": {"Min": 0.4, "Max": 1}, "Moisture": {"Min": 0.3, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.7, "PreferredMoisture": 0.75, "PreferredTemperature": 0.55, "PreferenceStrength": 6
+    },
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
+    "NeighborWeights": {
+      "forest_mountain": 8, "mountain": 1.6, "forest": 1.6, "barren_mountain": 1.6, "volcano": 1.6, "snow_mountain": 1.6,
+      "rainforest": 1.6, "karst": 1.6, "red_cliff": 1.6, "bamboo_forest": 1.6
+    },
+    "MovementModes": ["walk", "fly"], "MovementCost": 2.4, "WaterKind": "none", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
+  }
+]
