@@ -7,61 +7,77 @@
 ## Requirements
 
 ### Requirement: LandMarkId 唯一标识
-系统 SHALL 提供 `LandMarkId` 值类型（struct），用于唯一标识运行时地标实例，支持 `==`、`!=` 比较和字典键。
+
+系统 SHALL 为每个有效运行时地标提供唯一实例标识，支持相等比较和字典索引，并与地标定义 ID 区分。实例标识 SHALL 保持现有整数表示的兼容性；稳定地图摘要使用定义及位置等结构信息，不依赖随机实例标识。
 
 #### Scenario: LandMarkId 相等性
-- **WHEN** 两个 `LandMarkId` 由同一整数值构造
-- **THEN** `a == b` 为 true，`a.GetHashCode() == b.GetHashCode()`
+- **WHEN** 两个地标实例标识具有相同整数值
+- **THEN** 相等比较成立且字典键定位一致，不要求新增包装类型
 
 ### Requirement: LandMarkDefine 静态配置
-系统 SHALL 提供 `LandMarkDefine`（继承 `DefineBase`），字段包括：
-- `IsNatural: bool`：true = 自然奇观（计入原初快照），false = 后天建筑
-- `IsSingleton: bool`：全图唯一
-- `SpawnWeight: float`：散布生成权重（0 = 不参与散布随机）
-- `Tags: List<string>`：叙事标签，供事件/NPC 匹配
-- `PlacementTerrains: List<TerrainType>`：允许生成的地形（空 = 不限）
-- `PlacementExtraTerrains: List<string>`：要求的拓展地形标签 ID（空 = 不限）
-- `ModifierDefineIds: List<string>`：该地标对地块施加的元气修正 Define ID 列表
+
+地标定义 SHALL 保留稳定定义 ID、自然/人工分类、全局唯一性、散布权重、叙事标签、地区拓展标签条件和修正定义引用。允许散布的地块类型 SHALL 改为稳定类型 ID 列表，并支持类型标签条件；空条件表示不限制。统一 `AuraOffset` SHALL 默认为五行零值，仅创世自然阶段一次性应用；创世人工及运行时任何新增地标均按每秒变化量生效。旧枚举条件 SHALL 按地块类型迁移表转换；旧修正数据不能自动当作一次性偏移。
 
 #### Scenario: 自然奇观配置
-- **WHEN** 一个 `LandMarkDefine` 的 `IsNatural = true`
-- **THEN** 原初快照步骤会将此地标的 Modifier 纳入快照计算
+- **WHEN** 自然地标配置了非零 `AuraOffset`
+- **THEN** 地图生成时该偏移在自然原初快照前一次性计入地块初值
+- **AND** 修正源的每秒速率不被直接加进初始快照
 
 #### Scenario: 生成条件过滤
-- **WHEN** 地标 Define 配置 `PlacementTerrains = [Mountain]`
-- **THEN** 该地标只能生成在 `TerrainType.Mountain` 的地块上
+- **WHEN** 某地标散布条件只允许 `mountain`
+- **THEN** 独立散布只选择类型 ID 为 `mountain` 的格子，不自动选择林山或雪山
+
+#### Scenario: 类型标签辅助散布
+- **WHEN** 某地标散布条件要求山类标签且未限制具体类型 ID
+- **THEN** 所有携带该标签的同级类型均可参与其他条件的检查
+
+#### Scenario: 旧修正值不隐式转初值
+- **WHEN** 旧自然地标只配置一个火元气速率修正而没有一次性初始偏移
+- **THEN** 迁移后的 `AuraOffset` 仍为零，迁移报告保留速率配置并提示其语义
 
 ### Requirement: LandMark 运行时实体
-系统 SHALL 提供 `LandMark` 类，含：
-- `Id: LandMarkId`
-- `DefineId: string`
-- `Position: TileId`（所在地块坐标）
-- `PlaneId: PlaneId`（所在位面）
-- `IsActive: bool`（是否有效，销毁后置 false）
+
+运行时地标 SHALL 记录实例标识、定义 ID、所在地块坐标、位面 ID 和有效状态。成功放置 SHALL 同时建立地标到地块与地块到地标的关联，一个地块最多关联一个有效地标。所在地块 SHALL 用位面与坐标共同定位；销毁后地标无效、地块关联解除。此次变更 SHALL 保留现有整数实例标识的运行时兼容性。
 
 #### Scenario: LandMark 生成后关联地块
-- **WHEN** `LandMarkMgr` 在某地块上生成一个 LandMark
-- **THEN** `LandMark.Position == tile.Id`，且 `tile.LandMarkId == landmark.Id`
+- **WHEN** 地标在某位面的某地块成功生成
+- **THEN** 地标位置和位面与该地块一致，地块关联到该地标的实例标识
+
+#### Scenario: 跨位面相同坐标不混淆
+- **WHEN** 两个位面具有相同地块坐标，地标放在其中一个位面
+- **THEN** 只有目标位面的地块持有此地标关联
 
 ### Requirement: LandMarkMgr 管理所有地标实例
-系统 SHALL 提供 `LandMarkMgr`（实现 `IDomainMgrBase`），单例，功能：
-- `Place(plane, tile, defineId)`：在指定地块生成地标，挂载 Modifier 到 Tile，写入 `Tile.LandMarkId`
-- `Remove(id)`：移除地标，清理 Tile 上对应 Modifier，重置 `Tile.LandMarkId = null`
-- `GetById(id)`：按 ID 查询地标
-- `GetByPlane(planeId)`：获取某位面所有地标
-- `GetNaturalLandMarks(planeId)`：获取某位面所有 `IsNatural=true` 的地标
+
+系统 SHALL 支持地标放置、移除、按实例或位面查询及自然地标筛选。放置前 SHALL 校验定义与修正引用、目标地块占位和全局唯一性；成功后才挂载带来源的修正源并建立双向关联，失败不留副作用。移除 SHALL 清理该来源的全部修正源、解除地块关联并标记地标无效。固定地区地标 SHALL 与地区作为整体提交，不因散布权重或散布地形条件被跳过；独立散布 SHALL 仅在来源为基础填充且没有地标的格上按这些条件筛选，不向固定地区或边界追加随机地标。
 
 #### Scenario: 生成地标时 Modifier 挂载
-- **WHEN** 调用 `LandMarkMgr.Place(plane, tile, "holy_mountain")`，Define 中有 ModifierDefineIds
-- **THEN** 每个 ModifierDefine 被实例化为 `TileModifier` 并加入 `tile.Modifiers`
+- **WHEN** 地标成功生成且引用了若干有效修正定义
+- **THEN** 每项修正独立实例化并挂到目标地块，来源标识能追踪到该地标
 
 #### Scenario: 移除地标时清理 Modifier
-- **WHEN** 调用 `LandMarkMgr.Remove(landmarkId)`
-- **THEN** 对应 Tile 上由该 LandMark 挂载的所有 Modifier 被移除，`Tile.LandMarkId = null`
+- **WHEN** 移除一个已生成地标
+- **THEN** 该地块上由此地标挂载的修正源全部移除，其他来源保留，地块的地标关联为空
 
 #### Scenario: Singleton 地标全图唯一
-- **WHEN** 某 `LandMarkDefine.IsSingleton = true`，且已生成一个实例
-- **THEN** 再次尝试生成时，`LandMarkMgr.Place` 返回 null，不创建第二个
+- **WHEN** 某定义声明全局唯一，已存在一个有效实例后再次尝试生成
+- **THEN** 第二次放置失败，不创建实例或修正源；地区模板中的此失败使整个地区候选失败
+
+#### Scenario: 已占地块拒绝第二地标
+- **WHEN** 目标地块已有有效地标
+- **THEN** 新地标放置失败，原关联、当前元气和修正源保持不变
+
+#### Scenario: 缺失修正引用不能部分挂载
+- **WHEN** 地标引用的多个修正定义中任意一个不存在
+- **THEN** 放置失败，不先挂载其余修正，也不生成缺失修正的地标实例
+
+#### Scenario: 固定地标忽略散布过滤
+- **WHEN** 地区模板显式配置的地标散布权重为零，且不满足其独立散布地形条件，但其他完整性校验全部通过
+- **THEN** 该地标仍随地区在固定位置生成
+
+#### Scenario: 地区内无地标格不参与独立散布
+- **WHEN** 地区中某格没有配置地标，环境恰好符合独立地标散布条件
+- **THEN** 该格仍不参与独立散布，只有来源为基础填充且无地标的格可以参与
 
 ### Requirement: LandMarkDefineMgr 数据加载
 系统 SHALL 提供 `LandMarkDefineMgr`（实现 `IDataMgrBase<LandMarkDefine>`），从 JSON 加载，在 `GameDataMgr` 中注册。
@@ -69,3 +85,41 @@
 #### Scenario: 按 ID 查询地标定义
 - **WHEN** 调用 `LandMarkDefineMgr.Instance?.Get("volcanic_pillar")`
 - **THEN** 返回对应 Define，不存在返回 null
+
+### Requirement: 统一偏移按放置阶段生效
+
+地标 SHALL 只有一个 AuraOffset 字段。仅创世自然阶段成功放置的自然地标 SHALL 立即应用一次并计入原初快照；人工地标 SHALL 在快照之后才创建，并将偏移作为每秒速率挂载。运行时 Place 不论 IsNatural 取值，均只挂载动态速率，不立即改变浓度、不重拍快照。移除地标 SHALL 停止其来源速率，不撤销历史变化。额外 ModifierDefineIds 维持原有每秒语义。
+
+#### Scenario: 创世自然偏移计入原初
+- **WHEN** 地块基础火浓度 10，创世自然地标 AuraOffset 火 20
+- **THEN** 原初与当前火浓度均为 30，未来 Tick 不自动重复这个偏移
+
+#### Scenario: 人工地标在快照后生成并缓慢变化
+- **WHEN** 地块基础火浓度 10，初始人工地标 AuraOffset 火 4
+- **THEN** 快照和刚生成的当前值均为 10，运行半秒后当前值为 12，原初仍为 10
+
+#### Scenario: 晚生自然地标也动态变化
+- **WHEN** 运行后在当前火浓度 10 的格子放置 IsNatural=true、AuraOffset 火 4 的地标
+- **THEN** 放置时仍为 10，运行半秒后为 12，已有原初值保持不变
+
+#### Scenario: 重试与移除不产生额外变化
+- **WHEN** 放置失败或移除已放置的动态地标
+- **THEN** 失败不留下偏移或速率；移除停止该来源的未来速率且保留历史浓度
+
+### Requirement: 为独立地标刷新提供候选与放置边界
+系统 SHALL 提供独立候选查询和运行时 Place 接口。候选 SHALL 按类型 ID、标签、地区拓展标签、占位和唯一性筛选，不要求来自地区模板，不以创世 SpawnWeight 决定资格。未来刷新器可在此增加 min..max 数量、随机选取、周期和不足数量策略，本次只保留接口及明确注释。创世 Fill 散布规则不因此改变。
+
+#### Scenario: 不在地区模板中的尸体可以独立刷新
+- **WHEN** 人工地标定义允许 plain，存在无地标的 plain 格且该定义未被地区使用
+- **THEN** 该格可以出现在候选中，并可经 Place 放置，元气只在后续 Tick 改变
+
+### Requirement: 地标可由固定世界坐标预留
+地标 SHALL 支持 ForcedPositions 绝对 Offset 坐标列表，最前预留位置，跳过散布权重、类型和标签适配；占位、合法引用和 singleton 约束保持有效。预留 SHALL 不提前创建实体或改变元气；自然地标在快照前创建，人工地标在快照后创建。固定地标可附着于固定地区空地标格或之后由基础填充确定类型的格；定义不再额外随机散布。
+
+#### Scenario: 固定地标不满足散布条件
+- **WHEN** 地标 SpawnWeight=0，目标类型不满足散布过滤，但配置了合法固定位置
+- **THEN** 仍在该位置生成，按 IsNatural 遵守元气阶段规则
+
+#### Scenario: 固定地标冲突
+- **WHEN** 固定位置已有地区地标、另一固定地标或对应 singleton 已占用
+- **THEN** 候选生成失败，不覆盖原内容或留下公开副作用

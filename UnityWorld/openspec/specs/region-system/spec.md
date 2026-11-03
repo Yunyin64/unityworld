@@ -14,68 +14,64 @@
 - **THEN** `a == b` 为 true
 
 ### Requirement: RegionDefine 静态配置
-系统 SHALL 提供 `RegionDefine`（继承 `DefineBase`），字段包括：
 
-**生成规则：**
-- `IsGuaranteed: bool`：必然生成（世界宿命地点，优先放置）
-- `MaxCount: int`：全图最多实例数（-1 = 不限）
-- `SpawnWeight: float`：随机放置权重
-- `PlacementTerrains: List<TerrainType>`：中心点允许落在的地形（空 = 不限）
-
-**占用形状：**
-- `Width: int` / `Height: int`：区域占用的长方形格数（Offset 坐标系）
-
-**内容布局（相对中心点的 Axial 偏移）：**
-- `TerrainLayout: Dictionary<(int dq, int dr), TerrainType>`：相对坐标→地形覆盖
-- `LandMarkLayout: Dictionary<(int dq, int dr), string>`：相对坐标→LandMarkDefine ID（固定位置，必然生成）
-
-**区域属性：**
-- `ExtraTerrainIds: List<string>`：区域持有的拓展地形语义标签
-- `AuraProfile: TileAura`：区域整体元气倾向（叠加到区域内所有地块）
-- `Tags: List<string>`：叙事标签
+地区定义 SHALL 包含稳定 ID、固定相对 Axial 坐标到地块类型 ID 的布局、固定地标布局、环境适配条件、`MinCount`、`MaxCount`、选择权重、间距及水系接口。布局中配置的坐标 SHALL 是唯一占地集合；`Width`/`Height` 只保留为迁移元信息，不产生额外占位。地区 SHALL 保持作者朝向，不旋转、镜像、裁切或逐格随机。定义 SHALL 保留拓展语义标签、叙事标签和区域初始元气偏移；原锚点地形限制迁移为明确的环境适配或类型条件，不能无提示丢弃。
 
 #### Scenario: 必然生成区域优先放置
-- **WHEN** 世界生成时存在 `IsGuaranteed = true` 的 RegionDefine
-- **THEN** 该区域在所有随机区域放置之前先行落地
+- **WHEN** 某地区定义的 `MinCount > 0`
+- **THEN** 满足其最少数量的实例在可选随机地区前安排
+- **AND** 旧 `IsGuaranteed=true` 默认迁移为 `MinCount=1`，`false` 默认迁移为 `0`
 
 #### Scenario: 长方形超出地图边界
-- **WHEN** 区域中心点落在地图边缘，长方形有部分超出边界
-- **THEN** 超出边界的格子被忽略，区域仍然生成（不强制要求完整长方形）
+- **WHEN** 候选锚点使任意实际配置格子越出地图边界
+- **THEN** 整个候选被拒绝，不生成部分地区
+- **AND** 仅 `Width`/`Height` 对应的旧外框越界、实际配置格全部合法时，不因旧外框单独拒绝候选
 
 #### Scenario: 区域地形布局覆盖
-- **WHEN** 一个 Region 的 `TerrainLayout` 中配置了 `(0,0) → Mountain`
-- **THEN** 区域落地后，中心点所在地块的 `Terrain` 被覆盖为 `Mountain`
+- **WHEN** 地区布局配置 `(0,0) → mountain` 且候选通过全部检查
+- **THEN** 锚点地块的最终类型为 `mountain`，其他配置格按各自类型原样落地
 
 #### Scenario: 区域地标固定生成
-- **WHEN** 一个 Region 的 `LandMarkLayout` 中配置了 `(0,0) → "volcanic_pillar"`
-- **THEN** 区域落地后，中心点地块上必然生成该地标，不受地标 SpawnWeight 影响
+- **WHEN** 地标布局配置 `(0,0) → volcanic_pillar` 且地区成功落地
+- **THEN** 该坐标必然生成配置地标，不受地标散布权重和散布地形过滤影响
+- **AND** 定义、修正引用、占位或唯一性校验失败时，整个地区候选失败
+
+#### Scenario: 不规则布局保留空洞
+- **WHEN** 地区外框内某坐标没有配置地块
+- **THEN** 该坐标不归此地区占有，可以由其他地区或基础填充使用
 
 ### Requirement: Region 运行时实体
-系统 SHALL 提供 `Region` 类，含：
-- `Id: RegionId`
-- `DefineId: string`
-- `Center: TileId`（中心点 Axial 坐标）
-- `PlaneId: PlaneId`
-- `OwnedTiles: HashSet<TileId>`（区域拥有的所有地块坐标）
-- `LandMarkIds: List<LandMarkId>`（区域内生成的地标 ID）
+
+运行时地区 SHALL 记录唯一实例标识、定义 ID、锚点、位面 ID、实际拥有的地块集合及固定地标实例列表。拥有的地块 SHALL 恰好等于模板占地坐标加锚点后的集合，全部反向关联同一地区；模板外框和孔洞不能自动归属。地区与地块关联 SHALL 使用位面和地块坐标共同定位，不能把其他位面的同坐标算入该地区。
 
 #### Scenario: 区域拥有的 Tile 被标记
-- **WHEN** Region 落地后
-- **THEN** `OwnedTiles` 中每个 TileId 对应的 `Tile.RegionId == region.Id`
+- **WHEN** 地区落地后
+- **THEN** 所有拥有的地块均反向关联此地区，拥有的格数与模板实际配置格数完全相同
+- **AND** 固定地标实例列表与模板地标布局对应
+
+#### Scenario: 相同坐标跨位面隔离
+- **WHEN** 两个位面都有相同地块坐标，只有第一个位面的此坐标属于某地区
+- **THEN** 查询第二个位面的该坐标不会返回第一个位面的地区
 
 ### Requirement: RegionMgr 管理所有区域实例
-系统 SHALL 提供 `RegionMgr`（实现 `IDomainMgrBase`），单例，功能：
-- `GetById(id)`：按 ID 查询区域
-- `GetByPlane(planeId)`：获取某位面所有区域
-- `GetRegionOfTile(tileId)`：通过 Tile 的 RegionId 反查区域
+
+系统 SHALL 支持按地区实例标识、按位面、按位面与地块坐标查询地区，并统计每种定义在目标位面的生成数量。每个地区候选 SHALL 原子提交地块、归属、地标、元气初始偏移和相关修正源；全部验证及准备成功后才可查询。候选失败 SHALL 不留下部分内容、唯一性占用或计数。普通随机地区 `MaxCount=-1` 表示不限，其他最大数量不能小于最少数量；固定地区实例数量只由 ForcedPositions 决定。
 
 #### Scenario: 跨位面区域查询
-- **WHEN** 调用 `RegionMgr.Instance?.GetByPlane(planeId)`
-- **THEN** 返回该位面上所有已落地的 Region 列表
+- **WHEN** 按指定位面查询地区实例
+- **THEN** 只返回该位面已完整落地的地区列表
 
 #### Scenario: 区域数量上限
-- **WHEN** 一个 `RegionDefine.MaxCount = 3`，世界生成时尝试放置第 4 个
-- **THEN** 第 4 次放置被跳过，全图该类型区域不超过 3 个
+- **WHEN** 某定义 `MaxCount=3`，目标位面已有三个成功实例并尝试放置第四个
+- **THEN** 第四次候选被拒绝，该位面的此类型数量保持三个
+
+#### Scenario: 地标失败不留下半块地区
+- **WHEN** 某候选的地块均可放置，但固定地标违反全局唯一性
+- **THEN** 候选失败，地块类型、归属、地标、元气、修正源、地区数量与候选开始前一致
+
+#### Scenario: 无最大数量限制
+- **WHEN** 地区 `MaxCount=-1` 且满足其他生成条件
+- **THEN** 不因类型数量设置而拒绝候选，仍受面积、间距及生成预算限制
 
 ### Requirement: RegionDefineMgr 数据加载
 系统 SHALL 提供 `RegionDefineMgr`（实现 `IDataMgrBase<RegionDefine>`），从 JSON 加载，在 `GameDataMgr` 中注册。
@@ -83,3 +79,54 @@
 #### Scenario: 按 ID 查询区域定义
 - **WHEN** 调用 `RegionDefineMgr.Instance?.Get("volcanic_belt")`
 - **THEN** 返回对应 Define，不存在返回 null
+
+### Requirement: 地区环境适配分离硬条件和软评分
+
+系统 SHALL 支持锚点、关键格和整体占地范围的环境条件。硬条件全部成立后才计算适配分数；软评分影响候选被选择的权重，不代替边界、占位、定义引用和水系约束。环境底图 SHALL 提供筛选依据，不能把模板内明确配置的类型再次随机替换。
+
+#### Scenario: 关键格不符合条件
+- **WHEN** 整体湿度适配但主峰关键格不满足明确的海拔下限
+- **THEN** 候选被拒绝，并记录关键格坐标及失败条件
+
+#### Scenario: 局部软评分偏低仍可放置
+- **WHEN** 所有硬条件通过、部分格子的湿度软评分较低
+- **THEN** 候选以较低综合权重参与选择，不因这项软评分单独被判非法
+
+### Requirement: 地区最少数量与软覆盖率
+
+系统 SHALL 先满足各定义的 `MinCount`，随后依据权重、间距、`MaxCount` 和目标覆盖率安排可选地区。覆盖率 SHALL 以实际地区占地格数除以固定边界之外的可生成格数计算，并作为软停止目标；一次完整地区放置可以跨过目标，不能为精确比例裁切模板。达到覆盖率不能豁免必需地区数量；有界尝试后仍不满足最少数量 SHALL 明确失败。
+
+#### Scenario: 完整地区跨过覆盖率目标
+- **WHEN** 尚未达到目标覆盖率，放置下一个合法地区后将略高于目标
+- **THEN** 系统保持该地区完整，并结束或收束可选地区放置，不裁切最后若干格
+
+#### Scenario: 必需地区无法放下
+- **WHEN** 某定义未达到 `MinCount` 且布局重排或生成重试预算已耗尽
+- **THEN** 生成返回该定义的数量缺口和主要拒绝原因，不返回缺失必需地区的成功结果
+
+### Requirement: 地区模板迁移完整性
+
+迁移 SHALL 以旧地形布局中的坐标为占地真相并保留所有固定地标坐标。空地形布局、重复/非法坐标、地标落在占地集合之外、未知类型或地标引用，以及矛盾数量条件 SHALL 显式报告并阻止使用；不能自动补满旧矩形、丢弃地标或扩大占地来掩盖错误。旧条件无法等价转换时 SHALL 报告需要明确配置的字段。
+
+#### Scenario: 旧地标在模板占地外
+- **WHEN** 旧地标布局的某坐标没有对应地形布局格
+- **THEN** 迁移报告地区和该坐标，要求显式补充地块或修正地标配置，不静默扩大地区
+
+#### Scenario: 旧宽高大于实际布局
+- **WHEN** 旧定义宽高为 5×5 但地形布局仅配置七格
+- **THEN** 迁移结果只有这七格占地，其他位置保持未占用
+
+### Requirement: 地区可由固定锚点列表优先放置
+地区 SHALL 支持 ForcedPositions，列表每个绝对 Offset 坐标表示一整块相对 Axial 拼图的锚点。非空列表 SHALL 在普通地区和环境／水系前完整放置，跳过普通权重、环境适配、数量和间距规则，不参加随机放置；基本引用、越界、占位与唯一性仍须成立。任一失败 SHALL 放弃候选，不裁切或覆盖其他固定地区。固定地区 SHALL 提供环境锚点并受后续阶段保护，且不计入随机覆盖率。
+
+#### Scenario: 小模板在多个锚点复用
+- **WHEN** 一份 5×5 实际布局配置两个奇偶行不同的固定锚点
+- **THEN** 两处均保持完整相对 Axial 布局，不受 SpawnWeight=0、MaxCount=0、MinSpacing 或不匹配环境影响
+
+#### Scenario: 固定地区冲突与越界
+- **WHEN** 两份固定拼图重叠，或任一实际格超出世界
+- **THEN** 明确报告失败，不接受部分布局或覆盖结果
+
+#### Scenario: 固定地区保护与统计
+- **WHEN** 普通地区、填充或水系修补接近固定地区
+- **THEN** 固定类型、位置、环境与通行保持不变；覆盖率只统计普通地区占非固定面积的比例
