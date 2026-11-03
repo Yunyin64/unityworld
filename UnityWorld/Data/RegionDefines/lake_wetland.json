@@ -1,0 +1,67 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "lake_wetland", "DisplayName": "湖群湿地样例", "Width": 17, "Height": 13,
+    "GenerationPhase": "lake",
+    "Lake": {"Role": "closed", "Ports": [{"Dq": -3, "Dr": 6, "Direction": 3, "IsInlet": true}]}, "MinCount": 1,
+    "MaxCount": 1, "SpawnWeight": 0, "MinSpacing": 25,
+    "TerrainLayout": {
+      "1,0": "wetland", "2,0": "wetland", "3,0": "wetland", "4,0": "wetland", "5,0": "wetland",
+      "6,0": "wetland", "7,0": "wetland", "8,0": "wetland", "9,0": "wetland", "10,0": "wetland",
+      "11,0": "wetland", "12,0": "wetland", "13,0": "wetland", "14,0": "wetland", "15,0": "wetland",
+      "16,0": "wetland", "0,1": "wetland", "1,1": "wetland", "2,1": "wetland", "3,1": "wetland",
+      "4,1": "wetland", "5,1": "wetland", "6,1": "wetland", "7,1": "lake", "8,1": "wetland",
+      "9,1": "wetland", "10,1": "wetland", "11,1": "wetland", "12,1": "wetland", "13,1": "wetland",
+      "14,1": "wetland", "15,1": "wetland", "16,1": "wetland", "-1,2": "wetland", "0,2": "wetland",
+      "1,2": "wetland", "2,2": "wetland", "3,2": "wetland", "4,2": "lake", "5,2": "lake",
+      "6,2": "lake", "7,2": "lake", "8,2": "wetland", "9,2": "wetland", "10,2": "lake",
+      "11,2": "lake", "12,2": "wetland", "13,2": "wetland", "14,2": "wetland", "15,2": "wetland",
+      "-1,3": "wetland", "0,3": "wetland", "1,3": "wetland", "2,3": "wetland", "3,3": "lake",
+      "4,3": "lake", "5,3": "lake", "6,3": "lake", "7,3": "lake", "8,3": "lake",
+      "9,3": "lake", "10,3": "lake", "11,3": "lake", "12,3": "lake", "13,3": "wetland",
+      "14,3": "wetland", "15,3": "wetland", "-2,4": "wetland", "-1,4": "wetland", "0,4": "wetland",
+      "1,4": "wetland", "2,4": "lake", "3,4": "lake", "4,4": "lake", "5,4": "lake",
+      "6,4": "lake", "7,4": "lake", "8,4": "lake", "9,4": "lake", "10,4": "lake",
+      "11,4": "lake", "12,4": "wetland", "13,4": "wetland", "14,4": "wetland", "-2,5": "lake",
+      "-1,5": "wetland", "0,5": "wetland", "1,5": "lake", "2,5": "lake", "3,5": "lake",
+      "4,5": "lake", "5,5": "lake", "6,5": "lake", "7,5": "lake", "8,5": "lake",
+      "9,5": "lake", "10,5": "lake", "11,5": "lake", "12,5": "lake", "13,5": "wetland",
+      "14,5": "lake", "-3,6": "lake", "-2,6": "lake", "-1,6": "lake", "0,6": "lake",
+      "1,6": "lake", "2,6": "lake", "3,6": "lake", "4,6": "lake", "5,6": "lake",
+      "6,6": "lake", "7,6": "lake", "8,6": "lake", "9,6": "lake", "10,6": "lake",
+      "11,6": "lake", "12,6": "lake", "13,6": "lake", "-3,7": "lake", "-2,7": "wetland",
+      "-1,7": "wetland", "0,7": "lake", "1,7": "lake", "2,7": "lake", "3,7": "lake",
+      "4,7": "lake", "5,7": "lake", "6,7": "lake", "7,7": "lake", "8,7": "lake",
+      "9,7": "lake", "10,7": "lake", "11,7": "lake", "12,7": "wetland", "13,7": "lake",
+      "-4,8": "wetland", "-3,8": "wetland", "-2,8": "wetland", "-1,8": "wetland", "0,8": "lake",
+      "1,8": "lake", "2,8": "lake", "3,8": "lake", "4,8": "lake", "5,8": "lake",
+      "6,8": "lake", "7,8": "lake", "8,8": "lake", "9,8": "lake", "10,8": "wetland",
+      "11,8": "wetland", "12,8": "wetland", "-4,9": "wetland", "-3,9": "wetland", "-2,9": "wetland",
+      "-1,9": "wetland", "0,9": "lake", "1,9": "lake", "2,9": "lake", "3,9": "lake",
+      "4,9": "lake", "5,9": "lake", "6,9": "lake", "7,9": "lake", "8,9": "lake",
+      "9,9": "lake", "10,9": "wetland", "11,9": "wetland", "12,9": "wetland", "-5,10": "wetland",
+      "-4,10": "wetland", "-3,10": "wetland", "-2,10": "wetland", "-1,10": "wetland", "0,10": "lake",
+      "1,10": "lake", "2,10": "lake", "3,10": "lake", "4,10": "wetland", "5,10": "wetland",
+      "6,10": "lake", "7,10": "lake", "8,10": "wetland", "9,10": "wetland", "10,10": "wetland",
+      "11,10": "wetland", "-5,11": "wetland", "-4,11": "wetland", "-3,11": "wetland", "-2,11": "wetland",
+      "-1,11": "wetland", "0,11": "wetland", "1,11": "wetland", "2,11": "lake", "3,11": "wetland",
+      "4,11": "wetland", "5,11": "wetland", "6,11": "wetland", "7,11": "wetland", "8,11": "wetland",
+      "9,11": "wetland", "10,11": "wetland", "11,11": "wetland", "-6,12": "wetland", "-5,12": "wetland",
+      "-4,12": "wetland", "-3,12": "wetland", "-2,12": "wetland", "-1,12": "wetland", "0,12": "wetland",
+      "1,12": "wetland", "2,12": "wetland", "3,12": "wetland", "4,12": "wetland", "5,12": "wetland",
+      "6,12": "wetland", "7,12": "wetland", "8,12": "wetland", "9,12": "wetland", "10,12": "wetland"
+    },
+    "LandMarkLayout": {
+      "1,0": "natural_reed_marsh"
+    },
+    "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.5, "PreferredTemperature": 0.5, "PreferenceStrength": 0
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.5, "PreferredTemperature": 0.5, "PreferenceStrength": 0
+    },
+    "Tags": ["开发样例", "大湖"]
+  }
+]

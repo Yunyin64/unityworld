@@ -15,6 +15,17 @@ public class RegionDefine : DefineBase
     public List<OffsetPointDefine> ForcedPositions { get; set; } = new();
     /// <summary>固定地区为后续环境生成提供的锚定值；没有固定锚点时不使用。</summary>
     public MapEnvironment FixedEnvironment { get; set; } = new() { Elevation = .5, Moisture = .5, Temperature = .5 };
+    /// <summary>固定环境的逐轴最大变化幅度，按世界坐标和独立固定种子采样。</summary>
+    public EnvironmentRule FixedEnvironmentRange { get; set; } = new();
+    public int? FixedBlendDistance { get; set; }
+    public bool BlendFixedEnvironment { get; set; }
+    public bool AllowEnvironmentCliff { get; set; }
+    public MapEnvironment FixedVariation { get; set; } = new();
+    /// <summary>ordinary 或 lake；湖泊在海平面分类之后、河网之前完整放置。</summary>
+    public string GenerationPhase { get; set; } = "ordinary";
+    public LakeRegionSettings Lake { get; set; }
+    /// <summary>作者明确允许单格窄河段，只有 RiverCells 中这些相对坐标生效。</summary>
+    public List<RegionKeyPoint> NarrowRiverCells { get; set; } = new();
     /// <summary>每个位面必须完整放置的最少实例数。</summary>
     public int MinCount { get; set; }
     /// <summary>每个位面的最多实例数；-1 表示不限。</summary>
@@ -91,4 +102,18 @@ public class AxialOffsetStringDictConverter : JsonConverter<Dictionary<(int, int
             writer.WriteString(FormattableString.Invariant($"{pair.Key.Item1},{pair.Key.Item2}"), pair.Value);
         writer.WriteEndObject();
     }
+}
+
+/// <summary>湖体只参与生成；端口指向 footprint 外，整片水面收缩为一个排水节点。</summary>
+public sealed class LakeRegionSettings
+{
+    public string Role { get; set; } = "flowthrough";
+    public List<LakePortDefine> Ports { get; set; } = new();
+}
+public sealed class LakePortDefine
+{
+    public int Dq { get; set; }
+    public int Dr { get; set; }
+    public int Direction { get; set; }
+    public bool IsInlet { get; set; }
 }

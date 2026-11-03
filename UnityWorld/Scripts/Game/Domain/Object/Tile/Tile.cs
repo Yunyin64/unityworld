@@ -22,7 +22,9 @@ namespace UnityWorld.Game.Domain
         public bool IsFixed { get; internal set; }
         public bool HasForcedLandmark { get; internal set; }
         public MapEnvironment Environment { get; internal set; } = new();
-        public MapWater Water { get; internal set; } = new();
+        private MapWater _water = new();
+        /// <summary>Detached read-only projection: callers may inspect/copy it without mutating the world.</summary>
+        public MapWater Water { get => _water.Copy(); internal set => _water = value.Copy(); }
         public bool BlockAllMovement { get; internal set; }
         public IReadOnlyList<string> AllowedMovement { get; internal set; } = Array.Empty<string>();
 

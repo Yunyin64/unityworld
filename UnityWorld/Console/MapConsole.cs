@@ -18,7 +18,7 @@ public static class MapConsole
         {
             var flags = new HashSet<string>(StringComparer.Ordinal);
             var values = new Dictionary<string, string>(StringComparer.Ordinal);
-            string[] modes = ["--map-generate", "--map-generation-tests", "--map-data-tests", "--map-generator-tests", "--map-runtime-tests", "--map-batch", "--map-runtime-hash"];
+            string[] modes = ["--map-generate", "--map-generation-tests", "--map-data-tests", "--map-generator-tests", "--map-runtime-tests", "--map-batch", "--map-runtime-hash", "--map-hydrology-tests"];
             string[] options = ["--seed", "--profile", "--output", "--data-root", "--count"];
             for (int i = 0; i < args.Length; i++)
             {
@@ -42,6 +42,7 @@ public static class MapConsole
             if (flags.Contains("--map-data-tests") || flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapDataTests.Run(baseDir);
             if (flags.Contains("--map-generator-tests") || flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapGeneratorTests.Run(baseDir);
             if (flags.Contains("--map-runtime-tests") || flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapRuntimeTests.Run(baseDir);
+            if (flags.Contains("--map-generation-tests") || flags.Contains("--map-hydrology-tests")) UnityWorld.Tests.MapHydrologyTests.Run(baseDir);
             if (flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapDiagnosticsTests.Run(baseDir);
             if (flags.Any(x => x.EndsWith("tests", StringComparison.Ordinal)))
             {
@@ -77,6 +78,7 @@ public static class MapConsole
                     string hash = WorldMapExport.StructureHash(result);
                     reports.Add(new { seed = seed + n, hash, boundaryHash = current, tiles = result.Cells.Length, regions = result.Regions.Count,
                         result.Diagnostics.RegionCoverage, result.Diagnostics.RiverCellCount, result.Diagnostics.StageMilliseconds,
+                        result.Diagnostics.Metrics, lakes=result.Lakes.Select(l=>new{l.Id,l.Closed,area=l.CellIndices.Count,l.SurfaceLevel,l.Runoff}),
                         result.Diagnostics.Attempt, result.Diagnostics.RequiredBacktracks, result.Diagnostics.FillBacktracks, result.Diagnostics.Warnings });
                     Console.WriteLine($"MAP_BATCH_SEED_OK seed={seed + n} tiles={result.Cells.Length} regions={result.Regions.Count} coverage={result.Diagnostics.RegionCoverage:P1} hash={hash}");
                 }

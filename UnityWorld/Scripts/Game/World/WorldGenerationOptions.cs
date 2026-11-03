@@ -6,7 +6,7 @@ public sealed class WorldGenerationOptions
     public string ID { get; set; } = "china-inspired-v1";
     public string DisplayName { get; set; } = "大陆生成默认参数";
     /// <summary>生成器语义版本，参与种子派生与复现摘要。</summary>
-    public string GeneratorVersion { get; set; } = "region-puzzle-v2";
+    public string GeneratorVersion { get; set; } = "region-puzzle-v3";
     /// <summary>标明开发样例；不代表已确认的正式世界设定。</summary>
     public bool IsDevelopmentSample { get; set; } = true;
     /// <summary>生成配置说明与未定案内容边界。</summary>
@@ -17,8 +17,11 @@ public sealed class WorldGenerationOptions
     public int Height { get; set; } = 200;
     /// <summary>参与当前大陆生成的地区定义 ID。</summary>
     public List<string> RegionIds { get; set; } = new();
-    /// <summary>地区实际占地占非边界面积的软目标。</summary>
-    public double RegionCoverageTarget { get; set; } = 0.42;
+    /// <summary>普通地区占可用陆格的软目标，扣除固定、海域、河带和整个湖泊地区。</summary>
+    public double RegionCoverageTarget { get; set; } = 0.25;
+    /// <summary>普通地区 footprint 间最少空格数，最短六边形距离减一。</summary>
+    public int RegionGap { get; set; } = 2;
+    public int LakePlacementAttempts { get; set; } = 4000;
     /// <summary>整图环境重新生成的最大尝试数。</summary>
     public int WholeMapAttempts { get; set; } = 3;
     /// <summary>必需地区候选搜索预算。</summary>
@@ -53,7 +56,12 @@ public sealed class EnvironmentGenerationSettings
     /// <summary>局部连续环境噪声的空间尺度。</summary>
     public double DetailScale { get; set; } = 12;
     /// <summary>固定边界向内平滑过渡的距离。</summary>
-    public int BoundaryBlendDistance { get; set; } = 12;
+    public int BoundaryBlendDistance { get; set; } = 24;
+    public double ElevationAmplitude { get; set; } = 1.05;
+    public double MoistureAmplitude { get; set; } = .5;
+    public double TemperatureAmplitude { get; set; } = .16;
+    public int FixedSeed { get; set; } = 271828;
+    public double FixedVariationScale { get; set; } = 22;
     /// <summary>北方总体温度趋势。</summary>
     public double NorthTemperature { get; set; } = 0.2;
     /// <summary>南方总体温度趋势。</summary>
@@ -67,11 +75,19 @@ public sealed class EnvironmentGenerationSettings
 /// <summary>跨格水系的源头、终点和类型约束。</summary>
 public sealed class HydrologyGenerationSettings
 {
-    /// <summary>计划生成的河流水源数量。</summary>
+    public double SeaLevel { get; set; } = .05;
+    /// <summary>湿润度贡献的汇水阈值。RiverCount=0 可显式关闭河网。</summary>
+    public double TributaryThreshold { get; set; } = 90;
+    public double MainRiverThreshold { get; set; } = 500;
+    public double WideRiverThreshold { get; set; } = 1800;
+    public int MainRiverWidth { get; set; } = 2;
+    public int MaxRiverWidth { get; set; } = 3;
+    public int RoutingBudget { get; set; } = 2000000;
+    /// <summary>旧参数兼容开关：0关闭河网；正值启用汇水河网，不再限制水源数量。</summary>
     public int RiverCount { get; set; } = 3;
-    /// <summary>随机水源允许的最小列。</summary>
+    /// <summary>旧源头列范围，v3不再用于挑选水源。</summary>
     public int MinSourceColumn { get; set; } = 35;
-    /// <summary>随机水源允许的最大列。</summary>
+    /// <summary>旧源头列范围，v3不再用于挑选水源。</summary>
     public int MaxSourceColumn { get; set; } = 70;
     /// <summary>是否允许明确湖泊作为水系终点。</summary>
     public bool AllowInlandLakes { get; set; } = true;
@@ -80,7 +96,7 @@ public sealed class HydrologyGenerationSettings
     /// <summary>明确配置的内陆湖泊终点坐标。</summary>
     public List<OffsetPointDefine> LakeSinks { get; set; } = new();
     /// <summary>允许承载跨格河流的类型。</summary>
-    public List<string> RiverTypeIds { get; set; } = new() { "river_lake" };
+    public List<string> RiverTypeIds { get; set; } = new() { "river" };
     /// <summary>允许承载湖泊终点的类型。</summary>
     public List<string> LakeTypeIds { get; set; } = new() { "lake" };
     /// <summary>允许承载海洋终点的类型。</summary>

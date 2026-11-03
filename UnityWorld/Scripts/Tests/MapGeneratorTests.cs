@@ -111,7 +111,7 @@ public static class MapGeneratorTests
 
         var impossible = MapCatalog.Load(baseDir); var impossibleProfile = Profile(impossible);
         impossibleProfile.WholeMapAttempts = 1;
-        var required = impossible.Regions.Values.First(x => x.MinCount > 0);
+        var required = impossible.Regions.Values.First(x => x.GenerationPhase=="ordinary" && x.MinCount > 0);
         required.TerrainLayout[(500, 500)] = "mountain";
         Reject(() => WorldMapGenerator.Generate(impossible, impossibleProfile, 1), "required-regions", "Out-of-bounds required template is never cut.");
 
@@ -124,13 +124,13 @@ public static class MapGeneratorTests
         var carrierWorld = WorldMapGenerator.Generate(carrier, carrierProfile, 1);
         Check(carrierWorld.Cells.All(x => x.TileDefineId != "unlisted-river"), "Profile river carrier whitelist beats arbitrarily high fill weight.");
 
-        var noExit = MapCatalog.Load(baseDir); var noExitProfile = Profile(noExit); noExitProfile.WholeMapAttempts = 1;
+        var noExit = MapCatalog.Load(baseDir); var noExitProfile = Profile(noExit); noExitProfile.WholeMapAttempts = 1; noExitProfile.RegionIds.RemoveAll(id=>noExit.Regions[id].GenerationPhase=="lake");
         noExit.Tiles.Add("absent-ocean-outlet", new() { ID = "absent-ocean-outlet", WaterKind = "ocean", AllowFill = false });
         noExitProfile.Hydrology.OceanTypeIds = new() { "absent-ocean-outlet" };
         Reject(() => WorldMapGenerator.Generate(noExit, noExitProfile, 1), "hydrology", "No ocean outlet is rejected.");
 
         var inland = MapCatalog.Load(baseDir); var inlandProfile = Profile(inland);
-        inlandProfile.RegionIds.Clear(); inlandProfile.ConnectivityGroups.Clear(); inlandProfile.RegionCoverageTarget = 0;
+        inlandProfile.Hydrology.SeaLevel=0; inlandProfile.RegionIds.Clear(); inlandProfile.ConnectivityGroups.Clear(); inlandProfile.RegionCoverageTarget = 0;
         inland.Tiles.Add("absent-ocean-outlet", new() { ID = "absent-ocean-outlet", WaterKind = "ocean", AllowFill = false });
         inlandProfile.Hydrology.OceanTypeIds = new() { "absent-ocean-outlet" }; inlandProfile.Hydrology.RequireOceanExit = false;
         inlandProfile.Hydrology.LakeSinks.Add(new() { Col = 120, Row = 100 });
@@ -141,13 +141,13 @@ public static class MapGeneratorTests
         Check(lakeWorld.At(120, 100).TileDefineId != "unlisted-lake", "Profile lake carrier whitelist is enforced.");
 
         var adjustment = MapCatalog.Load(baseDir); var adjustmentProfile = Profile(adjustment); adjustmentProfile.WholeMapAttempts = 1;
-        var adjustmentRegion = adjustment.Regions.Values.First(x => x.MinCount > 0);
+        var adjustmentRegion = adjustment.Regions.Values.First(x => x.GenerationPhase=="ordinary" && x.MinCount > 0);
         var adjustmentCell = adjustmentRegion.TerrainLayout.Keys.First();
         adjustmentRegion.EnvironmentAdjustments.Add(new() { Dq = adjustmentCell.dq, Dr = adjustmentCell.dr, Elevation = .2 });
         Reject(() => WorldMapGenerator.Generate(adjustment, adjustmentProfile, 1), "required-regions", "Over-budget environment adjustment rejects whole template.");
 
         var singleton = MapCatalog.Load(baseDir); var singletonProfile = Profile(singleton); singletonProfile.WholeMapAttempts = 1;
-        var fixedDef = singleton.Regions.Values.First(r => r.MinCount > 0 && r.LandMarkLayout.Count > 0);
+        var fixedDef = singleton.Regions.Values.First(r => r.GenerationPhase=="ordinary" && r.MinCount > 0 && r.LandMarkLayout.Count > 0);
         string landmarkId = fixedDef.LandMarkLayout.Values.First(); singleton.LandMarks[landmarkId].IsSingleton = true;
         Reject(() => WorldMapGenerator.Generate(singleton, singletonProfile, 1, new HashSet<string> { landmarkId }), "required-regions", "Reserved global singleton rejects complete required puzzle.");
 

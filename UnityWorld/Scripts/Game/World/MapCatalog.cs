@@ -170,6 +170,36 @@ public sealed class MapCatalog
                 if (environment == null) Error(p, "FixedEnvironment is required");
                 else { Finite(p + ".FixedEnvironment.Elevation", environment.Elevation, 0, 1); Finite(p + ".FixedEnvironment.Moisture", environment.Moisture, 0, 1); Finite(p + ".FixedEnvironment.Temperature", environment.Temperature, 0, 1); }
             }
+            Environment(p + ".FixedEnvironmentRange",region.FixedEnvironmentRange);
+            if(region.FixedBlendDistance<0) Error(p + ".FixedBlendDistance", "negative blend distance");
+            if(region.ForcedPositions.Count>0 && region.FixedEnvironment!=null && !region.FixedEnvironmentRange.Matches(region.FixedEnvironment.Elevation,region.FixedEnvironment.Moisture,region.FixedEnvironment.Temperature)) Error(p + ".FixedEnvironment", "base outside fixed allowed range");
+            Finite(p + ".FixedVariation.Elevation", region.FixedVariation.Elevation, 0, 1);
+            Finite(p + ".FixedVariation.Moisture", region.FixedVariation.Moisture, 0, 1);
+            Finite(p + ".FixedVariation.Temperature", region.FixedVariation.Temperature, 0, 1);
+            if (region.GenerationPhase is not ("ordinary" or "lake")) Error(p + ".GenerationPhase", "expected ordinary/lake");
+            if (region.GenerationPhase == "lake")
+            {
+                if (region.Lake == null) Error(p + ".Lake", "required for lake phase");
+                else
+                {
+                    if (region.ForcedPositions.Count > 0 || region.RiverCells.Count > 0) Error(p + ".Lake", "lake cannot be forced or declare river cells");
+                    if (region.Lake.Role is not ("flowthrough" or "closed")) Error(p + ".Lake.Role", "expected flowthrough/closed");
+                    if (region.Lake.Ports.Count(x => !x.IsInlet) != (region.Lake.Role == "closed" ? 0 : 1)) Error(p + ".Lake.Ports", "requires exactly one flowthrough outlet or zero closed outlets");
+                    var ports = new HashSet<(int,int,int)>();
+                    foreach (var port in region.Lake.Ports)
+                    {
+                        if (port.Direction < 0 || port.Direction > 5 || !ports.Add((port.Dq, port.Dr, port.Direction))) { Error(p + ".Lake.Ports", "invalid/duplicate direction"); continue; }
+                        if (!region.TerrainLayout.TryGetValue((port.Dq, port.Dr), out var typeId) || !Tiles.TryGetValue(typeId, out var type) || type.WaterKind != "lake") Error(p + ".Lake.Ports", "port must be lake water");
+                        var n = new TileId(port.Dq, port.Dr).Neighbor(port.Direction);
+                        if (region.TerrainLayout.ContainsKey((n.Q,n.R))) Error(p + ".Lake.Ports", "port must face outside footprint");
+                    }
+                    var water = region.TerrainLayout.Where(x => Tiles.TryGetValue(x.Value, out var t) && t.WaterKind == "lake").Select(x => new TileId(x.Key.dq,x.Key.dr)).ToHashSet();
+                    if (water.Count == 0) Error(p + ".Lake", "empty water footprint");
+                    else { var seen = new HashSet<TileId>(); var queue = new Queue<TileId>(); queue.Enqueue(water.First()); while(queue.TryDequeue(out var at)) if(seen.Add(at)) foreach(var d in TileId.Directions) if(water.Contains(at+d)) queue.Enqueue(at+d); if(seen.Count!=water.Count) Error(p + ".Lake", "water footprint must be connected"); }
+                }
+            }
+            else if (region.Lake != null) Error(p + ".Lake", "requires lake generation phase");
+            foreach(var narrow in region.NarrowRiverCells) if(!region.RiverCells.Any(x=>x.Dq==narrow.Dq && x.Dr==narrow.Dr)) Error(p + ".NarrowRiverCells", "must refer to an authored river cell");
             if (region.SchemaVersion != 2) Error(p, "SchemaVersion must be 2");
             if (region.MinCount < 0 || region.MaxCount < -1 || (region.MaxCount != -1 && region.MaxCount < region.MinCount)) Error(p, "invalid MinCount/MaxCount");
             if (region.MinSpacing < 0 || region.Width < 0 || region.Height < 0) Error(p, "negative spacing/display dimensions");
@@ -237,12 +267,22 @@ public sealed class MapCatalog
             if (profile.WholeMapAttempts <= 0 || profile.RequiredRegionAttempts <= 0 || profile.OptionalRegionAttempts < 0 || profile.RegionBacktrackBudget < 0 || profile.FillBacktrackBudget < 0 || profile.FillRepairBudget < 0 || profile.WaterRepairBudget < 0) Error(p, "invalid generation budget");
             References(p + ".RegionIds", profile.RegionIds, Regions);
             if (profile.RegionIds.Distinct().Count() != profile.RegionIds.Count) Error(p, "duplicate RegionIds");
+            if (profile.RegionGap < 0 || profile.LakePlacementAttempts <= 0) Error(p, "invalid RegionGap/LakePlacementAttempts");
             var env = profile.Environment;
             Finite(p + ".Environment.NoiseScale", env.NoiseScale, double.Epsilon); Finite(p + ".Environment.DetailScale", env.DetailScale, double.Epsilon);
+            Finite(p + ".Environment.ElevationAmplitude",env.ElevationAmplitude,0,2);
+            Finite(p + ".Environment.MoistureAmplitude",env.MoistureAmplitude,0,2);
+            Finite(p + ".Environment.TemperatureAmplitude",env.TemperatureAmplitude,0,2);
+            Finite(p + ".Environment.FixedVariationScale", env.FixedVariationScale, double.Epsilon);
             if (env.BoundaryBlendDistance < 0) Error(p, "negative boundary blend distance");
             Finite(p + ".Environment.NorthTemperature", env.NorthTemperature, 0, 1); Finite(p + ".Environment.SouthTemperature", env.SouthTemperature, 0, 1);
             Finite(p + ".Environment.WestMoisture", env.WestMoisture, 0, 1); Finite(p + ".Environment.EastMoisture", env.EastMoisture, 0, 1);
             var hydro = profile.Hydrology;
+            Finite(p + ".Hydrology.SeaLevel", hydro.SeaLevel, 0, 1);
+            Finite(p + ".Hydrology.TributaryThreshold", hydro.TributaryThreshold, double.Epsilon);
+            Finite(p + ".Hydrology.MainRiverThreshold", hydro.MainRiverThreshold, hydro.TributaryThreshold);
+            Finite(p + ".Hydrology.WideRiverThreshold", hydro.WideRiverThreshold, hydro.MainRiverThreshold);
+            if(hydro.MainRiverWidth < 1 || hydro.MaxRiverWidth < hydro.MainRiverWidth || hydro.MaxRiverWidth > 3 || hydro.RoutingBudget <= 0) Error(p + ".Hydrology", "invalid width/routing budget");
             if (hydro.RiverCount < 0 || hydro.MinSourceColumn < 1 || hydro.MaxSourceColumn < hydro.MinSourceColumn || hydro.MaxSourceColumn >= 199) Error(p, "invalid hydrology source settings");
             References(p + ".Hydrology.RiverTypeIds", hydro.RiverTypeIds, Tiles); References(p + ".Hydrology.LakeTypeIds", hydro.LakeTypeIds, Tiles); References(p + ".Hydrology.OceanTypeIds", hydro.OceanTypeIds, Tiles);
             foreach (var (field, ids, kind) in new[] { ("RiverTypeIds", hydro.RiverTypeIds, "river"), ("LakeTypeIds", hydro.LakeTypeIds, "lake"), ("OceanTypeIds", hydro.OceanTypeIds, "ocean") })

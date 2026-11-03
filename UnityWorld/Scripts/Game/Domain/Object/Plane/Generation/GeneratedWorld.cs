@@ -18,9 +18,23 @@ public sealed class MapEnvironment
     public MapEnvironment Copy() => new() { Elevation = Elevation, Temperature = Temperature, Moisture = Moisture };
 }
 
-/// <summary>Directed cross-tile water graph; local scenery streams are deliberately excluded.</summary>
+/// <summary>Independent water footprint, drainage data and optional directed centerline.</summary>
 public sealed class MapWater
 {
+    /// <summary>Water footprint, independent of directed flow: none/ocean/lake/river.</summary>
+    public string Kind { get; set; } = "none";
+    public string BodyId { get; set; }
+    public double? SurfaceLevel { get; set; }
+    public double DrainageElevation { get; set; }
+    public int DrainageRank { get; set; } = -1;
+    public double LocalRunoff { get; set; }
+    public int DrainageTarget { get; set; } = -1;
+    public double Runoff { get; set; }
+    public int Width { get; set; }
+    /// <summary>Row-major owning centerline index; -1 outside river bands.</summary>
+    public int CenterlineIndex { get; set; } = -1;
+    public bool IsCenterline { get; set; }
+    public string Reason { get; set; }
     /// <summary>Bit d denotes inflow from neighbour direction d, using TileId.Directions.</summary>
     public int IncomingMask { get; set; }
     /// <summary>Single downstream direction, or -1 for no downstream.</summary>
@@ -32,7 +46,7 @@ public sealed class MapWater
     /// <summary>Whether this cell participates in a realized cross-tile watercourse.</summary>
     public bool Active => IncomingMask != 0 || OutDirection >= 0 || IsSource;
     /// <summary>Returns an independent connection copy.</summary>
-    public MapWater Copy() => new() { IncomingMask = IncomingMask, OutDirection = OutDirection, IsSource = IsSource, IsSink = IsSink };
+    public MapWater Copy() => (MapWater)MemberwiseClone();
 }
 
 /// <summary>One unpublished tile plan, including provenance and generation decision evidence.</summary>
@@ -58,7 +72,7 @@ public sealed class GeneratedCell
     public string LandMarkDefineId { get; set; }
     /// <summary>Final local environment after explicitly configured puzzle adjustments.</summary>
     public MapEnvironment Environment { get; set; } = new();
-    /// <summary>Final directed water connections.</summary>
+    /// <summary>Water footprint, drainage and directed connections.</summary>
     public MapWater Water { get; set; } = new();
     /// <summary>Absolute boundary prohibition, including flight.</summary>
     public bool BlockAllMovement { get; set; }
@@ -120,6 +134,22 @@ public sealed class EnvironmentAdjustmentRecord
     public MapEnvironment After { get; set; }
 }
 
+/// <summary>Whole lake node; shoreline/islands remain ordinary authored tiles in its region.</summary>
+public sealed class GeneratedLake
+{
+    public string Id { get; set; }
+    public int RegionIndex { get; set; }
+    public bool Closed { get; set; }
+    public double SurfaceLevel { get; set; }
+    public List<int> CellIndices { get; set; } = new();
+    public int OutletCell { get; set; } = -1;
+    public int OutletTarget { get; set; } = -1;
+    public List<int> InletCells { get; set; } = new();
+    public double LocalRunoff { get; set; }
+    public int DrainageTarget { get; set; } = -1;
+    public double Runoff { get; set; }
+}
+
 /// <summary>Bounded diagnostics; rejected candidates are counted rather than exhaustively logged.</summary>
 public sealed class MapGenerationDiagnostics
 {
@@ -149,10 +179,11 @@ public sealed class MapGenerationDiagnostics
     public int FillBacktracks { get; set; }
     /// <summary>Protected cells in forced region copies; legacy diagnostic field name.</summary>
     public int BoundaryCount { get; set; }
-    /// <summary>Cells participating in realized watercourses, including their sinks.</summary>
+    /// <summary>Actual river footprint cells, including wide side cells; ocean/lake surfaces counted separately.</summary>
     public int RiverCellCount { get; set; }
-    /// <summary>Ordinary puzzle footprint area divided by nonfixed area.</summary>
+    /// <summary>Ordinary puzzle land divided by eligible land after fixed, sea, river and whole lake-region exclusion.</summary>
     public double RegionCoverage { get; set; }
+    public Dictionary<string, double> Metrics { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Adds one rejection and, while capacity remains, an illustrative sample.</summary>
     public void Reject(string reason, string sample = null)
     {
@@ -166,8 +197,10 @@ public sealed class GeneratedWorld
 {
     /// <summary>Catalog and effective ordinary options, including caller overrides.</summary>
     public string ConfigHash { get; set; }
+    /// <summary>Detached effective ordinary generation options for exported reproduction.</summary>
+    public WorldGenerationOptions Parameters { get; set; }
     /// <summary>Semantic generation algorithm version included in seed derivation.</summary>
-    public string GeneratorVersion { get; set; } = "region-puzzle-v2";
+    public string GeneratorVersion { get; set; } = "region-puzzle-v3";
     /// <summary>Stable generation profile ID.</summary>
     public string ProfileId { get; set; }
     /// <summary>User-selected world seed, independent of runtime identities.</summary>
@@ -180,6 +213,7 @@ public sealed class GeneratedWorld
     public GeneratedCell[] Cells { get; set; }
     /// <summary>Author puzzles in stable acceptance sequence.</summary>
     public List<GeneratedRegion> Regions { get; set; } = new();
+    public List<GeneratedLake> Lakes { get; set; } = new();
     /// <summary>Bounded evidence and phase measurements for this generation.</summary>
     public MapGenerationDiagnostics Diagnostics { get; set; } = new();
     /// <summary>Retrieves a cell by its valid odd-r offset position.</summary>

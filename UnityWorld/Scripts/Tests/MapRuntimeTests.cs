@@ -18,7 +18,7 @@ public static class MapRuntimeTests
     private static void Reject(Action action, string message)
     {
         try { action(); }
-        catch (Exception ex) when (ex is InvalidOperationException || ex is InvalidDataException || ex is ArgumentException)
+        catch (Exception ex) when (ex is InvalidOperationException || ex is InvalidDataException || ex is ArgumentException || ex is MapGenerationException)
         { _assertions++; return; }
         throw new InvalidOperationException("应该拒绝：" + message);
     }
@@ -256,6 +256,15 @@ public static class MapRuntimeTests
                 && RegionDefineMgr.Instance.GetAll().Count() == catalog.Regions.Count
                 && LandMarkDefineMgr.Instance.GetAll().Count() == catalog.LandMarks.Count, "分拆定义目录与兼容管理器加载一致");
             Check(plane.TileCount == 40000 && plane.GenerationResult.Cells.Length == 40000, "默认入口实际生成完整大陆");
+            foreach(var plan in plane.GenerationResult.Cells.Where(c=>c.Water.Kind!="none"))
+            {
+                var actual=plane.GetTile(plan.Id);var projection=actual.Water;
+                Check(projection.Kind==plan.Water.Kind && projection.BodyId==plan.Water.BodyId && projection.Width==plan.Water.Width
+                    && projection.SurfaceLevel==plan.Water.SurfaceLevel && projection.Runoff==plan.Water.Runoff
+                    && projection.DrainageElevation==plan.Water.DrainageElevation, "水文投影逐格一致");
+                projection.Runoff=-1;projection.BodyId="tampered";
+                Check(actual.Water.Runoff==plan.Water.Runoff && actual.Water.BodyId==plan.Water.BodyId, "只读投影不能回写世界或候选");
+            }
             Check(!PlaneMgr.Instance.Destroy(plane.Id), "已发布的真实主大陆不能由Destroy销毁");
             Check(WorldTime.CurrentTick == 0 && WorldTime.TotalTime == 0, "地图生成不推进时间");
             Check(RegionMgr.Instance.GetByPlane(plane.Id).Count() == plane.GenerationResult.Regions.Count, "首次启动地区索引已经可用");
@@ -345,6 +354,11 @@ public static class MapRuntimeTests
                 GenerationMode = PlaneGenerationMode.Continent, GenerationSeed = 12345 };
             int tick = WorldTime.CurrentTick;
             float time = WorldTime.TotalTime;
+            var lakeLandmark=GameDataMgr.Instance.MapCatalog.LandMarks["natural_reed_marsh"];
+            bool singletonBefore=lakeLandmark.IsSingleton;lakeLandmark.IsSingleton=true;
+            try { Reject(()=>planes.CreatePlane(config), "必需三湖singleton冲突在候选阶段失败"); }
+            finally {lakeLandmark.IsSingleton=singletonBefore;}
+            Check(planes.Count==1 && regions.Count==0 && landmarks.Count==0 && dao.GetOrigin(baseline.Id,TileId.Zero).Huo==2, "三湖失败不覆盖历史世界与快照");
             planes.PublicationFailureStageForTesting = "snapshot";
             Reject(() => planes.CreatePlane(config), "所有地区地标及快照登记后注入失败");
             Check(planes.Count == 1 && regions.Count == 0 && landmarks.Count == 0
@@ -356,6 +370,13 @@ public static class MapRuntimeTests
             var placedLandmarks = landmarks.GetByPlane(success.Id).ToArray();
             Check(success.TileCount == 40000 && regions.Count > 0 && placedLandmarks.Length > 0,
                 "相同生成请求在失败回滚后可成功发布");
+            var lakePlans=success.GenerationResult.Regions.Where(r=>GameDataMgr.Instance.MapCatalog.Regions[r.DefineId].GenerationPhase=="lake").SelectMany(r=>r.LandMarkCellIndices).Select(i=>success.GenerationResult.Cells[i]).ToArray();
+            Check(lakePlans.Any(c=>GameDataMgr.Instance.MapCatalog.LandMarks[c.LandMarkDefineId].IsNatural) && lakePlans.Any(c=>!GameDataMgr.Instance.MapCatalog.LandMarks[c.LandMarkDefineId].IsNatural), "自然与人工湖泊地标统一进入既有创世阶段");
+            var parallel=planes.CreatePlane(new PlaneConfig {Width=200,Height=200,GenerationMode=PlaneGenerationMode.Continent,GenerationSeed=19});
+            var waterCell=success.GenerationResult.Cells.First(c=>c.Water.Kind=="lake");var oldWater=success.GetTile(waterCell.Id).Water;
+            var other=parallel.GetTile(waterCell.Id).Water;other.BodyId="mutated-other";other.Runoff=-9;
+            Check(success.GetTile(waterCell.Id).Water.BodyId==oldWater.BodyId && parallel.GetTile(waterCell.Id).Water.Runoff>=0 && dao.GetOrigin(baseline.Id,TileId.Zero).Huo==2, "两座大陆水文与旧位面快照隔离");
+            planes.Destroy(parallel.Id);
             var position = success.GenerationResult.Regions[0].Anchor;
             planes.Destroy(success.Id);
             Check(planes.Count == 1 && regions.Count == 0 && landmarks.Count == 0

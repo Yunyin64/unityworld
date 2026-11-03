@@ -5,36 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'Data'
 LEGACY = Path(__file__).parent / 'map_legacy_source'
 
-def compact_json(value, level=0):
-    pad='  '*level
-    flat=json.dumps(value,ensure_ascii=False,separators=(', ', ': '))
-    if len(flat)+len(pad)<=120: return flat
-    if isinstance(value,dict):
-        entries=[]
-        for key,child in value.items():
-            prefix='  '*(level+1)+json.dumps(key,ensure_ascii=False)+': '
-            if key in ('TerrainLayout','LandMarkLayout') and isinstance(child,dict):
-                pairs=[json.dumps(k,ensure_ascii=False)+': '+json.dumps(v,ensure_ascii=False) for k,v in child.items()]
-                lines=[', '.join(pairs[i:i+5]) for i in range(0,len(pairs),5)]
-                rendered='{\n'+',\n'.join('  '*(level+2)+line for line in lines)+'\n'+'  '*(level+1)+'}' if lines else '{}'
-            else: rendered=compact_json(child,level+1)
-            entries.append(prefix+rendered)
-        grouped=[]
-        for entry in entries:
-            if grouped and '\n' not in grouped[-1] and '\n' not in entry and len(grouped[-1])+len(entry.lstrip())+2<=120:
-                grouped[-1]+=', '+entry.lstrip()
-            else: grouped.append(entry)
-        return '{\n'+',\n'.join(grouped)+'\n'+pad+'}'
-    if isinstance(value,list):
-        entries=['  '*(level+1)+compact_json(v,level+1) for v in value]
-        if all(not isinstance(v,(dict,list)) for v in value) or (value and all(isinstance(v,dict) and set(v)=={'Col','Row'} for v in value)):
-            grouped=[]
-            for entry in entries:
-                if grouped and len(grouped[-1])+len(entry.lstrip())+2<=120: grouped[-1]+=', '+entry.lstrip()
-                else: grouped.append(entry)
-            entries=grouped
-        return '[\n'+',\n'.join(entries)+'\n'+pad+']'
-    return flat
+from map_json_format import compact_json
 
 def save(name, value):
     if name in ('TileDefines.json','RegionDefines.json','LandMarkDefines.json'):
@@ -54,8 +25,8 @@ rows = [
 ('plain','平原','#b9c77c',(.30,.50,.60),3,(1,1,1,1,1),'平野',1),
 ('hill','丘陵','#9caa67',(.48,.48,.55),4,(1,.8,.8,.8,1.5),'丘陵',1.4),
 ('mountain','山地','#8a907c',(.72,.42,.45),5,(2,.5,.8,.8,1.2),'山类',2.2),
-('river_lake','河谷','#509bb6',(.30,.70,.55),8,(.8,1.2,2.5,.5,.8),'水系',2.5),
-('ocean','东海','#356a97',(.03,.92,.55),0,(.5,.8,4,.3,.5),'水系',3),
+('river','河流','#509bb6',(.30,.70,.55),8,(.8,1.2,2.5,.5,.8),'水系',2.5),
+('ocean','东海','#356a97',(.03,.92,.55),8,(.5,.8,4,.3,.5),'水系',3),
 ('desert','沙漠','#d7b36a',(.40,.15,.75),4,(1,.3,.3,2.5,1.5),'干旱',2),
 ('forest','森林','#4b8250',(.42,.72,.58),5,(.8,2.5,1.2,.5,.8),'林木',1.6),
 ('forest_mountain','林山','#496b4e',(.70,.75,.55),5,(1.5,2,.9,.5,1.1),'山类 林木',2.4),
@@ -89,9 +60,9 @@ for ident,name,color,pref,weight,initial,tags,cost in rows:
     if ident=='wetland': rule['Moisture']['Min']=.45; rule['Elevation']['Max']=.65
     if ident=='coast': rule['Elevation']['Max']=.38
     if ident=='plain': rule=env(*pref,strength=3) # Explicit broad candidate; no implicit fallback in generator.
-    water='river' if ident=='river_lake' else ident if ident in ('ocean','lake') else 'none'
+    water='river' if ident=='river' else ident if ident in ('ocean','lake') else 'none'
     modes=[] if ident=='great_wall' else ['boat','fly'] if water!='none' else ['walk','fly']
-    tiles.append(dict(SchemaVersion=2,ID=ident,DisplayName=name,Description=f'开发样例：{name}代表一片地域，包含格内小尺度景观；不等同真实中国位置。',Tags=tags.split(),Color=color,Symbol=name[0],InitialAura=aura(initial),AllowFill=ident not in ('ocean','volcano','great_wall'),FillWeight=weight,Environment=rule,AllowedNeighborIds=[],ForbiddenNeighborIds=[],NeighborWeights={ident:8},MovementModes=modes,MovementCost=cost,WaterKind=water,BlocksAllMovement=ident=='great_wall',ResourceRefs=[],EncounterRefs=[]))
+    tiles.append(dict(SchemaVersion=2,ID=ident,DisplayName=name,Description=f'开发样例：{name}代表一片地域，包含格内小尺度景观；不等同真实中国位置。',Tags=tags.split(),Color=color,Symbol=name[0],InitialAura=aura(initial),AllowFill=ident not in ('volcano','great_wall'),FillWeight=weight,Environment=rule,AllowedNeighborIds=[],ForbiddenNeighborIds=[],NeighborWeights={ident:8},MovementModes=modes,MovementCost=cost,WaterKind=water,BlocksAllMovement=ident=='great_wall',ResourceRefs=[],EncounterRefs=[]))
 # Preference by geological family. Same-type growth remains strongest.
 for tile in tiles:
     for other in tiles:
@@ -99,7 +70,7 @@ for tile in tiles:
 save('TileDefines.json',tiles)
 
 legacy=json.loads((LEGACY/'RegionDefines.json').read_text(encoding='utf-8-sig'))
-legacy_map=['plain','hill','mountain','river_lake','ocean','desert','forest']
+legacy_map=['plain','hill','mountain','river','ocean','desert','forest']
 for item in legacy:
     item['SchemaVersion']=2
     item['MinCount']=1 if item.pop('IsGuaranteed',False) else 0
@@ -149,7 +120,7 @@ for direction,label in ((0,'东流'),(1,'东南流'),(5,'东北流')):
             cell=(q+bq,r+br)
             if cell not in excluded and cell not in river: bankset.add(cell)
     banks=sorted(bankset,key=lambda p:(max(abs(p[0]),abs(p[1]),abs(sum(p))),p[1],p[0]))[:4]
-    layout={f'{q},{r}':'river_lake' for q,r in river}
+    layout={f'{q},{r}':'river' for q,r in river}
     layout.update({f'{q},{r}':'forest_mountain' if q%2 else 'hill' for q,r in banks})
     obj=dict(SchemaVersion=2,ID=f'region_river_valley_{direction}',DisplayName=f'{label}山谷样例',MinCount=1 if direction==0 else 0,MaxCount=8,SpawnWeight=4,MinSpacing=12,Width=7,Height=7,TerrainLayout=layout,LandMarkLayout={},ExtraTerrainIds=[],AuraProfile=aura((0,0,.2,0,0)),Tags=['开发样例','涉水地区'],AnchorEnvironment=env(strength=0),OverallEnvironment=env(strength=0),RequiredEnvironmentFraction=1,KeyEnvironment=[],EnvironmentAdjustments=[],RiverCells=[dict(Dq=q,Dr=r,InDirections=[(direction+3)%6],OutDirection=direction,IsSource=False,IsSink=False) for q,r in river],RiverPorts=[dict(Dq=0,Dr=0,Direction=(direction+3)%6,IsInlet=True),dict(Dq=2*dq,Dr=2*dr,Direction=direction,IsInlet=False)],KeyPoints=[],PlacementTypeIds=[])
     regions.append(obj)
@@ -160,6 +131,8 @@ def fixed_region(ident,name,tile,width,height,positions,conditions):
     return dict(SchemaVersion=2,ID=ident,DisplayName=name,Width=width,Height=height,
         ForcedPositions=[dict(Col=col,Row=row) for col,row in positions],
         FixedEnvironment=dict(zip(('Elevation','Moisture','Temperature'),conditions)),
+        BlendFixedEnvironment=True,AllowEnvironmentCliff=tile in ('ocean','great_wall'),
+        FixedVariation=dict(Elevation=.012 if tile=='ocean' else .055,Moisture=.04,Temperature=.035),
         TerrainLayout=layout,LandMarkLayout={},SpawnWeight=0,MaxCount=0,MinSpacing=999,
         Tags=['开发样例','固定地区'])
 regions.extend([
@@ -170,6 +143,31 @@ regions.extend([
     fixed_region('fixed_south_desert','南境沙漠','desert',5,10,[(c,190) for c in range(5,80,5)],(.40,.12,.92)),
     fixed_region('fixed_south_rainforest','南境雨林','rainforest',10,10,[(c,190) for c in range(80,190,10)],(.35,.92,.90)),
 ])
+# Three authored lake pieces. Connected water corridors reach the declared ports.
+for ident,name,w,h,variant in [('lake_plain','平原大湖样例',15,11,0),('lake_mountain','狭长山间湖样例',19,9,1),('lake_wetland','湖群湿地样例',17,13,2)]:
+    layout={}
+    mid=h//2
+    for r in range(h):
+        for col in range(w):
+            if variant==2 and col==0 and r==0: continue # Authored footprint hole, not implicit land.
+            q=col-r//2
+            nx=(col-(w-1)/2)/((w-3)/2); ny=(r-mid)/((h-3)/2)
+            wet=nx*nx+ny*ny < (1 if variant!=2 else .86+.22*math.cos(col))
+            if r==mid: wet=True
+            # Port mouths are three cells across so a wide main river can enter without erasing shore.
+            if col in (0,w-1) and abs(r-mid)<=1: wet=True
+            tile='lake' if wet else ('mountain' if variant==1 else 'wetland' if variant==2 else 'plain')
+            # Authored island; it does not split the connected lake.
+            if variant==0 and col==w//2 and r==mid-2: tile='forest'
+            layout[f'{q},{r}']=tile
+    shores=[k for k,v in layout.items() if v!='lake']
+    landmarks={shores[0]:'natural_reed_marsh'}
+    if variant==0: landmarks[shores[1]]='building_old_observatory'
+    regions.append(dict(SchemaVersion=2,ID=ident,DisplayName=name,Width=w,Height=h,
+        GenerationPhase='lake',Lake=dict(Role='closed' if variant==2 else 'flowthrough',Ports=[dict(Dq=-(mid//2),Dr=mid,Direction=3,IsInlet=True),dict(Dq=w-1-mid//2,Dr=mid,Direction=0,IsInlet=False)] if variant!=2 else [dict(Dq=-(mid//2),Dr=mid,Direction=3,IsInlet=True)]),
+        MinCount=1,MaxCount=1,SpawnWeight=0,MinSpacing=25,TerrainLayout=layout,
+        LandMarkLayout=landmarks,AuraProfile=aura((0,0,0,0,0)),
+        AnchorEnvironment=env(strength=0),OverallEnvironment=env(strength=0),Tags=['开发样例','大湖']))
 save('RegionDefines.json',regions)
 
 landmarks=json.loads((LEGACY/'LandMarkDefines.json').read_text(encoding='utf-8-sig'))

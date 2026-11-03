@@ -2,7 +2,7 @@ namespace UnityWorld.Game.Domain
 {
     /// <summary>
     /// 基础地形类型枚举。
-    /// 共 7 种固定地形，由算法感知用于地形生成与五行浓度映射。
+    /// 旧七类数值保留，湖泊为独立类型，由算法感知用于地形生成与五行浓度映射。
     /// 策划如需扩展叙事语义标签，请使用 <see cref="UnityWorld.Game.Data.ExtraTerrainDefine"/>。
     /// </summary>
     public enum TerrainType
@@ -16,8 +16,11 @@ namespace UnityWorld.Game.Domain
         /// <summary>山地：金属性偏高，矿脉丰富</summary>
         Mountain = 2,
 
-        /// <summary>河湖：水属性偏高，灵气流动</summary>
-        RiverLake = 3,
+        /// <summary>河流：水属性偏高，灵气流动</summary>
+        River = 3,
+
+        /// <summary>湖泊</summary>
+        Lake = 7,
 
         /// <summary>海洋：水属性极高，深不可测</summary>
         Ocean = 4,

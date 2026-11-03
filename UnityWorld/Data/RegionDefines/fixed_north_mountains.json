@@ -2,11 +2,11 @@
   {
     "SchemaVersion": 2, "ID": "fixed_north_mountains", "DisplayName": "北境群山", "Width": 10, "Height": 10,
     "ForcedPositions": [
-      {"Col": 5, "Row": 0}, {"Col": 15, "Row": 0}, {"Col": 25, "Row": 0}, {"Col": 35, "Row": 0}, {"Col": 45, "Row": 0},
-      {"Col": 55, "Row": 0}, {"Col": 65, "Row": 0}, {"Col": 75, "Row": 0}, {"Col": 85, "Row": 0}, {"Col": 95, "Row": 0},
-      {"Col": 105, "Row": 0}
+       {"Col": 15, "Row": 0}, {"Col": 25, "Row": 0}, {"Col": 35, "Row": 0}, {"Col": 45, "Row": 0},
+      {"Col": 55, "Row": 0}, {"Col": 65, "Row": 0}, {"Col": 75, "Row": 0}, {"Col": 85, "Row": 0}, {"Col": 95, "Row": 0}
     ],
-    "FixedEnvironment": {"Elevation": 0.86, "Moisture": 0.35, "Temperature": 0.18},
+    "FixedEnvironment": {"Elevation": 0.86, "Moisture": 0.35, "Temperature": 0.18}, "BlendFixedEnvironment": true,
+    "AllowEnvironmentCliff": false, "FixedVariation": {"Elevation": 0.055, "Moisture": 0.04, "Temperature": 0.035},
     "TerrainLayout": {
       "0,0": "mountain", "1,0": "mountain", "2,0": "mountain", "3,0": "mountain", "4,0": "mountain",
       "5,0": "mountain", "6,0": "mountain", "7,0": "mountain", "8,0": "mountain", "9,0": "mountain",

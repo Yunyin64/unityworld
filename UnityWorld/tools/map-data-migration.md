@@ -37,7 +37,7 @@ dotnet run --project Console/UnityWorld.Console.csproj -- --map-data-tests --dat
 | 0 | plain |
 | 1 | hill |
 | 2 | mountain |
-| 3 | river_lake |
+| 3 | river |
 | 4 | ocean |
 | 5 | desert |
 | 6 | forest |
@@ -61,3 +61,9 @@ python tools/audit_world_map.py --source tools/map_legacy_source --migrate --out
 输出包含转换后的文件、`source/` 原始副本及 `migration-report.json`。输出位置必须在源目录之外；原始副本不同则拒绝覆盖。转换前一次性检查所有输入，失败不会先写出部分转换。SchemaVersion=2 的输入保持内容不变，再次转换不会重复更换类型或增加初值。
 
 回退时把原始三个文件与对应代码版本作为同一边界恢复；不要把新字符串布局喂给旧枚举加载器。已生成地图通过 manifest 的生成器版本、配置摘要和种子定位；本期不声明旧存档格式兼容。
+
+## v3 河流规范名称
+
+当前唯一ID为 `river`，与独立的 `lake`、`ocean` 并列。运行 `python tools/migrate_water_types.py` 批量转换类型、布局、放置过滤和邻接键值；先预检冲突／未知引用，再写入。重复运行变更数为0，初始元气不变。`ocean` 的水域Fill资格和正权重由作者脚本配置，水域类别仍是硬过滤。
+
+`tools/map_water_v2_backup/` 保存本次迁移前六份原始文件（来自v2基线）；原有 `map_legacy_source/` 不变，备份均不参加运行加载。`test_water_migration.py` 在临时副本验证幂等、元气、备份、旧引用清除、冲突和未知引用拒绝。`build_world_map_samples.py` 作者脚本输出规范名称与三份大湖，JSON格式器独立在 `map_json_format.py`，导入迁移工具不会重写开发数据。

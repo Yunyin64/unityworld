@@ -12,7 +12,8 @@ namespace UnityWorld.Game.Domain
         private static readonly TileAura PlainProfile     = new TileAura { Jin = 1.0f, Mu = 1.0f, Shui = 1.0f, Huo = 1.0f, Tu = 1.0f };
         private static readonly TileAura HillProfile      = new TileAura { Jin = 1.0f, Mu = 0.8f, Shui = 0.8f, Huo = 0.8f, Tu = 1.5f };
         private static readonly TileAura MountainProfile  = new TileAura { Jin = 2.0f, Mu = 0.5f, Shui = 0.8f, Huo = 0.8f, Tu = 1.2f };
-        private static readonly TileAura RiverLakeProfile = new TileAura { Jin = 0.8f, Mu = 1.2f, Shui = 2.5f, Huo = 0.5f, Tu = 0.8f };
+        private static readonly TileAura RiverProfile = new TileAura { Jin = 0.8f, Mu = 1.2f, Shui = 2.5f, Huo = 0.5f, Tu = 0.8f };
+        private static readonly TileAura LakeProfile = new TileAura { Jin = .6f, Mu = 1.4f, Shui = 3f, Huo = .3f, Tu = .8f };
         private static readonly TileAura OceanProfile     = new TileAura { Jin = 0.5f, Mu = 0.8f, Shui = 4.0f, Huo = 0.3f, Tu = 0.5f };
         private static readonly TileAura DesertProfile    = new TileAura { Jin = 1.0f, Mu = 0.3f, Shui = 0.3f, Huo = 2.5f, Tu = 1.5f };
         private static readonly TileAura ForestProfile    = new TileAura { Jin = 0.8f, Mu = 2.5f, Shui = 1.2f, Huo = 0.5f, Tu = 0.8f };
@@ -27,7 +28,8 @@ namespace UnityWorld.Game.Domain
             TerrainType.Plain     => PlainProfile,
             TerrainType.Hill      => HillProfile,
             TerrainType.Mountain  => MountainProfile,
-            TerrainType.RiverLake => RiverLakeProfile,
+            TerrainType.River => RiverProfile,
+            TerrainType.Lake => LakeProfile,
             TerrainType.Ocean     => OceanProfile,
             TerrainType.Desert    => DesertProfile,
             TerrainType.Forest    => ForestProfile,

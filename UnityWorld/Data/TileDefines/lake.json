@@ -7,8 +7,8 @@
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
       "PreferredElevation": 0.2, "PreferredMoisture": 0.9, "PreferredTemperature": 0.5, "PreferenceStrength": 6
     },
-    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [],
-    "NeighborWeights": {"lake": 8, "river_lake": 1.6, "ocean": 1.6}, "MovementModes": ["boat", "fly"],
-    "MovementCost": 2.5, "WaterKind": "lake", "BlocksAllMovement": false, "ResourceRefs": [], "EncounterRefs": []
+    "AllowedNeighborIds": [], "ForbiddenNeighborIds": [], "NeighborWeights": {"lake": 8, "river": 1.6, "ocean": 1.6},
+    "MovementModes": ["boat", "fly"], "MovementCost": 2.5, "WaterKind": "lake", "BlocksAllMovement": false,
+    "ResourceRefs": [], "EncounterRefs": []
   }
 ]

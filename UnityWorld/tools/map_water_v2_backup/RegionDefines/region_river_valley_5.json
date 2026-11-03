@@ -1,0 +1,28 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "region_river_valley_5", "DisplayName": "东北流山谷样例", "MinCount": 0, "MaxCount": 8,
+    "SpawnWeight": 4, "MinSpacing": 12, "Width": 7, "Height": 7,
+    "TerrainLayout": {
+      "0,0": "river_lake", "1,-1": "river_lake", "2,-2": "river_lake", "0,-1": "hill", "-1,0": "forest_mountain",
+      "1,0": "forest_mountain", "0,1": "hill"
+    },
+    "LandMarkLayout": {}, "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0.2, "Huo": 0, "Tu": 0},
+    "Tags": ["开发样例", "涉水地区"],
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.5, "PreferredTemperature": 0.5, "PreferenceStrength": 0
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.5, "PreferredTemperature": 0.5, "PreferenceStrength": 0
+    },
+    "RequiredEnvironmentFraction": 1, "KeyEnvironment": [], "EnvironmentAdjustments": [],
+    "RiverCells": [
+      {"Dq": 0, "Dr": 0, "InDirections": [2], "OutDirection": 5, "IsSource": false, "IsSink": false},
+      {"Dq": 1, "Dr": -1, "InDirections": [2], "OutDirection": 5, "IsSource": false, "IsSink": false},
+      {"Dq": 2, "Dr": -2, "InDirections": [2], "OutDirection": 5, "IsSource": false, "IsSink": false}
+    ],
+    "RiverPorts": [{"Dq": 0, "Dr": 0, "Direction": 2, "IsInlet": true}, {"Dq": 2, "Dr": -2, "Direction": 5, "IsInlet": false}],
+    "KeyPoints": [], "PlacementTypeIds": []
+  }
+]

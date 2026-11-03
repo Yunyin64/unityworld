@@ -2,11 +2,12 @@
   {
     "SchemaVersion": 2, "ID": "fixed_south_rainforest", "DisplayName": "南境雨林", "Width": 10, "Height": 10,
     "ForcedPositions": [
-      {"Col": 80, "Row": 190}, {"Col": 90, "Row": 190}, {"Col": 100, "Row": 190}, {"Col": 110, "Row": 190},
+       {"Col": 90, "Row": 190}, {"Col": 100, "Row": 190}, {"Col": 110, "Row": 190},
       {"Col": 120, "Row": 190}, {"Col": 130, "Row": 190}, {"Col": 140, "Row": 190}, {"Col": 150, "Row": 190},
-      {"Col": 160, "Row": 190}, {"Col": 170, "Row": 190}, {"Col": 180, "Row": 190}
+      {"Col": 160, "Row": 190}, {"Col": 170, "Row": 190}
     ],
-    "FixedEnvironment": {"Elevation": 0.35, "Moisture": 0.92, "Temperature": 0.9},
+    "FixedEnvironment": {"Elevation": 0.35, "Moisture": 0.92, "Temperature": 0.9}, "BlendFixedEnvironment": true,
+    "AllowEnvironmentCliff": false, "FixedVariation": {"Elevation": 0.055, "Moisture": 0.04, "Temperature": 0.035},
     "TerrainLayout": {
       "0,0": "rainforest", "1,0": "rainforest", "2,0": "rainforest", "3,0": "rainforest", "4,0": "rainforest",
       "5,0": "rainforest", "6,0": "rainforest", "7,0": "rainforest", "8,0": "rainforest", "9,0": "rainforest",

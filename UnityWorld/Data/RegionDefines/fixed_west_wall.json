@@ -8,7 +8,8 @@
       {"Col": 0, "Row": 140}, {"Col": 0, "Row": 150}, {"Col": 0, "Row": 160}, {"Col": 0, "Row": 170},
       {"Col": 0, "Row": 180}, {"Col": 0, "Row": 190}
     ],
-    "FixedEnvironment": {"Elevation": 0.75, "Moisture": 0.25, "Temperature": 0.5},
+    "FixedEnvironment": {"Elevation": 0.75, "Moisture": 0.25, "Temperature": 0.5}, "BlendFixedEnvironment": true,
+    "AllowEnvironmentCliff": true, "FixedVariation": {"Elevation": 0.055, "Moisture": 0.04, "Temperature": 0.035},
     "TerrainLayout": {
       "0,0": "great_wall", "1,0": "great_wall", "2,0": "great_wall", "3,0": "great_wall", "4,0": "great_wall",
       "0,1": "great_wall", "1,1": "great_wall", "2,1": "great_wall", "3,1": "great_wall", "4,1": "great_wall",

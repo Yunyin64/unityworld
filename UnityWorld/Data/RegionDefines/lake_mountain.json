@@ -1,0 +1,61 @@
+[
+  {
+    "SchemaVersion": 2, "ID": "lake_mountain", "DisplayName": "狭长山间湖样例", "Width": 19, "Height": 9,
+    "GenerationPhase": "lake",
+    "Lake": {
+      "Role": "flowthrough",
+      "Ports": [{"Dq": -2, "Dr": 4, "Direction": 3, "IsInlet": true}, {"Dq": 16, "Dr": 4, "Direction": 0, "IsInlet": false}]
+    },
+    "MinCount": 1, "MaxCount": 1, "SpawnWeight": 0, "MinSpacing": 25,
+    "TerrainLayout": {
+      "0,0": "mountain", "1,0": "mountain", "2,0": "mountain", "3,0": "mountain", "4,0": "mountain",
+      "5,0": "mountain", "6,0": "mountain", "7,0": "mountain", "8,0": "mountain", "9,0": "mountain",
+      "10,0": "mountain", "11,0": "mountain", "12,0": "mountain", "13,0": "mountain", "14,0": "mountain",
+      "15,0": "mountain", "16,0": "mountain", "17,0": "mountain", "18,0": "mountain", "0,1": "mountain",
+      "1,1": "mountain", "2,1": "mountain", "3,1": "mountain", "4,1": "mountain", "5,1": "mountain",
+      "6,1": "mountain", "7,1": "mountain", "8,1": "mountain", "9,1": "mountain", "10,1": "mountain",
+      "11,1": "mountain", "12,1": "mountain", "13,1": "mountain", "14,1": "mountain", "15,1": "mountain",
+      "16,1": "mountain", "17,1": "mountain", "18,1": "mountain", "-1,2": "mountain", "0,2": "mountain",
+      "1,2": "mountain", "2,2": "mountain", "3,2": "lake", "4,2": "lake", "5,2": "lake",
+      "6,2": "lake", "7,2": "lake", "8,2": "lake", "9,2": "lake", "10,2": "lake",
+      "11,2": "lake", "12,2": "lake", "13,2": "lake", "14,2": "mountain", "15,2": "mountain",
+      "16,2": "mountain", "17,2": "mountain", "-1,3": "lake", "0,3": "mountain", "1,3": "lake",
+      "2,3": "lake", "3,3": "lake", "4,3": "lake", "5,3": "lake", "6,3": "lake",
+      "7,3": "lake", "8,3": "lake", "9,3": "lake", "10,3": "lake", "11,3": "lake",
+      "12,3": "lake", "13,3": "lake", "14,3": "lake", "15,3": "lake", "16,3": "mountain",
+      "17,3": "lake", "-2,4": "lake", "-1,4": "lake", "0,4": "lake", "1,4": "lake",
+      "2,4": "lake", "3,4": "lake", "4,4": "lake", "5,4": "lake", "6,4": "lake",
+      "7,4": "lake", "8,4": "lake", "9,4": "lake", "10,4": "lake", "11,4": "lake",
+      "12,4": "lake", "13,4": "lake", "14,4": "lake", "15,4": "lake", "16,4": "lake",
+      "-2,5": "lake", "-1,5": "mountain", "0,5": "lake", "1,5": "lake", "2,5": "lake",
+      "3,5": "lake", "4,5": "lake", "5,5": "lake", "6,5": "lake", "7,5": "lake",
+      "8,5": "lake", "9,5": "lake", "10,5": "lake", "11,5": "lake", "12,5": "lake",
+      "13,5": "lake", "14,5": "lake", "15,5": "mountain", "16,5": "lake", "-3,6": "mountain",
+      "-2,6": "mountain", "-1,6": "mountain", "0,6": "mountain", "1,6": "lake", "2,6": "lake",
+      "3,6": "lake", "4,6": "lake", "5,6": "lake", "6,6": "lake", "7,6": "lake",
+      "8,6": "lake", "9,6": "lake", "10,6": "lake", "11,6": "lake", "12,6": "mountain",
+      "13,6": "mountain", "14,6": "mountain", "15,6": "mountain", "-3,7": "mountain", "-2,7": "mountain",
+      "-1,7": "mountain", "0,7": "mountain", "1,7": "mountain", "2,7": "mountain", "3,7": "mountain",
+      "4,7": "mountain", "5,7": "mountain", "6,7": "mountain", "7,7": "mountain", "8,7": "mountain",
+      "9,7": "mountain", "10,7": "mountain", "11,7": "mountain", "12,7": "mountain", "13,7": "mountain",
+      "14,7": "mountain", "15,7": "mountain", "-4,8": "mountain", "-3,8": "mountain", "-2,8": "mountain",
+      "-1,8": "mountain", "0,8": "mountain", "1,8": "mountain", "2,8": "mountain", "3,8": "mountain",
+      "4,8": "mountain", "5,8": "mountain", "6,8": "mountain", "7,8": "mountain", "8,8": "mountain",
+      "9,8": "mountain", "10,8": "mountain", "11,8": "mountain", "12,8": "mountain", "13,8": "mountain",
+      "14,8": "mountain"
+    },
+    "LandMarkLayout": {
+      "0,0": "natural_reed_marsh"
+    },
+    "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
+    "AnchorEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.5, "PreferredTemperature": 0.5, "PreferenceStrength": 0
+    },
+    "OverallEnvironment": {
+      "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},
+      "PreferredElevation": 0.5, "PreferredMoisture": 0.5, "PreferredTemperature": 0.5, "PreferenceStrength": 0
+    },
+    "Tags": ["开发样例", "大湖"]
+  }
+]

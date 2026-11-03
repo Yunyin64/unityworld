@@ -8,7 +8,8 @@
       {"Col": 190, "Row": 120}, {"Col": 190, "Row": 130}, {"Col": 190, "Row": 140}, {"Col": 190, "Row": 150},
       {"Col": 190, "Row": 160}, {"Col": 190, "Row": 170}, {"Col": 190, "Row": 180}, {"Col": 190, "Row": 190}
     ],
-    "FixedEnvironment": {"Elevation": 0.02, "Moisture": 0.95, "Temperature": 0.6},
+    "FixedEnvironment": {"Elevation": 0.02, "Moisture": 0.95, "Temperature": 0.6}, "BlendFixedEnvironment": true,
+    "AllowEnvironmentCliff": true, "FixedVariation": {"Elevation": 0.012, "Moisture": 0.04, "Temperature": 0.035},
     "TerrainLayout": {
       "0,0": "ocean", "1,0": "ocean", "2,0": "ocean", "3,0": "ocean", "4,0": "ocean",
       "5,0": "ocean", "6,0": "ocean", "7,0": "ocean", "8,0": "ocean", "9,0": "ocean",

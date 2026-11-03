@@ -24,7 +24,7 @@ public static partial class WorldMapGenerator
         var c = new Context(catalog, profile, world.Seed, 0, null);
         if (world.Width != profile.Width || world.Height != profile.Height || world.Cells.Length != profile.Width * profile.Height)
             c.Fail("audit", "Map dimensions do not match the profile.");
-        c.World.Cells = world.Cells; c.World.Regions = world.Regions; c.World.Diagnostics = world.Diagnostics;
+        c.World.Cells = world.Cells; c.World.Regions = world.Regions; c.World.Lakes=world.Lakes; c.World.Diagnostics = world.Diagnostics;
         return c;
     }
 
@@ -34,12 +34,14 @@ public static partial class WorldMapGenerator
         if (w.OutDirection >= 0)
         {
             int n = c.Neighbors[index][w.OutDirection];
-            if (n < 0 || environment(index).Elevation + 1e-10 < environment(n).Elevation) return false;
+            if(n>=0 && w.DrainageRank>=0 && c.World.Cells[n].Water.DrainageRank>=0 && w.DrainageRank<=c.World.Cells[n].Water.DrainageRank) return false;
+            if (n < 0 || (w.DrainageRank>=0 ? w.DrainageElevation : environment(index).Elevation) + 1e-10 < (c.World.Cells[n].Water.DrainageRank>=0 ? c.World.Cells[n].Water.DrainageElevation : environment(n).Elevation)) return false;
         }
         for (int d = 0; d < 6; d++) if ((w.IncomingMask & (1 << d)) != 0)
         {
             int n = c.Neighbors[index][d];
-            if (n < 0 || environment(n).Elevation + 1e-10 < environment(index).Elevation) return false;
+            if(n>=0 && w.DrainageRank>=0 && c.World.Cells[n].Water.DrainageRank>=0 && w.DrainageRank>=c.World.Cells[n].Water.DrainageRank) return false;
+            if (n < 0 || (c.World.Cells[n].Water.DrainageRank>=0 ? c.World.Cells[n].Water.DrainageElevation : environment(n).Elevation) + 1e-10 < (w.DrainageRank>=0 ? w.DrainageElevation : environment(index).Elevation)) return false;
         }
         return true;
     }
@@ -82,22 +84,40 @@ public static partial class WorldMapGenerator
     private static void AuditWater(Context c)
     {
         var colors = new byte[c.World.Cells.Length];
+        var lakes=c.World.Lakes.ToDictionary(x=>x.Id,StringComparer.Ordinal);
+        foreach(var lake in c.World.Lakes)
+        {
+            if(lake.CellIndices.Count==0 || lake.CellIndices.Distinct().Count()!=lake.CellIndices.Count) c.Fail("water", "Invalid lake footprint.");
+            foreach(int i in lake.CellIndices) if(c.World.Cells[i].Water.Kind!="lake" || c.World.Cells[i].Water.BodyId!=lake.Id || c.World.Cells[i].Water.SurfaceLevel!=lake.SurfaceLevel) c.Fail("water", "Lake ownership/water level changed.");
+            var region=c.World.Regions[lake.RegionIndex];var def=c.Catalog.Regions[region.DefineId];
+            foreach(int i in lake.CellIndices)
+            {
+                var w=c.World.Cells[i].Water;
+                int inletMask=0;int outlet=-1;
+                foreach(var p in def.Lake.Ports.Where(p=>c.Index(region.Anchor+new TileId(p.Dq,p.Dr))==i))
+                    if(p.IsInlet) inletMask|=1<<p.Direction;else outlet=p.Direction;
+                if((w.IncomingMask & ~inletMask)!=0 || w.OutDirection>=0 && w.OutDirection!=outlet || w.IsSink) c.Fail("water", "Lake direction violates authored port.");
+                if(i==lake.OutletCell && outlet>=0 && c.Neighbors[i][outlet]!=lake.OutletTarget) c.Fail("water", "Lake outlet target changed.");
+            }
+            if(!lake.Closed && (lake.OutletCell<0 || lake.OutletTarget<0 || c.World.Cells[lake.OutletCell].Water.OutDirection<0) && c.Profile.Hydrology.RiverCount>0) c.Fail("water", "Open lake missing outlet.");
+        }
         for (int i = 0; i < c.World.Cells.Length; i++)
         {
             var cell = c.World.Cells[i]; var water = cell.Water;
             if (!water.Active) continue;
             if (water.IncomingMask < 0 || water.IncomingMask > 63 || water.OutDirection < -1 || water.OutDirection > 5)
                 c.Fail("water", $"Invalid water directions at {cell.Id}.");
-            if (!water.IsSource && water.IncomingMask == 0) c.Fail("water", $"Undeclared river source at {cell.Id}.");
+            bool lakeCell=water.Kind=="lake" && water.BodyId!=null && lakes.ContainsKey(water.BodyId);
+            if (!lakeCell && !water.IsSource && water.IncomingMask == 0) c.Fail("water", $"Undeclared river source at {cell.Id}.");
             if (water.IsSink)
             {
-                bool ocean = cell.TileDefineId != null && c.Profile.Hydrology.OceanTypeIds.Contains(cell.TileDefineId);
+                bool ocean = water.Kind=="ocean" || cell.TileDefineId != null && c.Profile.Hydrology.OceanTypeIds.Contains(cell.TileDefineId);
                 bool lake = c.Profile.Hydrology.AllowInlandLakes && !c.Profile.Hydrology.RequireOceanExit
                     && c.Profile.Hydrology.LakeSinks.Any(p => p.Col == cell.Col && p.Row == cell.Row);
                 if (!ocean && !lake) c.Fail("water", $"Undeclared inland outlet at {cell.Id}.");
                 if (water.OutDirection != -1) c.Fail("water", $"A sink cannot have downstream flow at {cell.Id}.");
             }
-            else if (water.OutDirection < 0) c.Fail("water", $"Suspended river with no outlet at {cell.Id}.");
+            else if (!lakeCell && water.OutDirection < 0) c.Fail("water", $"Suspended river with no outlet at {cell.Id}.");
             if (!FlowValidAt(c, i, n => c.World.Cells[n].Environment)) c.Fail("water", $"River runs uphill at {cell.Id}.");
             for (int d = 0; d < 6; d++) if ((water.IncomingMask & (1 << d)) != 0)
             {
@@ -120,6 +140,13 @@ public static partial class WorldMapGenerator
                 colors[at] = 1; path.Add(at);
                 var w = c.World.Cells[at].Water;
                 if (w.IsSink) break;
+                if(w.Kind=="lake" && w.BodyId!=null && lakes.TryGetValue(w.BodyId,out var body))
+                {
+                    if(body.Closed) break;
+                    int target=body.OutletTarget;
+                    if(target<0) c.Fail("water", "Suspended lake outlet.");
+                    at=target;continue;
+                }
                 if (w.OutDirection < 0 || w.OutDirection > 5) c.Fail("water", $"River ends without a legal sink at {c.World.Cells[at].Id}.");
                 int next = c.Neighbors[at][w.OutDirection];
                 if (next < 0) c.Fail("water", $"River exits world at {c.World.Cells[at].Id}.");
@@ -132,6 +159,8 @@ public static partial class WorldMapGenerator
     private static void Audit(Context c)
     {
         if (c.World.Cells.Length != 40000) c.Fail("audit", "Main continent must contain 40000 cells.");
+        var fixedExpected=new Context(c.Catalog,c.Profile,c.World.Seed,0,null);
+        InstallFixedRegions(fixedExpected);GenerateEnvironment(fixedExpected);
         int fixedCount = c.Regions.Values.Sum(def => def.ForcedPositions.Count * def.TerrainLayout.Count);
         if (c.World.Cells.Count(cell => cell.IsFixed) != fixedCount) c.Fail("audit", "Forced region cell count changed.");
         for (int i = 0; i < c.World.Cells.Length; i++)
@@ -168,7 +197,7 @@ public static partial class WorldMapGenerator
                     c.Fail("audit", $"Author puzzle changed: {region.DefineId} at {cell.Id}.");
                 if (region.IsFixed)
                 {
-                    var env = def.FixedEnvironment;
+                    var env = fixedExpected.World.At(cell.Col,cell.Row).Environment;
                     var type = c.Catalog.Tiles[kv.Value];
                     if (cell.Environment.Elevation != env.Elevation || cell.Environment.Moisture != env.Moisture || cell.Environment.Temperature != env.Temperature
                         || cell.BlockAllMovement != type.BlocksAllMovement || !cell.AllowedMovement.SequenceEqual(type.MovementModes))
@@ -205,7 +234,7 @@ public static partial class WorldMapGenerator
                 c.Fail("audit", $"Unexpected fixed landmark at {cell.Id}.");
         foreach (var group in c.World.Cells.Where(x => x.LandMarkDefineId != null).GroupBy(x => x.LandMarkDefineId))
             if (c.Catalog.LandMarks[group.Key].IsSingleton && group.Count() > 1) c.Fail("audit", $"Duplicate singleton {group.Key}.");
-        AuditWater(c); AuditConnectivity(c);
+        AuditWater(c); AuditConnectivity(c); AuditHydrologyMetrics(c);
     }
 
     private static void AuditConnectivity(Context c)
@@ -229,7 +258,7 @@ public static partial class WorldMapGenerator
                 var cell = c.World.Cells[i]; var type = c.Catalog.Tiles[cell.TileDefineId];
                 if (cell.BlockAllMovement || type.BlocksAllMovement) return false;
                 var modes = cell.AllowedMovement is { Count: > 0 } ? cell.AllowedMovement : type.MovementModes;
-                return modes.Contains(group.MovementMode) && (group.CanCrossRivers || !cell.Water.Active);
+                return modes.Contains(group.MovementMode) && (group.CanCrossRivers || cell.Water.Kind!="river" && !cell.Water.Active);
             }
             if (points.Any(p => !Allowed(p))) c.Fail("connectivity", $"Group {group.ID}: key point blocks '{group.MovementMode}' or river crossing.");
             var seen = new bool[c.World.Cells.Length]; var queue = new Queue<int>();

@@ -23,6 +23,8 @@ public static partial class WorldMapGenerator
                 c.Stage("fixed-regions", () => InstallFixedRegions(c));
                 c.Stage("fixed-landmarks", () => InstallFixedLandmarks(c));
                 c.Stage("environment", () => GenerateEnvironment(c));
+                c.Stage("sea", () => ClassifySea(c));
+                c.Stage("lakes", () => PlaceLakes(c));
                 c.Stage("hydrology", () => PlanHydrology(c));
                 c.Stage("required-regions", () => PlaceRequiredRegions(c));
                 c.Stage("optional-regions", () => PlaceOptionalRegions(c));
@@ -59,13 +61,16 @@ public static partial class WorldMapGenerator
         public readonly Dictionary<string, List<GeneratedRegion>> PlacedByType = new(StringComparer.Ordinal);
         public readonly TileDefine[] FillTypes;
         public int RegionCells;
+        public readonly int[] RegionBuffer;
         public Context(MapCatalog catalog, WorldGenerationOptions profile, int seed, int attempt, IReadOnlySet<string> singleton)
         {
             Catalog = catalog; Profile = profile; Attempt = attempt;
             World = new() { GeneratorVersion = profile.GeneratorVersion, ProfileId = profile.ID, ConfigHash = catalog.ComputeConfigHash(profile), Seed = seed,
+                Parameters=System.Text.Json.JsonSerializer.Deserialize<WorldGenerationOptions>(System.Text.Json.JsonSerializer.Serialize(profile)),
                 Width = profile.Width, Height = profile.Height, Cells = new GeneratedCell[profile.Width * profile.Height] };
             World.Diagnostics.Attempt = attempt + 1;
             Neighbors = new int[World.Cells.Length][];
+            RegionBuffer = new int[World.Cells.Length];
             DrainOrder = Enumerable.Repeat(-1, World.Cells.Length).ToArray();
             for (int i = 0; i < World.Cells.Length; i++)
             {
@@ -106,10 +111,17 @@ public static partial class WorldMapGenerator
     private static bool WaterCompatible(Context c, int i, TileDefine type)
     {
         var w = c.World.Cells[i].Water;
-        if (!w.Active) return type.WaterKind == "none";
-        if (w.IsSink) return type.WaterKind == "ocean" && c.Profile.Hydrology.OceanTypeIds.Contains(type.ID)
-            || type.WaterKind == "lake" && c.Profile.Hydrology.LakeTypeIds.Contains(type.ID);
-        return type.WaterKind == "river" && c.Profile.Hydrology.RiverTypeIds.Contains(type.ID);
+        string kind=w.Kind;
+        // Detached legacy diagnostic fixtures can still describe directed water without a footprint.
+        if(kind=="none" && w.Active) kind=w.IsSink ? (type.WaterKind=="ocean"?"ocean":"lake") : "river";
+        return kind switch
+        {
+            "none" => type.WaterKind=="none",
+            "ocean" => type.WaterKind=="ocean" && c.Profile.Hydrology.OceanTypeIds.Contains(type.ID),
+            "lake" => type.WaterKind=="lake" && c.Profile.Hydrology.LakeTypeIds.Contains(type.ID),
+            "river" => type.WaterKind=="river" && c.Profile.Hydrology.RiverTypeIds.Contains(type.ID),
+            _ => false
+        };
     }
 
     private static int WeightedIndex<T>(IReadOnlyList<T> values, Func<T, double> weight, MapRandom random)

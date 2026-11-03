@@ -3,7 +3,7 @@
     "SchemaVersion": 2, "ID": "region_river_valley_1", "DisplayName": "东南流山谷样例", "MinCount": 0, "MaxCount": 8,
     "SpawnWeight": 4, "MinSpacing": 12, "Width": 7, "Height": 7,
     "TerrainLayout": {
-      "0,0": "river_lake", "0,1": "river_lake", "0,2": "river_lake", "1,-1": "forest_mountain", "-1,0": "forest_mountain",
+      "0,0": "river", "0,1": "river", "0,2": "river", "1,-1": "forest_mountain", "-1,0": "forest_mountain",
       "1,0": "forest_mountain", "-1,1": "forest_mountain"
     },
     "LandMarkLayout": {}, "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0.2, "Huo": 0, "Tu": 0},

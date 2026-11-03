@@ -25,6 +25,7 @@ public static class MapDataTests
             Check(catalog.Tiles.ContainsKey(id) && catalog.Tiles[id].Tags.Contains("山类"), "independent mountain type " + id);
         var mountain = catalog.Tiles["mountain"].InitialAura;
         Check(mountain.Jin == 2 && mountain.Mu == .5f && mountain.Shui == .8f && mountain.Huo == .8f && mountain.Tu == 1.2f, "legacy aura preserved");
+        Check(TerrainAuraProfile.Get(TerrainType.Lake).Shui==catalog.Tiles["lake"].InitialAura.Shui, "independent lake enum aura projection");
         var legacy = catalog.Regions["region_volcanic_belt"];
         Check(legacy.Width == 8 && legacy.Height == 8 && legacy.TerrainLayout.Count == 5, "legacy rectangle does not fill implicit cells");
         Check(!catalog.Regions["region_qinling"].TerrainLayout.ContainsKey((1,-1)), "authored hole stays empty");
@@ -50,7 +51,7 @@ public static class MapDataTests
         var range = catalog.Tiles["mountain"].Environment.Elevation; var oldMin = range.Min; range.Min = 1; range.Max = .5; Reject(catalog.Validate, "Min exceeds Max"); range.Min = oldMin; range.Max = 1;
         fixedSea.ForcedPositions.Add(fixedSea.ForcedPositions[0]); Reject(catalog.Validate, "duplicate forced position"); fixedSea.ForcedPositions.RemoveAt(fixedSea.ForcedPositions.Count - 1);
         var point = fixedSea.ForcedPositions[0]; int oldCol = point.Col; point.Col = 200; Reject(catalog.Validate, "forced position"); point.Col = oldCol;
-        foreach (var (field, ids, wrong) in new[] { ("RiverTypeIds", profile.Hydrology.RiverTypeIds, "plain"), ("LakeTypeIds", profile.Hydrology.LakeTypeIds, "river_lake"), ("OceanTypeIds", profile.Hydrology.OceanTypeIds, "lake") })
+        foreach (var (field, ids, wrong) in new[] { ("RiverTypeIds", profile.Hydrology.RiverTypeIds, "plain"), ("LakeTypeIds", profile.Hydrology.LakeTypeIds, "river"), ("OceanTypeIds", profile.Hydrology.OceanTypeIds, "lake") })
         {
             var old = ids[0]; ids[0] = wrong; Reject(catalog.Validate, "Hydrology." + field); ids[0] = old;
         }

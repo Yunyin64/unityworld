@@ -2,12 +2,13 @@
   {
     "SchemaVersion": 2, "ID": "fixed_south_desert", "DisplayName": "南境沙漠", "Width": 5, "Height": 10,
     "ForcedPositions": [
-      {"Col": 5, "Row": 190}, {"Col": 10, "Row": 190}, {"Col": 15, "Row": 190}, {"Col": 20, "Row": 190},
+      {"Col": 10, "Row": 190}, {"Col": 15, "Row": 190}, {"Col": 20, "Row": 190},
       {"Col": 25, "Row": 190}, {"Col": 30, "Row": 190}, {"Col": 35, "Row": 190}, {"Col": 40, "Row": 190},
       {"Col": 45, "Row": 190}, {"Col": 50, "Row": 190}, {"Col": 55, "Row": 190}, {"Col": 60, "Row": 190},
-      {"Col": 65, "Row": 190}, {"Col": 70, "Row": 190}, {"Col": 75, "Row": 190}
+      {"Col": 65, "Row": 190}, {"Col": 70, "Row": 190}
     ],
-    "FixedEnvironment": {"Elevation": 0.4, "Moisture": 0.12, "Temperature": 0.92},
+    "FixedEnvironment": {"Elevation": 0.4, "Moisture": 0.12, "Temperature": 0.92}, "BlendFixedEnvironment": true,
+    "AllowEnvironmentCliff": false, "FixedVariation": {"Elevation": 0.055, "Moisture": 0.04, "Temperature": 0.035},
     "TerrainLayout": {
       "0,0": "desert", "1,0": "desert", "2,0": "desert", "3,0": "desert", "4,0": "desert",
       "0,1": "desert", "1,1": "desert", "2,1": "desert", "3,1": "desert", "4,1": "desert",

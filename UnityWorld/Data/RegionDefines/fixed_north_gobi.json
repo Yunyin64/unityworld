@@ -2,12 +2,13 @@
   {
     "SchemaVersion": 2, "ID": "fixed_north_gobi", "DisplayName": "北境大漠", "Width": 5, "Height": 10,
     "ForcedPositions": [
-      {"Col": 115, "Row": 0}, {"Col": 120, "Row": 0}, {"Col": 125, "Row": 0}, {"Col": 130, "Row": 0},
+       {"Col": 120, "Row": 0}, {"Col": 125, "Row": 0}, {"Col": 130, "Row": 0},
       {"Col": 135, "Row": 0}, {"Col": 140, "Row": 0}, {"Col": 145, "Row": 0}, {"Col": 150, "Row": 0},
       {"Col": 155, "Row": 0}, {"Col": 160, "Row": 0}, {"Col": 165, "Row": 0}, {"Col": 170, "Row": 0},
-      {"Col": 175, "Row": 0}, {"Col": 180, "Row": 0}, {"Col": 185, "Row": 0}
+      {"Col": 175, "Row": 0}, {"Col": 180, "Row": 0}
     ],
-    "FixedEnvironment": {"Elevation": 0.6, "Moisture": 0.12, "Temperature": 0.25},
+    "FixedEnvironment": {"Elevation": 0.6, "Moisture": 0.12, "Temperature": 0.25}, "BlendFixedEnvironment": true,
+    "AllowEnvironmentCliff": false, "FixedVariation": {"Elevation": 0.055, "Moisture": 0.04, "Temperature": 0.035},
     "TerrainLayout": {
       "0,0": "gobi", "1,0": "gobi", "2,0": "gobi", "3,0": "gobi", "4,0": "gobi",
       "0,1": "gobi", "1,1": "gobi", "2,1": "gobi", "3,1": "gobi", "4,1": "gobi",

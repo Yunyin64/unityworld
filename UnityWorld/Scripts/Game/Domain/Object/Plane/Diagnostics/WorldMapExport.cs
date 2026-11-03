@@ -14,13 +14,14 @@ public static class WorldMapExport
     public static string StructureHash(GeneratedWorld world)
         => Hash(JsonSerializer.Serialize(new
         {
-            world.GeneratorVersion, world.Width, world.Height,
+            world.GeneratorVersion, world.ConfigHash, world.Parameters, world.Width, world.Height,
+            lakes=world.Lakes,
             cells = world.Cells.OrderBy(c => c.Row).ThenBy(c => c.Col).Select(c => new
             {
                 c.Col, c.Row, c.TileDefineId, source = c.Source.ToString(), c.RegionIndex, c.IsFixed, c.HasForcedLandmark,
                 c.LandMarkDefineId, elevation = Math.Round(c.Environment.Elevation, 6),
                 moisture = Math.Round(c.Environment.Moisture, 6), temperature = Math.Round(c.Environment.Temperature, 6),
-                c.Water.IncomingMask, c.Water.OutDirection, c.Water.IsSource, c.Water.IsSink,
+                c.Water.IncomingMask, c.Water.OutDirection, c.Water.IsSource, c.Water.IsSink, c.Water,
                 c.BlockAllMovement, movement = c.AllowedMovement?.OrderBy(x => x, StringComparer.Ordinal).ToArray()
             }),
             regions = world.Regions.OrderBy(r => r.Index).Select(r => new
@@ -36,6 +37,9 @@ public static class WorldMapExport
             .OrderBy(c => c.Row).ThenBy(c => c.Col).Select(c => new
             {
                 c.Col, c.Row, typeId = c.IsFixed ? c.TileDefineId : null, c.LandMarkDefineId,
+                elevation=c.IsFixed ? Math.Round(c.Environment.Elevation,6) : (double?)null,
+                moisture=c.IsFixed ? Math.Round(c.Environment.Moisture,6) : (double?)null,
+                temperature=c.IsFixed ? Math.Round(c.Environment.Temperature,6) : (double?)null,
                 blocked = c.IsFixed && c.BlockAllMovement,
                 movement = c.IsFixed ? c.AllowedMovement?.OrderBy(x => x, StringComparer.Ordinal).ToArray() : null
             }), Json));
@@ -47,11 +51,11 @@ public static class WorldMapExport
         string structureHash = StructureHash(world), boundaryHash = BoundaryHash(world);
         var data = new
         {
-            version = world.GeneratorVersion, profile = world.ProfileId, world.Seed, world.Width, world.Height,
+            version = world.GeneratorVersion, profile = world.ProfileId, parameters=world.Parameters, world.Seed, world.Width, world.Height,
             configHash = world.ConfigHash ?? catalog.ConfigHash, structureHash, boundaryHash,
             coverage = world.Diagnostics.RegionCoverage, boundaryCount = world.Diagnostics.BoundaryCount,
             riverCount = world.Diagnostics.RiverCellCount, elapsedMs = world.Diagnostics.StageMilliseconds.Values.Sum(),
-            warnings = world.Diagnostics.Warnings,
+            warnings = world.Diagnostics.Warnings, lakes=world.Lakes, metrics=world.Diagnostics.Metrics,
             types = catalog.Tiles.Values.OrderBy(t => t.ID, StringComparer.Ordinal).Select(t => new
             { id = t.ID, name = t.DisplayName, color = t.Color, tags = t.Tags, movement = t.MovementModes, t.Description }),
             regions = world.Regions.OrderBy(r => r.Index).Select(r => new
@@ -66,7 +70,7 @@ public static class WorldMapExport
                 landmark = c.LandMarkDefineId == null ? null : catalog.LandMarks[c.LandMarkDefineId].DisplayName,
                 elevation = Math.Round(c.Environment.Elevation, 6), moisture = Math.Round(c.Environment.Moisture, 6),
                 temperature = Math.Round(c.Environment.Temperature, 6), c.Water.IncomingMask, c.Water.OutDirection,
-                c.Water.IsSource, c.Water.IsSink, blockAll = c.BlockAllMovement, movement = c.AllowedMovement,
+                c.Water.IsSource, c.Water.IsSink, water=c.Water, blockAll = c.BlockAllMovement, movement = c.AllowedMovement,
                 candidateCount = c.FillCandidateCount, c.SelectedWeight, c.FillCandidates
             })
         };
@@ -77,9 +81,10 @@ public static class WorldMapExport
         File.WriteAllText(Path.Combine(directory, "manifest.json"), JsonSerializer.Serialize(new
         {
             status = "success", world.Seed, world.ProfileId, world.GeneratorVersion, ConfigHash = world.ConfigHash ?? catalog.ConfigHash,
-            world.Width, world.Height, tileCount = world.Cells.Length, regionCount = world.Regions.Count,
+            parameters=world.Parameters, world.Width, world.Height, tileCount = world.Cells.Length, regionCount = world.Regions.Count,
             structureHash, boundaryHash, world.Diagnostics.RegionCoverage,
             stageMilliseconds = world.Diagnostics.StageMilliseconds,
+            lakes=world.Lakes, metrics=world.Diagnostics.Metrics,
             world.Diagnostics.Attempt, world.Diagnostics.RequiredAttempts, world.Diagnostics.OptionalAttempts,
             world.Diagnostics.RequiredBacktracks, world.Diagnostics.FillBacktracks,
             files = new[] { "map.json", "diagnostics.json", "map.html" }

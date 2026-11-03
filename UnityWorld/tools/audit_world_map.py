@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 KINDS=('TileDefines','RegionDefines','LandMarkDefines','TileModifierDefines')
-LEGACY={0:'plain',1:'hill',2:'mountain',3:'river_lake',4:'ocean',5:'desert',6:'forest'}
+LEGACY={0:'plain',1:'hill',2:'mountain',3:'river',4:'ocean',5:'desert',6:'forest'}
 
 class AuditError(ValueError): pass
 

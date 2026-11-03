@@ -52,7 +52,8 @@ public static partial class WorldMapGenerator
             int i = c.Index(origin + new TileId(kv.Key.dq, kv.Key.dr));
             if (i < 0) return Reject("bounds");
             if (c.World.Cells[i].TileDefineId != null || c.World.Cells[i].HasForcedLandmark) return Reject("occupied");
-            if (!WaterCompatible(c, i, c.Catalog.Tiles[kv.Value])) return Reject("water-kind");
+            if(c.RegionBuffer[i]>0) return Reject("footprint-gap");
+            if (def.GenerationPhase=="lake" ? c.World.Cells[i].Water.Kind!="none" || c.Catalog.Tiles[kv.Value].WaterKind is not ("none" or "lake") : !WaterCompatible(c, i, c.Catalog.Tiles[kv.Value])) return Reject("water-kind");
             indexTypes[i] = kv.Value; environment[i] = c.World.Cells[i].Environment;
         }
         foreach (var adjustment in def.EnvironmentAdjustments)
@@ -62,7 +63,12 @@ public static partial class WorldMapGenerator
             int i = c.Index(origin + new TileId(adjustment.Dq, adjustment.Dr));
             if (!environment.ContainsKey(i)) return Reject("adjustment-footprint");
             MapEnvironment before = environment[i], after = before.Copy();
-            after.Elevation += adjustment.Elevation; after.Moisture += adjustment.Moisture; after.Temperature += adjustment.Temperature;
+            after.Elevation += adjustment.Elevation; after.Moisture += adjustment.Moisture;
+            after.Temperature += adjustment.Temperature-.18*adjustment.Elevation;
+            if ((before.Elevation<c.Profile.Hydrology.SeaLevel)!=(after.Elevation<c.Profile.Hydrology.SeaLevel)) return Reject("adjustment-sea-mask");
+            var water=c.World.Cells[i].Water;
+            if(water.SurfaceLevel.HasValue && after.Elevation>water.SurfaceLevel || water.DrainageRank>=0 && after.Elevation>water.DrainageElevation+1e-10) return Reject("adjustment-water-level");
+            if(Math.Abs(after.Temperature-before.Temperature)>c.Profile.MaxEnvironmentAdjustment+1e-12) return Reject("adjustment-budget-temperature");
             if (!ValidEnvironment(after)) return Reject("adjustment-range");
             environment[i] = after;
             trial.Adjustments.Add(new() { CellIndex = i, RegionDefineId = def.ID, Before = before.Copy(), After = after.Copy() });
@@ -92,13 +98,13 @@ public static partial class WorldMapGenerator
             // Author-fixed river cells must describe every segment the template covers, including all ports.
             var offset = c.World.Cells[i].Id - origin;
             var river = def.RiverCells.FirstOrDefault(x => x.Dq == offset.Q && x.Dr == offset.R);
-            if (w.Active)
+            if (def.GenerationPhase!="lake" && w.Active)
             {
                 if (river == null || river.InDirections.Aggregate(0, (mask, d) => mask | 1 << d) != w.IncomingMask
                     || (river.OutDirection ?? -1) != w.OutDirection || river.IsSource != w.IsSource || river.IsSink != w.IsSink)
                     return Reject("water-ports");
             }
-            else if (river != null) return Reject("water-missing-skeleton");
+            else if (def.GenerationPhase!="lake" && river != null) return Reject("water-missing-skeleton");
             if (!FlowValidAt(c, i, n => environment.GetValueOrDefault(n) ?? c.World.Cells[n].Environment)) return Reject("adjustment-flow");
             trial.Cells.Add((i, pair.Value, environment[i]));
         }
@@ -145,24 +151,36 @@ public static partial class WorldMapGenerator
             if (c.Catalog.LandMarks[item.define].IsSingleton) c.Singletons.Add(item.define);
         }
         c.World.Diagnostics.Adjustments.AddRange(plan.Adjustments);
-        c.World.Regions.Add(region); c.PlacedByType[plan.Define.ID].Add(region); if (!plan.IsFixed) c.RegionCells += region.CellIndices.Count;
+        c.World.Regions.Add(region); c.PlacedByType[plan.Define.ID].Add(region); if (!plan.IsFixed && plan.Define.GenerationPhase=="ordinary") c.RegionCells += region.CellIndices.Count(i=>EligibleLand(c,i));
+        if(!plan.IsFixed) ChangeRegionBuffer(c,region.CellIndices,1);
         return region;
     }
 
     private static void UndoRegion(Context c, RegionPlan plan, GeneratedRegion region)
     {
         foreach (int i in region.CellIndices)
-        { var cell = c.World.Cells[i]; cell.TileDefineId = null; cell.RegionIndex = null; cell.LandMarkDefineId = null; }
+        { var cell = c.World.Cells[i]; cell.TileDefineId = null; cell.RegionIndex = null; cell.LandMarkDefineId = null; cell.Source=default; cell.IsFixed=false; }
         foreach (var item in plan.Landmarks) if (c.Catalog.LandMarks[item.define].IsSingleton) c.Singletons.Remove(item.define);
         foreach (var a in plan.Adjustments) c.World.Cells[a.CellIndex].Environment = a.Before.Copy();
         if (plan.Adjustments.Count > 0) c.World.Diagnostics.Adjustments.RemoveRange(c.World.Diagnostics.Adjustments.Count - plan.Adjustments.Count, plan.Adjustments.Count);
         c.World.Regions.RemoveAt(c.World.Regions.Count - 1); c.PlacedByType[plan.Define.ID].RemoveAt(c.PlacedByType[plan.Define.ID].Count - 1);
-        c.RegionCells -= region.CellIndices.Count;
+        if(plan.Define.GenerationPhase=="ordinary") c.RegionCells -= region.CellIndices.Count(i=>EligibleLand(c,i));
+        ChangeRegionBuffer(c,region.CellIndices,-1);
+    }
+
+    private static bool EligibleLand(Context c,int i) => !c.World.Cells[i].IsFixed && c.World.Cells[i].Water.Kind=="none"
+        && !(c.World.Cells[i].RegionIndex is int r && c.Catalog.Regions[c.World.Regions[r].DefineId].GenerationPhase=="lake");
+
+    private static void ChangeRegionBuffer(Context c,IEnumerable<int> cells,int delta)
+    {
+        var seen=new HashSet<int>(cells);var frontier=seen.ToArray();
+        for(int step=0;step<c.Profile.RegionGap;step++) { var next=new List<int>(); foreach(int i in frontier) foreach(int n in c.Neighbors[i]) if(n>=0 && seen.Add(n)) next.Add(n); frontier=next.ToArray(); }
+        foreach(int i in seen) c.RegionBuffer[i]+=delta;
     }
 
     private static void PlaceRequiredRegions(Context c)
     {
-        var required = c.Regions.Values.Where(x => x.ForcedPositions.Count == 0 && x.MinCount > 0).ToArray();
+        var required = c.Regions.Values.Where(x => x.ForcedPositions.Count == 0 && x.GenerationPhase=="ordinary" && x.MinCount > 0).ToArray();
         if (required.Length == 0) return;
         var choices = new Dictionary<string, List<(int anchor, double key)>>(StringComparer.Ordinal);
         int quota = Math.Max(1, c.Profile.RequiredRegionAttempts / (required.Length * 2));
@@ -205,9 +223,9 @@ public static partial class WorldMapGenerator
 
     private static void PlaceOptionalRegions(Context c)
     {
-        int available = c.World.Cells.Count(cell => !cell.IsFixed);
+        int available = Enumerable.Range(0,c.World.Cells.Length).Count(i=>EligibleLand(c,i));
         double target = available * c.Profile.RegionCoverageTarget;
-        var definitions = c.Regions.Values.Where(x => x.ForcedPositions.Count == 0 && x.SpawnWeight > 0).ToArray();
+        var definitions = c.Regions.Values.Where(x => x.ForcedPositions.Count == 0 && x.GenerationPhase=="ordinary" && x.SpawnWeight > 0).ToArray();
         for (int trial = 0; trial < c.Profile.OptionalRegionAttempts && c.RegionCells < target; trial++)
         {
             c.World.Diagnostics.OptionalAttempts++;
