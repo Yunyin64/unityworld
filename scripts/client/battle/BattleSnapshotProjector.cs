@@ -36,9 +36,10 @@ internal sealed class BattleSnapshotProjector
                 .Select(p => new ManaSnapshot(p.Key.X, p.Key.Y, p.Value.ToString()))));
         var cards = ReadOnly(npc.GetField().OrderBy(c => c.Id).Select(card =>
         {
-            if (!pack.Placements.TryGetValue(card.Id, out var placement))
+            if (!pack.Placements.ContainsKey(card.Id))
                 throw new InvalidOperationException($"战斗卡实例 {card.Id}:{card.DefineId} 缺少背包布局，观察器不能补造位置。");
-            var cells = ReadOnly(placement.Select(c => new CellSnapshot(c.X, c.Y)));
+            // 坐标始终取自本场背包，不从世界卡或卡属性中推导位置。
+            var cells = ReadOnly(pack.GetCardCells(card.Id).Select(c => new CellSnapshot(c.X, c.Y)));
             var phase = Enum.GetValues<CombatCardPhase>().First(card.CheckPhase).ToString();
             return new CardSnapshot(card.Id, card.DefineId, card.DisplayName, card.BaseData.Size, phase,
                 card.IsFrozen, card.UseCount, card.ApplyCount, card.Id == pack.MainCardId,

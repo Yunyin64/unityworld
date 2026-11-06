@@ -124,7 +124,6 @@ namespace UnityWorld.Game.Domain.Combat
                         Backpack.RemoveCard(card.Id);
                         // 离场同步释放卡上资源，保留原先删除背包蓄灵记录的语义。
                         card.ClearAssignedMana();
-                        card.Position = null;
                         Field.Remove(card);
                         Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;

@@ -55,18 +55,20 @@ namespace UnityWorld.Tests
 
         private static void ExactClock()
         {
-            var loadout = NewNpc().GetCardLoadoutSnapshot();
-            var fast = new CombatBackpack(loadout);
+            var source = NewNpc();
+            var layout = source.GetBackpackSnapshot();
+            var cards = source.GetCombatCardSnapshot();
+            var fast = new CombatBackpack(layout, cards);
             fast.AddHaste(20);
             for (int i = 0; i < 4; i++) Check(!fast.AdvanceTick(), "双倍速前四 Tick 不满行");
             Check(fast.AdvanceTick() && fast.ScanProgress == 0, "双倍速五 Tick 一行");
-            var slow = new CombatBackpack(loadout);
+            var slow = new CombatBackpack(layout, cards);
             slow.AddSlow(20);
             for (int i = 0; i < 19; i++) Check(!slow.AdvanceTick(), "半速精确累计不截断");
             Check(slow.ScanProgress == 9.5m && slow.AdvanceTick() && slow.SlowTicks == 0, "半速二十 Tick 一行且独立到期");
             slow.AdvanceNaturalTick();
             Check(slow.ScanProgress == 1, "减速到期恢复正常");
-            var overlap = new CombatBackpack(loadout);
+            var overlap = new CombatBackpack(layout, cards);
             overlap.AddHaste(2); overlap.AddHaste(3); overlap.AddSlow(8);
             for (int i = 0; i < 5; i++) overlap.AdvanceNaturalTick();
             Check(overlap.ScanProgress == 5 && overlap.HasteTicks == 0 && overlap.SlowTicks == 3, "同类延时，异类独立计时倍率相乘");
@@ -74,7 +76,7 @@ namespace UnityWorld.Tests
             Check(overlap.ScanProgress == 6.5m && overlap.SlowTicks == 0, "加速先到期后仅半速");
             foreach (var mode in new[] { 0, 1, 2, 3 })
             {
-                var pack = new CombatBackpack(loadout);
+                var pack = new CombatBackpack(layout, cards);
                 if ((mode & 1) != 0) pack.AddHaste(12);
                 if ((mode & 2) != 0) pack.AddSlow(17);
                 pack.Charge(4); pack.Charge(10);

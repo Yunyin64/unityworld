@@ -221,7 +221,7 @@ namespace UnityWorld.Tests
 
             a = NewNpc(); b = NewNpc();
             // 纯被动明确声明 Passive，不由 Cooldown 推断。
-            var mainId = a.GetCardLoadoutSnapshot().MainGongFaCardId.Value;
+            var mainId = a.GetCombatCardSnapshot().MainGongFaCardId.Value;
             a.GetAllCards().Single(c => c.Id == mainId).BaseData.Keywords.Add("Passive");
             scene = Scene(a, b); card = scene.GetCombatants()[a.Id].GetField().Single(c => c.Id == mainId);
             Check(card.CheckPhase(CombatCardPhase.Passive) && card.UseCount == 0 && card.ApplyCount == 1, "显式纯Passive保留开场一次Apply");

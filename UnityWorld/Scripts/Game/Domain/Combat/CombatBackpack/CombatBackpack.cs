@@ -8,14 +8,14 @@ namespace UnityWorld.Game.Domain.Combat
     public sealed partial class CombatBackpack
     {
         // 初始化同一个背包实例；状态与操作按职责拆在其他 partial 文件中。
-        public CombatBackpack(NpcCardData loadout)
+        public CombatBackpack(NpcBackpackData layout, NpcCardData cards)
         {
-            var definition = NpcBackpackLayout.Validate(loadout);
-            Width = definition.Width;
-            Height = definition.Height;
-            MainCardId = loadout.MainGongFaCardId!.Value;
+            // 空间和卡牌选择分别复制；构造期间也不依赖世界功法管理器。
+            _layout = layout.Clone();
+            _cardData = cards.CloneSelectedCards();
+            var definition = NpcSystemBackpack.Validate(_layout, _cardData);
             _validCells = definition.GetValidCells();
-            foreach (var (id, cells) in loadout.Placements)
+            foreach (var (id, cells) in NpcSystemBackpack.GetPlacements(_layout, _cardData))
             {
                 var ordered = cells.OrderBy(c => c.Y).ThenBy(c => c.X).ToArray();
                 _placements.Add(id, Array.AsReadOnly(ordered));

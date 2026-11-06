@@ -15,7 +15,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         public  Npc Owner{get;private set;}
 
-        private NpcCardData _loadoutSnapshot = new();
+        // 继承的卡牌/装配查询统一指向本场私有数据，避免相同 NPC Id 查询到世界仓库。
+        protected override NpcCardData CardData => Backpack.CardData;
+        protected override NpcBackpackData BackpackData => Backpack.LayoutData;
         public CombatBackpack Backpack { get; private set; } = null!;
 
         /// <summary>所属战斗场景引用</summary>
@@ -36,10 +38,9 @@ namespace UnityWorld.Game.Domain.Combat
             CombatNpc combatNpc = new CombatNpc(npc.Id);
             combatNpc.Stats = npc.Stats.Snapshot();
             combatNpc.Owner = npc;
-            combatNpc._loadoutSnapshot = npc.GetCardLoadoutSnapshot();
-            combatNpc.Backpack = new CombatBackpack(combatNpc._loadoutSnapshot);
+            combatNpc.Backpack = new CombatBackpack(npc.GetBackpackSnapshot(), npc.GetCombatCardSnapshot());
             combatNpc.Backpack.PresentationOwner = combatNpc;
-            combatNpc._loadoutSnapshot.AllCards = combatNpc._loadoutSnapshot.AllCards
+            combatNpc.CardData.AllCards = combatNpc.CardData.AllCards
                 .Select(c => (Card)CombatCard.CreateFromData(c)).ToList();
             if (combatNpc.GetSpMax() > combatNpc.Backpack.Capacity)
                 throw new InvalidOperationException("SP 上限不能超过主功法背包有效格数。");

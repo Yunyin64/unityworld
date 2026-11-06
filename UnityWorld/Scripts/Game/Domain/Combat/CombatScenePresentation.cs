@@ -30,7 +30,7 @@ public partial class CombatScene
         card.DisplayName ?? card.DefineId, card.GetSize(), PresentationCopy(card.GetKeywords()),
         PresentationCopy(card.GetManaCost().OrderBy(p => p.Key.ToString()).Select(p => new PresentationManaCost(p.Key.ToString(), p.Value))),
         PresentationCopy(card.AssignedElements.Select(e => e.ToString())),
-        PresentationCopy(card.Owner?.Backpack.Placements.TryGetValue(card.Id, out var cells) == true ? cells.Select(c => new PresentationCell(c.X, c.Y)) : Array.Empty<PresentationCell>()),
+        PresentationCopy(card.Owner?.Backpack.GetCardCells(card.Id).Select(c => new PresentationCell(c.X, c.Y)) ?? Array.Empty<PresentationCell>()),
         PresentationCopy(card.BaseData.Shape.Select(c => new PresentationCell(c.X, c.Y))));
     internal PresentationOrigin? CapturePresentationOrigin() => !PresentationRecordingEnabled ? null :
         _presentationScopes.TryPeek(out var scope) ? scope.Origin : _presentationOrigin;

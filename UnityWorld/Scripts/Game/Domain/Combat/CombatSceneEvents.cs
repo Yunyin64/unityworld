@@ -95,7 +95,8 @@ namespace UnityWorld.Game.Domain.Combat
                     _collectingEventOpportunities = false;
                     // 两通道全部条件收集完成后统一争槽；注册顺序不会抢先提交。
                     foreach (var card in _eventOpportunities.Values.OrderBy(c => c.Owner.Id)
-                        .ThenBy(c => c.Position?.Y ?? int.MaxValue).ThenBy(c => c.Position?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
+                        .ThenBy(c => c.Owner.Backpack.GetCardPosition(c.Id)?.Y ?? int.MaxValue)
+                        .ThenBy(c => c.Owner.Backpack.GetCardPosition(c.Id)?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
                         card.TryCommitEventOpportunity(ctx);
                     _eventOpportunities.Clear();
                 }

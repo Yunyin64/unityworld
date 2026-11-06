@@ -17,7 +17,9 @@ namespace UnityWorld.Game.Domain
         protected NpcBioData BioData           => NpcMgr.Instance.BioSystem.GetData(Id);
         protected NpcBehaviorData BehaviorData     => NpcMgr.Instance.BehaviorSystem.GetData(Id);
         protected NpcCultivationData CultivationData           => NpcMgr.Instance.CultivationSystem.GetData(Id);
-        protected NpcCardData CardData           => NpcMgr.Instance.CardSystem.GetData(Id);
+        // 战斗子类覆盖为本场卡实例与布局，继承的只读入口也不会查询世界仓库。
+        protected virtual NpcCardData CardData => NpcMgr.Instance.CardSystem.GetData(Id);
+        protected virtual NpcBackpackData BackpackData => NpcMgr.Instance.BackpackSystem.GetData(Id);
         protected NpcPersonalityData PersonalityData           => NpcMgr.Instance.PersonalitySystem.GetData(Id);
          
         public SoulData Soul {get;set;}

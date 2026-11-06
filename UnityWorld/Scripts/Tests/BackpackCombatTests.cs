@@ -213,7 +213,7 @@ namespace UnityWorld.Tests
             var before = npc.Backpack.Mana.Count; var wound = npc.AddWound("bp_wound_small"); npc.DealFieldChange();
             Check(npc.Backpack.Mana.Count == before - 1 && npc.GetSp() == 2 && npc.Backpack.Placements[wound.Id].Count == 1, "满背包伤口替代一个灵元计SP");
             Check(wound.env != null && wound.Ticks.ContainsKey("Main"), "新伤口初始化Lua与Start");
-            Check(wound.Position == BackpackCoordinates.ToPosition(npc.Backpack.Placements[wound.Id][0]), "动态伤口实例位置与空间索引一致");
+            Check(npc.Backpack.GetCardPosition(wound.Id) == BackpackCoordinates.ToPosition(npc.Backpack.Placements[wound.Id][0]), "动态伤口位置归本场布局");
             var wide = npc.AddWound("bp_wound_wide"); npc.DealFieldChange(); var cells = npc.Backpack.Placements[wide.Id];
             Check(cells.Count == 2 && cells[0].Y == cells[1].Y && cells[1].X == cells[0].X + 1 && npc.Backpack.Mana.Count == before - 3, "多格伤口保持完整形状");
             Check(cells.All(c => !npc.Backpack.Mana.ContainsKey(c)), "被替代灵元不再存在"); scene.Cleanup();
@@ -232,7 +232,7 @@ namespace UnityWorld.Tests
             a = Npc();
             for (int y = 0; y < 5; y++) for (int x = 0; x < 6; x++)
                 if (x % 2 == 1) Place(a, "bp_focus", x, y);
-            var fragmented = new CombatBackpack(a.GetCardLoadoutSnapshot());
+            var fragmented = new CombatBackpack(a.GetBackpackSnapshot(), a.GetCombatCardSnapshot());
             var whole = CardMgr.Instance.InstantiateFromDefine("bp_wound_wide");
             Check(fragmented.EmptyCells().Count >= 2 && fragmented.FindPlacement(whole, true) == null, "格数够但形状不合仍判定无完整位置");
             var invalidRejected = false;
@@ -255,7 +255,7 @@ namespace UnityWorld.Tests
                 var a = Npc(main, 5); var b = Npc(main == "bp_main_6x5" ? "bp_main_8x3" : "bp_main_6x5", 5);
                 b.Stats.SetBase("ShenShi", 1);
                 var card = Place(a, "bp_attack", 5, 0);
-                var keywords = card.GetKeywords().ToArray(); var before = b.GetCardLoadoutSnapshot();
+                var keywords = card.GetKeywords().ToArray(); var before = b.GetCombatCardSnapshot();
                 var scene = new CombatScene(); scene.Init(8765, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 1000);
                 var result = scene.Run();
                 Check(result.GetValue<CombatTeam>("WinnerTeam") == CombatTeam.TeamA && result.GetValue<CombatEndReason>("EndReason") == CombatEndReason.AllDefeated, "完整战斗SP败退 " + main);

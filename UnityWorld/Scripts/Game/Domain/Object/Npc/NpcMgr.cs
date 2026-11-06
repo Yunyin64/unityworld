@@ -15,6 +15,7 @@ namespace UnityWorld.Game.Domain
         public NpcSystemBio BioSystem { get; } = new();
         public NpcSystemCultivation CultivationSystem { get; } = new();
         public NpcSystemCard CardSystem { get; } = new();
+        public NpcSystemBackpack BackpackSystem { get; } = new();
         public NpcSystemPosition PositionSystem { get; } = new();
         public NpcSystemBehavior BehaviorSystem { get; } = new();
         public NpcSystemTrait   TraitSystem { get; } = new();
@@ -43,6 +44,7 @@ namespace UnityWorld.Game.Domain
                 PositionSystem.OnTick(npc, deltaTime);
                 TraitSystem.OnTick(npc, deltaTime);
                 CardSystem.OnTick(npc, deltaTime);
+                BackpackSystem.OnTick(npc, deltaTime);
                 CultivationSystem.OnTick(npc, deltaTime);
                 BehaviorSystem.OnTick(npc, deltaTime);
 
@@ -70,7 +72,7 @@ namespace UnityWorld.Game.Domain
 
         public override void End()
         {
-            
+            BackpackSystem.Clear();
         }
 
     public override IEnumerator Save()
@@ -120,6 +122,7 @@ namespace UnityWorld.Game.Domain
         private void InitializeSystems(BirthContext ctx)
         {
             BioSystem.OnEntityBorn(ctx); PositionSystem.OnEntityBorn(ctx);
+            BackpackSystem.OnEntityBorn(ctx);
             TraitSystem.OnEntityBorn(ctx); CardSystem.OnEntityBorn(ctx);
             CultivationSystem.OnEntityBorn(ctx); PersonalitySystem.OnEntityBorn(ctx);
             BehaviorSystem.OnEntityBorn(ctx);
@@ -131,6 +134,7 @@ namespace UnityWorld.Game.Domain
                 throw new InvalidOperationException("模板不得混用 InitCardDeck 与 InitCardPlacements；每个上场实例必须有明确位置。");
             if (string.IsNullOrWhiteSpace(define.MainGongFaId)) throw new InvalidOperationException("缺少 MainGongFaId。");
             var data = CardSystem.GetData(npc.Id);
+            var backpack = BackpackSystem.GetData(npc.Id);
             foreach (var (entry, index) in define.InitCardPlacements.Select((entry, index) => (entry, index)))
             {
                 if (entry.Value == null) throw new InvalidOperationException($"位置条目 {index + 1} ({entry.Key}) 缺少坐标。");
@@ -138,9 +142,10 @@ namespace UnityWorld.Game.Domain
                 if (CardDefineMgr.Instance.Get(entry.Key) == null)
                     throw new InvalidOperationException($"位置条目 {index + 1} 引用不存在的卡 {entry.Key}。");
                 var card = npc.GainCard(entry.Key);
-                card.Position = entry.Value;
+                // JSON 仍按原格式读取，坐标写入装配，卡实例只保存自身属性。
+                backpack.PlacedCards.Add(new() { CardId = card.Id, Position = entry.Value });
                 data.Field.Add(card.Id);
-                NpcBackpackLayout.ValidateCard(card);
+                NpcSystemCard.ValidateCard(card);
             }
             var mains = data.AllCards.Where(c => c.DefineId == define.MainGongFaId).ToList();
             if (mains.Count != 1) throw new InvalidOperationException($"主功法 {define.MainGongFaId} 必须唯一对应位置列表实例，实际 {mains.Count} 张。");
@@ -192,9 +197,8 @@ namespace UnityWorld.Game.Domain
                     throw new InvalidOperationException($"位置条目 {i + 1} 的父装备序号 {parentIndex} 无效。");
                 data.AllCards[i].ParentCardId = data.AllCards[parentIndex - 1].Id;
             }
-            data.MainGongFaCardId = mains[0].Id;
-            NpcBackpackLayout.RebuildIndex(data);
-            var layout = NpcBackpackLayout.Validate(data);
+            BackpackSystem.InitializeTemplateLayout(npc, mains[0].Id);
+            var layout = npc.ValidateBackpackLayout();
             int occupied = npc.GetFieldSize(), spMax = npc.GetSpMax(), capacity = layout.GetValidCells().Count;
             if (spMax > capacity || occupied > spMax)
                 throw new InvalidOperationException($"SP 容量错误：上场占格 {occupied}，SP 上限 {spMax}，背包 {capacity}。");
@@ -207,6 +211,7 @@ namespace UnityWorld.Game.Domain
                     CardMgr.Instance.UnregisterCard(card.Id);
             BioSystem.Unregister(npc.Id); PositionSystem.Unregister(npc.Id); TraitSystem.Unregister(npc.Id);
             CardSystem.Unregister(npc.Id); CultivationSystem.Unregister(npc.Id);
+            BackpackSystem.Unregister(npc.Id);
             PersonalitySystem.Unregister(npc.Id); BehaviorSystem.Unregister(npc.Id);
             StatMgr.Instance.RemoveBlock(npc.Id, typeof(Npc));
             Remove(npc.Id);
@@ -229,6 +234,7 @@ namespace UnityWorld.Game.Domain
             BioSystem.OnEntityBorn(ctx);
             PositionSystem.OnEntityBorn(ctx);
             TraitSystem.OnEntityBorn(ctx);
+            BackpackSystem.OnEntityBorn(ctx);
             CardSystem.OnEntityBorn(ctx);
             CultivationSystem.OnEntityBorn(ctx);
             PersonalitySystem.OnEntityBorn(ctx);

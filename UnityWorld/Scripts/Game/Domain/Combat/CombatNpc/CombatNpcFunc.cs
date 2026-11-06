@@ -63,9 +63,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void InitDeck()
         {
-            var fieldIds = _loadoutSnapshot.Field;
-            var reserveIds = _loadoutSnapshot.Reserve;
-            var allCards = _loadoutSnapshot.AllCards;
+            var fieldIds = CardData.Field;
+            var reserveIds = CardData.Reserve;
+            var allCards = CardData.AllCards;
             if (Field.Count > 0 || Reserve.Count > 0)
                 throw new InvalidOperationException("战斗卡组不能重复初始化。");
 

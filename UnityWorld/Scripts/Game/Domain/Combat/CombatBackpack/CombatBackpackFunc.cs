@@ -9,7 +9,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>寻找保持完整形状的位置。优先纯空位，再按行序尝试灵元让位。</summary>
         public IReadOnlyList<BackpackCell> FindPlacement(Card card, bool replaceMana)
         {
-            NpcBackpackLayout.ValidateCard(card);
+            NpcSystemCard.ValidateCard(card);
             foreach (var allowMana in replaceMana ? new[] { false, true } : new[] { false })
             for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
@@ -29,7 +29,19 @@ namespace UnityWorld.Game.Domain.Combat
             var replaced = cells.Where(_mana.ContainsKey).ToArray();
             foreach (var cell in cells) { _mana.Remove(cell); _cardCells.Add(cell, card.Id); }
             _placements.Add(card.Id, Array.AsReadOnly(cells.OrderBy(c => c.Y).ThenBy(c => c.X).ToArray()));
-            card.BaseData.Position = BackpackCoordinates.ToPosition(new BackpackCell(cells.Min(c => c.X), cells.Min(c => c.Y)));
+            // 锚点只写本场布局；运行时新增卡及 Field 标记也只进入本场卡数据。
+            _layout.PlacedCards.Add(new()
+            {
+                CardId = card.Id,
+                Position = BackpackCoordinates.ToPosition(new BackpackCell(cells.Min(c => c.X), cells.Min(c => c.Y)))
+            });
+            _cardData.Reserve.Remove(card.Id);
+            if (!_cardData.Field.Contains(card.Id)) _cardData.Field.Add(card.Id);
+            if (!_cardData.AllCardIds.Contains(card.Id))
+            {
+                _cardData.AllCardIds.Add(card.Id);
+                _cardData.AllCards.Add(card);
+            }
             return Array.AsReadOnly(replaced);
         }
 
@@ -38,6 +50,8 @@ namespace UnityWorld.Game.Domain.Combat
             if (cardId == MainCardId) throw new InvalidOperationException("主功法固定卡不能移除。");
             if (!_placements.Remove(cardId, out var cells)) return;
             foreach (var cell in cells) _cardCells.Remove(cell);
+            _layout.PlacedCards.RemoveAll(entry => entry.CardId == cardId);
+            _cardData.Field.Remove(cardId);
         }
     }
 }

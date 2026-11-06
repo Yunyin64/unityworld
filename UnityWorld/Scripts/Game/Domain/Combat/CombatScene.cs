@@ -379,8 +379,8 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var npc in OrderedCombatants)
             {
                 // 卡牌
-                foreach (var card in npc.GetField().OrderBy(c => c.Position?.Y ?? int.MaxValue)
-                    .ThenBy(c => c.Position?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
+                foreach (var card in npc.GetField().OrderBy(c => npc.Backpack.GetCardPosition(c.Id)?.Y ?? int.MaxValue)
+                    .ThenBy(c => npc.Backpack.GetCardPosition(c.Id)?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
                 {
                     // Keyword 可以单独监听；不能要求卡自身同时定义同名 hook。
                     card.CallLua(hookName,ctx);
