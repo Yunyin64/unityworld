@@ -1,0 +1,440 @@
+[
+  {
+    "ID": "gongfa_nayin_shi_liu_mu",
+    "DisplayName": "榴房分秀诀",
+    "Desc": "每轮首张单格法术使用后，按己方单格法术所占行数获得护盾，最多3点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "石榴木",
+      "木",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "石榴木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚申",
+        "辛酉"
+      ],
+      "Aliases": [],
+      "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 484,
+          "Quote": "数颗枝头累累多子"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 331,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shi_liu_mu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "只统计己方Size为1的FaShu所在的不同行；功法卡不计。",
+        "每轮首次成功使用单格法术时取布局快照，最多获得3护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "本轮首次Size1法术成功使用时，按己方Size1法术所在不同行数获得护盾，最多3。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shi_liu_mu_open_seed_house",
+        "card_nayin_shi_liu_mu_keep_kernel",
+        "card_nayin_shi_liu_mu_falling_seed_rain",
+        "card_nayin_shi_liu_mu_nurture_branches",
+        "card_nayin_shi_liu_mu_ripe_fruit_fall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shi_liu_mu_open_seed_house",
+    "DisplayName": "榴房初绽",
+    "Desc": "回复2点HP；己方至少有三张单格法术时，再回复1点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "石榴木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "石榴木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚申",
+        "辛酉"
+      ],
+      "Aliases": [],
+      "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 484,
+          "Quote": "数颗枝头累累多子"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 331,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shi_liu_mu",
+      "Role": "小卡数量的续航回报",
+      "Rules": [
+        "只按不同Size1法术实例计数，包括本卡，功法不计。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复至多2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "己方至少有三张Size1法术时，回复至多1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shi_liu_mu_open_seed_house",
+        "card_nayin_shi_liu_mu_keep_kernel",
+        "card_nayin_shi_liu_mu_falling_seed_rain",
+        "card_nayin_shi_liu_mu_nurture_branches",
+        "card_nayin_shi_liu_mu_ripe_fruit_fall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shi_liu_mu_keep_kernel",
+    "DisplayName": "留核刺",
+    "Desc": "发起2点木刺拼点；本卡所在行没有其他法术时，本次+3。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "石榴木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "石榴木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚申",
+        "辛酉"
+      ],
+      "Aliases": [],
+      "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 484,
+          "Quote": "数颗枝头累累多子"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 331,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shi_liu_mu",
+      "Role": "单独占一行的小型攻击",
+      "Rules": [
+        "只检查同行其他己方FaShu；功法或普通物品不计为其他法术。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成2点Mu/Ci拼点；同行没有其他己方法术时改为5点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shi_liu_mu_open_seed_house",
+        "card_nayin_shi_liu_mu_keep_kernel",
+        "card_nayin_shi_liu_mu_falling_seed_rain",
+        "card_nayin_shi_liu_mu_nurture_branches",
+        "card_nayin_shi_liu_mu_ripe_fruit_fall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shi_liu_mu_falling_seed_rain",
+    "DisplayName": "落英细雨",
+    "Desc": "发起4点木射拼点；单格法术每占一行，本次+1，最多+3。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "石榴木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "石榴木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚申",
+        "辛酉"
+      ],
+      "Aliases": [],
+      "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 484,
+          "Quote": "数颗枝头累累多子"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 331,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shi_liu_mu",
+      "Role": "把分散的小卡布局汇成进攻",
+      "Rules": [
+        "按己方Size1法术所在的不同行计数，不按卡数量重复统计。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成4点Mu/SheJi拼点，并按己方单格法术所在不同行数增加至多3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shi_liu_mu_open_seed_house",
+        "card_nayin_shi_liu_mu_keep_kernel",
+        "card_nayin_shi_liu_mu_falling_seed_rain",
+        "card_nayin_shi_liu_mu_nurture_branches",
+        "card_nayin_shi_liu_mu_ripe_fruit_fall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shi_liu_mu_nurture_branches",
+    "DisplayName": "分枝育",
+    "Desc": "获得3点护盾；最早的另一张单格攻击法术，下次拼点+2。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "石榴木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "石榴木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚申",
+        "辛酉"
+      ],
+      "Aliases": [],
+      "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 484,
+          "Quote": "数颗枝头累累多子"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 331,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shi_liu_mu",
+      "Role": "扶持小型攻击卡",
+      "Rules": [
+        "按扫描顺序选择其他Size1攻击法术，排除待发卡；无目标仍得护盾。",
+        "增幅只用于一次新攻击拼点，到下一轮结束失效；同源不叠加。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "给最早的其他非待发Size1攻击法术一次+2攻击拼点增幅，持续至下一轮结束。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shi_liu_mu_open_seed_house",
+        "card_nayin_shi_liu_mu_keep_kernel",
+        "card_nayin_shi_liu_mu_falling_seed_rain",
+        "card_nayin_shi_liu_mu_nurture_branches",
+        "card_nayin_shi_liu_mu_ripe_fruit_fall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shi_liu_mu_ripe_fruit_fall",
+    "DisplayName": "熟果坠",
+    "Desc": "发起5点木打拼点；本卡位于己方法术扫描顺序末尾时，本次+3。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "石榴木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "石榴木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚申",
+        "辛酉"
+      ],
+      "Aliases": [],
+      "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 484,
+          "Quote": "数颗枝头累累多子"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 331,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shi_liu_mu",
+      "Role": "把重击留在分散布阵的末端",
+      "Rules": [
+        "按卡末格的行列顺序比较所有己方FaShu，使用提交时判断本卡是否最后。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成5点Mu/Da拼点；本卡为己方最后一张法术时增加3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shi_liu_mu_open_seed_house",
+        "card_nayin_shi_liu_mu_keep_kernel",
+        "card_nayin_shi_liu_mu_falling_seed_rain",
+        "card_nayin_shi_liu_mu_nurture_branches",
+        "card_nayin_shi_liu_mu_ripe_fruit_fall"
+      ]
+    }
+  }
+]

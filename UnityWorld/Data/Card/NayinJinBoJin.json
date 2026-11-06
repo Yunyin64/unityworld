@@ -1,0 +1,453 @@
+[
+  {
+    "ID": "gongfa_nayin_jin_bo_jin",
+    "DisplayName": "贴彩借辉法",
+    "Desc": "每轮首次小法术施放后，相邻最早、能拼点的大法术下次拼点增加1点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "金箔金",
+      "金",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "金箔金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "壬寅",
+        "癸卯"
+      ],
+      "Aliases": [
+        "金泊金"
+      ],
+      "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 424,
+          "Quote": "润色杯盘增光宫室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 299,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jin_bo_jin",
+      "Role": "核心功法被动",
+      "Rules": [
+        "小法术Size=1；目标须正交相邻、Size>=2且能产生拼点，跳过纯辅助法术。",
+        "同名加值最多1份，使用后或己方下一轮结束失效；无目标不产生加值。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "NextContestBonus",
+          "Effect": "每轮首次Size1法术施放后，从正交相邻Size>=2且能产生拼点的法术中按扫描顺序选最早者，下次拼点+1，最迟下一己方轮末到期。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jin_bo_jin_foil_on_vessel",
+        "card_nayin_jin_bo_jin_gold_thread_outline",
+        "card_nayin_jin_bo_jin_thin_foil_reflection",
+        "card_nayin_jin_bo_jin_split_glory_mark",
+        "card_nayin_jin_bo_jin_plainware_finishing"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jin_bo_jin_foil_on_vessel",
+    "DisplayName": "贴金借器",
+    "Desc": "获得3点护盾，使相邻最早、能拼点的大法术下次拼点增加1点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "金箔金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "金箔金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "壬寅",
+        "癸卯"
+      ],
+      "Aliases": [
+        "金泊金"
+      ],
+      "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 424,
+          "Quote": "润色杯盘增光宫室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 299,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jin_bo_jin",
+      "Role": "小卡给大卡添锋",
+      "Rules": [
+        "目标须Size>=2、正交相邻且能产生拼点；先过滤纯辅助法术，再按扫描顺序选取。",
+        "同名加值不叠加，使用后或己方下一轮结束失效；无目标仍得护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加3普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "从正交相邻Size>=2且能产生拼点的法术中选最早者，为其下一次拼点加1，最迟下一己方轮末到期。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jin_bo_jin_foil_on_vessel",
+        "card_nayin_jin_bo_jin_gold_thread_outline",
+        "card_nayin_jin_bo_jin_thin_foil_reflection",
+        "card_nayin_jin_bo_jin_split_glory_mark",
+        "card_nayin_jin_bo_jin_plainware_finishing"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jin_bo_jin_gold_thread_outline",
+    "DisplayName": "金缕描锋",
+    "Desc": "发起2点金刺拼点；相邻大法术本轮使用过时，本次增加3点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "金箔金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "金箔金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "壬寅",
+        "癸卯"
+      ],
+      "Aliases": [
+        "金泊金"
+      ],
+      "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 424,
+          "Quote": "润色杯盘增光宫室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 299,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jin_bo_jin",
+      "Role": "大卡出手后接上一记小招",
+      "Rules": [
+        "只检查正交相邻、Size>=2法术的本轮成功使用记录，任一满足即可。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "邻接大法术本轮有成功使用记录时建立5金刺，否则建立2金刺。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jin_bo_jin_foil_on_vessel",
+        "card_nayin_jin_bo_jin_gold_thread_outline",
+        "card_nayin_jin_bo_jin_thin_foil_reflection",
+        "card_nayin_jin_bo_jin_split_glory_mark",
+        "card_nayin_jin_bo_jin_plainware_finishing"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jin_bo_jin_thin_foil_reflection",
+    "DisplayName": "薄金照影",
+    "Desc": "获得2点护盾；每张相邻大法术再提供1点，最多额外3点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "金箔金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "金箔金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "壬寅",
+        "癸卯"
+      ],
+      "Aliases": [
+        "金泊金"
+      ],
+      "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 424,
+          "Quote": "润色杯盘增光宫室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 299,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jin_bo_jin",
+      "Role": "在多张大卡之间获得掩护",
+      "Rules": [
+        "大法术Size>=2；正交相邻按不同实例去重，最多计3张。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "按正交相邻不同Size>=2法术数n，增加2+min(n,3)普通护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jin_bo_jin_foil_on_vessel",
+        "card_nayin_jin_bo_jin_gold_thread_outline",
+        "card_nayin_jin_bo_jin_thin_foil_reflection",
+        "card_nayin_jin_bo_jin_split_glory_mark",
+        "card_nayin_jin_bo_jin_plainware_finishing"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jin_bo_jin_split_glory_mark",
+    "DisplayName": "彩箔分辉",
+    "Desc": "回复1点MP，并将一枚已有匹配灵元引入相邻最缺灵的大法术。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "金箔金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "金箔金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "壬寅",
+        "癸卯"
+      ],
+      "Aliases": [
+        "金泊金"
+      ],
+      "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 424,
+          "Quote": "润色杯盘增光宫室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 299,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jin_bo_jin",
+      "Role": "小卡帮助大卡点亮",
+      "Rules": [
+        "目标须Size>=2、正交相邻、未待发且可接收；按缺灵格数降序，再按扫描顺序。",
+        "取最早匹配的格上灵元转入点亮记录，原子守恒；无匹配不转移，不额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "恢复1MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "选择相邻最缺灵且Size>=2的合法法术，把最早匹配格上灵元转入其一个未亮需求，不复制或立即使用。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jin_bo_jin_foil_on_vessel",
+        "card_nayin_jin_bo_jin_gold_thread_outline",
+        "card_nayin_jin_bo_jin_thin_foil_reflection",
+        "card_nayin_jin_bo_jin_split_glory_mark",
+        "card_nayin_jin_bo_jin_plainware_finishing"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jin_bo_jin_plainware_finishing",
+    "DisplayName": "素胎点睛",
+    "Desc": "解除相邻最早大法术的冻结；没有冻结目标时，获得3点护盾。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "金箔金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "金箔金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "壬寅",
+        "癸卯"
+      ],
+      "Aliases": [
+        "金泊金"
+      ],
+      "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 424,
+          "Quote": "润色杯盘增光宫室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 299,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jin_bo_jin",
+      "Role": "保住大卡的下一次扫描",
+      "Rules": [
+        "只选正交相邻、Size>=2且已冻结的FaShu；无目标才执行护盾分支。",
+        "解冻不补扫、不额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "解除最早相邻Size>=2法术的冻结；没有这种冻结目标时改为增加3普通护盾。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jin_bo_jin_foil_on_vessel",
+        "card_nayin_jin_bo_jin_gold_thread_outline",
+        "card_nayin_jin_bo_jin_thin_foil_reflection",
+        "card_nayin_jin_bo_jin_split_glory_mark",
+        "card_nayin_jin_bo_jin_plainware_finishing"
+      ]
+    }
+  }
+]

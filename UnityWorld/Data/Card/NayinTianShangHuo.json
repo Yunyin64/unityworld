@@ -1,0 +1,448 @@
+[
+  {
+    "ID": "gongfa_nayin_tian_shang_huo",
+    "DisplayName": "天光周照诀",
+    "Desc": "每轮结束，若本轮最上行有火法成功激活，回复2点HP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天上火",
+      "火",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天上火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊午",
+        "己未"
+      ],
+      "Aliases": [],
+      "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 456,
+          "Quote": "戊午为太阳则刚己未为太阴则柔"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 327,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_shang_huo",
+      "Role": "核心功法被动",
+      "Rules": [
+        "最上行指背包固定第1行；多格卡只要占用该行即符合。",
+        "只看己方本轮真实成功Use记录；同名功法每轮合计一次治疗。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "完整扫描轮结束时，若本轮有占用背包第1行的火法成功Use，治疗2HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_shang_huo_sunwheel",
+        "card_nayin_tian_shang_huo_moon_shade",
+        "card_nayin_tian_shang_huo_turn_sundial",
+        "card_nayin_tian_shang_huo_dawn_fusang",
+        "card_nayin_tian_shang_huo_unite_lights"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_shang_huo_sunwheel",
+    "DisplayName": "旭轮开霁",
+    "Desc": "发起4点火射拼点；本卡位于最上行时，清除敌方1层正面五行状态。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天上火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天上火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊午",
+        "己未"
+      ],
+      "Aliases": [],
+      "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 456,
+          "Quote": "戊午为太阳则刚己未为太阴则柔"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 327,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_shang_huo",
+      "Role": "高位火法破除增益",
+      "Rules": [
+        "最上行是背包第1行；状态清除在本次成功Use时执行，不要求命中。",
+        "清除沿用现有RemoveElementBuff随机选择1层正面五行状态。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起4点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "本卡占用最上行时，清除敌方随机1层现有正面五行状态。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_shang_huo_sunwheel",
+        "card_nayin_tian_shang_huo_moon_shade",
+        "card_nayin_tian_shang_huo_turn_sundial",
+        "card_nayin_tian_shang_huo_dawn_fusang",
+        "card_nayin_tian_shang_huo_unite_lights"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_shang_huo_moon_shade",
+    "DisplayName": "霞光护顶",
+    "Desc": "获得4点护盾；本卡是本轮首张激活法术时，再获得2点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天上火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天上火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊午",
+        "己未"
+      ],
+      "Aliases": [],
+      "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 456,
+          "Quote": "戊午为太阳则刚己未为太阴则柔"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 327,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_shang_huo",
+      "Role": "轮初防守",
+      "Rules": [
+        "按己方本轮真实成功Use记录判断首张，不把额外效果算作施法。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "本卡是本轮首张成功Use法术时获得6点持续护盾，否则4点。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_shang_huo_sunwheel",
+        "card_nayin_tian_shang_huo_moon_shade",
+        "card_nayin_tian_shang_huo_turn_sundial",
+        "card_nayin_tian_shang_huo_dawn_fusang",
+        "card_nayin_tian_shang_huo_unite_lights"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_shang_huo_turn_sundial",
+    "DisplayName": "天光助势",
+    "Desc": "己方当前待发攻击拼点+2；没有待发攻击时，获得3点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天上火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天上火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊午",
+        "己未"
+      ],
+      "Aliases": [],
+      "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 456,
+          "Quote": "戊午为太阳则刚己未为太阴则柔"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 327,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_shang_huo",
+      "Role": "照应正在进行的出手",
+      "Rules": [
+        "只修改已有待发攻击，不生成新记录；防御待发保持不变并走护盾分支。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "己方有待发攻击则其数值增加2，否则给予3点持续护盾。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_shang_huo_sunwheel",
+        "card_nayin_tian_shang_huo_moon_shade",
+        "card_nayin_tian_shang_huo_turn_sundial",
+        "card_nayin_tian_shang_huo_dawn_fusang",
+        "card_nayin_tian_shang_huo_unite_lights"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_shang_huo_dawn_fusang",
+    "DisplayName": "曦照扶桑",
+    "Desc": "回复2点HP；本卡所在行没有其他法术时，再回复2点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天上火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天上火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊午",
+        "己未"
+      ],
+      "Aliases": [],
+      "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 456,
+          "Quote": "戊午为太阳则刚己未为太阴则柔"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 327,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_shang_huo",
+      "Role": "独占一行的恢复",
+      "Rules": [
+        "所在行按本卡锚点行；检查其他法术是否占该行，主功法和伤势不算其他法术。",
+        "HP与MP回复均受各自上限限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "本卡锚点行没有其他法术时，额外回复2MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_shang_huo_sunwheel",
+        "card_nayin_tian_shang_huo_moon_shade",
+        "card_nayin_tian_shang_huo_turn_sundial",
+        "card_nayin_tian_shang_huo_dawn_fusang",
+        "card_nayin_tian_shang_huo_unite_lights"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_shang_huo_unite_lights",
+    "DisplayName": "日轮当表",
+    "Desc": "发起5点火射拼点；本卡是扫描顺序最后一张法术时，获得3点护盾。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天上火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天上火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊午",
+        "己未"
+      ],
+      "Aliases": [],
+      "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 456,
+          "Quote": "戊午为太阳则刚己未为太阴则柔"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 327,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_shang_huo",
+      "Role": "扫描收尾的攻守兼备",
+      "Rules": [
+        "按当前布局的法术扫描顺序判断末位，不因其他卡冻结或未点亮而跳过它们。",
+        "只在本卡正常成功Use时获得附效，不额外补发使用。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起5点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "本卡在当前布局的法术扫描顺序中位于末位时，获得3点持续护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_shang_huo_sunwheel",
+        "card_nayin_tian_shang_huo_moon_shade",
+        "card_nayin_tian_shang_huo_turn_sundial",
+        "card_nayin_tian_shang_huo_dawn_fusang",
+        "card_nayin_tian_shang_huo_unite_lights"
+      ]
+    }
+  }
+]

@@ -1,0 +1,437 @@
+[
+  {
+    "ID": "gongfa_nayin_bi_shang_tu",
+    "DisplayName": "闭户隔尘诀",
+    "Desc": "每轮首次边缘法术激活后，移除自身1层负面五行状态。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "壁上土",
+      "土",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "壁上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚子",
+        "辛丑"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 492,
+          "Quote": "遮霜护雪之功"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 295,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_bi_shang_tu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "边缘指占格接触背包矩形最外一行或一列，不包含内部空洞边界。",
+        "沿用通用随机负面五行状态清除；同名功法每轮共一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "每轮首张占格接触背包外边界的法术成功Use后，随机移除角色自身1层负面五行状态。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_bi_shang_tu_mud_partition",
+        "card_nayin_bi_shang_tu_repair_plaster",
+        "card_nayin_bi_shang_tu_hear_wall",
+        "card_nayin_bi_shang_tu_clean_inside",
+        "card_nayin_bi_shang_tu_break_wall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_bi_shang_tu_mud_partition",
+    "DisplayName": "拒风泥垣",
+    "Desc": "获得3点护盾；本卡贴住左边或右边界时，再获得2点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "壁上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "壁上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚子",
+        "辛丑"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 492,
+          "Quote": "遮霜护雪之功"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 295,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_bi_shang_tu",
+      "Role": "侧边防守",
+      "Rules": [
+        "只看占格是否接触背包最左或最右列；同时满足也只增加一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾，本卡接触背包左右外边界时改为5点。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_bi_shang_tu_mud_partition",
+        "card_nayin_bi_shang_tu_repair_plaster",
+        "card_nayin_bi_shang_tu_hear_wall",
+        "card_nayin_bi_shang_tu_clean_inside",
+        "card_nayin_bi_shang_tu_break_wall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_bi_shang_tu_repair_plaster",
+    "DisplayName": "补壁藏温",
+    "Desc": "回复3点HP；本卡位于背包边缘时，再回复1点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "壁上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "壁上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚子",
+        "辛丑"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 492,
+          "Quote": "遮霜护雪之功"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 295,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_bi_shang_tu",
+      "Role": "边缘续航",
+      "Rules": [
+        "边缘指占格接触最外行或列；回复均受属性上限限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复3HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "本卡接触背包外边界时，额外回复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_bi_shang_tu_mud_partition",
+        "card_nayin_bi_shang_tu_repair_plaster",
+        "card_nayin_bi_shang_tu_hear_wall",
+        "card_nayin_bi_shang_tu_clean_inside",
+        "card_nayin_bi_shang_tu_break_wall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_bi_shang_tu_hear_wall",
+    "DisplayName": "隔壁听震",
+    "Desc": "发起3点土打拼点；左右均无紧邻法术时，本次+2。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "壁上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "壁上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚子",
+        "辛丑"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 492,
+          "Quote": "遮霜护雪之功"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 295,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_bi_shang_tu",
+      "Role": "利用两侧留白反击",
+      "Rules": [
+        "左右仅检查正交共边法术，不把包外空间算作卡，也不穿空格找更远目标。",
+        "条件在本次拼点生成时判断。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "左右两侧都没有正交共边法术时，发起5点土打拼点，否则3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_bi_shang_tu_mud_partition",
+        "card_nayin_bi_shang_tu_repair_plaster",
+        "card_nayin_bi_shang_tu_hear_wall",
+        "card_nayin_bi_shang_tu_clean_inside",
+        "card_nayin_bi_shang_tu_break_wall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_bi_shang_tu_clean_inside",
+    "DisplayName": "门内清尘",
+    "Desc": "移除自身1层石化；本卡贴边时，再移除1层寒意。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "壁上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "壁上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚子",
+        "辛丑"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 492,
+          "Quote": "遮霜护雪之功"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 295,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_bi_shang_tu",
+      "Role": "保护抽灵与资源运转",
+      "Rules": [
+        "石化为Element_Debuff_Tu，寒意为Element_Debuff_Shui；各最多移除1层。",
+        "贴边按背包最外行或列判断；两次清除独立，没有石化也可在贴边时清寒意。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "移除自身1层石化；若本卡接触外边界，再移除自身1层寒意。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_bi_shang_tu_mud_partition",
+        "card_nayin_bi_shang_tu_repair_plaster",
+        "card_nayin_bi_shang_tu_hear_wall",
+        "card_nayin_bi_shang_tu_clean_inside",
+        "card_nayin_bi_shang_tu_break_wall"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_bi_shang_tu_break_wall",
+    "DisplayName": "破垣扬尘",
+    "Desc": "发起5点土射拼点；本卡贴边时，消耗至多2点护盾，使本次等量增加。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "壁上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "壁上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚子",
+        "辛丑"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 492,
+          "Quote": "遮霜护雪之功"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 295,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_bi_shang_tu",
+      "Role": "把侧边防守换成攻击",
+      "Rules": [
+        "贴边按占格接触最外行或列判断；只消费角色已有持续护盾，不消费待发防御。",
+        "按实际消费量给本次拼点加值，最多2；无护盾时保留基础攻击。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起5点土射拼点；贴边时先消费0至2点持续护盾，再为本次值增加实际消费量。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_bi_shang_tu_mud_partition",
+        "card_nayin_bi_shang_tu_repair_plaster",
+        "card_nayin_bi_shang_tu_hear_wall",
+        "card_nayin_bi_shang_tu_clean_inside",
+        "card_nayin_bi_shang_tu_break_wall"
+      ]
+    }
+  }
+]

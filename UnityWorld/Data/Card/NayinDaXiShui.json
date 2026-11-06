@@ -1,0 +1,454 @@
+[
+  {
+    "ID": "gongfa_nayin_da_xi_shui",
+    "DisplayName": "东注回澜经",
+    "Desc": "每轮首次用法术成功移动一张卡牌后，回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大溪水",
+      "水",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大溪水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲寅",
+        "乙卯"
+      ],
+      "Aliases": [],
+      "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 520,
+          "Quote": "惊涛薄岸骇浪浮天"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 319,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_xi_shui",
+      "Role": "核心功法被动",
+      "Rules": [
+        "只认己方法术造成的卡牌实际位置改变，灵元移动和失败推移不计。",
+        "每轮最多一次，移动不追加扫描或使用机会。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "己方本轮首次由法术成功移动一张卡牌后，回复至多1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_xi_shui_eastward_push",
+        "card_nayin_da_xi_shui_wash_sand_channel",
+        "card_nayin_da_xi_shui_bend_return",
+        "card_nayin_da_xi_shui_hidden_reef",
+        "card_nayin_da_xi_shui_stacked_wave"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_xi_shui_eastward_push",
+    "DisplayName": "东流推",
+    "Desc": "发起3点水射拼点；结算后将敌方最左法术右移一格。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大溪水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大溪水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲寅",
+        "乙卯"
+      ],
+      "Aliases": [],
+      "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 520,
+          "Quote": "惊涛薄岸骇浪浮天"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 319,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_xi_shui",
+      "Role": "把敌方关键卡推向右侧",
+      "Rules": [
+        "排除主功法与待发卡，按最左列、最上行、ID选目标。",
+        "整卡新位置须合法且不覆盖卡或灵元；失败原地保留，不补扫。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成3点Shui/SheJi拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "MoveCard",
+          "Effect": "本次拼点正常结算后，尝试将最左合法敌方法术原子右移一格。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_xi_shui_eastward_push",
+        "card_nayin_da_xi_shui_wash_sand_channel",
+        "card_nayin_da_xi_shui_bend_return",
+        "card_nayin_da_xi_shui_hidden_reef",
+        "card_nayin_da_xi_shui_stacked_wave"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_xi_shui_wash_sand_channel",
+    "DisplayName": "冲沙换道",
+    "Desc": "回复2点MP；把最早的一枚水灵元移到同行最右空格。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大溪水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大溪水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲寅",
+        "乙卯"
+      ],
+      "Aliases": [],
+      "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 520,
+          "Quote": "惊涛薄岸骇浪浮天"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 319,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_xi_shui",
+      "Role": "调整灵元经过扫描的先后",
+      "Rules": [
+        "源为己方按行列排序首枚格上Shui灵元，目标为同行最右的其他有效纯空格。",
+        "缺源或目的则不移动；守恒转移，不补扫已经过的格。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "回复至多2MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "把最早格上Shui灵元原子移到其同行最右合法空格，数量和元素均不变。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_xi_shui_eastward_push",
+        "card_nayin_da_xi_shui_wash_sand_channel",
+        "card_nayin_da_xi_shui_bend_return",
+        "card_nayin_da_xi_shui_hidden_reef",
+        "card_nayin_da_xi_shui_stacked_wave"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_xi_shui_bend_return",
+    "DisplayName": "急湾折返",
+    "Desc": "获得3点护盾；将己方最右的另一张法术左移一格。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大溪水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大溪水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲寅",
+        "乙卯"
+      ],
+      "Aliases": [],
+      "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 520,
+          "Quote": "惊涛薄岸骇浪浮天"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 319,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_xi_shui",
+      "Role": "把己方卡拉回更靠前的位置",
+      "Rules": [
+        "排除本卡、主功法和待发卡，按最右列降序、行、ID选目标。",
+        "新占格须合法且不覆盖卡或灵元；移动保留点亮，不追加使用。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "MoveCard",
+          "Effect": "将最右合法己方法术尝试原子左移一格，失败保持原状。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_xi_shui_eastward_push",
+        "card_nayin_da_xi_shui_wash_sand_channel",
+        "card_nayin_da_xi_shui_bend_return",
+        "card_nayin_da_xi_shui_hidden_reef",
+        "card_nayin_da_xi_shui_stacked_wave"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_xi_shui_hidden_reef",
+    "DisplayName": "临岸回波",
+    "Desc": "敌方待发卡贴右边界时，其拼点-2；否则获得3点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大溪水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大溪水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲寅",
+        "乙卯"
+      ],
+      "Aliases": [],
+      "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 520,
+          "Quote": "惊涛薄岸骇浪浮天"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 319,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_xi_shui",
+      "Role": "针对被推到岸边的攻击",
+      "Rules": [
+        "贴边指来源卡任一占格触及敌方背包最右有效边界列；无待发卡走护盾分支。",
+        "只修改当前待发值，最低0，不保留到下次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "敌方当前待发来源卡接触背包右边界时，其值减少2，最低0。",
+          "Support": "SharedExtension"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "无合法贴右边界的敌方待发卡时，获得3护盾；与减值分支互斥。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_xi_shui_eastward_push",
+        "card_nayin_da_xi_shui_wash_sand_channel",
+        "card_nayin_da_xi_shui_bend_return",
+        "card_nayin_da_xi_shui_hidden_reef",
+        "card_nayin_da_xi_shui_stacked_wave"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_xi_shui_stacked_wave",
+    "DisplayName": "叠浪贯",
+    "Desc": "发起5点水射拼点；敌方待发卡位于后两行时，本次+3。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大溪水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大溪水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲寅",
+        "乙卯"
+      ],
+      "Aliases": [],
+      "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 520,
+          "Quote": "惊涛薄岸骇浪浮天"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 319,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_xi_shui",
+      "Role": "针对扫描后段形成的待发",
+      "Rules": [
+        "按敌方背包自身高度判断末两行；无待发来源时不加值。",
+        "使用提交时快照来源行，后续移动不重算。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成5点Shui/SheJi拼点；敌方当前待发来源卡位于其背包最后两行时增加3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_xi_shui_eastward_push",
+        "card_nayin_da_xi_shui_wash_sand_channel",
+        "card_nayin_da_xi_shui_bend_return",
+        "card_nayin_da_xi_shui_hidden_reef",
+        "card_nayin_da_xi_shui_stacked_wave"
+      ]
+    }
+  }
+]

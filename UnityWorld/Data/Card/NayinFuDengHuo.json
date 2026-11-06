@@ -1,0 +1,457 @@
+[
+  {
+    "ID": "gongfa_nayin_fu_deng_huo",
+    "DisplayName": "金盏引流经",
+    "Desc": "每轮首次水法激活后，为相邻最早火法引入1个已有匹配灵元。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "覆灯火",
+      "火",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "覆灯火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲辰",
+        "乙巳"
+      ],
+      "Aliases": [],
+      "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 452,
+          "Quote": "以木为心以水为油"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 301,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_fu_deng_huo",
+      "Role": "核心功法被动",
+      "Rules": [
+        "以触发水法为锚点，选正交共边且可收灵的最早火法；排除待发与等待Apply卡。",
+        "按剩余ManaCost以Jin/Mu/Shui/Huo/Tu找可匹配元素，消费最前来源格1灵元使点亮+1。",
+        "无合法来源则无效果，不免费点亮或立即Use；同名功法每轮共一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "MoveMana",
+          "Effect": "每轮首次水法Use后，从背包取实际匹配未分配灵元，消费1个以完成相邻最早合法火法的1点剩余ManaCost需求。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_fu_deng_huo_fill_lamp",
+        "card_nayin_fu_deng_huo_lamp_cut_dark",
+        "card_nayin_fu_deng_huo_light_dark_room",
+        "card_nayin_fu_deng_huo_trim_wick",
+        "card_nayin_fu_deng_huo_last_oil"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_fu_deng_huo_fill_lamp",
+    "DisplayName": "清泉映盏",
+    "Desc": "回复2点MP；相邻有水法时，再获得2点护盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "覆灯火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "覆灯火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲辰",
+        "乙巳"
+      ],
+      "Aliases": [],
+      "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 452,
+          "Quote": "以木为心以水为油"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 301,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_fu_deng_huo",
+      "Role": "水火邻接时增强续航",
+      "Rules": [
+        "相邻按正交共边；水法指ManaCost含Shui，混费也计。",
+        "回复MP不超过战斗MP上限。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "回复2MP，受MP上限限制。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "正交相邻存在水法时，额外获得2点持续护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_fu_deng_huo_fill_lamp",
+        "card_nayin_fu_deng_huo_lamp_cut_dark",
+        "card_nayin_fu_deng_huo_light_dark_room",
+        "card_nayin_fu_deng_huo_trim_wick",
+        "card_nayin_fu_deng_huo_last_oil"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_fu_deng_huo_lamp_cut_dark",
+    "DisplayName": "灯花照水",
+    "Desc": "发起3点火射拼点；背包有未分配水灵元时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "覆灯火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "覆灯火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲辰",
+        "乙巳"
+      ],
+      "Aliases": [],
+      "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 452,
+          "Quote": "以木为心以水为油"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 301,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_fu_deng_huo",
+      "Role": "利用现存水灵元照应火攻",
+      "Rules": [
+        "只读取背包真实格上的Shui灵元，不计已经投入卡牌的点亮。",
+        "不消费水灵元，条件在拼点创建时判断。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "背包存在未分配Shui灵元时发起5点火射拼点，否则3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_fu_deng_huo_fill_lamp",
+        "card_nayin_fu_deng_huo_lamp_cut_dark",
+        "card_nayin_fu_deng_huo_light_dark_room",
+        "card_nayin_fu_deng_huo_trim_wick",
+        "card_nayin_fu_deng_huo_last_oil"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_fu_deng_huo_light_dark_room",
+    "DisplayName": "暗室分明",
+    "Desc": "获得2点护盾，为相邻的一张水法和一张火法各引灵1次。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "覆灯火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "覆灯火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲辰",
+        "乙巳"
+      ],
+      "Aliases": [],
+      "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 452,
+          "Quote": "以木为心以水为油"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 301,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_fu_deng_huo",
+      "Role": "同时疏通水火搭档",
+      "Rules": [
+        "先选最早合法水法，再选不同实例的最早火法；都须正交共边、可收灵且无待发。",
+        "每次按剩余ManaCost以Jin/Mu/Shui/Huo/Tu选匹配元素，消费最前来源格实际灵元后点亮+1。",
+        "第二次使用更新后的灵元状态；无匹配来源就跳过，不免费点亮或立即Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "为正交相邻的最早合法水法、再为不同的最早合法火法，各消费1个现有匹配灵元以完成1点剩余点亮需求。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_fu_deng_huo_fill_lamp",
+        "card_nayin_fu_deng_huo_lamp_cut_dark",
+        "card_nayin_fu_deng_huo_light_dark_room",
+        "card_nayin_fu_deng_huo_trim_wick",
+        "card_nayin_fu_deng_huo_last_oil"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_fu_deng_huo_trim_wick",
+    "DisplayName": "挑灯引泉",
+    "Desc": "获得3点护盾，将最前一个水灵元移到本卡上方空格。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "覆灯火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "覆灯火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲辰",
+        "乙巳"
+      ],
+      "Aliases": [],
+      "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 452,
+          "Quote": "以木为心以水为油"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 301,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_fu_deng_huo",
+      "Role": "整理水灵元的位置",
+      "Rules": [
+        "来源为背包最前未分配Shui灵元；目标为本卡上边共边、无卡无灵元且不覆盖主功法的最早有效格。",
+        "无来源或目标时不移动；仅搬移，不换色、不增减数量、不触碰卡上点亮。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "将最前一个Shui未分配灵元移到本卡上方正交共边的最早合法空格，失败不改变任何格。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_fu_deng_huo_fill_lamp",
+        "card_nayin_fu_deng_huo_lamp_cut_dark",
+        "card_nayin_fu_deng_huo_light_dark_room",
+        "card_nayin_fu_deng_huo_trim_wick",
+        "card_nayin_fu_deng_huo_last_oil"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_fu_deng_huo_last_oil",
+    "DisplayName": "水照灯花",
+    "Desc": "抽取1点MP转为灵元；本次抽到水灵元时，回复2点HP。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "覆灯火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "覆灯火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲辰",
+        "乙巳"
+      ],
+      "Aliases": [],
+      "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 452,
+          "Quote": "以木为心以水为油"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 301,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_fu_deng_huo",
+      "Role": "普通抽灵中获得水火相济的恢复",
+      "Rules": [
+        "只尝试一次正常Draw，须有MP和合法空格；实际落地才扣1MP，不覆盖卡、灵元或固定主功法。",
+        "只检查这次Draw直接成功落地的那一枚灵元，不计已有水灵元、额外派生灵元或后续换色。",
+        "没有MP、没有合法空格或未实际落地时，不扣MP也不治疗；本次落地元素为Shui才治疗2HP。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Draw",
+          "Effect": "按正常Draw尝试将1MP转为1个实际落地灵元；无MP或合法空格时不生成、不扣MP，记录本次直接落地结果。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "仅本次Draw直接实际落地的唯一灵元元素为Shui时，恢复2HP一次；未落地不治疗。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_fu_deng_huo_fill_lamp",
+        "card_nayin_fu_deng_huo_lamp_cut_dark",
+        "card_nayin_fu_deng_huo_light_dark_room",
+        "card_nayin_fu_deng_huo_trim_wick",
+        "card_nayin_fu_deng_huo_last_oil"
+      ]
+    }
+  }
+]

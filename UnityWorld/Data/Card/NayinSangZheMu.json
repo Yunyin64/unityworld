@@ -1,0 +1,442 @@
+[
+  {
+    "ID": "gongfa_nayin_sang_zhe_mu",
+    "DisplayName": "桑荫养元经",
+    "Desc": "每轮首次实际回复HP后，获得2点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "桑柘木",
+      "木",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "桑柘木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬子",
+        "癸丑"
+      ],
+      "Aliases": [],
+      "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 468,
+          "Quote": "此木供蚕为弧其用甚大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 315,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sang_zhe_mu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "只有本轮实际HP增加大于0的治疗触发，满血无效治疗不消耗机会。",
+        "每轮最多一次，增加护盾不再次视为治疗。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "本轮首次己方实际受到正数HP治疗后，获得2普通护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sang_zhe_mu_mulberry_feed",
+        "card_nayin_sang_zhe_mu_silk_tether",
+        "card_nayin_sang_zhe_mu_weave_cocoon",
+        "card_nayin_sang_zhe_mu_reel_mana",
+        "card_nayin_sang_zhe_mu_break_cocoon_bow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sang_zhe_mu_mulberry_feed",
+    "DisplayName": "采桑吟",
+    "Desc": "回复2点HP；施放前没有护盾时，再获得2点护盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "桑柘木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "桑柘木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬子",
+        "癸丑"
+      ],
+      "Aliases": [],
+      "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 468,
+          "Quote": "此木供蚕为弧其用甚大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 315,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sang_zhe_mu",
+      "Role": "无盾时补齐两条防线",
+      "Rules": [
+        "无盾条件在使用开始时快照，不受本次治疗触发的其他护盾改变。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复至多2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "使用开始时己方ShieldValue为0，则获得2护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sang_zhe_mu_mulberry_feed",
+        "card_nayin_sang_zhe_mu_silk_tether",
+        "card_nayin_sang_zhe_mu_weave_cocoon",
+        "card_nayin_sang_zhe_mu_reel_mana",
+        "card_nayin_sang_zhe_mu_break_cocoon_bow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sang_zhe_mu_silk_tether",
+    "DisplayName": "牵丝箭",
+    "Desc": "发起3点木射拼点；己方护盾不少于5点时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "桑柘木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "桑柘木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬子",
+        "癸丑"
+      ],
+      "Aliases": [],
+      "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 468,
+          "Quote": "此木供蚕为弧其用甚大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 315,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sang_zhe_mu",
+      "Role": "保留护盾换取稳定进攻",
+      "Rules": [
+        "在使用开始时读取普通护盾值，不消耗护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "己方施放前护盾至少5时生成5点Mu/SheJi拼点，否则生成3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sang_zhe_mu_mulberry_feed",
+        "card_nayin_sang_zhe_mu_silk_tether",
+        "card_nayin_sang_zhe_mu_weave_cocoon",
+        "card_nayin_sang_zhe_mu_reel_mana",
+        "card_nayin_sang_zhe_mu_break_cocoon_bow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sang_zhe_mu_weave_cocoon",
+    "DisplayName": "桑荫护身",
+    "Desc": "获得4点护盾；施放前满血时，再获得2点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "桑柘木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "桑柘木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬子",
+        "癸丑"
+      ],
+      "Aliases": [],
+      "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 468,
+          "Quote": "此木供蚕为弧其用甚大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 315,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sang_zhe_mu",
+      "Role": "治疗充足后的预防性防守",
+      "Rules": [
+        "满血按使用开始时当前HP等于最大HP判定。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4护盾；使用开始时HP已满则共获得6护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sang_zhe_mu_mulberry_feed",
+        "card_nayin_sang_zhe_mu_silk_tether",
+        "card_nayin_sang_zhe_mu_weave_cocoon",
+        "card_nayin_sang_zhe_mu_reel_mana",
+        "card_nayin_sang_zhe_mu_break_cocoon_bow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sang_zhe_mu_reel_mana",
+    "DisplayName": "柘阴回元",
+    "Desc": "将至多3点护盾转为等量MP；没有护盾时，回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "桑柘木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "桑柘木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬子",
+        "癸丑"
+      ],
+      "Aliases": [],
+      "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 468,
+          "Quote": "此木供蚕为弧其用甚大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 315,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sang_zhe_mu",
+      "Role": "把多余防守改为供能",
+      "Rules": [
+        "实际转换量取护盾、3和MP空缺的最小值；不消耗无法恢复的部分。",
+        "只有使用开始时护盾恰为0才走基础回复分支。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "有护盾时扣除至多3且不超过MP空缺的护盾并恢复等量MP；无护盾时回复至多1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sang_zhe_mu_mulberry_feed",
+        "card_nayin_sang_zhe_mu_silk_tether",
+        "card_nayin_sang_zhe_mu_weave_cocoon",
+        "card_nayin_sang_zhe_mu_reel_mana",
+        "card_nayin_sang_zhe_mu_break_cocoon_bow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sang_zhe_mu_break_cocoon_bow",
+    "DisplayName": "柘弓养身",
+    "Desc": "发起5点木射拼点；结算后，将至多2点护盾转为等量HP。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "桑柘木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "桑柘木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬子",
+        "癸丑"
+      ],
+      "Aliases": [],
+      "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 468,
+          "Quote": "此木供蚕为弧其用甚大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 315,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sang_zhe_mu",
+      "Role": "用防线余量恢复本体",
+      "Rules": [
+        "正式拼点胜、负、平或直击结算后均可转换；撤回取消未结算效果。",
+        "实际转换量取当时护盾、2和HP空缺的最小值。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成5点Mu/SheJi拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "本次拼点正常结算后，扣除至多2且不超过HP空缺的护盾并回复等量HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sang_zhe_mu_mulberry_feed",
+        "card_nayin_sang_zhe_mu_silk_tether",
+        "card_nayin_sang_zhe_mu_weave_cocoon",
+        "card_nayin_sang_zhe_mu_reel_mana",
+        "card_nayin_sang_zhe_mu_break_cocoon_bow"
+      ]
+    }
+  }
+]

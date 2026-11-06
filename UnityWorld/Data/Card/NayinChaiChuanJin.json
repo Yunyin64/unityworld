@@ -1,0 +1,451 @@
+[
+  {
+    "ID": "gongfa_nayin_chai_chuan_jin",
+    "DisplayName": "珠联双璧录",
+    "Desc": "连续使用不同名金法时，获得2点护盾，每轮最多两次。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "钗钏金",
+      "金",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "钗钏金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "庚戌",
+        "辛亥"
+      ],
+      "Aliases": [],
+      "Identity": "不同名金法交替出手，只读取上一张成功法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 440,
+          "Quote": "美容首饰增光腻肌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 311,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chai_chuan_jin",
+      "Role": "核心功法被动",
+      "Rules": [
+        "检查当前法术与此前最近成功法术均含Jin且ID不同；无上一张不触发。",
+        "每轮次数由己方共享；不配对、不储存额外资源。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "连续两次成功施法均为金法且ID不同，则加2普通护盾，每轮最多2次。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+        "card_nayin_chai_chuan_jin_jade_ring_echo",
+        "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+        "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+        "card_nayin_chai_chuan_jin_leave_jade_afterglow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+    "DisplayName": "鸾钗分影",
+    "Desc": "发起3点金斩拼点；上一张是不同名金法时，敌方待发值降低1点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "钗钏金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "钗钏金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "庚戌",
+        "辛亥"
+      ],
+      "Aliases": [],
+      "Identity": "不同名金法交替出手，只读取上一张成功法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 440,
+          "Quote": "美容首饰增光腻肌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 311,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chai_chuan_jin",
+      "Role": "交替小招压低眼前敌势",
+      "Rules": [
+        "条件取本次之前的成功施法；只改当前敌方待发值，最低0。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "上一张成功法术含Jin且ID不同，则当前敌方待发值减1，最低0。",
+          "Support": "SharedExtension"
+        },
+        {
+          "Action": "Attack",
+          "Effect": "随后建立3点金斩拼点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+        "card_nayin_chai_chuan_jin_jade_ring_echo",
+        "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+        "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+        "card_nayin_chai_chuan_jin_leave_jade_afterglow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chai_chuan_jin_jade_ring_echo",
+    "DisplayName": "环佩回音",
+    "Desc": "回复2点MP；上一张为不同名、能拼点的金法时，使它下次拼点增加2点。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "钗钏金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "钗钏金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "庚戌",
+        "辛亥"
+      ],
+      "Aliases": [],
+      "Identity": "不同名金法交替出手，只读取上一张成功法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 440,
+          "Quote": "美容首饰增光腻肌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 311,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chai_chuan_jin",
+      "Role": "后法为前法回送支援",
+      "Rules": [
+        "上一张须含Jin、ID不同且能产生拼点；只作用于原实例，目标不符或离场时仍回复2MP。",
+        "同名加值不叠加，使用后或己方下一轮结束失效。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "恢复2MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "此前上一张成功法术含Jin、ID不同且能产生拼点时，为其仍在场来源实例下次拼点加2，最迟下一己方轮末到期；否则跳过加值。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+        "card_nayin_chai_chuan_jin_jade_ring_echo",
+        "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+        "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+        "card_nayin_chai_chuan_jin_leave_jade_afterglow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+    "DisplayName": "步摇定风",
+    "Desc": "获得3点护盾；上一张是不同名金法时，清除己方4Tick减速。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "钗钏金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "钗钏金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "庚戌",
+        "辛亥"
+      ],
+      "Aliases": [],
+      "Identity": "不同名金法交替出手，只读取上一张成功法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 440,
+          "Quote": "美容首饰增光腻肌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 311,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chai_chuan_jin",
+      "Role": "交替施法恢复背包节奏",
+      "Rules": [
+        "只减少已有整包SlowTicks，最低0；不制造加速或改变扫描行。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加3普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "ReduceSlow",
+          "Effect": "上一张成功法术含Jin且ID不同时，使己方SlowTicks减少至多4。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+        "card_nayin_chai_chuan_jin_jade_ring_echo",
+        "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+        "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+        "card_nayin_chai_chuan_jin_leave_jade_afterglow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+    "DisplayName": "双珰护心",
+    "Desc": "回复3点HP；上一张是不同名金法时，移除己方1层出血。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "钗钏金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "钗钏金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "庚戌",
+        "辛亥"
+      ],
+      "Aliases": [],
+      "Identity": "不同名金法交替出手，只读取上一张成功法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 440,
+          "Quote": "美容首饰增光腻肌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 311,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chai_chuan_jin",
+      "Role": "交替金法后清除出血",
+      "Rules": [
+        "只清除金系负面出血；没有该状态时仅回血。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "恢复3HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "上一张成功法术含Jin且ID不同时，移除己方至多1层出血。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+        "card_nayin_chai_chuan_jin_jade_ring_echo",
+        "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+        "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+        "card_nayin_chai_chuan_jin_leave_jade_afterglow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chai_chuan_jin_leave_jade_afterglow",
+    "DisplayName": "金玉流辉",
+    "Desc": "己方背包双速4Tick；若上一张法术与本卡同名，改为获得4点护盾。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "钗钏金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "钗钏金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "庚戌",
+        "辛亥"
+      ],
+      "Aliases": [],
+      "Identity": "不同名金法交替出手，只读取上一张成功法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 440,
+          "Quote": "美容首饰增光腻肌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 311,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chai_chuan_jin",
+      "Role": "重复同招偏守，换招则提速",
+      "Rules": [
+        "按本次之前最近成功法术ID判断；无上一张按双速分支。",
+        "双速沿用整包Haste，同类加时；两分支互斥。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Haste",
+          "Effect": "此前上一张法术ID不同或不存在时，己方整包Haste增加4真实Tick；同ID则改加4普通护盾。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chai_chuan_jin_paired_phoenix_shadow",
+        "card_nayin_chai_chuan_jin_jade_ring_echo",
+        "card_nayin_chai_chuan_jin_sway_pin_stills_wind",
+        "card_nayin_chai_chuan_jin_twin_pendants_guard_heart",
+        "card_nayin_chai_chuan_jin_leave_jade_afterglow"
+      ]
+    }
+  }
+]

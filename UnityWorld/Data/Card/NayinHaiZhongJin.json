@@ -1,0 +1,428 @@
+[
+  {
+    "ID": "gongfa_nayin_hai_zhong_jin",
+    "DisplayName": "渊海敛息经",
+    "Desc": "每轮直击前，若MP至少剩余一半，己方待发金攻击拼点增加3点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "海中金",
+      "金",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "海中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲子",
+        "乙丑"
+      ],
+      "Aliases": [],
+      "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 420,
+          "Quote": "宝藏龙宫珠孕蛟室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 235,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_hai_zhong_jin",
+      "Role": "核心功法被动",
+      "Rules": [
+        "在己方轮末单方直击之前检查，最多一次；没有待发金攻击则无效果。",
+        "至少一半指当前MP达到最大MP的一半，向上取整；只加本次值。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "己方轮末直击前，满足MP半量条件时给当前待发金攻击加3，不创建新拼点。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_hai_zhong_jin_dive_for_pearl",
+        "card_nayin_hai_zhong_jin_moon_shell_edge",
+        "card_nayin_hai_zhong_jin_jade_seals_tide",
+        "card_nayin_hai_zhong_jin_open_dragon_coffer",
+        "card_nayin_hai_zhong_jin_outsea_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_hai_zhong_jin_dive_for_pearl",
+    "DisplayName": "潜渊敛息",
+    "Desc": "获得3点护盾；MP至少剩余一半时，再获得2点护盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "海中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "海中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲子",
+        "乙丑"
+      ],
+      "Aliases": [],
+      "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 420,
+          "Quote": "宝藏龙宫珠孕蛟室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 235,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_hai_zhong_jin",
+      "Role": "保留MP换取防守",
+      "Rules": [
+        "MP按施放开始时读取；半量向上取整。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加3普通护盾，MP达到最大值一半时总计增加5。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_hai_zhong_jin_dive_for_pearl",
+        "card_nayin_hai_zhong_jin_moon_shell_edge",
+        "card_nayin_hai_zhong_jin_jade_seals_tide",
+        "card_nayin_hai_zhong_jin_open_dragon_coffer",
+        "card_nayin_hai_zhong_jin_outsea_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_hai_zhong_jin_moon_shell_edge",
+    "DisplayName": "蚌月初锋",
+    "Desc": "发起3点金刺拼点；本卡位于背包最后一行时，改为6点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "海中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "海中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲子",
+        "乙丑"
+      ],
+      "Aliases": [],
+      "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 420,
+          "Quote": "宝藏龙宫珠孕蛟室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 235,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_hai_zhong_jin",
+      "Role": "把小攻击留在扫描尾部",
+      "Rules": [
+        "最后一行指当前背包的最后有效扫描行；施放时快照。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "按来源卡所在行，建立3或6点金刺拼点，进入唯一待发槽。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_hai_zhong_jin_dive_for_pearl",
+        "card_nayin_hai_zhong_jin_moon_shell_edge",
+        "card_nayin_hai_zhong_jin_jade_seals_tide",
+        "card_nayin_hai_zhong_jin_open_dragon_coffer",
+        "card_nayin_hai_zhong_jin_outsea_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_hai_zhong_jin_jade_seals_tide",
+    "DisplayName": "沉璧封潮",
+    "Desc": "获得4点护盾；己方已有待发金攻击时，再获得3点护盾。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "海中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "海中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲子",
+        "乙丑"
+      ],
+      "Aliases": [],
+      "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 420,
+          "Quote": "宝藏龙宫珠孕蛟室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 235,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_hai_zhong_jin",
+      "Role": "在攻击等待期间自保",
+      "Rules": [
+        "只检查施放开始时的己方待发槽；不改变或结算该拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "己方有待发金攻击时增加7普通护盾，否则增加4。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_hai_zhong_jin_dive_for_pearl",
+        "card_nayin_hai_zhong_jin_moon_shell_edge",
+        "card_nayin_hai_zhong_jin_jade_seals_tide",
+        "card_nayin_hai_zhong_jin_open_dragon_coffer",
+        "card_nayin_hai_zhong_jin_outsea_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_hai_zhong_jin_open_dragon_coffer",
+    "DisplayName": "龙宫启匣",
+    "Desc": "回复2点MP；本卡位于最后一行时，再回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "海中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "海中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲子",
+        "乙丑"
+      ],
+      "Aliases": [],
+      "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 420,
+          "Quote": "宝藏龙宫珠孕蛟室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 235,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_hai_zhong_jin",
+      "Role": "在轮末出手前补足MP",
+      "Rules": [
+        "最后一行指当前背包最后有效扫描行；恢复不超过MP上限。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "来源卡在最后行时恢复3MP，否则恢复2MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_hai_zhong_jin_dive_for_pearl",
+        "card_nayin_hai_zhong_jin_moon_shell_edge",
+        "card_nayin_hai_zhong_jin_jade_seals_tide",
+        "card_nayin_hai_zhong_jin_open_dragon_coffer",
+        "card_nayin_hai_zhong_jin_outsea_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_hai_zhong_jin_outsea_glimmer",
+    "DisplayName": "出海流光",
+    "Desc": "发起5点金射击拼点；本次若在轮末直击，额外增加3点。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "海中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "海中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲子",
+        "乙丑"
+      ],
+      "Aliases": [],
+      "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 420,
+          "Quote": "宝藏龙宫珠孕蛟室"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 235,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_hai_zhong_jin",
+      "Role": "等待单方直击的重招",
+      "Rules": [
+        "仅本次在己方轮末进行单方直击时加3，对拼不加；每次拼点最多触发一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "建立5点金射击拼点；该次若进入轮末单方直击，在结算伤害前额外加3。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_hai_zhong_jin_dive_for_pearl",
+        "card_nayin_hai_zhong_jin_moon_shell_edge",
+        "card_nayin_hai_zhong_jin_jade_seals_tide",
+        "card_nayin_hai_zhong_jin_open_dragon_coffer",
+        "card_nayin_hai_zhong_jin_outsea_glimmer"
+      ]
+    }
+  }
+]

@@ -1,0 +1,452 @@
+[
+  {
+    "ID": "gongfa_nayin_shan_xia_huo",
+    "DisplayName": "草间微明诀",
+    "Desc": "每轮前两张不同的一格火法成功激活后，各回复1点HP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山下火",
+      "火",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山下火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙申",
+        "丁酉"
+      ],
+      "Aliases": [],
+      "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 460,
+          "Quote": "草间熠燿花里荧煌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 289,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_xia_huo",
+      "Role": "核心功法被动",
+      "Rules": [
+        "一格指Size=1，火法指ManaCost含Huo；同一实例每轮只计一次。",
+        "同名功法每轮合计最多治疗2点；治疗不触发新的Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "每轮前两张不同的Size=1火法成功Use后，各治疗自己1HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_xia_huo_light_grass",
+        "card_nayin_shan_xia_huo_darting_firefly",
+        "card_nayin_shan_xia_huo_scatter_swarm",
+        "card_nayin_shan_xia_huo_light_behind_curtain",
+        "card_nayin_shan_xia_huo_keep_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_xia_huo_light_grass",
+    "DisplayName": "草间点翠",
+    "Desc": "获得2点护盾，并解除相邻最早一格法术的冻结。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山下火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山下火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙申",
+        "丁酉"
+      ],
+      "Aliases": [],
+      "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 460,
+          "Quote": "草间熠燿花里荧煌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 289,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_xia_huo",
+      "Role": "小卡互相解控",
+      "Rules": [
+        "选择正交共边、Size=1且已冻结的最早法术。",
+        "无目标仍得护盾；解冻不立即补发Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "解除相邻最早Size=1已冻结法术的冻结。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_xia_huo_light_grass",
+        "card_nayin_shan_xia_huo_darting_firefly",
+        "card_nayin_shan_xia_huo_scatter_swarm",
+        "card_nayin_shan_xia_huo_light_behind_curtain",
+        "card_nayin_shan_xia_huo_keep_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_xia_huo_darting_firefly",
+    "DisplayName": "飞光掠影",
+    "Desc": "发起2点火刺拼点；相邻至少两张一格法术时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山下火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山下火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙申",
+        "丁酉"
+      ],
+      "Aliases": [],
+      "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 460,
+          "Quote": "草间熠燿花里荧煌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 289,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_xia_huo",
+      "Role": "紧凑小卡布局进攻",
+      "Rules": [
+        "按正交共边的不同Size=1法术实例计数，不含自身。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "正交相邻Size=1法术至少2张时发起4点火刺拼点，否则2点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_xia_huo_light_grass",
+        "card_nayin_shan_xia_huo_darting_firefly",
+        "card_nayin_shan_xia_huo_scatter_swarm",
+        "card_nayin_shan_xia_huo_light_behind_curtain",
+        "card_nayin_shan_xia_huo_keep_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_xia_huo_scatter_swarm",
+    "DisplayName": "碎光催行",
+    "Desc": "发起4点火射拼点；本轮已有两张一格法术激活时，己方充能2Tick。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山下火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山下火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙申",
+        "丁酉"
+      ],
+      "Aliases": [],
+      "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 460,
+          "Quote": "草间熠燿花里荧煌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 289,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_xia_huo",
+      "Role": "把小卡出手转成扫描进度",
+      "Rules": [
+        "只读取本次Use之前、己方本轮成功Use的不同Size=1法术。",
+        "充能为背包基准进度，不改卡CD、不立即额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起4点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Charge",
+          "Effect": "本轮此前至少2张不同Size=1法术成功Use时，己方背包充能2个基准Tick。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_xia_huo_light_grass",
+        "card_nayin_shan_xia_huo_darting_firefly",
+        "card_nayin_shan_xia_huo_scatter_swarm",
+        "card_nayin_shan_xia_huo_light_behind_curtain",
+        "card_nayin_shan_xia_huo_keep_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_xia_huo_light_behind_curtain",
+    "DisplayName": "隔幔微光",
+    "Desc": "获得3点护盾；相邻有两张一格法术时，移除自身1层寒意。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山下火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山下火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙申",
+        "丁酉"
+      ],
+      "Aliases": [],
+      "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 460,
+          "Quote": "草间熠燿花里荧煌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 289,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_xia_huo",
+      "Role": "小卡群提供护持",
+      "Rules": [
+        "相邻按正交共边、不同Size=1法术实例计数，不含自身。",
+        "寒意为Element_Debuff_Shui；没有寒意或条件不满足仍得护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "相邻Size=1法术至少2张时，移除自身1层Element_Debuff_Shui。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_xia_huo_light_grass",
+        "card_nayin_shan_xia_huo_darting_firefly",
+        "card_nayin_shan_xia_huo_scatter_swarm",
+        "card_nayin_shan_xia_huo_light_behind_curtain",
+        "card_nayin_shan_xia_huo_keep_glimmer"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_xia_huo_keep_glimmer",
+    "DisplayName": "星光初照",
+    "Desc": "发起2点火射拼点；本轮首次一格火法激活时，再抽取1点MP为灵元。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山下火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山下火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙申",
+        "丁酉"
+      ],
+      "Aliases": [],
+      "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 460,
+          "Quote": "草间熠燿花里荧煌"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 289,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_xia_huo",
+      "Role": "首个小火法带动资源",
+      "Rules": [
+        "需本卡为本轮首张成功Use的Size=1火法；同次额外效果不增加施法记录。",
+        "抽灵沿用Draw：须有MP和合法空格，不能覆盖卡、灵元或主功法；实际成功才扣MP。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起2点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Draw",
+          "Effect": "若本卡是本轮首张Size=1火法，则尝试将1MP抽成一个灵元，遵守正常空格与MP约束。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_xia_huo_light_grass",
+        "card_nayin_shan_xia_huo_darting_firefly",
+        "card_nayin_shan_xia_huo_scatter_swarm",
+        "card_nayin_shan_xia_huo_light_behind_curtain",
+        "card_nayin_shan_xia_huo_keep_glimmer"
+      ]
+    }
+  }
+]

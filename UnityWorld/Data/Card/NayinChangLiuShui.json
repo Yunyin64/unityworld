@@ -1,0 +1,438 @@
+[
+  {
+    "ID": "gongfa_nayin_chang_liu_shui",
+    "DisplayName": "千折不断流",
+    "Desc": "每轮首次连续使用两张水法时，己方背包双速4Tick。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "长流水",
+      "水",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "长流水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬辰",
+        "癸巳"
+      ],
+      "Aliases": [],
+      "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 524,
+          "Quote": "混混无穷滔滔不竭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 283,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chang_liu_shui",
+      "Role": "核心功法被动",
+      "Rules": [
+        "水法按ManaCost含Shui判断；上一张取本次之前最近成功法术，可跨轮。",
+        "每轮最多一次；沿用整包Haste，同类加时，不额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Haste",
+          "Effect": "成功水法且此前上一张成功法术也含Shui时，本轮首次使己方Haste增加4真实Tick。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chang_liu_shui_spring_starts_river",
+        "card_nayin_chang_liu_shui_unbroken_ripple",
+        "card_nayin_chang_liu_shui_bend_keeps_channel",
+        "card_nayin_chang_liu_shui_broken_river_resurge",
+        "card_nayin_chang_liu_shui_return_to_headwater"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chang_liu_shui_spring_starts_river",
+    "DisplayName": "源起细川",
+    "Desc": "获得3点护盾；这是本轮第一张水法时，回复1点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "长流水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "长流水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬辰",
+        "癸巳"
+      ],
+      "Aliases": [],
+      "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 524,
+          "Quote": "混混无穷滔滔不竭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 283,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chang_liu_shui",
+      "Role": "为本轮水法起手",
+      "Rules": [
+        "只检查本次之前的本轮成功施法记录；混合费用含Shui也计作水法。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加3普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "本轮此前没有成功水法时，恢复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chang_liu_shui_spring_starts_river",
+        "card_nayin_chang_liu_shui_unbroken_ripple",
+        "card_nayin_chang_liu_shui_bend_keeps_channel",
+        "card_nayin_chang_liu_shui_broken_river_resurge",
+        "card_nayin_chang_liu_shui_return_to_headwater"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chang_liu_shui_unbroken_ripple",
+    "DisplayName": "一线续澜",
+    "Desc": "发起3点水射击拼点；本轮此前每次水法使其增加1点，最多增加3点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "长流水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "长流水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬辰",
+        "癸巳"
+      ],
+      "Aliases": [],
+      "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 524,
+          "Quote": "混混无穷滔滔不竭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 283,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chang_liu_shui",
+      "Role": "持续施水后的渐强输出",
+      "Rules": [
+        "只计本次之前的本轮成功水法次数，失败与派生效果不计；不消耗记录。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "以3+min(本轮此前成功水法次数,3)建立水射击拼点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chang_liu_shui_spring_starts_river",
+        "card_nayin_chang_liu_shui_unbroken_ripple",
+        "card_nayin_chang_liu_shui_bend_keeps_channel",
+        "card_nayin_chang_liu_shui_broken_river_resurge",
+        "card_nayin_chang_liu_shui_return_to_headwater"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chang_liu_shui_bend_keeps_channel",
+    "DisplayName": "折湾延脉",
+    "Desc": "回复2点HP；上一张法术为水法时，清除己方6Tick减速。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "长流水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "长流水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬辰",
+        "癸巳"
+      ],
+      "Aliases": [],
+      "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 524,
+          "Quote": "混混无穷滔滔不竭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 283,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chang_liu_shui",
+      "Role": "连续出水化解节奏阻滞",
+      "Rules": [
+        "上一张取本次之前最近成功法术；只减少已有SlowTicks至0，不制造加速。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "恢复2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "ReduceSlow",
+          "Effect": "上一张成功法术含Shui时，使己方SlowTicks减少至多6。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chang_liu_shui_spring_starts_river",
+        "card_nayin_chang_liu_shui_unbroken_ripple",
+        "card_nayin_chang_liu_shui_bend_keeps_channel",
+        "card_nayin_chang_liu_shui_broken_river_resurge",
+        "card_nayin_chang_liu_shui_return_to_headwater"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chang_liu_shui_broken_river_resurge",
+    "DisplayName": "断流复涌",
+    "Desc": "发起5点水打拼点；上一张法术不是水法时，本次增加3点。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "长流水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "长流水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬辰",
+        "癸巳"
+      ],
+      "Aliases": [],
+      "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 524,
+          "Quote": "混混无穷滔滔不竭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 283,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chang_liu_shui",
+      "Role": "从其他元素切回水法的重击",
+      "Rules": [
+        "必须存在上一张成功法术且其ManaCost不含Shui；无记录时不加。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "此前上一张成功法术存在且不含Shui时建立8水打，否则建立5水打。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chang_liu_shui_spring_starts_river",
+        "card_nayin_chang_liu_shui_unbroken_ripple",
+        "card_nayin_chang_liu_shui_bend_keeps_channel",
+        "card_nayin_chang_liu_shui_broken_river_resurge",
+        "card_nayin_chang_liu_shui_return_to_headwater"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_chang_liu_shui_return_to_headwater",
+    "DisplayName": "归源息流",
+    "Desc": "回复1点MP；本轮此前已使用至少三次水法时，再回复2点MP。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "长流水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "长流水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬辰",
+        "癸巳"
+      ],
+      "Aliases": [],
+      "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 524,
+          "Quote": "混混无穷滔滔不竭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 283,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_chang_liu_shui",
+      "Role": "长串水法后的补给",
+      "Rules": [
+        "按本次之前的本轮成功水法次数判断；回复总量受MP上限限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "本轮此前成功水法>=3次时恢复3MP，否则恢复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_chang_liu_shui_spring_starts_river",
+        "card_nayin_chang_liu_shui_unbroken_ripple",
+        "card_nayin_chang_liu_shui_bend_keeps_channel",
+        "card_nayin_chang_liu_shui_broken_river_resurge",
+        "card_nayin_chang_liu_shui_return_to_headwater"
+      ]
+    }
+  }
+]

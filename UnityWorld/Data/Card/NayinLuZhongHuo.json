@@ -1,0 +1,456 @@
+[
+  {
+    "ID": "gongfa_nayin_lu_zhong_huo",
+    "DisplayName": "两仪陶铸诀",
+    "Desc": "每轮首次火法激活后，相邻最早金系攻击法术的下次攻击拼点+2。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "炉中火",
+      "火",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "炉中火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙寅",
+        "丁卯"
+      ],
+      "Aliases": [],
+      "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 448,
+          "Quote": "天地为炉阴阳为炭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 239,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_zhong_huo",
+      "Role": "核心功法被动",
+      "Rules": [
+        "相邻以触发火法为锚点，按正交共边；金系指ManaCost含非零Jin。",
+        "下一次加值取同目标已有同类加值的较大值，不叠加；下一轮结束失效。",
+        "同名功法每轮共触发一次；无合法目标不产生效果。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "NextContestBonus",
+          "Effect": "每轮首次火法Use后，给与该法术共边且扫描顺序最早的金系攻击法术下一次攻击拼点+2。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_zhong_huo_add_charcoal",
+        "card_nayin_lu_zhong_huo_bellows",
+        "card_nayin_lu_zhong_huo_test_edge",
+        "card_nayin_lu_zhong_huo_cooling_heat",
+        "card_nayin_lu_zhong_huo_inherit_forge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_zhong_huo_add_charcoal",
+    "DisplayName": "添炭引锋",
+    "Desc": "发起3点火射拼点；右邻金系攻击法术下次攻击拼点+1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "炉中火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "炉中火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙寅",
+        "丁卯"
+      ],
+      "Aliases": [],
+      "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 448,
+          "Quote": "天地为炉阴阳为炭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 239,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_zhong_huo",
+      "Role": "小攻并支援右侧金法",
+      "Rules": [
+        "右邻只取正交共边的最早一张金系攻击法术；无目标仍有攻击。",
+        "下次加值不叠加，取较大值，下一轮结束失效。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起3点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "右侧最早共边金系攻击法术下次攻击拼点+1。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_zhong_huo_add_charcoal",
+        "card_nayin_lu_zhong_huo_bellows",
+        "card_nayin_lu_zhong_huo_test_edge",
+        "card_nayin_lu_zhong_huo_cooling_heat",
+        "card_nayin_lu_zhong_huo_inherit_forge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_zhong_huo_bellows",
+    "DisplayName": "风箱鼓炎",
+    "Desc": "获得3点护盾；左右相邻金系攻击法术下次攻击拼点各+1。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "炉中火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "炉中火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙寅",
+        "丁卯"
+      ],
+      "Aliases": [],
+      "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 448,
+          "Quote": "天地为炉阴阳为炭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 239,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_zhong_huo",
+      "Role": "同时支援两翼",
+      "Rules": [
+        "左右各取最早一张正交共边金系攻击法术，同实例去重，最多2张。",
+        "下一次加值不叠加，取较大值，下一轮结束失效。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "左右各一张合法金系攻击法术下次攻击拼点+1，最多2张不同实例。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_zhong_huo_add_charcoal",
+        "card_nayin_lu_zhong_huo_bellows",
+        "card_nayin_lu_zhong_huo_test_edge",
+        "card_nayin_lu_zhong_huo_cooling_heat",
+        "card_nayin_lu_zhong_huo_inherit_forge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_zhong_huo_test_edge",
+    "DisplayName": "熔锋试刃",
+    "Desc": "发起4点火斩拼点；左侧紧邻金系法术时，本次+3。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "炉中火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "炉中火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙寅",
+        "丁卯"
+      ],
+      "Aliases": [],
+      "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 448,
+          "Quote": "天地为炉阴阳为炭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 239,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_zhong_huo",
+      "Role": "金火相接的强攻",
+      "Rules": [
+        "只检查本卡左边正交共边法术；ManaCost含Jin即满足，混费也计。",
+        "条件在本次拼点生成时读取，不追加第二条拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起4点火斩拼点，左邻存在金系法术时改为7点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_zhong_huo_add_charcoal",
+        "card_nayin_lu_zhong_huo_bellows",
+        "card_nayin_lu_zhong_huo_test_edge",
+        "card_nayin_lu_zhong_huo_cooling_heat",
+        "card_nayin_lu_zhong_huo_inherit_forge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_zhong_huo_cooling_heat",
+    "DisplayName": "出炉余温",
+    "Desc": "获得4点护盾，解除相邻最早金系法术的冻结。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "炉中火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "炉中火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙寅",
+        "丁卯"
+      ],
+      "Aliases": [],
+      "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 448,
+          "Quote": "天地为炉阴阳为炭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 239,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_zhong_huo",
+      "Role": "保护金系搭档",
+      "Rules": [
+        "只选择正交共边且已冻结的金系法术，按扫描顺序取1张。",
+        "解除冻结不立刻补发Use；没有目标仍获得护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "解除相邻最早已冻结金系法术的冻结，不立即Use。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_zhong_huo_add_charcoal",
+        "card_nayin_lu_zhong_huo_bellows",
+        "card_nayin_lu_zhong_huo_test_edge",
+        "card_nayin_lu_zhong_huo_cooling_heat",
+        "card_nayin_lu_zhong_huo_inherit_forge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_zhong_huo_inherit_forge",
+    "DisplayName": "余炭卸甲",
+    "Desc": "回收最前一个火灵元为1点MP；成功后，敌方待发防御降低2。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "炉中火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "炉中火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "丙寅",
+        "丁卯"
+      ],
+      "Aliases": [],
+      "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 448,
+          "Quote": "天地为炉阴阳为炭"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 239,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_zhong_huo",
+      "Role": "回收火灵元并削弱已出手防御",
+      "Rules": [
+        "仅回收背包行列顺序最前的未分配Huo灵元，按Convert的1:1规则恢复MP。",
+        "MP已满或没有火灵元时不回收、不修改待发；只在实际移除灵元并恢复1MP后触发附效。",
+        "附效只降低敌方当前待发防御记录，最低0；不减少角色护盾，不生成新拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Convert",
+          "Effect": "若当前MP有至少1点空缺，回收最前一个实际未分配Huo灵元并恢复1MP，原子提交；否则不动来源。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "ModifyPending",
+          "Effect": "仅当前Convert实际回收成功时，使敌方当前待发防御拼点降低2，最低0；无防御待发则跳过。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_zhong_huo_add_charcoal",
+        "card_nayin_lu_zhong_huo_bellows",
+        "card_nayin_lu_zhong_huo_test_edge",
+        "card_nayin_lu_zhong_huo_cooling_heat",
+        "card_nayin_lu_zhong_huo_inherit_forge"
+      ]
+    }
+  }
+]

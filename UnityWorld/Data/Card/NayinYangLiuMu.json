@@ -1,0 +1,456 @@
+[
+  {
+    "ID": "gongfa_nayin_yang_liu_mu",
+    "DisplayName": "随风解厄篇",
+    "Desc": "每轮首次攻击拼点以1至2点差值落败后，回复2点HP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "杨柳木",
+      "木",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "杨柳木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬午",
+        "癸未"
+      ],
+      "Aliases": [],
+      "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 480,
+          "Quote": "隋堤袅娜汉苑轻盈"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 265,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_yang_liu_mu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "仅认己方攻击与敌方待发拼点正式对抗的结果；平局、直击和撤回不算落败。",
+        "每轮最多回复一次，不回改当次伤害或胜负。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "本轮首次己方攻击拼点以1或2点差值落败后，回复至多2HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_yang_liu_mu_bank_brush",
+        "card_nayin_yang_liu_mu_hanging_willow",
+        "card_nayin_yang_liu_mu_rain_wash",
+        "card_nayin_yang_liu_mu_lengthen_thread",
+        "card_nayin_yang_liu_mu_cut_sorrow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_yang_liu_mu_bank_brush",
+    "DisplayName": "拂堤刺",
+    "Desc": "发起3点木刺拼点；本次平局后，回复2点HP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "杨柳木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "杨柳木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬午",
+        "癸未"
+      ],
+      "Aliases": [],
+      "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 480,
+          "Quote": "隋堤袅娜汉苑轻盈"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 265,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_yang_liu_mu",
+      "Role": "争取相抵后的恢复",
+      "Rules": [
+        "只认本次正式对抗的数值平局，直击不触发治疗。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成3点Mu/Ci拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "本次正式拼点平局后，回复至多2HP一次。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_yang_liu_mu_bank_brush",
+        "card_nayin_yang_liu_mu_hanging_willow",
+        "card_nayin_yang_liu_mu_rain_wash",
+        "card_nayin_yang_liu_mu_lengthen_thread",
+        "card_nayin_yang_liu_mu_cut_sorrow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_yang_liu_mu_hanging_willow",
+    "DisplayName": "垂柳衣",
+    "Desc": "发起4点格挡拼点；本次落败后，回复2点HP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "杨柳木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "杨柳木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬午",
+        "癸未"
+      ],
+      "Aliases": [],
+      "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 480,
+          "Quote": "隋堤袅娜汉苑轻盈"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 265,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_yang_liu_mu",
+      "Role": "保底治疗的柔性格挡",
+      "Rules": [
+        "格挡进入唯一待发槽，不增加持久护盾；平局和无对手直击不触发治疗。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Defend",
+          "Effect": "生成4点Block防御拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "本次防御拼点正式落败后，回复至多2HP一次。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_yang_liu_mu_bank_brush",
+        "card_nayin_yang_liu_mu_hanging_willow",
+        "card_nayin_yang_liu_mu_rain_wash",
+        "card_nayin_yang_liu_mu_lengthen_thread",
+        "card_nayin_yang_liu_mu_cut_sorrow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_yang_liu_mu_rain_wash",
+    "DisplayName": "雨洗絮",
+    "Desc": "回复3点HP；施放前HP不足一半时，再获得2点护盾。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1,
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "杨柳木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "杨柳木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬午",
+        "癸未"
+      ],
+      "Aliases": [],
+      "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 480,
+          "Quote": "隋堤袅娜汉苑轻盈"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 265,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_yang_liu_mu",
+      "Role": "低血量稳住后续伤害",
+      "Rules": [
+        "HP不足一半按施放开始时HP与最大HP比较，治疗后不重算条件。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复至多3HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "施放前HP低于最大HP一半时，获得2护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_yang_liu_mu_bank_brush",
+        "card_nayin_yang_liu_mu_hanging_willow",
+        "card_nayin_yang_liu_mu_rain_wash",
+        "card_nayin_yang_liu_mu_lengthen_thread",
+        "card_nayin_yang_liu_mu_cut_sorrow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_yang_liu_mu_lengthen_thread",
+    "DisplayName": "长丝缓",
+    "Desc": "获得2点护盾；敌方当前待发值至少5点时，使其降低2点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "杨柳木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "杨柳木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬午",
+        "癸未"
+      ],
+      "Aliases": [],
+      "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 480,
+          "Quote": "隋堤袅娜汉苑轻盈"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 265,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_yang_liu_mu",
+      "Role": "削弱已经到来的高点数待发",
+      "Rules": [
+        "只检查敌方当前待发记录，不要求己方有待发；原值至少5才减少2，最低0。",
+        "无敌方待发或原值不足5时，仍获得护盾，不预存减值。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "ModifyPending",
+          "Effect": "敌方当前待发记录存在且原值至少5时，将该记录数值减少2，最低0；不检查己方待发槽。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_yang_liu_mu_bank_brush",
+        "card_nayin_yang_liu_mu_hanging_willow",
+        "card_nayin_yang_liu_mu_rain_wash",
+        "card_nayin_yang_liu_mu_lengthen_thread",
+        "card_nayin_yang_liu_mu_cut_sorrow"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_yang_liu_mu_cut_sorrow",
+    "DisplayName": "剪愁枝",
+    "Desc": "回复1点MP；己方待发为格挡时，将其数值提高2点。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "杨柳木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "杨柳木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "壬午",
+        "癸未"
+      ],
+      "Aliases": [],
+      "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 480,
+          "Quote": "隋堤袅娜汉苑轻盈"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 265,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_yang_liu_mu",
+      "Role": "为已架起的格挡补足数值",
+      "Rules": [
+        "只修改己方当前Block待发记录；无格挡记录时仅回复MP，不预存增幅。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "回复至多1MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "ModifyPending",
+          "Effect": "己方当前待发是Block时，其数值增加2。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_yang_liu_mu_bank_brush",
+        "card_nayin_yang_liu_mu_hanging_willow",
+        "card_nayin_yang_liu_mu_rain_wash",
+        "card_nayin_yang_liu_mu_lengthen_thread",
+        "card_nayin_yang_liu_mu_cut_sorrow"
+      ]
+    }
+  }
+]

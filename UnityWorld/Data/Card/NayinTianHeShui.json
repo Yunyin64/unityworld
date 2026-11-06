@@ -1,0 +1,447 @@
+[
+  {
+    "ID": "gongfa_nayin_tian_he_shui",
+    "DisplayName": "银河均泽经",
+    "Desc": "水法使用时，若其上一行和下一行都有法术，回复2点HP，每轮一次。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天河水",
+      "水",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天河水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙午",
+        "丁未"
+      ],
+      "Aliases": [],
+      "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 528,
+          "Quote": "天上雨露发生万物无不赖之"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 305,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_he_shui",
+      "Role": "核心功法被动",
+      "Rules": [
+        "只检查紧邻的上下扫描行是否各有FaShu，不要求同列。",
+        "水法按ManaCost含Shui判断；只在条件满足时消耗本轮一次机会。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "成功水法的紧邻上下行都存在己方FaShu时恢复2HP，每轮首次满足者触发。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_he_shui_rain_five_fields",
+        "card_nayin_tian_he_shui_rain_washes_rows",
+        "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+        "card_nayin_tian_he_shui_even_rain_balance",
+        "card_nayin_tian_he_shui_after_rain_clear_sky"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_he_shui_rain_five_fields",
+    "DisplayName": "分畦细雨",
+    "Desc": "己方每有一行放着法术，回复1点HP，最多回复3点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天河水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天河水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙午",
+        "丁未"
+      ],
+      "Aliases": [],
+      "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 528,
+          "Quote": "天上雨露发生万物无不赖之"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 305,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_he_shui",
+      "Role": "分行摆放获得均匀滋养",
+      "Rules": [
+        "按有己方FaShu占格的不同有效行去重；包括本卡所在行，最多计3行。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "恢复min(己方法术占据的不同行数,3)点HP，不超过HP上限。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_he_shui_rain_five_fields",
+        "card_nayin_tian_he_shui_rain_washes_rows",
+        "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+        "card_nayin_tian_he_shui_even_rain_balance",
+        "card_nayin_tian_he_shui_after_rain_clear_sky"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_he_shui_rain_washes_rows",
+    "DisplayName": "雨过洗尘",
+    "Desc": "解除本卡上一行和下一行各一张法术的冻结。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天河水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天河水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙午",
+        "丁未"
+      ],
+      "Aliases": [],
+      "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 528,
+          "Quote": "天上雨露发生万物无不赖之"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 305,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_he_shui",
+      "Role": "同时清理上下扫描行",
+      "Rules": [
+        "每行只取扫描最前的已冻结己方FaShu；不存在的行或无冻结目标跳过。",
+        "解冻不补扫、不额外Use；最多解除两张。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "分别从来源卡紧邻上一行和下一行选择最前冻结法术，各解除一张。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_he_shui_rain_five_fields",
+        "card_nayin_tian_he_shui_rain_washes_rows",
+        "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+        "card_nayin_tian_he_shui_even_rain_balance",
+        "card_nayin_tian_he_shui_after_rain_clear_sky"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+    "DisplayName": "云汉垂练",
+    "Desc": "发起5点水射击拼点；本卡上一行有水法时，回复2点HP。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天河水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天河水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙午",
+        "丁未"
+      ],
+      "Aliases": [],
+      "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 528,
+          "Quote": "天上雨露发生万物无不赖之"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 305,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_he_shui",
+      "Role": "沿上下水法形成供养",
+      "Rules": [
+        "只看紧邻上一行是否有ManaCost含Shui的FaShu；无该行则不回血。",
+        "回血在施放时完成，不依赖拼点胜负。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "建立5点水射击拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "紧邻上一行存在水法时恢复2HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_he_shui_rain_five_fields",
+        "card_nayin_tian_he_shui_rain_washes_rows",
+        "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+        "card_nayin_tian_he_shui_even_rain_balance",
+        "card_nayin_tian_he_shui_after_rain_clear_sky"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_he_shui_even_rain_balance",
+    "DisplayName": "润泽不偏",
+    "Desc": "回复2点HP，并移除己方层数最多的一种五行负面状态1层。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天河水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天河水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙午",
+        "丁未"
+      ],
+      "Aliases": [],
+      "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 528,
+          "Quote": "天上雨露发生万物无不赖之"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 305,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_he_shui",
+      "Role": "优先洗去最重的五行负担",
+      "Rules": [
+        "只计出血、中毒、寒意、灼烧、石化；同层数按金木水火土选择。",
+        "无负面状态时仅回血，不清除冻结或自定义状态。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "恢复2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "移除己方层数最多的一种五行负面状态1层，同值按金木水火土。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_he_shui_rain_five_fields",
+        "card_nayin_tian_he_shui_rain_washes_rows",
+        "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+        "card_nayin_tian_he_shui_even_rain_balance",
+        "card_nayin_tian_he_shui_after_rain_clear_sky"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_tian_he_shui_after_rain_clear_sky",
+    "DisplayName": "霖止留晴",
+    "Desc": "获得2点护盾，使下一行最早攻击法术的下次拼点增加2点。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "天河水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "天河水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙午",
+        "丁未"
+      ],
+      "Aliases": [],
+      "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 528,
+          "Quote": "天上雨露发生万物无不赖之"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 305,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_tian_he_shui",
+      "Role": "从上一行支援后续攻击",
+      "Rules": [
+        "只选紧邻下一行扫描最前的己方攻击法术；无目标仍得护盾。",
+        "同名加值不叠加，使用后或己方下一轮结束失效，不额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加2普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "为紧邻下一行最早攻击法术设下一次拼点+2，最迟下一己方轮末到期。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_tian_he_shui_rain_five_fields",
+        "card_nayin_tian_he_shui_rain_washes_rows",
+        "card_nayin_tian_he_shui_galaxy_falling_ribbon",
+        "card_nayin_tian_he_shui_even_rain_balance",
+        "card_nayin_tian_he_shui_after_rain_clear_sky"
+      ]
+    }
+  }
+]

@@ -1,0 +1,447 @@
+[
+  {
+    "ID": "gongfa_nayin_jian_xia_shui",
+    "DisplayName": "石罅潜流诀",
+    "Desc": "每轮首次使用两端至少一侧为空的涧下水法术时，回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "涧下水",
+      "水",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "涧下水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙子",
+        "丁丑"
+      ],
+      "Aliases": [],
+      "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 516,
+          "Quote": "山环细浪雪涌飞湍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 255,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jian_xia_shui",
+      "Role": "核心功法被动",
+      "Rules": [
+        "空格须在背包内有效、无卡且无灵元；只看横条左右紧邻格。",
+        "按施放时布局判断，每轮由己方共享最多触发一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "每轮首次符合左右至少一端纯空格的涧下水法术成功施放后，恢复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jian_xia_shui_seep_stone_current",
+        "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+        "card_nayin_jian_xia_shui_thread_passage",
+        "card_nayin_jian_xia_shui_stone_channel_divert",
+        "card_nayin_jian_xia_shui_shoal_softens_force"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jian_xia_shui_seep_stone_current",
+    "DisplayName": "渗石微流",
+    "Desc": "发起2点水刺拼点；敌方待发来自至少占两格的卡时，本次增加3点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "涧下水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "涧下水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙子",
+        "丁丑"
+      ],
+      "Aliases": [],
+      "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 516,
+          "Quote": "山环细浪雪涌飞湍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 255,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jian_xia_shui",
+      "Role": "以小卡对付大招",
+      "Rules": [
+        "只读当前敌方待发来源卡Size；无来源或无待发不加。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "敌方当前待发来源Size>=2时建立5水刺，否则建立2水刺。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jian_xia_shui_seep_stone_current",
+        "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+        "card_nayin_jian_xia_shui_thread_passage",
+        "card_nayin_jian_xia_shui_stone_channel_divert",
+        "card_nayin_jian_xia_shui_shoal_softens_force"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+    "DisplayName": "峡影伏波",
+    "Desc": "获得4点护盾；本卡两端都为空时，清除己方4Tick减速。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "涧下水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "涧下水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙子",
+        "丁丑"
+      ],
+      "Aliases": [],
+      "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 516,
+          "Quote": "山环细浪雪涌飞湍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 255,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jian_xia_shui",
+      "Role": "留出双侧余地缓解减速",
+      "Rules": [
+        "左右端紧邻格均须有效、无卡无灵元；边界外不算空格。",
+        "仅减少SlowTicks至最低0，不增加Haste。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加4普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "ReduceSlow",
+          "Effect": "左右端均为纯空格时，使己方SlowTicks减少至多4。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jian_xia_shui_seep_stone_current",
+        "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+        "card_nayin_jian_xia_shui_thread_passage",
+        "card_nayin_jian_xia_shui_stone_channel_divert",
+        "card_nayin_jian_xia_shui_shoal_softens_force"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jian_xia_shui_thread_passage",
+    "DisplayName": "一线潜渡",
+    "Desc": "发起3点水射击拼点；本卡右侧为空时，先消去敌方2点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "涧下水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "涧下水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙子",
+        "丁丑"
+      ],
+      "Aliases": [],
+      "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 516,
+          "Quote": "山环细浪雪涌飞湍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 255,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jian_xia_shui",
+      "Role": "朝后方留缝以穿开护盾",
+      "Rules": [
+        "右端紧邻格须有效、无卡无灵元；边界外不算空。",
+        "只消持久护盾，最低0；不修改防御拼点值。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ArmorBreak",
+          "Effect": "右端紧邻格纯空时，敌方ShieldValue减少至多2。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Attack",
+          "Effect": "随后建立3点水射击拼点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jian_xia_shui_seep_stone_current",
+        "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+        "card_nayin_jian_xia_shui_thread_passage",
+        "card_nayin_jian_xia_shui_stone_channel_divert",
+        "card_nayin_jian_xia_shui_shoal_softens_force"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jian_xia_shui_stone_channel_divert",
+    "DisplayName": "石间引渠",
+    "Desc": "回复2点HP；本卡两端至少一侧为空时，移除己方1层灼烧。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "涧下水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "涧下水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙子",
+        "丁丑"
+      ],
+      "Aliases": [],
+      "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 516,
+          "Quote": "山环细浪雪涌飞湍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 255,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jian_xia_shui",
+      "Role": "留隙导去火患",
+      "Rules": [
+        "左右紧邻格须有效、无卡无灵元；只清除1层灼烧，不转移或制造伤害。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "恢复2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "左右至少一端为纯空格时，移除己方至多1层灼烧。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jian_xia_shui_seep_stone_current",
+        "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+        "card_nayin_jian_xia_shui_thread_passage",
+        "card_nayin_jian_xia_shui_stone_channel_divert",
+        "card_nayin_jian_xia_shui_shoal_softens_force"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jian_xia_shui_shoal_softens_force",
+    "DisplayName": "浅滩让势",
+    "Desc": "敌方待发值减少1加两端空格数；无待发时，获得3点护盾。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "涧下水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "涧下水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "丙子",
+        "丁丑"
+      ],
+      "Aliases": [],
+      "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 516,
+          "Quote": "山环细浪雪涌飞湍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 255,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jian_xia_shui",
+      "Role": "空隙越多，越能卸去已蓄的力",
+      "Rules": [
+        "两端仅计左右有效无卡无灵元格，数量0至2。",
+        "减去(1+空格数)，结果最低0；不预存给将来的拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "存在敌方待发时使其值减去(1+左右纯空格数)，最低0；不存在则改加3普通护盾。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jian_xia_shui_seep_stone_current",
+        "card_nayin_jian_xia_shui_gorge_shadow_shelter",
+        "card_nayin_jian_xia_shui_thread_passage",
+        "card_nayin_jian_xia_shui_stone_channel_divert",
+        "card_nayin_jian_xia_shui_shoal_softens_force"
+      ]
+    }
+  }
+]

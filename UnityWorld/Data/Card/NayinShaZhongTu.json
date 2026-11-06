@@ -1,0 +1,460 @@
+[
+  {
+    "ID": "gongfa_nayin_sha_zhong_tu",
+    "DisplayName": "回浪疏元诀",
+    "Desc": "每轮开始补灵完成后，背包至少有四个空格时，获得3点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中土",
+      "土",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙辰",
+        "丁巳"
+      ],
+      "Aliases": [
+        "砂中土"
+      ],
+      "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 500,
+          "Quote": "浪回所积波渚而成"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 323,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_tu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "空格须为有效背包格、无卡无未分配灵元且不覆盖固定主功法，不计包外或禁用格。",
+        "轮初补灵及其同步触发效果全部完成后，再读取当前空格；同名功法每轮共一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "每个己方完整扫描轮开始，完成该轮补灵及同步触发后，若当前合法空格至少4个，则获得3点持续护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_tu_tide_deposit",
+        "card_nayin_sha_zhong_tu_sand_blade",
+        "card_nayin_sha_zhong_tu_sand_cushion",
+        "card_nayin_sha_zhong_tu_move_sand",
+        "card_nayin_sha_zhong_tu_buried_edge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_tu_tide_deposit",
+    "DisplayName": "浪退回元",
+    "Desc": "回收至多两个灵元为MP；实际回收成功时，获得2点护盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙辰",
+        "丁巳"
+      ],
+      "Aliases": [
+        "砂中土"
+      ],
+      "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 500,
+          "Quote": "浪回所积波渚而成"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 323,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_tu",
+      "Role": "腾出真实格子并回蓝",
+      "Rules": [
+        "沿用Convert，回收背包实际未分配灵元，1:1恢复MP，实际数量受MP空缺限制。",
+        "至少实际移除1灵元才给2护盾；不删除超出MP空缺的灵元。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Convert",
+          "Effect": "将背包至多2个未分配灵元按1:1回收为MP，遵守现有目标选择及MP空缺限制。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "本次Convert实际回收至少1个灵元时获得2点持续护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_tu_tide_deposit",
+        "card_nayin_sha_zhong_tu_sand_blade",
+        "card_nayin_sha_zhong_tu_sand_cushion",
+        "card_nayin_sha_zhong_tu_move_sand",
+        "card_nayin_sha_zhong_tu_buried_edge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_tu_sand_blade",
+    "DisplayName": "风卷沙刃",
+    "Desc": "发起3点土斩拼点；背包至少有四个空格时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙辰",
+        "丁巳"
+      ],
+      "Aliases": [
+        "砂中土"
+      ],
+      "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 500,
+          "Quote": "浪回所积波渚而成"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 323,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_tu",
+      "Role": "奖励保留空间",
+      "Rules": [
+        "空格必须有效、无卡无未分配灵元且不覆盖固定主功法。",
+        "在本次拼点创建时读取空格数，不制造地形。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "当前合法空格至少4个时发起5点土斩拼点，否则3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_tu_tide_deposit",
+        "card_nayin_sha_zhong_tu_sand_blade",
+        "card_nayin_sha_zhong_tu_sand_cushion",
+        "card_nayin_sha_zhong_tu_move_sand",
+        "card_nayin_sha_zhong_tu_buried_edge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_tu_sand_cushion",
+    "DisplayName": "空渚承寒",
+    "Desc": "获得4点护盾；背包至多一个空格时，解除最早法术的冻结。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙辰",
+        "丁巳"
+      ],
+      "Aliases": [
+        "砂中土"
+      ],
+      "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 500,
+          "Quote": "浪回所积波渚而成"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 323,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_tu",
+      "Role": "拥挤布局中的解控",
+      "Rules": [
+        "空格按无卡无未分配灵元的合法有效格统计，排除固定主功法。",
+        "条件满足时选扫描顺序最早的已冻结法术；无目标仍得护盾，不立即补Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "当前合法空格不超过1个时，解除最早已冻结法术的冻结。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_tu_tide_deposit",
+        "card_nayin_sha_zhong_tu_sand_blade",
+        "card_nayin_sha_zhong_tu_sand_cushion",
+        "card_nayin_sha_zhong_tu_move_sand",
+        "card_nayin_sha_zhong_tu_buried_edge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_tu_move_sand",
+    "DisplayName": "疏流换岸",
+    "Desc": "回复2点HP，将最前灵元移到最下方的合法空格。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙辰",
+        "丁巳"
+      ],
+      "Aliases": [
+        "砂中土"
+      ],
+      "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 500,
+          "Quote": "浪回所积波渚而成"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 323,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_tu",
+      "Role": "整理现有灵元的空间分布",
+      "Rules": [
+        "来源按行列顺序取最前未分配灵元；目标先取最大行，再取该行最左合法空格。",
+        "目标须无卡无灵元、不覆盖主功法；缺少来源或目标时不移动，不换色或增量。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "把最前未分配灵元移到最下方、同层最左的合法空格，颜色与总数保持不变。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_tu_tide_deposit",
+        "card_nayin_sha_zhong_tu_sand_blade",
+        "card_nayin_sha_zhong_tu_sand_cushion",
+        "card_nayin_sha_zhong_tu_move_sand",
+        "card_nayin_sha_zhong_tu_buried_edge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_tu_buried_edge",
+    "DisplayName": "散灵惊尘",
+    "Desc": "发起4点土打拼点；背包至少三行有未分配灵元时，本次+3。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙辰",
+        "丁巳"
+      ],
+      "Aliases": [
+        "砂中土"
+      ],
+      "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 500,
+          "Quote": "浪回所积波渚而成"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 323,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_tu",
+      "Role": "利用分散到多行的灵元",
+      "Rules": [
+        "按当前真实未分配灵元占用的不同背包行计数，不按元素种类或灵元总数计数。",
+        "只读取分布，不消费灵元；本次仅生成一条攻击拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "未分配灵元分布在至少3个不同有效背包行时，发起7点土打拼点，否则4点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_tu_tide_deposit",
+        "card_nayin_sha_zhong_tu_sand_blade",
+        "card_nayin_sha_zhong_tu_sand_cushion",
+        "card_nayin_sha_zhong_tu_move_sand",
+        "card_nayin_sha_zhong_tu_buried_edge"
+      ]
+    }
+  }
+]

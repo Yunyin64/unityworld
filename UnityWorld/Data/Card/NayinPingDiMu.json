@@ -1,0 +1,444 @@
+[
+  {
+    "ID": "gongfa_nayin_ping_di_mu",
+    "DisplayName": "梁柱承天篇",
+    "Desc": "每轮首次使用夹在本行两张其他法术之间的法术时，获得4点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "平地木",
+      "木",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "平地木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊戌",
+        "己亥"
+      ],
+      "Aliases": [],
+      "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 488,
+          "Quote": "戊戌为栋己亥为梁"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 293,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_ping_di_mu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "本卡完整占格左侧和右侧各须有一张同行法术，且为不同实例；不要求相邻。",
+        "使用提交时查询实际占格，每轮最多触发一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "每轮首个使用时左右都有其他同行法术的己方FaShu，使自己获得4护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_ping_di_mu_pillar_strike",
+        "card_nayin_ping_di_mu_crossbeam_support",
+        "card_nayin_ping_di_mu_raise_frame",
+        "card_nayin_ping_di_mu_rest_under_eaves",
+        "card_nayin_ping_di_mu_hall_draft"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_ping_di_mu_pillar_strike",
+    "DisplayName": "杵柱击",
+    "Desc": "发起3点木打拼点；本卡位于同行法术最左或最右时，获得2点护盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "平地木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "平地木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊戌",
+        "己亥"
+      ],
+      "Aliases": [],
+      "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 488,
+          "Quote": "戊戌为栋己亥为梁"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 293,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_ping_di_mu",
+      "Role": "边柱主动出手",
+      "Rules": [
+        "按法术占格的外边界判定；同行只有本卡时也满足。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成3点Mu/Da拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "本卡位于同行己方法术的最左或最右边缘时，获得2护盾一次。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_ping_di_mu_pillar_strike",
+        "card_nayin_ping_di_mu_crossbeam_support",
+        "card_nayin_ping_di_mu_raise_frame",
+        "card_nayin_ping_di_mu_rest_under_eaves",
+        "card_nayin_ping_di_mu_hall_draft"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_ping_di_mu_crossbeam_support",
+    "DisplayName": "横梁承",
+    "Desc": "获得4点护盾；本卡两格下方各有不同法术时，再获得3点。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "平地木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "平地木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊戌",
+        "己亥"
+      ],
+      "Aliases": [],
+      "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 488,
+          "Quote": "戊戌为栋己亥为梁"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 293,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_ping_di_mu",
+      "Role": "横梁搭在两根不同支柱上",
+      "Rules": [
+        "检查本卡两个占格各自正下方一格，须由不同己方FaShu占据；越界不满足。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4护盾；两个正下方格被两张不同法术承托时额外获得3护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_ping_di_mu_pillar_strike",
+        "card_nayin_ping_di_mu_crossbeam_support",
+        "card_nayin_ping_di_mu_raise_frame",
+        "card_nayin_ping_di_mu_rest_under_eaves",
+        "card_nayin_ping_di_mu_hall_draft"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_ping_di_mu_raise_frame",
+    "DisplayName": "扶栋术",
+    "Desc": "获得2点护盾；将同列最下方的另一张法术整体上移一格。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "平地木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "平地木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊戌",
+        "己亥"
+      ],
+      "Aliases": [],
+      "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 488,
+          "Quote": "戊戌为栋己亥为梁"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 293,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_ping_di_mu",
+      "Role": "重排支点而不拆卡",
+      "Rules": [
+        "候选与本卡至少同一列，排除主功法、待发卡和本卡；最下者优先，再按列和ID。",
+        "整卡必须能合法放下且不覆盖卡或灵元，否则原地保留；移动不补扫。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "MoveCard",
+          "Effect": "将所选同列最下己方法术原子上移一格，点亮与冻结随卡保留，不立即发动。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_ping_di_mu_pillar_strike",
+        "card_nayin_ping_di_mu_crossbeam_support",
+        "card_nayin_ping_di_mu_raise_frame",
+        "card_nayin_ping_di_mu_rest_under_eaves",
+        "card_nayin_ping_di_mu_hall_draft"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_ping_di_mu_rest_under_eaves",
+    "DisplayName": "檐下息",
+    "Desc": "回复2点HP；本卡正上方和正下方都有法术时，再回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "平地木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "平地木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊戌",
+        "己亥"
+      ],
+      "Aliases": [],
+      "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 488,
+          "Quote": "戊戌为栋己亥为梁"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 293,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_ping_di_mu",
+      "Role": "在上下承托之间休整",
+      "Rules": [
+        "上下各至少一张与本卡共边的其他己方FaShu；不跨空格寻找。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复至多2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "本卡上下均有正交共边法术时，回复至多1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_ping_di_mu_pillar_strike",
+        "card_nayin_ping_di_mu_crossbeam_support",
+        "card_nayin_ping_di_mu_raise_frame",
+        "card_nayin_ping_di_mu_rest_under_eaves",
+        "card_nayin_ping_di_mu_hall_draft"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_ping_di_mu_hall_draft",
+    "DisplayName": "穿堂风",
+    "Desc": "发起4点木射拼点；同行至少有两个空格时，本次+3。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "平地木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "平地木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊戌",
+        "己亥"
+      ],
+      "Aliases": [],
+      "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 488,
+          "Quote": "戊戌为栋己亥为梁"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 293,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_ping_di_mu",
+      "Role": "用留白对抗密集摆放",
+      "Rules": [
+        "空格须有效且无卡无格上灵元；使用提交时统计本卡所在行。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成4点Mu/SheJi拼点；本行至少两格纯空位时增加3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_ping_di_mu_pillar_strike",
+        "card_nayin_ping_di_mu_crossbeam_support",
+        "card_nayin_ping_di_mu_raise_frame",
+        "card_nayin_ping_di_mu_rest_under_eaves",
+        "card_nayin_ping_di_mu_hall_draft"
+      ]
+    }
+  }
+]

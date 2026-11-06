@@ -1,0 +1,447 @@
+[
+  {
+    "ID": "gongfa_nayin_wu_shang_tu",
+    "DisplayName": "覆霜瓦庐诀",
+    "Desc": "每轮首次土法激活时，若其正下方紧邻法术，获得3点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "屋上土",
+      "土",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "屋上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙戌",
+        "丁亥"
+      ],
+      "Aliases": [],
+      "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 512,
+          "Quote": "盖蔽雪霜之积"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 271,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_wu_shang_tu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "以触发土法为锚点，只认下边与其他法术上边正交共边，不跨空格。",
+        "同名功法每轮共一次；多格接触同一卡不增加收益。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "每轮首次土法成功Use后，若它下边正交共边处有另一法术，则获得3点持续护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_wu_shang_tu_lay_roof",
+        "card_nayin_wu_shang_tu_eaves_spring",
+        "card_nayin_wu_shang_tu_falling_tile",
+        "card_nayin_wu_shang_tu_double_eaves",
+        "card_nayin_wu_shang_tu_close_eaves"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_wu_shang_tu_lay_roof",
+    "DisplayName": "铺瓦成檐",
+    "Desc": "获得3点护盾；下方每紧邻一张法术，再获得1点，最多2点。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "屋上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "屋上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙戌",
+        "丁亥"
+      ],
+      "Aliases": [],
+      "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 512,
+          "Quote": "盖蔽雪霜之积"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 271,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_wu_shang_tu",
+      "Role": "覆盖下方多个法术",
+      "Rules": [
+        "按下边正交共边的不同法术实例计数，不跨空格，最多计2张。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾，再按下方正交共边法术数加0至2点。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_wu_shang_tu_lay_roof",
+        "card_nayin_wu_shang_tu_eaves_spring",
+        "card_nayin_wu_shang_tu_falling_tile",
+        "card_nayin_wu_shang_tu_double_eaves",
+        "card_nayin_wu_shang_tu_close_eaves"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_wu_shang_tu_eaves_spring",
+    "DisplayName": "檐滴回泉",
+    "Desc": "回复2点HP；正下方紧邻水法时，移除自身1层灼烧。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "屋上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "屋上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙戌",
+        "丁亥"
+      ],
+      "Aliases": [],
+      "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 512,
+          "Quote": "盖蔽雪霜之积"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 271,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_wu_shang_tu",
+      "Role": "水法承接下的恢复",
+      "Rules": [
+        "只检查下边正交共边法术，ManaCost含Shui即为水法。",
+        "灼烧为Element_Debuff_Huo，最多移除1层。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "下方正交共边存在水法时，移除自身1层灼烧。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_wu_shang_tu_lay_roof",
+        "card_nayin_wu_shang_tu_eaves_spring",
+        "card_nayin_wu_shang_tu_falling_tile",
+        "card_nayin_wu_shang_tu_double_eaves",
+        "card_nayin_wu_shang_tu_close_eaves"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_wu_shang_tu_falling_tile",
+    "DisplayName": "坠瓦惊尘",
+    "Desc": "发起4点土打拼点；下方紧邻未全亮法术时，本次+2。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "屋上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "屋上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙戌",
+        "丁亥"
+      ],
+      "Aliases": [],
+      "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 512,
+          "Quote": "盖蔽雪霜之积"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 271,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_wu_shang_tu",
+      "Role": "保护正在准备的下方卡",
+      "Rules": [
+        "条件在拼点创建时读取，下方只认正交共边的其他法术。",
+        "任意一张尚未完成点亮即满足，不按缺少点数累计。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "下方存在正交共边未全亮法术时发起6点土打拼点，否则4点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_wu_shang_tu_lay_roof",
+        "card_nayin_wu_shang_tu_eaves_spring",
+        "card_nayin_wu_shang_tu_falling_tile",
+        "card_nayin_wu_shang_tu_double_eaves",
+        "card_nayin_wu_shang_tu_close_eaves"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_wu_shang_tu_double_eaves",
+    "DisplayName": "叠檐分雨",
+    "Desc": "获得2点护盾；下方最多两张可拼点法术的下次拼点各+1。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "屋上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "屋上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙戌",
+        "丁亥"
+      ],
+      "Aliases": [],
+      "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 512,
+          "Quote": "盖蔽雪霜之积"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 271,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_wu_shang_tu",
+      "Role": "给下方出手通用增幅",
+      "Rules": [
+        "先筛选下边正交共边且可产生拼点的法术，再按扫描顺序取最多2张不同实例；纯辅助不占候选名额。",
+        "下次加值不叠加，取较大值；下一轮结束失效，不修改已生成待发。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "NextContestBonus",
+          "Effect": "先筛选正下方正交共边且可产生拼点的法术，再按扫描顺序取最多2张不同实例，各设下次拼点+1；不选不能产生拼点的纯辅助。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_wu_shang_tu_lay_roof",
+        "card_nayin_wu_shang_tu_eaves_spring",
+        "card_nayin_wu_shang_tu_falling_tile",
+        "card_nayin_wu_shang_tu_double_eaves",
+        "card_nayin_wu_shang_tu_close_eaves"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_wu_shang_tu_close_eaves",
+    "DisplayName": "闭檐避寒",
+    "Desc": "获得3点护盾，解除正下方最早法术的冻结。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "屋上土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "屋上土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "丙戌",
+        "丁亥"
+      ],
+      "Aliases": [],
+      "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 512,
+          "Quote": "盖蔽雪霜之积"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 271,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_wu_shang_tu",
+      "Role": "向下提供解控",
+      "Rules": [
+        "从下边正交共边、已冻结的其他法术中按扫描顺序取1张。",
+        "无目标仍有护盾；解除冻结不立即Use或补发扫描。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "解除下边正交共边最早已冻结法术的冻结。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_wu_shang_tu_lay_roof",
+        "card_nayin_wu_shang_tu_eaves_spring",
+        "card_nayin_wu_shang_tu_falling_tile",
+        "card_nayin_wu_shang_tu_double_eaves",
+        "card_nayin_wu_shang_tu_close_eaves"
+      ]
+    }
+  }
+]

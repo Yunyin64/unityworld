@@ -1,0 +1,456 @@
+[
+  {
+    "ID": "gongfa_nayin_da_hai_shui",
+    "DisplayName": "百川归藏篇",
+    "Desc": "每轮首次使用多格法术，按格上灵元五行种数获得护盾，最多4点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大海水",
+      "水",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大海水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬戌",
+        "癸亥"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 536,
+          "Quote": "海水不择细流故能成其大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 335,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_hai_shui",
+      "Role": "核心功法被动",
+      "Rules": [
+        "多格法术指Size至少2；只统计己方有效格上未分配灵元，不计卡上点亮。",
+        "成功使用提交时读取当前颜色集合，每轮至多一次，五行各只计一种。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "本轮首次成功使用Size至少2的法术时，按己方格上未分配灵元五行种数增加至多4护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_hai_shui_draw_hundred_streams",
+        "card_nayin_da_hai_shui_all_streams_return",
+        "card_nayin_da_hai_shui_room_for_streams",
+        "card_nayin_da_hai_shui_mixed_tide_wash",
+        "card_nayin_da_hai_shui_one_ocean"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_hai_shui_draw_hundred_streams",
+    "DisplayName": "汲百川",
+    "Desc": "回复2点MP；格上灵元不足三种五行时，再抽取1点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大海水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大海水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬戌",
+        "癸亥"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 536,
+          "Quote": "海水不择细流故能成其大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 335,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_hai_shui",
+      "Role": "少色补给与保留MP之间取舍",
+      "Rules": [
+        "先回复MP，再检查己方格上未分配灵元颜色；不足三种才计划抽取1。",
+        "抽取仍受实际MP和纯空格限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "回复至多2MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Draw",
+          "Effect": "回复后格上灵元不足三种五行时，按空格与MP限制抽取至多1MP生成灵元。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_hai_shui_draw_hundred_streams",
+        "card_nayin_da_hai_shui_all_streams_return",
+        "card_nayin_da_hai_shui_room_for_streams",
+        "card_nayin_da_hai_shui_mixed_tide_wash",
+        "card_nayin_da_hai_shui_one_ocean"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_hai_shui_all_streams_return",
+    "DisplayName": "万流归航",
+    "Desc": "发起5点水射拼点；格上灵元每有一种五行，本次+1，最多+5。",
+    "Rarity": 0,
+    "Size": 3,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 3
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大海水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大海水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬戌",
+        "癸亥"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 536,
+          "Quote": "海水不择细流故能成其大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 335,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_hai_shui",
+      "Role": "让多色余量支撑大法术",
+      "Rules": [
+        "只统计己方当前格上未分配灵元的五行种数，成功使用提交时快照。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "以5加格上未分配灵元五行种数生成一次Shui/SheJi拼点，最大10点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_hai_shui_draw_hundred_streams",
+        "card_nayin_da_hai_shui_all_streams_return",
+        "card_nayin_da_hai_shui_room_for_streams",
+        "card_nayin_da_hai_shui_mixed_tide_wash",
+        "card_nayin_da_hai_shui_one_ocean"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_hai_shui_room_for_streams",
+    "DisplayName": "百川容",
+    "Desc": "获得5点护盾；格上至少有三种五行灵元时，回复1点MP。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大海水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大海水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬戌",
+        "癸亥"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 536,
+          "Quote": "海水不择细流故能成其大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 335,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_hai_shui",
+      "Role": "保留多色灵元时兼顾防守与回蓝",
+      "Rules": [
+        "只统计己方有效格上尚未分配的五行灵元种数，不计卡上点亮，也不消耗灵元。",
+        "使用开始时检查颜色种数；回复MP受最大MP限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得5点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "使用开始时己方格上未分配灵元至少含三种五行，则回复至多1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_hai_shui_draw_hundred_streams",
+        "card_nayin_da_hai_shui_all_streams_return",
+        "card_nayin_da_hai_shui_room_for_streams",
+        "card_nayin_da_hai_shui_mixed_tide_wash",
+        "card_nayin_da_hai_shui_one_ocean"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_hai_shui_mixed_tide_wash",
+    "DisplayName": "混潮洗",
+    "Desc": "回复3点HP；格上至少有三种五行灵元时，清除1层五行负面。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1,
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大海水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大海水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬戌",
+        "癸亥"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 536,
+          "Quote": "海水不择细流故能成其大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 335,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_hai_shui",
+      "Role": "多色余量用于净化",
+      "Rules": [
+        "只统计己方格上未分配灵元；不消耗这些灵元。",
+        "按出血、中毒、寒意、灼烧、石化顺序清除存在的第一层，不处理冻结或伤势。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复至多3HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "格上至少三种五行灵元时，按Jin、Mu、Shui、Huo、Tu顺序清除已有第一层负面。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_hai_shui_draw_hundred_streams",
+        "card_nayin_da_hai_shui_all_streams_return",
+        "card_nayin_da_hai_shui_room_for_streams",
+        "card_nayin_da_hai_shui_mixed_tide_wash",
+        "card_nayin_da_hai_shui_one_ocean"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_hai_shui_one_ocean",
+    "DisplayName": "沧海归一",
+    "Desc": "发起6点水射击拼点；MP至少4点时，消耗4点MP使本次+4。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大海水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大海水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "壬戌",
+        "癸亥"
+      ],
+      "Aliases": [],
+      "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 536,
+          "Quote": "海水不择细流故能成其大"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 335,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_hai_shui",
+      "Role": "消耗蓝条储备换取一次大额拼点",
+      "Rules": [
+        "成功入待发槽时原子检查MP与扣减；MP至少4则扣4并生成10点拼点，不足4不扣且仅生成6点。",
+        "未能合法入槽时不扣MP；只生成一次拼点，不额外发动。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "与MP检查扣减作为同一提交，成功入槽时生成6点或已支付4MP后的10点Shui/SheJi拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "ReduceMP",
+          "Effect": "仅在本次攻击可成功入槽且当前MP至少4时原子扣除4MP；不足或入槽失败不扣。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_hai_shui_draw_hundred_streams",
+        "card_nayin_da_hai_shui_all_streams_return",
+        "card_nayin_da_hai_shui_room_for_streams",
+        "card_nayin_da_hai_shui_mixed_tide_wash",
+        "card_nayin_da_hai_shui_one_ocean"
+      ]
+    }
+  }
+]

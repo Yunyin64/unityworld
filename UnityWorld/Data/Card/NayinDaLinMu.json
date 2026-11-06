@@ -1,0 +1,449 @@
+[
+  {
+    "ID": "gongfa_nayin_da_lin_mu",
+    "DisplayName": "万木同根经",
+    "Desc": "每轮首次使用连片至少三张的木法术后，获得3点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大林木",
+      "木",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大林木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊辰",
+        "己巳"
+      ],
+      "Aliases": [],
+      "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 476,
+          "Quote": "枝干撼风柯条撑月"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 241,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_lin_mu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "木法术按费用含非零Mu判定；两卡占格共边即相连，连片按不同法术实例计数。",
+        "使用提交时读取布局；每个己方完整扫描轮最多触发一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "己方本轮首张属于至少三张正交连片木法术的成功使用卡，使自己获得3护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_lin_mu_canopy_needle",
+        "card_nayin_da_lin_mu_graft_branch",
+        "card_nayin_da_lin_mu_root_drink",
+        "card_nayin_da_lin_mu_forest_shade",
+        "card_nayin_da_lin_mu_return_to_roots"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_lin_mu_canopy_needle",
+    "DisplayName": "翠盖针",
+    "Desc": "发起3点木刺拼点；相邻木法术至少两张时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大林木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大林木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊辰",
+        "己巳"
+      ],
+      "Aliases": [],
+      "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 476,
+          "Quote": "枝干撼风柯条撑月"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 241,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_lin_mu",
+      "Role": "林中攻击支点",
+      "Rules": [
+        "按使用提交时正交相邻的不同木法术实例计数，不包括本卡。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成3点Mu/Ci拼点；正交相邻木法术至少两张时改为5点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_lin_mu_canopy_needle",
+        "card_nayin_da_lin_mu_graft_branch",
+        "card_nayin_da_lin_mu_root_drink",
+        "card_nayin_da_lin_mu_forest_shade",
+        "card_nayin_da_lin_mu_return_to_roots"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_lin_mu_graft_branch",
+    "DisplayName": "连梢引",
+    "Desc": "抽取2点MP转为灵元；相邻木法术至少两张时，再抽取1点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大林木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大林木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊辰",
+        "己巳"
+      ],
+      "Aliases": [],
+      "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 476,
+          "Quote": "枝干撼风柯条撑月"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 241,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_lin_mu",
+      "Role": "密集布置补给",
+      "Rules": [
+        "相邻按正交共边且费用含非零Mu的不同法术计数。",
+        "按实际MP与有效空格数量抽取，只支付实际生成数量的MP。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Draw",
+          "Effect": "依据相邻木法术是否至少两张，计划抽取3或2MP；仅在合法空格生成实际可负担的灵元。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_lin_mu_canopy_needle",
+        "card_nayin_da_lin_mu_graft_branch",
+        "card_nayin_da_lin_mu_root_drink",
+        "card_nayin_da_lin_mu_forest_shade",
+        "card_nayin_da_lin_mu_return_to_roots"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_lin_mu_root_drink",
+    "DisplayName": "根饮诀",
+    "Desc": "回复2点HP；本卡连片木法术达到三张时，再回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大林木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大林木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊辰",
+        "己巳"
+      ],
+      "Aliases": [],
+      "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 476,
+          "Quote": "枝干撼风柯条撑月"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 241,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_lin_mu",
+      "Role": "连片续航",
+      "Rules": [
+        "连片规则同通用正交连通查询，包括本卡；恢复均受各自上限限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "回复至多2HP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "本卡属于至少三张正交连片木法术时，回复至多1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_lin_mu_canopy_needle",
+        "card_nayin_da_lin_mu_graft_branch",
+        "card_nayin_da_lin_mu_root_drink",
+        "card_nayin_da_lin_mu_forest_shade",
+        "card_nayin_da_lin_mu_return_to_roots"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_lin_mu_forest_shade",
+    "DisplayName": "林阴帐",
+    "Desc": "获得4点护盾；本卡连片木法术达到三张时，清除1层中毒。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大林木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大林木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊辰",
+        "己巳"
+      ],
+      "Aliases": [],
+      "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 476,
+          "Quote": "枝干撼风柯条撑月"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 241,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_lin_mu",
+      "Role": "树林庇护与净化",
+      "Rules": [
+        "中毒指现有木系负面状态；只减1层，不清除伤势或冻结。",
+        "无中毒或连片不足时仍获得基础护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4点普通持久护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "连片木法术至少三张时，清除己方1层Mu负面状态中毒。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_lin_mu_canopy_needle",
+        "card_nayin_da_lin_mu_graft_branch",
+        "card_nayin_da_lin_mu_root_drink",
+        "card_nayin_da_lin_mu_forest_shade",
+        "card_nayin_da_lin_mu_return_to_roots"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_lin_mu_return_to_roots",
+    "DisplayName": "归根汲",
+    "Desc": "获得2点护盾；将一枚格上木灵元引入相邻、尚缺木灵元的法术。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大林木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大林木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "戊辰",
+        "己巳"
+      ],
+      "Aliases": [],
+      "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 476,
+          "Quote": "枝干撼风柯条撑月"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 241,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_lin_mu",
+      "Role": "定向补灵而不额外发动",
+      "Rules": [
+        "目标是正交相邻、非待发且仍缺Mu的其他法术，按扫描顺序选首张。",
+        "源取己方格上最早的Mu灵元；无源或目标则不转移，不立即发动目标。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "把一枚实际格上Mu灵元守恒转入所选相邻法术的点亮记录，遵守其原有缺额。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_lin_mu_canopy_needle",
+        "card_nayin_da_lin_mu_graft_branch",
+        "card_nayin_da_lin_mu_root_drink",
+        "card_nayin_da_lin_mu_forest_shade",
+        "card_nayin_da_lin_mu_return_to_roots"
+      ]
+    }
+  }
+]

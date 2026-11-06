@@ -1,0 +1,452 @@
+[
+  {
+    "ID": "gongfa_nayin_shan_tou_huo",
+    "DisplayName": "燎野延霞经",
+    "Desc": "每轮首次火法激活时，若敌方有灼烧，获得2点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山头火",
+      "火",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山头火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲戌",
+        "乙亥"
+      ],
+      "Aliases": [],
+      "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 464,
+          "Quote": "野焚燎原延烧极目"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 251,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_tou_huo",
+      "Role": "核心功法被动",
+      "Rules": [
+        "灼烧沿用Element_Debuff_Huo：抽灵时清除自身正面五行状态，不视为持续伤害。",
+        "条件读取法术主动效果结算后的敌方状态；同名功法每轮共一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "每轮首次己方火法Use完成后，敌方有至少1层Element_Debuff_Huo时获得2点持续护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_tou_huo_cast_tinder",
+        "card_nayin_shan_tou_huo_wind_on_ridge",
+        "card_nayin_shan_tou_huo_tongue_of_flame",
+        "card_nayin_shan_tou_huo_gather_smoke",
+        "card_nayin_shan_tou_huo_burn_ridge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_tou_huo_cast_tinder",
+    "DisplayName": "焚草投炬",
+    "Desc": "发起2点火射拼点，给敌方施加1层灼烧。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山头火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山头火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲戌",
+        "乙亥"
+      ],
+      "Aliases": [],
+      "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 464,
+          "Quote": "野焚燎原延烧极目"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 251,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_tou_huo",
+      "Role": "开始压制对手五行正面状态",
+      "Rules": [
+        "灼烧是现有角色状态Element_Debuff_Huo，上限及存续沿用原定义。",
+        "灼烧在本次法术成功Use时施加，不要求命中本体。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起2点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "AddElementBuff",
+          "Effect": "对敌方添加1层Huo负面五行状态，即灼烧。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_tou_huo_cast_tinder",
+        "card_nayin_shan_tou_huo_wind_on_ridge",
+        "card_nayin_shan_tou_huo_tongue_of_flame",
+        "card_nayin_shan_tou_huo_gather_smoke",
+        "card_nayin_shan_tou_huo_burn_ridge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_tou_huo_wind_on_ridge",
+    "DisplayName": "风过山脊",
+    "Desc": "给敌方施加2层灼烧；若其有再生，再移除1层再生。",
+    "Rarity": 0,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山头火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山头火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲戌",
+        "乙亥"
+      ],
+      "Aliases": [],
+      "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 464,
+          "Quote": "野焚燎原延烧极目"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 251,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_tou_huo",
+      "Role": "压制已有恢复状态",
+      "Rules": [
+        "再生为Element_Buff_Mu，仅移除实际存在的1层，不影响其他状态。",
+        "灼烧沿用现有定义，不新增传播标记或持续伤害。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "AddElementBuff",
+          "Effect": "对敌方添加2层灼烧。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "若敌方存在Element_Buff_Mu则移除1层。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_tou_huo_cast_tinder",
+        "card_nayin_shan_tou_huo_wind_on_ridge",
+        "card_nayin_shan_tou_huo_tongue_of_flame",
+        "card_nayin_shan_tou_huo_gather_smoke",
+        "card_nayin_shan_tou_huo_burn_ridge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_tou_huo_tongue_of_flame",
+    "DisplayName": "火舌追根",
+    "Desc": "发起4点火斩拼点；敌方至少有2层灼烧时，本次+3。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山头火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山头火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲戌",
+        "乙亥"
+      ],
+      "Aliases": [],
+      "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 464,
+          "Quote": "野焚燎原延烧极目"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 251,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_tou_huo",
+      "Role": "利用灼烧积累发动强攻",
+      "Rules": [
+        "在拼点创建时读取敌方灼烧层数，不消费状态。",
+        "本次只生成一条攻击拼点，额外数值最多3。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "敌方灼烧至少2层时发起7点火斩拼点，否则4点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_tou_huo_cast_tinder",
+        "card_nayin_shan_tou_huo_wind_on_ridge",
+        "card_nayin_shan_tou_huo_tongue_of_flame",
+        "card_nayin_shan_tou_huo_gather_smoke",
+        "card_nayin_shan_tou_huo_burn_ridge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_tou_huo_gather_smoke",
+    "DisplayName": "拢烟成障",
+    "Desc": "获得4点护盾，并移除自身1层灼烧。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山头火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山头火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲戌",
+        "乙亥"
+      ],
+      "Aliases": [],
+      "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 464,
+          "Quote": "野焚燎原延烧极目"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 251,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_tou_huo",
+      "Role": "抵抗同类五行压制",
+      "Rules": [
+        "仅移除自身Element_Debuff_Huo的1层；没有灼烧仍获得护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "移除自身1层Element_Debuff_Huo。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_tou_huo_cast_tinder",
+        "card_nayin_shan_tou_huo_wind_on_ridge",
+        "card_nayin_shan_tou_huo_tongue_of_flame",
+        "card_nayin_shan_tou_huo_gather_smoke",
+        "card_nayin_shan_tou_huo_burn_ridge"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_shan_tou_huo_burn_ridge",
+    "DisplayName": "尽焰焚脊",
+    "Desc": "发起3点火射拼点；消耗敌方至多2层灼烧，各清除其1层正面五行状态。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "山头火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "山头火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "甲戌",
+        "乙亥"
+      ],
+      "Aliases": [],
+      "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 464,
+          "Quote": "野焚燎原延烧极目"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 251,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_shan_tou_huo",
+      "Role": "把未来抽灵压制提前兑现",
+      "Rules": [
+        "先移除敌方至多2层灼烧，再按实际移除量清除其正面五行状态。",
+        "正面状态选择沿用RemoveElementBuff的战斗随机规则；无可清状态时不伪造收益。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起3点火射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "移除敌方至多2层灼烧，再按实移层数调用通用随机正面五行状态清除。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_shan_tou_huo_cast_tinder",
+        "card_nayin_shan_tou_huo_wind_on_ridge",
+        "card_nayin_shan_tou_huo_tongue_of_flame",
+        "card_nayin_shan_tou_huo_gather_smoke",
+        "card_nayin_shan_tou_huo_burn_ridge"
+      ]
+    }
+  }
+]

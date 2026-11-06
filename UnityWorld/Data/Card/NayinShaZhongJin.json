@@ -1,0 +1,463 @@
+[
+  {
+    "ID": "gongfa_nayin_sha_zhong_jin",
+    "DisplayName": "黄碛淘真录",
+    "Desc": "每轮首次施放沙中金法术后，将最早一枚格上非金灵元转回1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中金",
+      "金",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲午",
+        "乙未"
+      ],
+      "Aliases": [
+        "砂中金"
+      ],
+      "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 432,
+          "Quote": "宝质藏砂直教淘洗为珍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 287,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_jin",
+      "Role": "核心功法被动",
+      "Rules": [
+        "只取未分配的格上木水火土灵元，按扫描顺序。",
+        "MP已满或没有目标时不移除灵元；移除和恢复原子提交。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Convert",
+          "Effect": "每轮首次沙中金法术施放后，若MP未满，移除最早一枚格上非Jin灵元并恢复1MP；失败不移除。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+        "card_nayin_sha_zhong_jin_clearwater_sieve",
+        "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+        "card_nayin_sha_zhong_jin_desert_ingot_strike",
+        "card_nayin_sha_zhong_jin_sand_ballast_ward"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+    "DisplayName": "浅滩淘金",
+    "Desc": "获得2点护盾，并将最早一枚格上非金灵元改为金。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲午",
+        "乙未"
+      ],
+      "Aliases": [
+        "砂中金"
+      ],
+      "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 432,
+          "Quote": "宝质藏砂直教淘洗为珍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 287,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_jin",
+      "Role": "无需额外材料的提纯入口",
+      "Rules": [
+        "只对有效格内未分配灵元原地改色，位置和数量不变；无目标仍得护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加2普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RecolorMana",
+          "Effect": "将扫描顺序最前的格上非Jin五行灵元原地改为Jin。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+        "card_nayin_sha_zhong_jin_clearwater_sieve",
+        "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+        "card_nayin_sha_zhong_jin_desert_ingot_strike",
+        "card_nayin_sha_zhong_jin_sand_ballast_ward"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_jin_clearwater_sieve",
+    "DisplayName": "清流筛金",
+    "Desc": "回复1点MP，再将最早一枚格上非金灵元转回1点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲午",
+        "乙未"
+      ],
+      "Aliases": [
+        "砂中金"
+      ],
+      "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 432,
+          "Quote": "宝质藏砂直教淘洗为珍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 287,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_jin",
+      "Role": "回收暂时用不上的异色",
+      "Rules": [
+        "基础回复后仍缺MP才回收，按扫描顺序选未分配非金灵元。",
+        "回收与回复原子提交；无目标或MP已满不移除灵元。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "先恢复1MP，不超过上限。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Convert",
+          "Effect": "若仍缺MP，原子移除最早一枚格上非Jin灵元并恢复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+        "card_nayin_sha_zhong_jin_clearwater_sieve",
+        "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+        "card_nayin_sha_zhong_jin_desert_ingot_strike",
+        "card_nayin_sha_zhong_jin_sand_ballast_ward"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+    "DisplayName": "磁缕引金",
+    "Desc": "发起4点金刺拼点，并将最早一枚格上金灵元移到本卡右侧空格。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲午",
+        "乙未"
+      ],
+      "Aliases": [
+        "砂中金"
+      ],
+      "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 432,
+          "Quote": "宝质藏砂直教淘洗为珍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 287,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_jin",
+      "Role": "将散落金灵元聚到后续扫描位置",
+      "Rules": [
+        "右侧须为背包内有效、无卡且无灵元格；不合法时只攻击。",
+        "搬运已有灵元且总量守恒，不补扫、不直接点亮或额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "建立4点金刺拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "把扫描最前格上Jin移到本卡横条右端紧邻的合法空格；原子移动，失败不改变原格。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+        "card_nayin_sha_zhong_jin_clearwater_sieve",
+        "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+        "card_nayin_sha_zhong_jin_desert_ingot_strike",
+        "card_nayin_sha_zhong_jin_sand_ballast_ward"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_jin_desert_ingot_strike",
+    "DisplayName": "黄碛重击",
+    "Desc": "发起6点金打拼点；格上尚有至少两枚非金灵元时，本次增加3点。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲午",
+        "乙未"
+      ],
+      "Aliases": [
+        "砂中金"
+      ],
+      "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 432,
+          "Quote": "宝质藏砂直教淘洗为珍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 287,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_jin",
+      "Role": "保留异色也能派上用场",
+      "Rules": [
+        "只计施放时尚未分配的格上非金五行灵元，不消耗它们。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "格上非Jin灵元至少2枚时建立9金打，否则建立6金打。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+        "card_nayin_sha_zhong_jin_clearwater_sieve",
+        "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+        "card_nayin_sha_zhong_jin_desert_ingot_strike",
+        "card_nayin_sha_zhong_jin_sand_ballast_ward"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_sha_zhong_jin_sand_ballast_ward",
+    "DisplayName": "积金护身",
+    "Desc": "获得3点护盾；消去至多两枚格上非金灵元，每枚再获得2点护盾。",
+    "Rarity": 2,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "沙中金",
+      "金",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "沙中金",
+      "Element": "Jin",
+      "Ganzhi": [
+        "甲午",
+        "乙未"
+      ],
+      "Aliases": [
+        "砂中金"
+      ],
+      "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 432,
+          "Quote": "宝质藏砂直教淘洗为珍"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 287,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_sha_zhong_jin",
+      "Role": "把暂时无用的灵元用于防守",
+      "Rules": [
+        "按扫描顺序取未分配非金灵元；每枚移除与对应加盾原子提交。",
+        "只按实际移除数奖励，最多2枚；不触碰卡内点亮。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加3普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "Convert",
+          "Effect": "依扫描顺序原子移除最多2枚格上非Jin灵元，每枚使己方ShieldValue增加2。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_sha_zhong_jin_shallow_sand_scoop",
+        "card_nayin_sha_zhong_jin_clearwater_sieve",
+        "card_nayin_sha_zhong_jin_magnetic_dust_thread",
+        "card_nayin_sha_zhong_jin_desert_ingot_strike",
+        "card_nayin_sha_zhong_jin_sand_ballast_ward"
+      ]
+    }
+  }
+]

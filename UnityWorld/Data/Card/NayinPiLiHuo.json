@@ -1,0 +1,449 @@
+[
+  {
+    "ID": "gongfa_nayin_pi_li_huo",
+    "DisplayName": "九天号令诀",
+    "Desc": "每轮首次敌方形成待发攻击时，己方现有待发攻击拼点+2。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "霹雳火",
+      "火",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "霹雳火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊子",
+        "己丑"
+      ],
+      "Aliases": [],
+      "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 444,
+          "Quote": "九天号令电掣金蛇之势"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 275,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_pi_li_huo",
+      "Role": "核心功法被动",
+      "Rules": [
+        "仅响应新的敌方待发攻击记录，不响应原记录数值变化；己方无待发攻击则无收益。",
+        "只修改己方已有记录，不生成第二条待发；同名功法每轮共一次。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "每轮首个敌方新待发攻击入槽时，若己方也有待发攻击，将己方该记录数值增加2。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_pi_li_huo_call_thunder",
+        "card_nayin_pi_li_huo_bind_blade",
+        "card_nayin_pi_li_huo_break_guard",
+        "card_nayin_pi_li_huo_return_thunder",
+        "card_nayin_pi_li_huo_cease_order"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_pi_li_huo_call_thunder",
+    "DisplayName": "叩天惊雷",
+    "Desc": "发起3点火射拼点；敌方有待发拼点时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "霹雳火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "霹雳火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊子",
+        "己丑"
+      ],
+      "Aliases": [],
+      "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 444,
+          "Quote": "九天号令电掣金蛇之势"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 275,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_pi_li_huo",
+      "Role": "抓住对方出手窗口",
+      "Rules": [
+        "创建本次拼点前检查敌方待发槽，攻击或防御均可。",
+        "只创建一条本次攻击记录。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "敌方待发槽非空时发起5点火射拼点，否则3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_pi_li_huo_call_thunder",
+        "card_nayin_pi_li_huo_bind_blade",
+        "card_nayin_pi_li_huo_break_guard",
+        "card_nayin_pi_li_huo_return_thunder",
+        "card_nayin_pi_li_huo_cease_order"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_pi_li_huo_bind_blade",
+    "DisplayName": "电蛇缚刃",
+    "Desc": "获得3点护盾，使敌方当前待发攻击拼点降低1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "霹雳火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "霹雳火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊子",
+        "己丑"
+      ],
+      "Aliases": [],
+      "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 444,
+          "Quote": "九天号令电掣金蛇之势"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 275,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_pi_li_huo",
+      "Role": "直接削弱已出手攻击",
+      "Rules": [
+        "只降低敌方当前攻击记录，最低0；不移除记录或改变来源。",
+        "无待发攻击时仍有护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "ModifyPending",
+          "Effect": "敌方当前待发攻击数值减少1，最低0。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_pi_li_huo_call_thunder",
+        "card_nayin_pi_li_huo_bind_blade",
+        "card_nayin_pi_li_huo_break_guard",
+        "card_nayin_pi_li_huo_return_thunder",
+        "card_nayin_pi_li_huo_cease_order"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_pi_li_huo_break_guard",
+    "DisplayName": "抢声裂障",
+    "Desc": "敌方当前待发防御拼点降低2，然后发起4点火刺拼点。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "霹雳火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "霹雳火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊子",
+        "己丑"
+      ],
+      "Aliases": [],
+      "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 444,
+          "Quote": "九天号令电掣金蛇之势"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 275,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_pi_li_huo",
+      "Role": "先压低防御再攻击",
+      "Rules": [
+        "防御指待发盾或格挡记录，不是角色持有的持续护盾；最低降到0。",
+        "先改敌方记录，再正常创建本次攻击；无防御记录仍发起攻击。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "敌方当前待发防御拼点减少2，最低0。",
+          "Support": "SharedExtension"
+        },
+        {
+          "Action": "Attack",
+          "Effect": "发起4点火刺拼点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_pi_li_huo_call_thunder",
+        "card_nayin_pi_li_huo_bind_blade",
+        "card_nayin_pi_li_huo_break_guard",
+        "card_nayin_pi_li_huo_return_thunder",
+        "card_nayin_pi_li_huo_cease_order"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_pi_li_huo_return_thunder",
+    "DisplayName": "回霆护心",
+    "Desc": "撤去己方待发攻击，转为等值护盾，最多6点；无待发攻击则获得3点。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "霹雳火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "霹雳火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊子",
+        "己丑"
+      ],
+      "Aliases": [],
+      "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 444,
+          "Quote": "九天号令电掣金蛇之势"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 275,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_pi_li_huo",
+      "Role": "放弃出手换取防守",
+      "Rules": [
+        "有待发攻击时按其非负数值获得0至6点护盾；只存在防御待发时不撤它，给3点护盾。",
+        "合法撤回须结束来源本次施放并解除InPending/_awaitingApply，使其以后可正常收灵。",
+        "不执行该记录的Apply、命中或胜败附效，不返灵元、不补扫描或立即再Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "ModifyPending",
+          "Effect": "合法撤回己方待发攻击，解除来源待发状态且取消该次附效；按原值给0至6护盾，无待发攻击则给3。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_pi_li_huo_call_thunder",
+        "card_nayin_pi_li_huo_bind_blade",
+        "card_nayin_pi_li_huo_break_guard",
+        "card_nayin_pi_li_huo_return_thunder",
+        "card_nayin_pi_li_huo_cease_order"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_pi_li_huo_cease_order",
+    "DisplayName": "落雷止戈",
+    "Desc": "获得4点护盾；若敌方有待发攻击，冻结它的来源卡。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "霹雳火",
+      "火",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "霹雳火",
+      "Element": "Huo",
+      "Ganzhi": [
+        "戊子",
+        "己丑"
+      ],
+      "Aliases": [],
+      "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 444,
+          "Quote": "九天号令电掣金蛇之势"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 275,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_pi_li_huo",
+      "Role": "延后对手下一次出手",
+      "Rules": [
+        "冻结作用于敌方当前待发攻击的来源卡，不取消或延迟已经生成的待发记录。",
+        "沿用现有冻结规则：下次完整扫描跳过并解冻，不叠加；无来源时仅得护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "Freeze",
+          "Effect": "冻结敌方当前待发攻击的来源卡，不改变当前待发记录。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_pi_li_huo_call_thunder",
+        "card_nayin_pi_li_huo_bind_blade",
+        "card_nayin_pi_li_huo_break_guard",
+        "card_nayin_pi_li_huo_return_thunder",
+        "card_nayin_pi_li_huo_cease_order"
+      ]
+    }
+  }
+]

@@ -1,0 +1,454 @@
+[
+  {
+    "ID": "gongfa_nayin_da_yi_tu",
+    "DisplayName": "万途相承诀",
+    "Desc": "每轮首次接连施放两张不同五行法术时，回复1点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大驿土",
+      "土",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大驿土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "戊申",
+        "己酉"
+      ],
+      "Aliases": [],
+      "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 508,
+          "Quote": "九州无所不通万国无行不至"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 309,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_yi_tu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "不同五行指两卡ManaCost非零元素集合没有交集；无上一张法术则不满足。",
+        "上一张仅取此前最近一次己方真实成功Use，当前卡主动与核心效果结算完后才更新记录。",
+        "上一张成功施法历史跨轮保留，轮初只重置功法次数；同名功法每轮最多回复1MP。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "每轮首次当前法术与上一张己方法术费用元素集合不相交时，回复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_yi_tu_send_dispatch",
+        "card_nayin_da_yi_tu_swift_dispatch",
+        "card_nayin_da_yi_tu_station_reception",
+        "card_nayin_da_yi_tu_hold_dispatch",
+        "card_nayin_da_yi_tu_return_dispatch"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_yi_tu_send_dispatch",
+    "DisplayName": "发驿通途",
+    "Desc": "获得2点护盾；上张法术不含土元素时，再回复1点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大驿土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大驿土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "戊申",
+        "己酉"
+      ],
+      "Aliases": [],
+      "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 508,
+          "Quote": "九州无所不通万国无行不至"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 309,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_yi_tu",
+      "Role": "非土法术之后补给",
+      "Rules": [
+        "上一张须为此前最近一次己方成功Use；不存在时不获得条件收益。",
+        "判定ManaCost非零元素，不把额外效果算作上一张法术。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "上一张法术存在且ManaCost不含Tu时，额外回复1MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_yi_tu_send_dispatch",
+        "card_nayin_da_yi_tu_swift_dispatch",
+        "card_nayin_da_yi_tu_station_reception",
+        "card_nayin_da_yi_tu_hold_dispatch",
+        "card_nayin_da_yi_tu_return_dispatch"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_yi_tu_swift_dispatch",
+    "DisplayName": "快马催行",
+    "Desc": "己方背包充能2Tick；上张法术含木元素时，回复1点HP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大驿土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大驿土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "戊申",
+        "己酉"
+      ],
+      "Aliases": [],
+      "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 508,
+          "Quote": "九州无所不通万国无行不至"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 309,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_yi_tu",
+      "Role": "接在木法之后推进扫描",
+      "Rules": [
+        "只读取上一张己方成功Use的费用元素；混费含Mu也满足。",
+        "充能为基准扫描进度，不改卡CD或立即额外Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Charge",
+          "Effect": "己方背包充能2个基准Tick。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "上一张法术ManaCost含Mu时，回复1HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_yi_tu_send_dispatch",
+        "card_nayin_da_yi_tu_swift_dispatch",
+        "card_nayin_da_yi_tu_station_reception",
+        "card_nayin_da_yi_tu_hold_dispatch",
+        "card_nayin_da_yi_tu_return_dispatch"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_yi_tu_station_reception",
+    "DisplayName": "亭候接锋",
+    "Desc": "发起3点土打拼点；上张法术含金元素时，本次+2。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大驿土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大驿土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "戊申",
+        "己酉"
+      ],
+      "Aliases": [],
+      "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 508,
+          "Quote": "九州无所不通万国无行不至"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 309,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_yi_tu",
+      "Role": "承接金法攻击",
+      "Rules": [
+        "只读取此前最近一次己方成功Use，费用含Jin即满足。",
+        "额外数值只属于本次拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "上一张法术ManaCost含Jin时发起5点土打拼点，否则3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_yi_tu_send_dispatch",
+        "card_nayin_da_yi_tu_swift_dispatch",
+        "card_nayin_da_yi_tu_station_reception",
+        "card_nayin_da_yi_tu_hold_dispatch",
+        "card_nayin_da_yi_tu_return_dispatch"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_yi_tu_hold_dispatch",
+    "DisplayName": "关津清流",
+    "Desc": "获得4点护盾；上张法术含水元素时，移除自身1层灼烧。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大驿土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大驿土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "戊申",
+        "己酉"
+      ],
+      "Aliases": [],
+      "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 508,
+          "Quote": "九州无所不通万国无行不至"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 309,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_yi_tu",
+      "Role": "承接水法净化",
+      "Rules": [
+        "只读取上一张己方法术；灼烧沿用Element_Debuff_Huo。",
+        "没有上一张或没有灼烧仍获得基础护盾。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得4点持续护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "上一张法术ManaCost含Shui时，移除自身1层灼烧。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_yi_tu_send_dispatch",
+        "card_nayin_da_yi_tu_swift_dispatch",
+        "card_nayin_da_yi_tu_station_reception",
+        "card_nayin_da_yi_tu_hold_dispatch",
+        "card_nayin_da_yi_tu_return_dispatch"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_da_yi_tu_return_dispatch",
+    "DisplayName": "万里回响",
+    "Desc": "发起5点土射拼点；上张法术含火元素时，使敌方减速0.3秒。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "大驿土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "大驿土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "戊申",
+        "己酉"
+      ],
+      "Aliases": [],
+      "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 508,
+          "Quote": "九州无所不通万国无行不至"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 309,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_da_yi_tu",
+      "Role": "承接火法压慢对手",
+      "Rules": [
+        "只读取上一张己方成功Use，费用含Huo即满足。",
+        "减速沿用整包半速，0.3秒为3个真实Tick，同类加时。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "发起5点土射拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Slow",
+          "Effect": "上一张法术ManaCost含Huo时，对敌方整包施加3个真实Tick减速。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_da_yi_tu_send_dispatch",
+        "card_nayin_da_yi_tu_swift_dispatch",
+        "card_nayin_da_yi_tu_station_reception",
+        "card_nayin_da_yi_tu_hold_dispatch",
+        "card_nayin_da_yi_tu_return_dispatch"
+      ]
+    }
+  }
+]

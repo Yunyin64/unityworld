@@ -1,0 +1,452 @@
+[
+  {
+    "ID": "gongfa_nayin_song_bai_mu",
+    "DisplayName": "岁寒不凋诀",
+    "Desc": "每轮首次己方法术因冻结跳过扫描时，获得3点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "松柏木",
+      "木",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "松柏木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚寅",
+        "辛卯"
+      ],
+      "Aliases": [],
+      "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 472,
+          "Quote": "苍松冬秀"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 279,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_song_bai_mu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "只认法术末格实际消费冻结、跳过扫描机会的事件；抵挡冻结或主动解冻不触发。",
+        "每轮最多一次，不补发使用或点亮。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "本轮首次己方FaShu在扫描末格因冻结跳过机会时，获得3普通护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_song_bai_mu_frost_bone",
+        "card_nayin_song_bai_mu_snow_fall",
+        "card_nayin_song_bai_mu_evergreen_seal",
+        "card_nayin_song_bai_mu_carve_ring",
+        "card_nayin_song_bai_mu_twisted_root"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_song_bai_mu_frost_bone",
+    "DisplayName": "霜骨针",
+    "Desc": "发起3点木刺拼点；己方有被冻结的法术时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "松柏木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "松柏木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚寅",
+        "辛卯"
+      ],
+      "Aliases": [],
+      "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 472,
+          "Quote": "苍松冬秀"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 279,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_song_bai_mu",
+      "Role": "同伴受冻时反击",
+      "Rules": [
+        "使用提交时检查己方其他法术的冻结状态，之后解冻不回改拼点。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "己方有其他被冻结法术时生成5点Mu/Ci拼点，否则生成3点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_song_bai_mu_frost_bone",
+        "card_nayin_song_bai_mu_snow_fall",
+        "card_nayin_song_bai_mu_evergreen_seal",
+        "card_nayin_song_bai_mu_carve_ring",
+        "card_nayin_song_bai_mu_twisted_root"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_song_bai_mu_snow_fall",
+    "DisplayName": "雪落枝",
+    "Desc": "获得2点护盾，并解冻己方最早的一张被冻结法术。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "松柏木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "松柏木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚寅",
+        "辛卯"
+      ],
+      "Aliases": [],
+      "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 472,
+          "Quote": "苍松冬秀"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 279,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_song_bai_mu",
+      "Role": "清除现有冻结",
+      "Rules": [
+        "按扫描顺序选首张被冻结的己方FaShu；无目标仍获得护盾。",
+        "解冻不补发已经错过的扫描机会。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "清除扫描顺序最早的一张己方法术的冻结，不立即使用目标。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_song_bai_mu_frost_bone",
+        "card_nayin_song_bai_mu_snow_fall",
+        "card_nayin_song_bai_mu_evergreen_seal",
+        "card_nayin_song_bai_mu_carve_ring",
+        "card_nayin_song_bai_mu_twisted_root"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_song_bai_mu_evergreen_seal",
+    "DisplayName": "冬青印",
+    "Desc": "回复2点MP；己方正在减速时，再获得2点护盾。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "松柏木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "松柏木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚寅",
+        "辛卯"
+      ],
+      "Aliases": [],
+      "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 472,
+          "Quote": "苍松冬秀"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 279,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_song_bai_mu",
+      "Role": "逆境中的资源补给",
+      "Rules": [
+        "以使用开始时己方SlowTicks大于0为准；加速同时存在也仍视为有减速。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "回复至多2MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "GainShield",
+          "Effect": "使用开始时己方有剩余减速持续时间，则获得2护盾。",
+          "Support": "ExistingCore"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_song_bai_mu_frost_bone",
+        "card_nayin_song_bai_mu_snow_fall",
+        "card_nayin_song_bai_mu_evergreen_seal",
+        "card_nayin_song_bai_mu_carve_ring",
+        "card_nayin_song_bai_mu_twisted_root"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_song_bai_mu_carve_ring",
+    "DisplayName": "凌霜护体",
+    "Desc": "获得5点护盾；己方有被冻结的法术时，再回复1点HP。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "松柏木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "松柏木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚寅",
+        "辛卯"
+      ],
+      "Aliases": [],
+      "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 472,
+          "Quote": "苍松冬秀"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 279,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_song_bai_mu",
+      "Role": "保留冻结压力时的防守补偿",
+      "Rules": [
+        "只需至少一张己方FaShu冻结，多张不重复获得治疗。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得5点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "Heal",
+          "Effect": "己方存在被冻结法术时回复至多1HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_song_bai_mu_frost_bone",
+        "card_nayin_song_bai_mu_snow_fall",
+        "card_nayin_song_bai_mu_evergreen_seal",
+        "card_nayin_song_bai_mu_carve_ring",
+        "card_nayin_song_bai_mu_twisted_root"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_song_bai_mu_twisted_root",
+    "DisplayName": "虬根破寒",
+    "Desc": "发起5点木刺拼点；己方正在减速时，背包双速5个Tick。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "松柏木",
+      "木",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "松柏木",
+      "Element": "Mu",
+      "Ganzhi": [
+        "庚寅",
+        "辛卯"
+      ],
+      "Aliases": [],
+      "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 472,
+          "Quote": "苍松冬秀"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 279,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_song_bai_mu",
+      "Role": "用现有加速抵消减速时段",
+      "Rules": [
+        "是否减速在使用开始时判定；Haste与Slow按现有倍率相乘，同类加时。",
+        "时长为5个真实Tick，不修改单卡CD或当前待发记录。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成5点Mu/Ci拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "Haste",
+          "Effect": "使用开始时己方SlowTicks大于0，则为己方整包增加5真实Tick的Haste。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_song_bai_mu_frost_bone",
+        "card_nayin_song_bai_mu_snow_fall",
+        "card_nayin_song_bai_mu_evergreen_seal",
+        "card_nayin_song_bai_mu_carve_ring",
+        "card_nayin_song_bai_mu_twisted_root"
+      ]
+    }
+  }
+]

@@ -1,0 +1,456 @@
+[
+  {
+    "ID": "gongfa_nayin_jing_quan_shui",
+    "DisplayName": "八家共井经",
+    "Desc": "每轮首次水法施放后，若MP不高于上限一半，回复2点MP。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "井泉水",
+      "水",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "井泉水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲申",
+        "乙酉"
+      ],
+      "Aliases": [
+        "泉中水"
+      ],
+      "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 532,
+          "Quote": "八家凿之以同饮"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 269,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jing_quan_shui",
+      "Role": "核心功法被动",
+      "Rules": [
+        "水法按ManaCost含Shui判断；在该法术效果结束后检查MP。",
+        "半量向下取整，每轮只检查首次水法，不因未满足条件补发。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "每轮第一张成功水法效果结束后，MP<=floor(最大MP/2)则恢复2MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jing_quan_shui_dredge_dry_well",
+        "card_nayin_jing_quan_shui_neighbor_ladle",
+        "card_nayin_jing_quan_shui_winch_lifted_wave",
+        "card_nayin_jing_quan_shui_clean_well_silt",
+        "card_nayin_jing_quan_shui_seal_well_for_drought"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jing_quan_shui_dredge_dry_well",
+    "DisplayName": "凿井浚源",
+    "Desc": "回复2点MP；施放前MP为0时，再回复2点MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "井泉水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "井泉水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲申",
+        "乙酉"
+      ],
+      "Aliases": [
+        "泉中水"
+      ],
+      "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 532,
+          "Quote": "八家凿之以同饮"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 269,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jing_quan_shui",
+      "Role": "接近干涸时补得更多",
+      "Rules": [
+        "以本次效果开始前MP为快照；总恢复不超过最大MP。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "施放前MP为0恢复4MP，否则恢复2MP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jing_quan_shui_dredge_dry_well",
+        "card_nayin_jing_quan_shui_neighbor_ladle",
+        "card_nayin_jing_quan_shui_winch_lifted_wave",
+        "card_nayin_jing_quan_shui_clean_well_silt",
+        "card_nayin_jing_quan_shui_seal_well_for_drought"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jing_quan_shui_neighbor_ladle",
+    "DisplayName": "邻瓢共饮",
+    "Desc": "回复2点HP；施放前MP不高于一半时，再回复2点HP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "井泉水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "井泉水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲申",
+        "乙酉"
+      ],
+      "Aliases": [
+        "泉中水"
+      ],
+      "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 532,
+          "Quote": "八家凿之以同饮"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 269,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jing_quan_shui",
+      "Role": "缺蓝时仍能救急回血",
+      "Rules": [
+        "以施放前MP判断，半量向下取整；恢复受HP上限限制。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Heal",
+          "Effect": "施放前MP<=floor(最大MP/2)时恢复4HP，否则恢复2HP。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jing_quan_shui_dredge_dry_well",
+        "card_nayin_jing_quan_shui_neighbor_ladle",
+        "card_nayin_jing_quan_shui_winch_lifted_wave",
+        "card_nayin_jing_quan_shui_clean_well_silt",
+        "card_nayin_jing_quan_shui_seal_well_for_drought"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jing_quan_shui_winch_lifted_wave",
+    "DisplayName": "辘轳扬波",
+    "Desc": "发起4点水射击拼点；本次拼点获胜后，回复2点MP。",
+    "Rarity": 1,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "井泉水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "井泉水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲申",
+        "乙酉"
+      ],
+      "Aliases": [
+        "泉中水"
+      ],
+      "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 532,
+          "Quote": "八家凿之以同饮"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 269,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jing_quan_shui",
+      "Role": "以胜利补足周转",
+      "Rules": [
+        "只认正式对拼获胜；平局、落败和单方直击不触发。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "建立4点水射击拼点。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RecoverMP",
+          "Effect": "本次正式对拼获胜后恢复2MP一次。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jing_quan_shui_dredge_dry_well",
+        "card_nayin_jing_quan_shui_neighbor_ladle",
+        "card_nayin_jing_quan_shui_winch_lifted_wave",
+        "card_nayin_jing_quan_shui_clean_well_silt",
+        "card_nayin_jing_quan_shui_seal_well_for_drought"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jing_quan_shui_clean_well_silt",
+    "DisplayName": "清井除浊",
+    "Desc": "回复1点MP；施放前MP不高于一半时，移除己方1层中毒。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "井泉水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "井泉水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲申",
+        "乙酉"
+      ],
+      "Aliases": [
+        "泉中水"
+      ],
+      "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 532,
+          "Quote": "八家凿之以同饮"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 269,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jing_quan_shui",
+      "Role": "低MP时同时清理中毒",
+      "Rules": [
+        "条件取恢复前的MP，半量向下取整；中毒按既有五行负面状态清除。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "恢复1MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "RemoveElementBuff",
+          "Effect": "施放前MP<=floor(最大MP/2)时，移除己方至多1层中毒。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jing_quan_shui_dredge_dry_well",
+        "card_nayin_jing_quan_shui_neighbor_ladle",
+        "card_nayin_jing_quan_shui_winch_lifted_wave",
+        "card_nayin_jing_quan_shui_clean_well_silt",
+        "card_nayin_jing_quan_shui_seal_well_for_drought"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_jing_quan_shui_seal_well_for_drought",
+    "DisplayName": "封井蓄护",
+    "Desc": "获得3点护盾；MP至少有2点时，消耗2点MP再获得4点护盾。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "井泉水",
+      "水",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "井泉水",
+      "Element": "Shui",
+      "Ganzhi": [
+        "甲申",
+        "乙酉"
+      ],
+      "Aliases": [
+        "泉中水"
+      ],
+      "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 532,
+          "Quote": "八家凿之以同饮"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 269,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_jing_quan_shui",
+      "Role": "将现有MP换成当下防线",
+      "Rules": [
+        "额外消耗与4点护盾原子提交；不足2MP不消耗。",
+        "这是效果中的资源转化，不再次支付ManaCost，不产生灵元。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "增加3普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "Convert",
+          "Effect": "当前MP>=2时，原子扣2MP并加4普通护盾，否则跳过。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "spire"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_jing_quan_shui_dredge_dry_well",
+        "card_nayin_jing_quan_shui_neighbor_ladle",
+        "card_nayin_jing_quan_shui_winch_lifted_wave",
+        "card_nayin_jing_quan_shui_clean_well_silt",
+        "card_nayin_jing_quan_shui_seal_well_for_drought"
+      ]
+    }
+  }
+]

@@ -1,0 +1,467 @@
+[
+  {
+    "ID": "gongfa_nayin_lu_pang_tu",
+    "DisplayName": "阡陌通衢法",
+    "Desc": "每轮首次使用法术后，使其后下一张攻击法术的下次拼点+1。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ScanActivatable": false,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "路旁土",
+      "土",
+      "功法"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "路旁土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚午",
+        "辛未"
+      ],
+      "Aliases": [
+        "路傍土"
+      ],
+      "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 504,
+          "Quote": "大地连途平田万顷"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 245,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_pang_tu",
+      "Role": "核心功法被动",
+      "Rules": [
+        "按卡末格扫描顺序查找来源之后、非待发且本轮尚未使用的第一张攻击法术，不循环回头。",
+        "增幅只用于一次新攻击拼点，到下一轮结束失效，同源不叠加。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "NextContestBonus",
+          "Effect": "每轮首张法术成功使用后，给其扫描后方下一张合法攻击法术一次+1拼点增幅，无目标则无效果。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_pang_tu_open_path",
+        "card_nayin_lu_pang_tu_dust_road_hit",
+        "card_nayin_lu_pang_tu_field_channel",
+        "card_nayin_lu_pang_tu_patrol_path",
+        "card_nayin_lu_pang_tu_rear_guard_dust"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_pang_tu_open_path",
+    "DisplayName": "开径符",
+    "Desc": "获得2点护盾，并解冻扫描顺序在本卡之后的第一张冻结法术。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "路旁土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "路旁土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚午",
+        "辛未"
+      ],
+      "Aliases": [
+        "路傍土"
+      ],
+      "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 504,
+          "Quote": "大地连途平田万顷"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 245,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_pang_tu",
+      "Role": "替后方清除一次跳扫",
+      "Rules": [
+        "按末格扫描顺序只向后找己方已冻结FaShu，不回绕；无目标仍得护盾。",
+        "解冻不补发已经错过的扫描。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "RemoveFreeze",
+          "Effect": "清除本卡扫描顺序之后首张被冻结己方法术的冻结。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_pang_tu_open_path",
+        "card_nayin_lu_pang_tu_dust_road_hit",
+        "card_nayin_lu_pang_tu_field_channel",
+        "card_nayin_lu_pang_tu_patrol_path",
+        "card_nayin_lu_pang_tu_rear_guard_dust"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_pang_tu_dust_road_hit",
+    "DisplayName": "尘途击",
+    "Desc": "发起3点土打拼点；本轮已有其他法术使用时，本次+2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": true,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "路旁土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "路旁土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚午",
+        "辛未"
+      ],
+      "Aliases": [
+        "路傍土"
+      ],
+      "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 504,
+          "Quote": "大地连途平田万顷"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 245,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_pang_tu",
+      "Role": "在先行法术之后跟进",
+      "Rules": [
+        "只统计本轮在本次提交前已成功使用的其他己方FaShu，不计当前卡或被拒绝机会。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "Attack",
+          "Effect": "生成3点Tu/Da拼点；本轮已有其他己方法术成功使用则增加2点。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_pang_tu_open_path",
+        "card_nayin_lu_pang_tu_dust_road_hit",
+        "card_nayin_lu_pang_tu_field_channel",
+        "card_nayin_lu_pang_tu_patrol_path",
+        "card_nayin_lu_pang_tu_rear_guard_dust"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_pang_tu_field_channel",
+    "DisplayName": "平畦引",
+    "Desc": "回复1点MP；把一枚格上土灵元引入后方第一张尚缺土的法术。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "路旁土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "路旁土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚午",
+        "辛未"
+      ],
+      "Aliases": [
+        "路傍土"
+      ],
+      "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 504,
+          "Quote": "大地连途平田万顷"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 245,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_pang_tu",
+      "Role": "为扫描尚未到达的卡补灵",
+      "Rules": [
+        "目标按末格扫描顺序位于本卡之后，非待发且仍缺Tu；不循环回头。",
+        "取己方最早的格上Tu灵元守恒转入点亮；缺源或目标则仅回复MP，不立即Use。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "RecoverMP",
+          "Effect": "回复至多1MP。",
+          "Support": "ExistingAPI"
+        },
+        {
+          "Action": "MoveMana",
+          "Effect": "将一枚实际格上Tu灵元转入扫描后方首张合法缺Tu法术的点亮记录，遵守原费用缺额。",
+          "Support": "SharedExtension"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_pang_tu_open_path",
+        "card_nayin_lu_pang_tu_dust_road_hit",
+        "card_nayin_lu_pang_tu_field_channel",
+        "card_nayin_lu_pang_tu_patrol_path",
+        "card_nayin_lu_pang_tu_rear_guard_dust"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_pang_tu_patrol_path",
+    "DisplayName": "巡路诀",
+    "Desc": "获得3点护盾；扫描后方还有至少两张法术时，背包充能3个Tick。",
+    "Rarity": 1,
+    "Size": 1,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "路旁土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "路旁土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚午",
+        "辛未"
+      ],
+      "Aliases": [
+        "路傍土"
+      ],
+      "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 504,
+          "Quote": "大地连途平田万顷"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 245,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_pang_tu",
+      "Role": "让仍未到达的后续行更快推进",
+      "Rules": [
+        "按末格扫描顺序统计位于本卡之后的不同己方FaShu。",
+        "充能仅增加3个基准Tick的整包进度，不立即重入当前行，不改变当前行使用额度。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得3点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "Charge",
+          "Effect": "使用时扫描后方至少还有两张己方法术，则整包增加3个基准Tick进度。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "bazaar",
+        "backpack"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_pang_tu_open_path",
+        "card_nayin_lu_pang_tu_dust_road_hit",
+        "card_nayin_lu_pang_tu_field_channel",
+        "card_nayin_lu_pang_tu_patrol_path",
+        "card_nayin_lu_pang_tu_rear_guard_dust"
+      ]
+    }
+  },
+  {
+    "ID": "card_nayin_lu_pang_tu_rear_guard_dust",
+    "DisplayName": "断后扬尘",
+    "Desc": "获得2点护盾，并冻结敌方扫描顺序最后的一张未冻结法术。",
+    "Rarity": 2,
+    "Size": 2,
+    "Cooldown": 0,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ScanActivatable": true,
+    "ProducesContest": false,
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "纳音五行第二版设计；使用通用战斗效果，尚未实现本卡Lua及必要的通用扩展。",
+    "Tags": [
+      "纳音五行",
+      "路旁土",
+      "土",
+      "法术"
+    ],
+    "Design": {
+      "Revision": 2,
+      "Status": "DesignOnly",
+      "Ruleset": "NayinDesign-v2",
+      "Nayin": "路旁土",
+      "Element": "Tu",
+      "Ganzhi": [
+        "庚午",
+        "辛未"
+      ],
+      "Aliases": [
+        "路傍土"
+      ],
+      "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
+      "ClassicalSources": [
+        {
+          "Path": "docs/三命通会.md",
+          "Line": 504,
+          "Quote": "大地连途平田万顷"
+        },
+        {
+          "Path": "docs/渊海子平.md",
+          "Line": 245,
+          "Purpose": "核对干支对应与纳音取象"
+        }
+      ],
+      "CoreGongFaID": "gongfa_nayin_lu_pang_tu",
+      "Role": "压住敌方后段出手",
+      "Rules": [
+        "按敌方法术末格扫描顺序倒序选第一张未冻结FaShu，排除主功法。",
+        "冻结沿用下次完整扫描跳过并解冻规则，不叠加时长。"
+      ],
+      "EffectPlan": [
+        {
+          "Action": "GainShield",
+          "Effect": "获得2点普通护盾。",
+          "Support": "ExistingCore"
+        },
+        {
+          "Action": "Freeze",
+          "Effect": "冻结敌方扫描顺序最后的一张尚未冻结法术，无目标则不施加。",
+          "Support": "ExistingAPI"
+        }
+      ],
+      "InspirationRefs": [
+        "backpack",
+        "bazaar"
+      ],
+      "RelatedSpellIDs": [
+        "card_nayin_lu_pang_tu_open_path",
+        "card_nayin_lu_pang_tu_dust_road_hit",
+        "card_nayin_lu_pang_tu_field_channel",
+        "card_nayin_lu_pang_tu_patrol_path",
+        "card_nayin_lu_pang_tu_rear_guard_dust"
+      ]
+    }
+  }
+]
