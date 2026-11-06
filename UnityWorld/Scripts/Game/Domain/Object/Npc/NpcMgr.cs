@@ -89,6 +89,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public Npc Assemble(NpcDefine define)
         {
+            // 模板配置检查由客户端编辑器负责；后端直接使用定义进入装配流程。
             var ctx = NpcDefineMgr.ToBirthContext(define);
             ctx.AssemblySource = NpcAssemblySource.Template;
             var npc = ctx.MainNpc = new Npc(Soul.NewId());
@@ -108,7 +109,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>玩家/生成 NPC 及专用测试的显式非模板入口，保留旧自动发牌能力。</summary>
         public Npc AssembleGenerated(NpcDefine define, NpcAssemblySource source = NpcAssemblySource.Generated)
         {
-            if (source == NpcAssemblySource.Template) throw new InvalidOperationException("模板必须通过 Assemble 完整校验。");
+            if (source == NpcAssemblySource.Template) throw new InvalidOperationException("模板必须通过 Assemble 装配。");
             var ctx = NpcDefineMgr.ToBirthContext(define);
             ctx.AssemblySource = source;
             ctx.MainNpc = new Npc(Soul.NewId());

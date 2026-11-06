@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "cardVisualsResource": "res://assets/presentation/card_visuals.json",
+  "manaVisualsResource": "res://assets/presentation/mana_visuals.json",
+  "background": {
+    "texture": "res://assets/art/backgrounds/qinglan_arena.png",
+    "region": [0, 0, 1672, 941],
+    "source": "reused"
+  },
+  "panels": {
+    "editor": {
+      "texture": "res://assets/art/ui/template_editor/panel_frame.png",
+      "region": null,
+      "sourceSize": [1254, 1254],
+      "nineSliceMargins": { "left": 150, "top": 150, "right": 150, "bottom": 150 },
+      "displayTextureSize": [256, 256],
+      "displayNineSliceMargins": { "left": 31, "top": 31, "right": 31, "bottom": 31 },
+      "contentMargins": { "left": 18, "top": 18, "right": 18, "bottom": 18 },
+      "contentMarginUnits": "display-pixels",
+      "source": "generated",
+      "status": "available"
+    },
+    "backpack": {
+      "texture": "res://assets/art/ui/backpack_base.png",
+      "region": [0, 0, 1122, 1402],
+      "source": "reused"
+    },
+    "stats": {
+      "texture": "res://assets/art/ui/character_stats_panel.png",
+      "region": [48, 107, 2077, 503],
+      "source": "reused"
+    },
+    "message": {
+      "texture": "res://assets/art/ui/combat_log_panel.png",
+      "region": [0, 61, 2172, 598],
+      "source": "reused"
+    }
+  },
+  "actors": {
+    "jade_swordsman": {
+      "texture": "res://assets/art/characters/jade_swordsman.png",
+      "region": [58, 157, 1183, 991],
+      "displayScale": 1.0,
+      "source": "reused"
+    },
+    "crimson_cultivator": {
+      "texture": "res://assets/art/characters/crimson_cultivator.png",
+      "region": [44, 78, 1201, 1118],
+      "displayScale": 1.0,
+      "source": "reused"
+    }
+  },
+  "portraits": {
+    "jade_swordsman": {
+      "texture": "res://assets/art/characters/jade_swordsman.png",
+      "region": [450, 260, 480, 445],
+      "displayScale": 1.0,
+      "source": "reused"
+    },
+    "crimson_cultivator": {
+      "texture": "res://assets/art/characters/crimson_cultivator.png",
+      "region": [205, 200, 500, 460],
+      "displayScale": 1.0,
+      "source": "reused"
+    }
+  },
+  "templates": {
+    "test_npc_a": { "actorVisualKey": "jade_swordsman", "portraitKey": "jade_swordsman" },
+    "test_npc_b": { "actorVisualKey": "crimson_cultivator", "portraitKey": "crimson_cultivator" }
+  },
+  "fallback": {
+    "card": "display-name-then-id",
+    "actor": "display-name-then-id",
+    "portrait": "display-name-then-id",
+    "generateMissingImages": false,
+    "substituteUnrelatedActor": false,
+    "preserveCardFootprintAndInteraction": true,
+    "showFullNameAndIdOnHover": true
+  },
+  "typography": {
+    "fontNames": ["Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif"],
+    "titleSize": 26,
+    "bodySize": 18,
+    "secondarySize": 15,
+    "paperText": "#33382B",
+    "paperMuted": "#525945",
+    "darkText": "#E8E3CE",
+    "darkMuted": "#AFC7C5"
+  },
+  "styles": {
+    "implementation": "godot-theme-stylebox-and-simple-drawing",
+    "colorFormat": "#RRGGBB or #RRGGBBAA",
+    "borderWidth": 1,
+    "cornerRadius": 6,
+    "button": {
+      "normal": { "fill": "#293633EB", "border": "#B0A373D9", "text": "#E8E3CE" },
+      "hover": { "fill": "#3C6265", "border": "#D6C88D", "text": "#FFF6D9" },
+      "pressed": { "fill": "#527879", "border": "#E3CA78", "text": "#FFF6D9" },
+      "selected": { "fill": "#376348", "border": "#C8B778", "text": "#FFF6D9" },
+      "disabled": { "fill": "#39423DD9", "border": "#747562", "text": "#A1A497" },
+      "focus": { "border": "#EAD58C", "borderWidth": 2 }
+    },
+    "keyword": {
+      "normal": { "fill": "#DDD0A7", "border": "#9D9267", "text": "#33382B" },
+      "hover": { "fill": "#E9DCB3", "border": "#857442", "text": "#33382B" },
+      "pressed": { "fill": "#55795B", "border": "#D6C88D", "text": "#FFF6D9" },
+      "selected": { "fill": "#376348", "border": "#C8B778", "text": "#FFF6D9" },
+      "disabled": { "fill": "#BEB99F", "border": "#999780", "text": "#6A6F61" },
+      "selectedIndicator": "checkmark-and-border",
+      "focus": { "border": "#746132", "borderWidth": 2 }
+    },
+    "templateRow": {
+      "normal": { "fill": "#E5D8B6", "border": "#B3A77C", "text": "#33382B" },
+      "hover": { "fill": "#DAD9B4", "border": "#789773", "text": "#33382B" },
+      "selected": { "fill": "#BDD2B5", "border": "#568963", "text": "#263E2B" },
+      "draftBadge": { "fill": "#F0D393", "border": "#BD914D", "text": "#6A4D23" }
+    },
+    "grid": {
+      "empty": { "fill": "#D1C7A6B8", "border": "#857A5CCC" },
+      "occupied": { "fill": "#777363D9", "border": "#AB9F74" },
+      "selected": { "border": "#F0CB6B", "borderWidth": 2 },
+      "main": { "border": "#D0B364", "symbol": "lock" },
+      "dragValid": { "fill": "#75B58B59", "border": "#3F8B5A", "symbol": "check" },
+      "dragInvalid": { "fill": "#CB756459", "border": "#AB473E", "symbol": "cross" },
+      "unplaced": { "fill": "#E1C990", "border": "#AA803D", "text": "#684B25" }
+    },
+    "diagnostic": {
+      "success": "#3F8052",
+      "warning": "#916925",
+      "error": "#A3483F",
+      "information": "#386F7A"
+    }
+  }
+}

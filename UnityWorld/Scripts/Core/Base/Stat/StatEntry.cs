@@ -122,14 +122,15 @@ namespace UnityWorld.Core
             Dictionary<string, object> parameters, bool isolatedExpression)
         {
             // ① Primary 属性 baseValue=0（由 AddValue 承载基础值）；非 Primary 从 Define 读 DefaultValue
-            var define = StatDefineMgr.Instance?.Get(_statId);
+            var define = _ownerBlock.FindDefinition(_statId);
             float baseValue = (define != null && define.BaseType == StatBaseType.Primary)
                 ? 0f
                 : (define?.DefaultValue ?? 0f);
-            var formulaStr = define.ExtraBase;
+            var formulaStr = define?.ExtraBase;
             if (!string.IsNullOrEmpty(formulaStr))
             {
-                var expr = isolatedExpression ? new Expression(formulaStr) : StatBlock.GetExpression(formulaStr);
+                var expr = isolatedExpression || _ownerBlock.UsesIsolatedDefinitions
+                    ? new Expression(formulaStr) : StatBlock.GetExpression(formulaStr);
                 expr.Parameters = parameters;
                 baseValue = Convert.ToSingle(expr.Evaluate()) + baseValue;
             }

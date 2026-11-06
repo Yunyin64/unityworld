@@ -15,6 +15,20 @@ namespace UnityWorld.Core
         /// <summary>空属性块（只读占位，用于 NPC 尚未注册时）</summary>
         public static readonly StatBlock Empty = new();
         private readonly Dictionary<string, StatEntry> _stats = new();
+        private readonly IReadOnlyDictionary<string, StatDefine> _definitions;
+
+        public StatBlock() { }
+
+        /// <summary>独立定义目录的临时属性块；不安装单例、不注册实体、不共享公式参数。</summary>
+        public StatBlock(IEnumerable<StatDefine> definitions)
+        {
+            _definitions = definitions.ToDictionary(d => d.ID, StringComparer.Ordinal);
+        }
+
+        internal bool UsesIsolatedDefinitions => _definitions != null;
+        internal StatDefine FindDefinition(string statId) => _definitions != null
+            ? (_definitions.TryGetValue(statId, out var definition) ? definition : null)
+            : StatDefineMgr.Instance?.Get(statId);
 
         private  static Dictionary<string,Expression> _exprCache = new();
         public static Expression GetExpression(string formulaStr)
@@ -35,7 +49,7 @@ namespace UnityWorld.Core
         public Dictionary<string, object> GetFinalCache() => _finalCache;
         public void InitType(string Type)
         {
-            StatDefineMgr.Instance.GetAll().Where(d => d.Type == Type && d.BaseType == StatBaseType.Primary).ToList().ForEach(d =>
+            (_definitions?.Values ?? StatDefineMgr.Instance.GetAll()).Where(d => d.Type == Type && d.BaseType == StatBaseType.Primary).ToList().ForEach(d =>
             {
                 var entry = GetOrCreateEntry(d.ID);
                 entry.SetAdd(d.DefaultValue);
@@ -53,7 +67,7 @@ namespace UnityWorld.Core
         public float Get(string statId, float defaultValue = 0f)
         {
             float rawValue;
-            var define = StatDefineMgr.Instance?.Get(statId);
+            var define = FindDefinition(statId);
             if(define == null) return defaultValue;
             
             
@@ -78,7 +92,7 @@ namespace UnityWorld.Core
         /// </summary>
         public float GetReadOnly(string statId, float defaultValue = 0f)
         {
-            var define = StatDefineMgr.Instance?.Get(statId);
+            var define = FindDefinition(statId);
             if (define == null) return defaultValue;
 
             var rawValue = _stats.TryGetValue(statId, out var entry)
@@ -94,7 +108,7 @@ namespace UnityWorld.Core
         /// </summary>
         public void AddBase(string statId, float amount)
         {
-            var define = StatDefineMgr.Instance?.Get(statId);
+            var define = FindDefinition(statId);
             if (define == null) return;
             if (define.BaseType != StatBaseType.Primary)
             {
@@ -111,7 +125,7 @@ namespace UnityWorld.Core
         /// </summary>
         public void SetBase(string statId, float value)
         {
-            var define = StatDefineMgr.Instance?.Get(statId);
+            var define = FindDefinition(statId);
             if (define == null) return;
             if (define.BaseType != StatBaseType.Primary)
             {
@@ -174,9 +188,9 @@ namespace UnityWorld.Core
         /// <summary>
         /// 应用 Define 的 MinValue/MaxValue 硬夹紧
         /// </summary>
-        private static float ApplyDefineClamp(string statId, float value)
+        private float ApplyDefineClamp(string statId, float value)
         {
-            var define = StatDefineMgr.Instance?.Get(statId);
+            var define = FindDefinition(statId);
             if (define == null) return value;
 
             if (define.MinValue.HasValue)
@@ -189,7 +203,7 @@ namespace UnityWorld.Core
 
         /// <summary>创建一份独立的 StatBlock 快照（用于战斗等需要隔离的场景）</summary>
     public StatBlock Snapshot(){
-    var copy = new StatBlock();
+    var copy = _definitions == null ? new StatBlock() : new StatBlock(_definitions.Values);
     foreach (var (id, entry) in _stats)
     {
         var newEntry = copy.GetOrCreateEntry(id);

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Xianxia.Client.Battle;
+using Xianxia.Client.Templates;
 
 namespace Xianxia.Client.UI;
 
@@ -19,10 +20,11 @@ public partial class BattleObserverView : Control
     private string? _viewError;
     private bool _quitting;
     private bool _fixture;
+    private string? _dataRoot;
 
     public override void _Ready()
     {
-        if (OS.GetCmdlineUserArgs().Contains("--core-smoke-test")) return;
+        if (GameBootstrap.CurrentMode != ClientHostMode.Observer) return;
         try
         {
             _layout = new ObserverBattleLayout(this,
@@ -37,15 +39,15 @@ public partial class BattleObserverView : Control
             _player.AnimationsEnabled = !OS.GetCmdlineUserArgs().Contains("--observer-no-animations");
             // 每个 Tick 都交付，不能只在 Update 后读取最后一帧。
             _session.PresentationCommitted += _player.Submit;
-            string? encoded = ObserverSessionOutput.Argument("--observer-case=");
-            var battleCase = encoded == null
-                ? BattleCaseCatalog.Load(ProjectSettings.GlobalizePath("res://assets/testing/battle_cases.json"), ObserverSessionOutput.Argument("--observer-case-id=") ?? "console-basic-template")
-                : BattleCase.FromJson(Encoding.UTF8.GetString(Convert.FromBase64String(encoded)));
+            var battleCase = BattleCaseInput.Load(OS.GetCmdlineUserArgs(),
+                ProjectSettings.GlobalizePath("res://assets/testing/battle_cases.json"));
             string dataRoot = ObserverSessionOutput.Argument("--observer-data-root=") ?? (OS.HasFeature("editor")
                 ? ProjectSettings.GlobalizePath("res://UnityWorld")
                 : Path.GetDirectoryName(OS.GetExecutablePath())!);
+            _dataRoot = Path.GetFullPath(dataRoot);
             _session.Initialize(battleCase, dataRoot);
             _output.SaveInput(_session.Case);
+            if (_session.Diagnostic != null) throw new InvalidOperationException(_session.Diagnostic);
             Refresh();
             if (ObserverSessionOutput.Argument("--observer-presentation-fixture=") is { } fixtureDirectory)
             {
@@ -88,12 +90,12 @@ public partial class BattleObserverView : Control
         Refresh();
         try
         {
-            var args = new List<string>();
-            if (OS.HasFeature("editor")) args.AddRange(new[] { "--path", ProjectSettings.GlobalizePath("res://"), "res://scenes/battle/battle_observer.tscn" });
-            args.Add("--");
-            args.Add("--battle-observer");
-            args.Add("--observer-case=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(_session.Case.ToJson())));
-            if (ObserverSessionOutput.Argument("--observer-data-root=") is { } root) args.Add("--observer-data-root=" + root);
+            if (_output == null || _dataRoot == null) throw new InvalidOperationException("观察器尚未取得完整输入，不能重开。");
+            var frozen = _session.Case.Copy();
+            BattleCaseFactory.Validate(frozen);
+            string restartPath = Path.Combine(_output.SessionDirectory, "restart-input.json");
+            File.WriteAllText(restartPath, frozen.ToJson(), new UTF8Encoding(false));
+            var args = TemplateTrialLauncher.ObserverArguments(restartPath, _dataRoot);
             if (!_player.AnimationsEnabled) args.Add("--observer-no-animations");
             if (verification && _output != null)
             {

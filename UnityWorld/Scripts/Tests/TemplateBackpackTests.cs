@@ -29,6 +29,7 @@ namespace UnityWorld.Tests
         public static void Run()
         {
             _assertions = 0;
+            // 配置诊断与属性预览在 tools/template-editor 中验证，此处只覆盖后端装配。
             CoordinatesAndShapes();
             InstanceAndSnapshotIsolation();
             BindingAndSourceIsolation();

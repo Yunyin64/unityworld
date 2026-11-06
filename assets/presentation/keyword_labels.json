@@ -1,0 +1,12 @@
+{
+  "GongFa": { "DisplayName": "功法", "SortOrder": 10 },
+  "FaShu": { "DisplayName": "法术", "SortOrder": 20 },
+  "FaBao": { "DisplayName": "法宝", "SortOrder": 30 },
+  "ZhaoShi": { "DisplayName": "招式", "SortOrder": 40 },
+  "Passive": { "DisplayName": "被动", "SortOrder": 50 },
+  "Item": { "DisplayName": "物品", "SortOrder": 60 },
+  "Armor": { "DisplayName": "护甲", "SortOrder": 70 },
+  "Wound": { "DisplayName": "伤势", "SortOrder": 80 },
+  "Amount": { "DisplayName": "弹药", "SortOrder": 90 },
+  "Consume": { "DisplayName": "消耗", "SortOrder": 100 }
+}

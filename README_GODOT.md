@@ -1,6 +1,10 @@
-# Godot 战斗观察客户端
+# Godot 模板编辑与战斗观察客户端
 
-使用 Godot 4.7.2 .NET 打开根目录 `project.godot`，按 F5 进入真实战斗观察界面。默认场景已设置为 `res://scenes/battle/battle_observer.tscn`。原静态预览保留在 `res://scenes/tests/battle_assets_preview.tscn`，仍可选中后按 F6 单独运行。
+使用 Godot 4.7.2 .NET 打开根目录 `project.godot`，按 F5 进入人物／怪物模板编辑器。默认场景现为 `res://scenes/templates/character_template_editor.tscn`：左侧区分只读的“项目模板”和可编辑的“我的模板”，复制后可调整属性、摆放已有 Card、保存个人草稿并进入原战斗观察界面试战。
+
+编辑器快速使用、个人库位置、六项人工检查及当前验证边界见 [模板编辑器快速开始](docs/template-editor/QUICKSTART.md)。卡牌 Keyword 筛选由实际目录生成，多选为“同时满足”；缺图卡牌显示名称，仍可编辑。编辑器只加载定义，试战启动独立游戏窗口；关闭试战后可继续编辑，未保存内容不会被试战隐式保存。
+
+原战斗观察场景仍是 `res://scenes/battle/battle_observer.tscn`，可用下方命令直接运行，或在编辑器顶部点击“战斗观察”。原静态素材预览保留在 `res://scenes/tests/battle_assets_preview.tscn`，可选中后按 F6 单独运行。以下战斗操作与历史验证记录继续保留。
 
 观察器使用原控制台默认案例 `console-basic-template`：世界和战斗种子均为 12345，依次装配 `test_npc_a`、`test_npc_b`，上限 5000 Tick。双方真实背包为 5×5，角色数值、格上灵元、卡片点亮、冻结、待发和战报均来自核心模拟。人物立绘仅为客户端展示形象。
 
@@ -11,6 +15,8 @@
 ```powershell
 dotnet build Xianxia.Client.csproj
 # 将 godot 替换为本机 Godot .NET 可执行文件路径。
+godot --path . res://scenes/templates/character_template_editor.tscn -- --template-editor
+# 直接运行原战斗观察器：
 godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 ```
 
@@ -33,7 +39,7 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 
 ## 核心独立与共享验证
 
-- `UnityWorld/UnityWorld.csproj` 输出纯 .NET 8 `UnityWorld.dll`，不引用 Godot。核心仅增加纯观察记录及无副作用属性投影；JSON/Lua、原控制台入口与玩法规则保持不变。
+- `UnityWorld/UnityWorld.csproj` 输出纯 .NET 8 `UnityWorld.dll`，不引用 Godot。核心提供观察记录与无副作用属性投影，直接消费模板进行装配；模板配置检查和 HP/MP/SP 预览由客户端 `scripts/client/templates/TemplateEditorValidator.cs` 提供，正式 JSON/Lua 仍由项目内容提供。
 - `Xianxia.Client.csproj` 通过 ProjectReference 引用核心，客户端代码位于 `scripts/client/`。
 - `scripts/client/battle/` 为纯 C# 观察会话/值快照；`assets/testing/battle_cases.json` 保存共享案例输入。Godot 和 `tools/client-observer/` 编译同一份适配代码，不复制 NPC 数值或卡位。
 - 原 `UnityWorld/Console/UnityWorld.Console.csproj` 保留原测试入口作为兼容基线，没有改成读取新案例清单。

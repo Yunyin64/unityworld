@@ -19,16 +19,28 @@ namespace UnityWorld.Game.Domain
         public static void ValidateCard(Card card)
         {
             var data = card.BaseData;
+            // 保留既有背包规则，解除对已迁至客户端的模板诊断器及报告类型的依赖。
+            var issues = new List<string>();
+            var mana = data.ManaCost.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value);
             if (data.CompatibilityStatus != "Migrated")
-                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 不可装配：{data.CompatibilityStatus}，{data.CompatibilityReason}");
-            if (data.Keywords.Any(k => k is "Min" or "Max" || k.StartsWith("ManaAdj", StringComparison.Ordinal)) ||
-                data.ManaCost.Keys.Any(k => k.ToString() is "Min" or "Max"))
-                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 依赖 Deprecated 的 Min/Max/ManaAdj，禁止装配。");
-            if (data.Size < 1 || data.Shape.Count != data.Size || data.Shape.Distinct().Count() != data.Size ||
-                data.Shape.Any(p => p.X < 0 || p.Y < 0) || data.Shape.Min(p => p.X) != 0 || data.Shape.Min(p => p.Y) != 0)
-                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 的形状必须规范化、无重复且占格数等于正数 Size。");
-            if (data.HasActiveAbility && (data.ManaCost.Values.Any(n => n <= 0) || data.ManaCost.Values.Sum() != data.Size))
-                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id} 的激活灵元总数必须等于 Size。");
+                issues.Add($"不可装配：{data.CompatibilityStatus}，{data.CompatibilityReason}");
+            if (data.Keywords == null)
+                issues.Add("Keywords 和 ManaCost 不能为 null。");
+            else
+            {
+                if (data.Keywords.Any(k => k is "Min" or "Max" || k?.StartsWith("ManaAdj", StringComparison.Ordinal) == true) ||
+                    mana.Keys.Any(k => k is "Min" or "Max"))
+                    issues.Add("依赖 Deprecated 的 Min/Max/ManaAdj，禁止装配。");
+                var shape = data.Shape;
+                if (shape == null || data.Size < 1 || shape.Count != data.Size || shape.Distinct().Count() != data.Size ||
+                    shape.Any(p => p.X < 0 || p.Y < 0) || shape.Count > 0 && (shape.Min(p => p.X) != 0 || shape.Min(p => p.Y) != 0))
+                    issues.Add("形状必须规范化、无重复且占格数等于正数 Size。");
+                bool active = data.ScanActivatable || data.Keywords.Contains("FaShu") || data.Keywords.Contains("ZhaoShi") || data.Keywords.Contains("FaBao");
+                if (active && (mana.Values.Any(n => n <= 0) || mana.Values.Sum(n => (long)n) != data.Size))
+                    issues.Add("主动卡的激活灵元总数必须等于 Size，且各需求为正数。");
+            }
+            if (issues.Count > 0)
+                throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id}：" + string.Join("；", issues));
         }
 
         public static List<BackpackCell> CellsFromPosition(Card card)
