@@ -77,8 +77,6 @@ namespace UnityWorld.Game.Domain.Combat
             CardModifierTick();
             HookUse.Clear();
             Ticks["Main"]++;
-            
-
         }
         public void CDTick()
         {
@@ -132,7 +130,7 @@ namespace UnityWorld.Game.Domain.Combat
         private bool HasUseEligibility()
         {
             return !Scene.IsFinished && Owner.IsActive && BaseData.HasActiveAbility && !IsFrozen && !_usingActiveOpportunity
-                && !_awaitingApply && !CheckPhase(CombatCardPhase.InPending) && Owner.Backpack.HasActivationResources(this)
+                && !_awaitingApply && !CheckPhase(CombatCardPhase.InPending) && HasActivationResources()
                 && (!(BaseData.ProducesContest ?? this.HasHook("Contest")) || Owner.PendingSlot == null);
         }
 
@@ -162,8 +160,9 @@ namespace UnityWorld.Game.Domain.Combat
                 parentOrigin?.ActionId, parentOrigin?.ContestId, null));
             Log(eventCtx == null ? "扫描机会提交 Use" : $"条件机会提交 Use Event={eventCtx.EventId} Chain={eventCtx.ChainId} Trigger={eventCtx.EventName} Caster={eventCtx.Caster?.Id} Source={eventCtx.SourceCard?.Id}:{eventCtx.SourceCard?.DefineId}");
             var resourcesBefore = Scene.PresentationRecordingEnabled
-                ? CombatScene.PresentationCopy(Owner.Backpack.AssignedTo(Id).Select(e => e.ToString())) : null;
-            Owner.Backpack.BeginNextActivation(Id);
+                ? CombatScene.PresentationCopy(AssignedElements.Select(e => e.ToString())) : null;
+            // 使用已成功提交，由卡自身结束本次蓄灵，保留原来的清空时机。
+            ClearAssignedMana();
             if (resourcesBefore != null)
                 Scene.RecordPresentation(CombatPresentationKind.CardUsed, Owner, this,
                     origin: new PresentationOrigin(PresentationActionId, parentOrigin?.ActionId, parentOrigin?.ContestId, null),

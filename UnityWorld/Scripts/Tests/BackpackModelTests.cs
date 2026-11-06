@@ -50,6 +50,7 @@ namespace UnityWorld.Tests
             Layouts();
             IsolationAndCarry();
             TargetSelection();
+            CardManaLifecycle();
             CombatRegression();
             LuaFixtures();
             Console.WriteLine($"BACKPACK_MODEL_TESTS_OK assertions={_assertions}");
@@ -133,17 +134,20 @@ namespace UnityWorld.Tests
             Check(a.Backpack.TryAssign(new(1, 0), ca), "单次分配");
             Check(!a.Backpack.TryAssign(new(1, 0), ca), "不重复分配");
             a.Backpack.PlaceMana(new(1, 1), ElementType.Jin);
+            // 同源的两个战斗卡 Id 相同，背包不能把灵元写进另一场战斗的卡实例。
+            Check(!a.Backpack.TryAssign(new(1, 1), cb) && a.Backpack.Mana.ContainsKey(new(1, 1)) && cb.LitCount == 0, "跨战斗分配失败不消耗源格");
+            Check(a.Backpack.SelectManaTarget(new(1, 1), ElementType.Jin, new[] { cb }) == null, "选卡排除另一场战斗的同Id实例");
             a.Backpack.TryAssign(new(1, 1), ca);
             a.Backpack.PlaceMana(new(5, 4), ElementType.Huo);
             for (var tick = 0; tick < 50; tick++)
                 if (a.Backpack.AdvanceTick()) a.Backpack.FinishRow();
             Check(a.Backpack.Round == 2 && a.Backpack.Row == 0 && b.Backpack.Round == 1, "扫描时钟独立");
-            Check(a.Backpack.AssignedTo(card.Id).Count == 2 && a.Backpack.Mana.ContainsKey(new(5, 4)), "卡上与格上灵元跨轮");
-            Check(b.Backpack.AssignedTo(card.Id).Count == 0 && b.Backpack.Mana.Count == 0, "战斗资源隔离");
-            Check(!a.Backpack.HasActivationResources(ca), "Size3持2不满足");
+            Check(ca.LitCount == 2 && a.Backpack.Mana.ContainsKey(new(5, 4)), "卡上与格上灵元跨轮");
+            Check(cb.LitCount == 0 && b.Backpack.Mana.Count == 0, "战斗资源隔离");
+            Check(!ca.HasActivationResources(), "Size3持2不满足");
             a.Backpack.PlaceMana(new(1, 2), ElementType.Jin);
             a.Backpack.TryAssign(new(1, 2), ca);
-            Check(a.Backpack.HasActivationResources(ca) && !a.Backpack.CanAccept(ca, ElementType.Jin), "满3且不溢收");
+            Check(ca.HasActivationResources() && !ca.CanAcceptMana(ElementType.Jin), "满3且不溢收");
             Check(a.Backpack.EmptyCells().Count == 25, "空间30减卡4减未分配灵元1");
             Reject(() => a.Backpack.PlaceMana(new(0, 0), ElementType.Jin), "灵元覆盖主卡");
             Reject(() => a.Backpack.PlaceMana(new(5, 4), ElementType.Jin), "灵元覆盖旧灵元");
@@ -170,22 +174,68 @@ namespace UnityWorld.Tests
             var lower = Place(world, "bp_attack", 2, 2);
             var combat = Snapshot(world);
             var bag = combat.Backpack;
-            var selector = new BackpackManaTargetSelector();
             var source = new BackpackCell(2, 1);
             bag.PlaceMana(source, ElementType.Jin);
-            Check(selector.AssignAt(bag, source, combat.GetField()).Id == lower.Id, "等距先下方");
+            Check(bag.AssignManaAt(source, combat.GetField()).Id == lower.Id, "等距先下方");
             bag.PlaceMana(source, ElementType.Jin);
-            Check(selector.AssignAt(bag, source, combat.GetField()).Id == left.Id, "已满跳过、等距左方");
+            Check(bag.AssignManaAt(source, combat.GetField()).Id == left.Id, "已满跳过、等距左方");
             bag.PlaceMana(new(0, 1), ElementType.Jin);
-            Check(selector.AssignAt(bag, new(0, 1), combat.GetField()).Id == right.Id, "最近已满时找较远需要卡");
+            Check(bag.AssignManaAt(new(0, 1), combat.GetField()).Id == right.Id, "最近已满时找较远需要卡");
             bag.PlaceMana(source, ElementType.Jin);
-            Check(selector.AssignAt(bag, source, combat.GetField()) == null && bag.Mana.ContainsKey(source), "无候选原地保留");
-            Check(bag.AssignedTo(right.Id).Count == 1, "重复扫描不复制资源");
+            Check(bag.AssignManaAt(source, combat.GetField()) == null && bag.Mana.ContainsKey(source), "无候选原地保留");
+            Check(Find(combat, right).LitCount == 1, "重复扫描不复制资源");
             var other = Snapshot(world);
             other.Backpack.PlaceMana(source, ElementType.Huo);
-            Check(selector.AssignAt(other.Backpack, source, other.GetField()) == null, "缺灵但元素不匹配不接收");
-            var injected = new BackpackManaTargetSelector((_, cells) => cells[0].X == 3 ? 0 : 10);
-            Check(injected.Select(other.Backpack, source, ElementType.Jin, other.GetField()).Id == right.Id, "距离策略可注入");
+            Check(other.Backpack.AssignManaAt(source, other.GetField()) == null, "缺灵但元素不匹配不接收");
+            // 策略改由背包实例持有，查询和实际分配必须共用替换后的距离函数。
+            other.Backpack.ManaTargetDistance = (_, cells) => cells[0].X == 3 ? 0 : 10;
+            Check(other.Backpack.SelectManaTarget(source, ElementType.Jin, other.GetField()).Id == right.Id, "距离策略可注入");
+            Check(other.Backpack.Mana[source].Equals(ElementType.Huo) && Find(other, right).LitCount == 0, "只选目标不改变灵元或点亮");
+            var injectedSource = other.Backpack.EmptyCells()[0];
+            other.Backpack.PlaceMana(injectedSource, ElementType.Jin);
+            Check(other.Backpack.AssignManaAt(injectedSource, other.GetField()).Id == right.Id &&
+                !other.Backpack.Mana.ContainsKey(injectedSource) && Find(other, right).LitCount == 1, "实际分配沿用注入距离并只转移一次");
+        }
+
+        /// <summary>卡持有混合元素蓄灵，离场清空，重新放入后只能从空状态开始。</summary>
+        private static void CardManaLifecycle()
+        {
+            var world = CreateNpc();
+            var opponent = CreateNpc();
+            world.Stats.AddModifier("ManaDrawCost", StatModifier.Override(0, "mana-lifecycle"));
+            opponent.Stats.AddModifier("ManaDrawCost", StatModifier.Override(0, "mana-lifecycle"));
+            var source = Place(world, "bp_charge", 2, 0);
+            source.BaseData.ManaCost = new() { [ElementType.Huo] = 2, [ElementType.Jin] = 1 };
+            var scene = new CombatScene();
+            scene.Init(734, [(world, CombatTeam.TeamA), (opponent, CombatTeam.TeamB)], 100);
+            try
+            {
+                scene.PreStart(); scene.Start();
+                var npc = scene.GetCombatants()[world.Id];
+                var card = Find(npc, source);
+                void Assign(ElementType element)
+                {
+                    var cell = npc.Backpack.EmptyCells()[0];
+                    npc.Backpack.PlaceMana(cell, element);
+                    Check(npc.Backpack.TryAssign(cell, card) && !npc.Backpack.Mana.ContainsKey(cell), "分配成功只保留卡上资源");
+                }
+                Assign(ElementType.Huo); Assign(ElementType.Jin);
+                Check(card.LitCount == 2 && !card.HasActivationResources() && card.CanAcceptMana(ElementType.Huo) &&
+                    !card.CanAcceptMana(ElementType.Jin), "卡自身识别2/3及剩余元素需求");
+                Assign(ElementType.Huo);
+                Check(card.HasActivationResources() && card.AssignedElements.Count(e => e.Equals(ElementType.Huo)) == 2, "混合元素3/3满灵");
+                Check(card.AssignedElements is IList<ElementType> view && view.IsReadOnly, "卡上蓄灵对外只读");
+                npc.RemoveCombatCard(card); npc.DealFieldChange();
+                Check(card.LitCount == 0 && !npc.Backpack.Placements.ContainsKey(card.Id), "离场同时清空蓄灵并释放占格");
+                var rejectedCell = npc.Backpack.EmptyCells()[0];
+                npc.Backpack.PlaceMana(rejectedCell, ElementType.Huo);
+                Check(!npc.Backpack.TryAssign(rejectedCell, card) && npc.Backpack.Mana.ContainsKey(rejectedCell), "离场卡不能接收格上灵元");
+                npc.AddCombatCard(card); npc.DealFieldChange();
+                Check(card.LitCount == 0 && npc.Backpack.Placements.ContainsKey(card.Id), "重新入场从空蓄灵开始");
+                Assign(ElementType.Huo);
+                Check(card.LitCount == 1 && !card.HasActivationResources(), "重新入场按本卡需求重新蓄灵");
+            }
+            finally { scene.Cleanup(); }
         }
 
         private static CombatScene Scene(int ticks = 3)

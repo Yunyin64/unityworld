@@ -37,7 +37,7 @@ namespace UnityWorld.Tests
         }
         private static void Light(CombatCard card)
         {
-            if (card.Owner.Backpack.HasActivationResources(card)) return;
+            if (card.HasActivationResources()) return;
             foreach (var cost in card.GetManaCost())
             for (int i = 0; i < cost.Value; i++)
             {
@@ -93,7 +93,7 @@ namespace UnityWorld.Tests
             Check(!sword.BaseData.HasScanOpportunity && sword.BaseData.HasEventOpportunity && sword.BaseData.HasActiveAbility, "真实长剑纯条件机会仍可蓄灵");
             Check(sword.UseCount == 0 && sword.ApplyCount == 0, "真实法宝没有开场免费使用");
             Light(sword); To(scene, 10);
-            Check(sword.UseCount == 0 && sword.Owner.Backpack.LitCount(sword.Id) == 2, "纯法宝扫描不发动");
+            Check(sword.UseCount == 0 && sword.LitCount == 2, "纯法宝扫描不发动");
             scene.GetCombatants()[b.Id].DoManaDraw();
             Check(sword.UseCount == 0, "真实Lua忽略对手抽灵");
             sword.Owner.DoManaDraw();
@@ -127,7 +127,7 @@ namespace UnityWorld.Tests
             Check(card.UseCount == 1 && card.ApplyCount == 1 && card.env["contested"] == null, "无拼点声明跳过空/旧Contest，立即Apply一次");
             card.Apply(); Check(card.ApplyCount == 1, "主动Apply不可重复");
             Light(card); card.Freeze(); Fire(scene, "OnProbe", card.Owner);
-            Check(card.UseCount == 1 && card.Owner.Backpack.LitCount(card.Id) == 1, "冻结条件失败不清点亮");
+            Check(card.UseCount == 1 && card.LitCount == 1, "冻结条件失败不清点亮");
             To(scene, 60); Check(!card.IsFrozen && card.UseCount == 1, "纯法宝冻结也在末格解除且不补发");
             Fire(scene, "OnProbe", card.Owner); Check(card.UseCount == 2, "解冻后的新独立事件可使用");
             scene.Cleanup();
@@ -139,7 +139,7 @@ namespace UnityWorld.Tests
             blockedCard.BaseData.Keywords.Add("ActivationProbe");
             Light(pending); Light(card); Light(blockedCard); To(scene, 10); Fire(scene, "OnProbe", pending.Owner);
             Check(card.UseCount == 1 && card.ApplyCount == 1 && pending.Owner.PendingSlot?.SourceCard == pending, "空Contest无拼点卡不被其他待发阻挡");
-            Check(blockedCard.UseCount == 0 && blockedCard.Owner.Backpack.LitCount(blockedCard.Id) == 1, "有拼点事件槽满失败不消耗");
+            Check(blockedCard.UseCount == 0 && blockedCard.LitCount == 1, "有拼点事件槽满失败不消耗");
             scene.Cleanup();
         }
 
@@ -167,9 +167,9 @@ namespace UnityWorld.Tests
             scene = Scene(a, b); lc = Find(scene, a, left); rc = Find(scene, a, right);
             rc.BaseData.Keywords.Add("ActivationProbe"); Light(lc); Light(rc);
             WithEvent("OnProbe", ctx => Check(lc.TryUseFromEvent(ctx), "EventMgr左卡机会已收集"), () => Fire(scene, "OnProbe", lc.Owner));
-            Check(lc.Owner.PendingSlot?.SourceCard == lc && rc.UseCount == 0 && rc.Owner.Backpack.LitCount(rc.Id) == 1, "跨通道反序请求仍由左卡入槽，右卡失败保留灵元");
+            Check(lc.Owner.PendingSlot?.SourceCard == lc && rc.UseCount == 0 && rc.LitCount == 1, "跨通道反序请求仍由左卡入槽，右卡失败保留灵元");
             To(scene, 50);
-            Check(rc.UseCount == 0 && rc.Owner.PendingSlot == null && rc.Owner.Backpack.LitCount(rc.Id) == 1, "同事件争槽失败不在槽释放后补发");
+            Check(rc.UseCount == 0 && rc.Owner.PendingSlot == null && rc.LitCount == 1, "同事件争槽失败不在槽释放后补发");
             scene.Cleanup();
 
             // 两个 C# listener 反序注册也不影响争槽。
@@ -192,7 +192,7 @@ namespace UnityWorld.Tests
             Light(card);
             APIContext observed = null;
             WithEvent("OnProbe", ctx => { observed = ctx; Check(!card.TryUseFromEvent(ctx), "EventMgr同事件不得二次提交"); }, () => Fire(scene, "OnProbe", scene.GetCombatants()[b.Id]));
-            Check(card.UseCount == 1 && card.ApplyCount == 1 && card.Owner.Backpack.LitCount(card.Id) == 1, "同事件多Keyword及双通道仅Use一次，即使Apply重新点满");
+            Check(card.UseCount == 1 && card.ApplyCount == 1 && card.LitCount == 1, "同事件多Keyword及双通道仅Use一次，即使Apply重新点满");
             Check(ReferenceEquals(card.env["own"], observed) && ReferenceEquals(card.env["first"], observed) && ReferenceEquals(card.env["second"], observed), "所有通道保留同一实际事件对象");
             var effect = (APIContext)card.env["effect"];
             Check(effect.SourceCard == card && effect.Caster == card.Owner && ReferenceEquals(effect.TriggerEvent, observed) && observed.Caster.Id == b.Id, "效果来源是监听法宝且原始敌方事件另存TriggerEvent");
@@ -233,7 +233,7 @@ namespace UnityWorld.Tests
             var a = NewNpc(); var b = NewNpc(); var left = Place(a, "bp_focus", 1, 0); var right = Place(a, "bp_focus", 3, 0);
             var scene = Scene(a, b); var lc = Find(scene, a, left); var rc = Find(scene, a, right);
             Light(lc); Light(rc); Check(lc.Freeze() && !lc.Freeze(), "冻结不叠加"); To(scene, 10);
-            Check(!lc.IsFrozen && lc.UseCount == 0 && lc.Owner.Backpack.LitCount(lc.Id) == 1 && rc.UseCount == 1, "满灵左卡冻结跳过解冻，右卡使用"); scene.Cleanup();
+            Check(!lc.IsFrozen && lc.UseCount == 0 && lc.LitCount == 1 && rc.UseCount == 1, "满灵左卡冻结跳过解冻，右卡使用"); scene.Cleanup();
 
             scene = Scene(a, b); lc = Find(scene, a, left); rc = Find(scene, a, right);
             Light(lc); rc.Freeze(); To(scene, 10);
@@ -247,7 +247,7 @@ namespace UnityWorld.Tests
             a = NewNpc(); b = NewNpc(); left = Place(a, "bp_attack", 1, 0);
             scene = Scene(a, b); card = Find(scene, a, left); Light(card); To(scene, 10); card.Freeze(); To(scene, 50);
             Check(card.ApplyCount == 1 && card.IsFrozen && card.Owner.PendingSlot == null, "待发被冻结仍正常结算且保留冻结");
-            Light(card); To(scene, 60); Check(!card.IsFrozen && card.UseCount == 1 && card.Owner.Backpack.LitCount(card.Id) == 1, "已待发冻结在下次完整扫描跳过解冻");
+            Light(card); To(scene, 60); Check(!card.IsFrozen && card.UseCount == 1 && card.LitCount == 1, "已待发冻结在下次完整扫描跳过解冻");
             scene.Cleanup();
         }
 
@@ -257,7 +257,7 @@ namespace UnityWorld.Tests
             var scene = Scene(a, b); var card = Find(scene, a, src);
             Script(card, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, OnUse=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, Apply=function(self,ctx) self.refill:Invoke() end");
             card.env["refill"] = (Action)(() => Light(card)); Light(card); Fire(scene, "OnProbe", card.Owner);
-            Check(card.UseCount == 1 && !scene.IsFinished && card.Owner.Backpack.LitCount(card.Id) == 1, "自身Use派生事件拒绝重入且不消耗重新点亮");
+            Check(card.UseCount == 1 && !scene.IsFinished && card.LitCount == 1, "自身Use派生事件拒绝重入且不消耗重新点亮");
             Fire(scene, "OnProbe", card.Owner); Check(card.UseCount == 2, "拒绝自身派生不吞独立事件"); scene.Cleanup();
 
             // A→B→缺灵A 是自然终止链；补满A后相同路径才是真正循环。

@@ -52,7 +52,6 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>唯一待发位置；null 表示空槽。</summary>
         public ContestData PendingSlot { get; private set; }
-        public BackpackManaTargetSelector ManaTargetSelector { get; set; } = new();
 
         private Queue<DamageInfo> damageInfos { get; set; } = new();
 

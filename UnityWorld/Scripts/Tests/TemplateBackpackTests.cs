@@ -93,7 +93,7 @@ namespace UnityWorld.Tests
             Check(b.GetAllCards()[1].Position == new BackpackPosition(1, 1) && definition.InitCardPlacements[1].Value == new BackpackPosition(1, 1), "实例摆放不改其他NPC或模板");
             var manaCell = sa.Backpack.EmptyCells()[0];
             sa.Backpack.PlaceMana(manaCell, ElementType.Jin); sa.Backpack.TryAssign(manaCell, ca);
-            Check(sa.Backpack.AssignedTo(ca.Id).Count == 1 && sb.Backpack.AssignedTo(cb.Id).Count == 0 && sa.Backpack.AssignedTo(duplicates[1].Id).Count == 0, "重复实例及同源战斗点亮隔离");
+            Check(ca.LitCount == 1 && cb.LitCount == 0 && sa.GetField().Single(c => c.Id == duplicates[1].Id).LitCount == 0, "重复实例及同源战斗点亮隔离");
         }
 
         private static void BindingAndSourceIsolation()

@@ -29,7 +29,7 @@ public partial class CombatScene
     internal static CombatPresentationCard PresentationCard(CombatCard card) => new(card.Id, card.DefineId,
         card.DisplayName ?? card.DefineId, card.GetSize(), PresentationCopy(card.GetKeywords()),
         PresentationCopy(card.GetManaCost().OrderBy(p => p.Key.ToString()).Select(p => new PresentationManaCost(p.Key.ToString(), p.Value))),
-        PresentationCopy(card.Owner?.Backpack.Placements.ContainsKey(card.Id) == true ? card.Owner.Backpack.AssignedTo(card.Id).Select(e => e.ToString()) : Array.Empty<string>()),
+        PresentationCopy(card.AssignedElements.Select(e => e.ToString())),
         PresentationCopy(card.Owner?.Backpack.Placements.TryGetValue(card.Id, out var cells) == true ? cells.Select(c => new PresentationCell(c.X, c.Y)) : Array.Empty<PresentationCell>()),
         PresentationCopy(card.BaseData.Shape.Select(c => new PresentationCell(c.X, c.Y))));
     internal PresentationOrigin? CapturePresentationOrigin() => !PresentationRecordingEnabled ? null :

@@ -42,7 +42,7 @@ internal sealed class BattleSnapshotProjector
             var phase = Enum.GetValues<CombatCardPhase>().First(card.CheckPhase).ToString();
             return new CardSnapshot(card.Id, card.DefineId, card.DisplayName, card.BaseData.Size, phase,
                 card.IsFrozen, card.UseCount, card.ApplyCount, card.Id == pack.MainCardId,
-                card.BaseData.Keywords.Contains("Wound"), cells, ReadOnly(pack.AssignedTo(card.Id).Select(e => e.ToString())),
+                card.BaseData.Keywords.Contains("Wound"), cells, ReadOnly(card.AssignedElements.Select(e => e.ToString())),
                 ReadOnly(card.BaseData.ManaCost.OrderBy(p => p.Key.ToString(), StringComparer.Ordinal)
                     .Select(p => new ElementAmount(p.Key.ToString(), p.Value))));
         }));

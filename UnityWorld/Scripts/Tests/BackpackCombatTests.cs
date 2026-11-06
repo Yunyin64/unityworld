@@ -92,7 +92,7 @@ namespace UnityWorld.Tests
             scene = Scene(a, b); npc = scene.GetCombatants()[a.Id];
             Light(npc, Card(scene, a, cb)); Light(npc, Card(scene, a, cc));
             To(scene, 10);
-            Check(Card(scene, a, cb).UseCount == 1 && Card(scene, a, cc).UseCount == 0 && npc.Backpack.LitCount(cc.Id) == 1, "左缺灵、右先满者使用，后满者保留");
+            Check(Card(scene, a, cb).UseCount == 1 && Card(scene, a, cc).UseCount == 0 && Card(scene, a, cc).LitCount == 1, "左缺灵、右先满者使用，后满者保留");
             scene.Cleanup();
 
             // 左灵元先点亮右卡；本行机会用完仍继续扫描右灵元。
@@ -102,7 +102,7 @@ namespace UnityWorld.Tests
             npc.Backpack.PlaceMana(new(5, 0), ElementType.Jin);
             To(scene, 10);
             Check(Card(scene, a, ca).UseCount == 1 && Card(scene, a, cb).UseCount == 0, "左灵元先供右卡");
-            Check(npc.Backpack.LitCount(cb.Id) == 1 && npc.Backpack.Mana.Count == 0, "机会用完继续分配右灵元");
+            Check(Card(scene, a, cb).LitCount == 1 && npc.Backpack.Mana.Count == 0, "机会用完继续分配右灵元");
             To(scene, 50); Check(Card(scene, a, cb).UseCount == 0, "迟到补满本轮不追补");
             To(scene, 60); Check(Card(scene, a, cb).UseCount == 1, "下一轮再次扫完整才使用");
             scene.Cleanup();
@@ -127,7 +127,7 @@ namespace UnityWorld.Tests
             Light(npc, active, 2); npc.Backpack.PlaceMana(new(2, 0), ElementType.Jin);
             To(scene, 10);
             Check(active.UseCount == 1 && npc.PendingSlot?.SourceCard == active, "同一行多格卡只在末格判断，先处理中间灵元");
-            Check(!npc.Backpack.CanAccept(active, ElementType.Jin), "待发期间不接收下一次点亮资源");
+            Check(!active.CanAcceptMana(ElementType.Jin), "待发期间不接收下一次点亮资源");
             scene.Cleanup();
         }
 
@@ -157,8 +157,8 @@ namespace UnityWorld.Tests
             a = Npc(); b = Npc("bp_main_8x3"); var c = Place(a, "bp_charge", 2, 0); scene = Scene(a, b); npc = scene.GetCombatants()[a.Id];
             var card = Card(scene, a, c); Light(npc, card, 2);
             npc.Backpack.PlaceMana(new(5, 4), ElementType.Huo);
-            To(scene, 50); Check(npc.Backpack.LitCount(c.Id) == 2 && npc.Backpack.Mana.ContainsKey(new(5, 4)) && card.UseCount == 0, "2/3与无目标灵元跨轮保留");
-            Light(npc, card, 1); To(scene, 80); Check(card.UseCount == 1 && npc.Backpack.LitCount(c.Id) == 0, "补至3/3后再次完整扫描使用，开始下次点亮"); scene.Cleanup();
+            To(scene, 50); Check(card.LitCount == 2 && npc.Backpack.Mana.ContainsKey(new(5, 4)) && card.UseCount == 0, "2/3与无目标灵元跨轮保留");
+            Light(npc, card, 1); To(scene, 80); Check(card.UseCount == 1 && card.LitCount == 0, "补至3/3后再次完整扫描使用，开始下次点亮"); scene.Cleanup();
         }
 
         private static void SlotsAndTimeline()
@@ -181,7 +181,7 @@ namespace UnityWorld.Tests
             scene = Scene(a, b); na = scene.GetCombatants()[a.Id]; nb = scene.GetCombatants()[b.Id];
             Light(na, Card(scene, a, ac)); Light(na, Card(scene, a, waiting)); Light(na, Card(scene, a, effect)); hp = nb.GetHp();
             To(scene, 20);
-            Check(na.PendingSlot?.SourceCard.Id == ac.Id && Card(scene, a, waiting).UseCount == 0 && na.Backpack.LitCount(waiting.Id) == 1, "单槽等待不覆盖、不消失");
+            Check(na.PendingSlot?.SourceCard.Id == ac.Id && Card(scene, a, waiting).UseCount == 0 && Card(scene, a, waiting).LitCount == 1, "单槽等待不覆盖、不消失");
             Check(Card(scene, a, effect).UseCount == 1 && na.ShieldValue == 2 && nb.GetHp() == hp, "待发占位不占本行机会，无轮中直击");
             To(scene, 50); Check(nb.GetHp() == hp - 6 && na.PendingSlot == null, "本方轮末唯一攻击直击");
             To(scene, 70); Check(na.PendingSlot?.SourceCard.Id == waiting.Id, "已等待点亮卡下轮扫完整才入槽"); scene.Cleanup();

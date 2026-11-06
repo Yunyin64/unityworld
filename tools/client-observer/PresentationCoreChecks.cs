@@ -60,7 +60,7 @@ internal static class PresentationCoreChecks
     private static void Light(CombatCard card)
     {
         foreach (var cost in card.GetManaCost())
-            while (card.Owner.Backpack.AssignedTo(card.Id).Count(e => e.Equals(cost.Key)) < cost.Value)
+            while (card.AssignedElements.Count(e => e.Equals(cost.Key)) < cost.Value)
             {
                 var cell = card.Owner.Backpack.EmptyCells()[0];
                 card.Owner.Backpack.PlaceMana(cell, cost.Key);
@@ -88,18 +88,18 @@ internal static class PresentationCoreChecks
         Check(assigned[0].ManaAssigned!.SourceCell == new PresentationCell(1, 0) && assigned[1].ManaAssigned!.SourceCell == new PresentationCell(3, 0), "两个灵元真实零基源格");
         var used = events.Single(e => e.Kind == CombatPresentationKind.CardUsed);
         Check(used.Tick == 10 && assigned[0].Sequence < used.Sequence && used.CardUsed!.Before.Count == 1 && used.CardUsed.After.Count == 0, "同 Tick 分配后使用清空保留顺序");
-        Check(one.Owner.Backpack.LitCount(one.Id) == 0 && one.Owner.Backpack.LitCount(two.Id) == 1, "最终点亮与中间记录独立");
+        Check(one.LitCount == 0 && two.LitCount == 1, "最终点亮与中间记录独立");
         Check(events.Single(e => e.Kind == CombatPresentationKind.PendingChanged).ActionId == used.ActionId, "使用与真实入槽关联");
         Check(!events.Any(e => e.Kind == CombatPresentationKind.CardApplied), "只待发不提前生效");
         one.Owner.Backpack.PlaceMana(new(5, 0), ElementType.Huo);
-        Check(one.Owner.ManaTargetSelector.AssignAt(one.Owner.Backpack, new(5, 0), one.Owner.GetField()) == null, "不匹配灵元留格");
+        Check(one.Owner.Backpack.AssignManaAt(new(5, 0), one.Owner.GetField()) == null, "不匹配灵元留格");
         Check(scene.ReadPresentationEvents().Count == 0, "未分配不伪造事件");
         // 通过正式事件机会验证槽满时不产生 Use；不直接调用内部提交入口。
         two.BaseData.Keywords.Add("FaBao");
         two.BaseData.ProducesContest = true;
         Script(two, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end");
         scene.TriggerCombatEvent("OnProbe", new APIContext { Scene = scene, Caster = one.Owner });
-        Check(!scene.ReadPresentationEvents().Any(e => e.Kind == CombatPresentationKind.CardUsed) && one.Owner.Backpack.LitCount(two.Id) == 1, "槽满拒绝且保留点亮");
+        Check(!scene.ReadPresentationEvents().Any(e => e.Kind == CombatPresentationKind.CardUsed) && two.LitCount == 1, "槽满拒绝且保留点亮");
         Check(assigned[0].Card!.AssignedElements.Count == 1 && assigned[0].ManaAssigned!.After.Count == 1, "历史值不会被使用清空");
         scene.Cleanup();
     }

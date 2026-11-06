@@ -106,6 +106,8 @@ namespace UnityWorld.Game.Domain.Combat
                     case ComabtFieldChangeType.Add:
                         var manaBefore = Scene.PresentationRecordingEnabled ? Backpack.Mana.ToDictionary(p => p.Key, p => p.Value) : null;
                         var replaced = Backpack.Insert(card, card.HasKeyword("Wound"));
+                        // 原背包在入场时创建空蓄灵；现在由战斗卡重置自己的状态。
+                        card.ClearAssignedMana();
                         Field.Add(card);
                         card.Owner = this;
                         card.PreStart();
@@ -120,6 +122,8 @@ namespace UnityWorld.Game.Domain.Combat
 
                     case ComabtFieldChangeType.Remove:
                         Backpack.RemoveCard(card.Id);
+                        // 离场同步释放卡上资源，保留原先删除背包蓄灵记录的语义。
+                        card.ClearAssignedMana();
                         card.Position = null;
                         Field.Remove(card);
                         Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");

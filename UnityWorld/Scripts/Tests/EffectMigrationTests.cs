@@ -109,10 +109,10 @@ namespace UnityWorld.Tests
             npc.ReduceMP(1); var before = npc.GetMp(); CombatBaseFunc.Convert(ctx);
             Check(npc.Backpack.Mana.Count == 1 && npc.GetMp() == before + 1, "仅差1MP只回收一个");
             Check(System.Convert.ToInt32(card.env["changes"]) == 2, "一次回收只发送一次MP变化，满MP回收不发送");
-            Check(npc.Backpack.LitCount(card.Id) == 3, "回收保护卡上点亮");
+            Check(card.LitCount == 3, "回收保护卡上点亮");
             ctx.Set("MaxAmount", -1); CombatBaseFunc.Convert(ctx); Check(npc.Backpack.Mana.Count == 1, "非正请求不删除");
             ctx.Set("Amount", 3); CombatBaseFunc.ReduceMana(ctx);
-            Check(npc.Backpack.Mana.Count == 0 && npc.Backpack.LitCount(card.Id) == 3, "减灵部分成功且不影响卡上资源");
+            Check(npc.Backpack.Mana.Count == 0 && card.LitCount == 3, "减灵部分成功且不影响卡上资源");
             npc.ReduceMP(3);
             empty = npc.Backpack.EmptyCells();
             npc.Backpack.PlaceMana(empty[0], ElementType.Jin); npc.Backpack.PlaceMana(empty[1], ElementType.Huo);
@@ -147,7 +147,7 @@ namespace UnityWorld.Tests
             var apply = (NLua.LuaTable)lua.DoString("return {Apply=function(self,ctx) ReduceMana(ctx, 'Self', 'None', 3) end}")[0];
             card.env = apply; card.ScanLuaHooks();
             while (scene.CurrentTick < 10) scene.Tick();
-            Check(card.UseCount == 1 && npc.Backpack.Mana.Count == 0 && npc.Backpack.LitCount(card.Id) == 0, "左侧真实Lua/API减灵使右侧实体不再被扫描分配");
+            Check(card.UseCount == 1 && npc.Backpack.Mana.Count == 0 && card.LitCount == 0, "左侧真实Lua/API减灵使右侧实体不再被扫描分配");
             var free = npc.Backpack.EmptyCells()[0]; npc.Backpack.PlaceMana(free, ElementType.Jin);
             var mp = npc.GetMp(); lua.GetFunction("chain").Call(Ctx(npc));
             Check(npc.Backpack.Mana.Count == 1 && npc.GetMp() == mp - 1, "效果链删除立即腾格供后续Draw使用");
@@ -198,7 +198,7 @@ namespace UnityWorld.Tests
                     Light(npc, card); while (scene.CurrentTick < 50 && !scene.IsFinished) scene.Tick();
                     Check(card.UseCount == 1 && card.ApplyCount == 1, definition.ID + "真实定义Lua一次Use/Apply");
                 }
-                else Check(!npc.Backpack.CanAccept(card, ElementType.Jin) && card.UseCount == 0, definition.ID + "纯被动不被强制收灵");
+                else Check(!card.CanAcceptMana(ElementType.Jin) && card.UseCount == 0, definition.ID + "纯被动不被强制收灵");
                 Console.WriteLine($"MIGRATED_CARD_OK id={definition.ID} size={card.GetSize()} use={card.UseCount} apply={card.ApplyCount}");
                 scene.Cleanup();
             }
