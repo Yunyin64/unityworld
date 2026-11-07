@@ -5,12 +5,27 @@ using UnityWorld.Game.Domain.Tag;
 using UnityWorld.Game.World;
 
 // ═══════════════════════════════════════════════════════════
-//  UnityWorld —— NPC系统实时Tick测试
-//  规则：现实时间 1秒 = 游戏世界 1个月
-//        每过1游戏年（12个月）打印一次状态
+//  UnityWorld —— 核心测试入口
+//  旧秒 Tick 与游戏周历独立；测试入口不隐式换算秒、月或周。
 // ═══════════════════════════════════════════════════════════
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+// 纯历法测试必须先分派，避免为时间换算加载 Lua 或生成整个世界。
+if (args.Contains("--world-calendar-tests"))
+{
+    try
+    {
+        if (args.Length != 1) throw new ArgumentException("--world-calendar-tests 必须单独使用。");
+        UnityWorld.Tests.WorldCalendarTests.Run();
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine("WORLD_CALENDAR_FAILED " + ex);
+        Environment.ExitCode = 1;
+    }
+    return;
+}
 
 // 地图诊断先解析参数，仅在明确的运行时验证分支启动整个世界。
 if (args.Any(a => a.StartsWith("--map-", StringComparison.Ordinal)))

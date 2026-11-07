@@ -267,6 +267,9 @@ public static class MapRuntimeTests
             }
             Check(!PlaneMgr.Instance.Destroy(plane.Id), "已发布的真实主大陆不能由Destroy销毁");
             Check(WorldTime.CurrentTick == 0 && WorldTime.TotalTime == 0, "地图生成不推进时间");
+            // 周历也只能在世界成功建立后初始化，生成本身不消耗游戏周数。
+            Check(WorldTime.CurrentDate.ElapsedWeeks == 0 && WorldTime.CurrentDate.PeriodKind == WorldPeriodKind.NewYear,
+                "首次世界发布建立4000年新年，不预先推进周历");
             Check(RegionMgr.Instance.GetByPlane(plane.Id).Count() == plane.GenerationResult.Regions.Count, "首次启动地区索引已经可用");
             foreach (var region in RegionMgr.Instance.GetByPlane(plane.Id))
             {
@@ -307,6 +310,8 @@ public static class MapRuntimeTests
             var tag = catalog.Tiles.Values.SelectMany(t => t.Tags).First();
             Check(TileMgr.Instance.GetByTag(plane.Id, tag).All(t => catalog.Tiles[t.TypeId].Tags.Contains(tag)), "标签查询使用定义标签");
             var mainOrigin = WorldMgr.AuraDaoMgr.GetOrigin(TileId.Zero);
+            WorldTime.AdvanceWeek();
+            var dateBeforeSubPlane = WorldTime.CurrentDate;
             var existing = new Tile(TileId.Zero, Fire(17));
             var sub = PlaneMgr.Instance.CreatePlane(new PlaneConfig { Width = 2, Height = 2, InitialTiles = new[] { existing } });
             Check(ReferenceEquals(sub.GetTile(TileId.Zero), existing) && sub.TileCount == 4 && existing.CurrentAura.Huo == 17, "基础填充保留手工格内容并补齐");
@@ -315,6 +320,7 @@ public static class MapRuntimeTests
                 && RegionMgr.Instance.GetByPlane(sub.Id).Count() == 0, "跨位面同坐标不借用主世界地区");
             PlaneMgr.Instance.Destroy(sub.Id);
             Check(WorldMgr.AuraDaoMgr.GetOrigin(sub.Id, TileId.Zero) == null, "销毁清理小位面原初");
+            Check(WorldTime.CurrentDate == dateBeforeSubPlane, "创建和销毁额外位面不改变已有周历");
             Reject(() => PlaneMgr.Instance.CreatePlane(new PlaneConfig { Width = 2, Height = 2,
                 GenerationMode = PlaneGenerationMode.Continent }), "非200尺寸大陆不能降级");
             var regionWithLandmark = RegionMgr.Instance.GetByPlane(plane.Id).First(r => r.LandMarkIds.Count != 0);
@@ -326,14 +332,29 @@ public static class MapRuntimeTests
         }
         finally { WorldMgr.End(); }
         WorldTime.Advance(2);
+        // 使用非初始日期检查失败启动：不能通过意外重置到0周碰巧通过断言。
+        WorldTime.AdvanceWeek();
+        var previousCalendar = WorldTime.Calendar;
+        var previousDate = WorldTime.CurrentDate;
+        int oldWeekNotifications = 0;
+        previousCalendar.WeekAdvanced += _ => oldWeekNotifications++;
         int previousTick = WorldTime.CurrentTick;
         float previousTime = WorldTime.TotalTime;
         Reject(() => WorldMgr.Initialize(12345, baseDir, "missing-profile"), "启动失败不生成空白大陆");
         Check(WorldTime.CurrentTick == previousTick && WorldTime.TotalTime == previousTime
             && PlaneMgr.Instance == null && RegionMgr.Instance == null && LandMarkMgr.Instance == null,
             "失败启动不改时间且释放地图管理器，可再次重试");
+        Check(ReferenceEquals(WorldTime.Calendar, previousCalendar) && WorldTime.CurrentDate == previousDate,
+            "失败启动保留原周历实例、日期和订阅");
         WorldMgr.Initialize(12345, baseDir);
-        try { Check(PlaneMgr.Instance.Count == 1 && WorldTime.CurrentTick == 0, "同进程世界重启没有旧位面和时间"); }
+        try
+        {
+            Check(PlaneMgr.Instance.Count == 1 && WorldTime.CurrentTick == 0, "同进程世界重启没有旧位面和时间");
+            Check(WorldTime.CurrentDate.ElapsedWeeks == 0 && !ReferenceEquals(WorldTime.Calendar, previousCalendar),
+                "成功重启从新年建立新周历");
+            WorldTime.AdvanceWeek();
+            Check(oldWeekNotifications == 0, "世界成功重启后旧订阅不泄漏到新世界");
+        }
         finally { WorldMgr.End(); }
     }
 
@@ -354,6 +375,8 @@ public static class MapRuntimeTests
                 GenerationMode = PlaneGenerationMode.Continent, GenerationSeed = 12345 };
             int tick = WorldTime.CurrentTick;
             float time = WorldTime.TotalTime;
+            WorldTime.AdvanceWeek();
+            var dateBeforeCandidate = WorldTime.CurrentDate;
             var lakeLandmark=GameDataMgr.Instance.MapCatalog.LandMarks["natural_reed_marsh"];
             bool singletonBefore=lakeLandmark.IsSingleton;lakeLandmark.IsSingleton=true;
             try { Reject(()=>planes.CreatePlane(config), "必需三湖singleton冲突在候选阶段失败"); }
@@ -365,6 +388,7 @@ public static class MapRuntimeTests
                 && dao.GetOrigin(baseline.Id, TileId.Zero).Huo == 2 && dao.CalculateBalance()[BaseElementType.Huo] == 0,
                 "晚期失败撤销地区、地标、单例与快照，保留旧位面");
             Check(WorldTime.CurrentTick == tick && WorldTime.TotalTime == time, "晚期失败不改变世界时间");
+            Check(WorldTime.CurrentDate == dateBeforeCandidate, "候选校验和晚期发布失败均保留已有周历");
             planes.PublicationFailureStageForTesting = null;
             var success = planes.CreatePlane(config);
             var placedLandmarks = landmarks.GetByPlane(success.Id).ToArray();
@@ -379,6 +403,7 @@ public static class MapRuntimeTests
             planes.Destroy(parallel.Id);
             var position = success.GenerationResult.Regions[0].Anchor;
             planes.Destroy(success.Id);
+            Check(WorldTime.CurrentDate == dateBeforeCandidate, "候选成功发布和销毁也不推进世界周历");
             Check(planes.Count == 1 && regions.Count == 0 && landmarks.Count == 0
                 && placedLandmarks.All(lm => !lm.IsActive) && regions.GetAt(success.Id, position) == null
                 && dao.GetOrigin(success.Id, TileId.Zero) == null && dao.GetOrigin(baseline.Id, TileId.Zero).Huo == 2,
