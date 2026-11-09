@@ -6,8 +6,8 @@ using UnityWorld.Game.Data;
 namespace UnityWorld.Game.Domain
 {
     /// <summary>
-    /// Lua 运行时管理器：管理 NLua State 生命周期、
-    /// 卡牌脚本加载与 Hook 函数发现。
+    /// 游戏 Lua 管理器：组织卡牌、词条与 Hook 规则，通用执行交给 Core。
+    /// 保留原有 C# 入口和 Lua 全局名称，脚本无需修改。
     /// </summary>
     public class LuaMgr : IDomainMgrBase
     {
@@ -17,8 +17,8 @@ namespace UnityWorld.Game.Domain
 
         // ── Lua State ────────────────────────────────────────────
 
-        /// <summary>全局 Lua State（整个应用共享一个）</summary>
-        private Lua _luaState;
+        /// <summary>本游戏持有的执行环境；Core 不保存跨游戏的静态 Lua State。</summary>
+        private LuaRuntime _runtime;
 
 
         /// <summary>Lua 初始化脚本路径</summary>
@@ -59,9 +59,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void Init()
         {
-            _luaState = new Lua();
-            _luaState.State.Encoding = System.Text.Encoding.UTF8;
-            _luaState.LoadCLRPackage();
+            _runtime = new LuaRuntime();
 
             // 加载 Init.lua（定义 CardBase、Attack 等全局函数）
             LoadInitScript();
@@ -93,8 +91,8 @@ namespace UnityWorld.Game.Domain
         {
             HookToEventId.Clear();
             _keywordRegistry.Clear();
-            _luaState?.Dispose();
-            _luaState = null;
+            _runtime?.Dispose();
+            _runtime = null;
             Instance = null;
         }
 
@@ -104,7 +102,7 @@ namespace UnityWorld.Game.Domain
         public void Log()
         {
             LogMgr.Instance.Dbg("=== {0} ===  {1}", Name, Desc);
-            LogMgr.Instance.Dbg("  Lua State: {0}", _luaState != null ? "Active" : "Null");
+            LogMgr.Instance.Dbg("  Lua State: {0}", _runtime != null ? "Active" : "Null");
         }
 
         // ══════════════════════════════════════════════════════════
@@ -128,8 +126,7 @@ namespace UnityWorld.Game.Domain
                 RegisterEnumTables();
 
                 // 设置 package.path，让 require 能找到 Data/LuaScripts/ 下的模块
-                var luaScriptsDir = Path.GetDirectoryName(_luaInitPath).Replace("\\", "/");
-                _luaState.DoString($"package.path = '{luaScriptsDir}/?.lua;' .. package.path");
+                _runtime.AddModuleDirectory(Path.GetDirectoryName(_luaInitPath));
 
                 DoFileUtf8(_luaInitPath);
                 LogMgr.Instance.Dbg("[LuaMgr] Init.lua 加载成功");
@@ -146,9 +143,10 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         private void RegisterGlobals()
         {
-            _luaState["LuaMgr"] = this;
-            _luaState["LogMgr"] = LogMgr.Instance;
-            _luaState["API"] = APIMgr.Instance;
+            // 绑定哪些游戏能力由 Game 决定；Core 只执行显式注册。
+            _runtime.RegisterGlobal("LuaMgr", this);
+            _runtime.RegisterGlobal("LogMgr", LogMgr.Instance);
+            _runtime.RegisterGlobal("API", APIMgr.Instance);
         }
 
         /// <summary>
@@ -161,16 +159,8 @@ namespace UnityWorld.Game.Domain
             var enumTypes = assembly.GetTypes()
                 .Where(t => t.IsEnum && t.IsPublic);
 
-            foreach (var enumType in enumTypes)
-            {
-                var name = enumType.Name;
-                _luaState.NewTable(name);
-                var tbl = _luaState.GetTable(name);
-                foreach (var val in Enum.GetValues(enumType))
-                {
-                    tbl[val.ToString()] = val;
-                }
-            }
+            // 保持原游戏程序集的枚举集合，不能改成扫描 Core 自己的程序集。
+            _runtime.RegisterEnums(enumTypes);
 
             LogMgr.Instance.Dbg("[LuaMgr] 枚举注册完成，共 {0} 个", enumTypes.Count());
         }
@@ -196,7 +186,7 @@ namespace UnityWorld.Game.Domain
         /// <returns>脚本 return 的 card table，加载失败返回 null</returns>
         public LuaTable LoadCardScript(CardDefine define)
         {
-            if (_luaState == null)
+            if (_runtime == null)
             {
                 LogMgr.Instance.Err("[LuaMgr] LoadCardScript: Lua State 未初始化");
                 return null;
@@ -304,7 +294,7 @@ namespace UnityWorld.Game.Domain
 
                 try
                 {
-                    var results = func.Call(card);
+                    var results = LuaRuntime.Call(func, card);
                     if (results != null && results.Length > 0 && results[0] is bool b && b)
                     {
                         added.Add(kv.Key);
@@ -324,13 +314,13 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 加载战斗 Modifier Lua 脚本，每次调用返回独立的 LuaTable（不缓存）。
-        /// 脚本路径：Data/LuaScripts/CombatModifiers/{defineId}.lua
+        /// 脚本路径由 CombatNpcModifierDefineMgr.DataDir 提供，沿用既有数据目录。
         /// </summary>
         /// <param name="defineId">Modifier Define ID（如 "Burn"）</param>
         /// <returns>脚本 return 的 table，文件不存在或加载失败返回 null</returns>
         public LuaTable LoadModifierScript(string defineId)
         {
-            if (_luaState == null)
+            if (_runtime == null)
             {
                 LogMgr.Instance.Err("[LuaMgr] LoadModifierScript: Lua State 未初始化");
                 return null;
@@ -369,8 +359,7 @@ namespace UnityWorld.Game.Domain
 
         private object[] DoFileUtf8(string filePath)
         {
-            var code = File.ReadAllText(filePath, System.Text.Encoding.UTF8);
-            return _luaState.DoString(code, filePath);
+            return _runtime.ExecuteFile(filePath);
         }
 
         // ══════════════════════════════════════════════════════════
@@ -384,14 +373,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public static Dictionary<string, LuaFunction> ScanLuaHooks(LuaTable env)
         {
-            var hooks = new Dictionary<string, LuaFunction>();
-            if (env == null) return hooks;
-            foreach (var key in env.Keys)
-            {
-                if (key is string s && env[s] is LuaFunction func)
-                    hooks[s] = func;
-            }
-            return hooks;
+            // 保留旧调用入口，函数扫描本身由公共执行器完成。
+            return LuaRuntime.ScanFunctions(env);
         }
 
     }

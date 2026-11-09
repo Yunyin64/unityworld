@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- 故意不引用后端程序集：确保公共 Lua 文件能脱离 Game 编译、运行。 -->
+    <Compile Include="../../UnityWorld/Scripts/Core/Lua/LuaRuntime.cs" Link="Core/LuaRuntime.cs" />
+    <Compile Include="../../UnityWorld/Scripts/Core/Base/Interface/ILuaBindable.cs" Link="Core/ILuaBindable.cs" />
+    <PackageReference Include="NLua" Version="1.7.3" />
+    <Content Include="Fixtures/**/*.lua" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
