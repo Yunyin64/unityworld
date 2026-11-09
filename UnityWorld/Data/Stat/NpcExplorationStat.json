@@ -1,0 +1,12 @@
+[
+  {
+    "ID": "ExploreActionSpeed", "DisplayName": "行动速度", "Type": "Npc", "BaseType": "Derived",
+    "DefaultValue": 50, "MinValue": 0, "ExtraBase": "", "DisplayFormat": "Float2",
+    "Category": "探索", "Description": "世界移动每周完成的距离；相邻格固定距离100。"
+  },
+  {
+    "ID": "ExploreDisplayRadius", "DisplayName": "显示半径", "Type": "Npc", "BaseType": "Derived",
+    "DefaultValue": 5, "MinValue": 0, "ExtraBase": "", "DisplayFormat": "Integer",
+    "Category": "探索", "Description": "局部地图六边形圈数，最终值向下取整；与画面缩放独立。"
+  }
+]

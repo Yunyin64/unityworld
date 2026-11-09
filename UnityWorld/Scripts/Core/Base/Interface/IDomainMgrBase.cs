@@ -61,7 +61,8 @@ public abstract class DomainMgrBase<T> : IDomainMgrBase where T:GameEntityBase
         _allEntities[id] = obj;
     }
 
-    public void Remove(int id)
+    // NPC 覆写注销清理，保证经基类引用删除也会解除世界位置与成员。
+    public virtual void Remove(int id)
     {
         _allEntities.Remove(id);
     }

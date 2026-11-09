@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityWorld.Game.Data;
 using UnityWorld.Core;
+using UnityWorld.Game.World;
 
 namespace UnityWorld.Game.Domain
 {
@@ -72,6 +73,9 @@ namespace UnityWorld.Game.Domain
 
         public override void End()
         {
+            // 包括失败创建和未落地对象；新世界不继承旧位置或周移动。
+            foreach (var id in _allEntities.Keys.ToArray()) RemoveCore(id);
+            PositionSystem.Clear(); BehaviorSystem.Clear();
             BackpackSystem.Clear();
         }
 
@@ -205,16 +209,29 @@ namespace UnityWorld.Game.Domain
         }
 
         private void CleanupFailedAssembly(Npc npc)
+            => RemoveCore(npc.Id, npc);
+
+        internal void CleanupFailedWorldBirth(Npc npc) => RemoveCore(npc.Id, npc);
+
+        public override void Remove(int id)
         {
-            if (CardSystem.Contains(npc.Id))
-                foreach (var card in CardSystem.GetData(npc.Id).AllCards)
-                    CardMgr.Instance.UnregisterCard(card.Id);
-            BioSystem.Unregister(npc.Id); PositionSystem.Unregister(npc.Id); TraitSystem.Unregister(npc.Id);
-            CardSystem.Unregister(npc.Id); CultivationSystem.Unregister(npc.Id);
-            BackpackSystem.Unregister(npc.Id);
-            PersonalitySystem.Unregister(npc.Id); BehaviorSystem.Unregister(npc.Id);
-            StatMgr.Instance.RemoveBlock(npc.Id, typeof(Npc));
-            Remove(npc.Id);
+            WorldMgr.EnsureMutable();
+            RemoveCore(id);
+        }
+
+        private void RemoveCore(int id, Npc knownNpc = null)
+        {
+            // 正常注销和失败装配共用清理，不再只删除实体字典中的壳。
+            bool hadData = knownNpc != null || GetById(id) != null || BioSystem.Contains(id) || PositionSystem.Contains(id);
+            if (CardSystem.Contains(id))
+                foreach (var card in CardSystem.GetData(id).AllCards)
+                    CardMgr.Instance?.UnregisterCard(card.Id);
+            BioSystem.Unregister(id); PositionSystem.Unregister(id); TraitSystem.Unregister(id);
+            CardSystem.Unregister(id); CultivationSystem.Unregister(id);
+            BackpackSystem.Unregister(id);
+            PersonalitySystem.Unregister(id); BehaviorSystem.Unregister(id);
+            if (hadData) StatMgr.Instance.RemoveBlock(id, typeof(Npc));
+            base.Remove(id);
         }
 
         /// <summary>

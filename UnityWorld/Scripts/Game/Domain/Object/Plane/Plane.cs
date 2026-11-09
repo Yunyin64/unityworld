@@ -126,32 +126,39 @@ namespace UnityWorld.Game.Domain
 
         // ── 地块 ──────────────────────────────────────────
 
-        private readonly Dictionary<TileId, Tile> _tiles = new();
+        // Plane是复杂对象：数据有唯一归属，操作由所属System承担。
+        public PlaneTileData TileData { get; } = new();
+        public PlaneNpcData NpcData { get; } = new();
+        public PlaneSystemTile TileSystem { get; }
+        public PlaneSystemNpc NpcSystem { get; }
 
         /// <summary>本位面所有地块（只读视图）</summary>
-        public IReadOnlyDictionary<TileId, Tile> Tiles => _tiles;
+        public IReadOnlyDictionary<TileId, Tile> Tiles => TileData.Tiles;
 
         /// <summary>当前地块数量</summary>
-        public int TileCount => _tiles.Count;
+        public int TileCount => TileData.Entries.Count;
 
         /// <summary>发布的结构计划用于预览与运行时入口一致性核验，不参与 Tick。</summary>
         public GeneratedWorld GenerationResult { get; internal set; }
 
         // ── NPC列表 ───────────────────────────────────────
 
-        private readonly HashSet<int> _npcIds = new();
-
         /// <summary>本位面所有NPC的ID（只读快照）</summary>
-        public IReadOnlyCollection<int> ints => _npcIds;
+        public IReadOnlyCollection<int> NpcIds => NpcData.NpcIds;
+
+        /// <summary>保留旧访问名称，成员仍来自同一个NpcData。</summary>
+        public IReadOnlyCollection<int> ints => NpcIds;
 
         /// <summary>本位面当前NPC数量</summary>
-        public int NpcCount => _npcIds.Count;
+        public int NpcCount => NpcData.Members.Count;
 
         // ── 构造 ──────────────────────────────────────────
 
         /// <summary>通过 PlaneConfig 构造（推荐通过 PlaneMgr.CreatePlane 创建）</summary>
         internal Plane(PlaneId id, PlaneConfig config)
         {
+            TileSystem = new PlaneSystemTile(this);
+            NpcSystem = new PlaneSystemNpc(this);
             Id           = id;
             Name         = config.Name;
             Kind         = config.Kind;
@@ -171,7 +178,7 @@ namespace UnityWorld.Game.Domain
             if (config.InitialTiles != null)
                 foreach (var tile in config.InitialTiles)
                 {
-                    if (!IsInBounds(tile.Id) || !_tiles.TryAdd(tile.Id, tile))
+                    if (!IsInBounds(tile.Id) || !TileData.Entries.TryAdd(tile.Id, tile))
                         throw new ArgumentException($"初始地块坐标重复或越界：{tile.Id}");
                 }
         }
@@ -215,16 +222,16 @@ namespace UnityWorld.Game.Domain
         // ── 地块管理 ──────────────────────────────────────
 
         /// <summary>添加或覆盖一个地块</summary>
-        public void SetTile(Tile tile) => _tiles[tile.Id] = tile;
+        public void SetTile(Tile tile) => TileSystem.SetTile(tile);
 
         /// <summary>获取指定坐标的地块，不存在则返回 null</summary>
-        public Tile? GetTile(TileId id) => _tiles.TryGetValue(id, out var t) ? t : null;
+        public Tile? GetTile(TileId id) => TileSystem.GetTile(id);
 
         /// <summary>移除指定坐标的地块</summary>
-        public bool RemoveTile(TileId id) => _tiles.Remove(id);
+        public bool RemoveTile(TileId id) => TileSystem.RemoveTile(id);
 
         /// <summary>判断指定坐标是否有地块</summary>
-        public bool HasTile(TileId id) => _tiles.ContainsKey(id);
+        public bool HasTile(TileId id) => TileData.Entries.ContainsKey(id);
 
         /// <summary>
         /// 计算某地块的有效元气（地块当前值 + 位面加成）
@@ -232,7 +239,7 @@ namespace UnityWorld.Game.Domain
         public TileAura GetEffectiveAura(TileId id)
         {
             var effective = new TileAura();
-            if (_tiles.TryGetValue(id, out var tile))
+            if (TileData.Entries.TryGetValue(id, out var tile))
             {
                 effective.Jin = tile.CurrentAura.Jin + PlaneAuraBonus.Jin;
                 effective.Mu   = tile.CurrentAura.Mu   + PlaneAuraBonus.Mu;
@@ -246,13 +253,13 @@ namespace UnityWorld.Game.Domain
         // ── NPC管理 ───────────────────────────────────────
 
         /// <summary>将NPC加入本位面</summary>
-        public bool AddNpc(int npcId) => _npcIds.Add(npcId);
+        public bool AddNpc(int npcId) => NpcSystem.AddNpc(npcId);
 
         /// <summary>将NPC从本位面移除</summary>
-        public bool RemoveNpc(int npcId) => _npcIds.Remove(npcId);
+        public bool RemoveNpc(int npcId) => NpcSystem.RemoveNpc(npcId);
 
         /// <summary>判断NPC是否在本位面</summary>
-        public bool ContainsNpc(int npcId) => _npcIds.Contains(npcId);
+        public bool ContainsNpc(int npcId) => NpcData.Members.Contains(npcId);
 
         // ── 状态控制 ──────────────────────────────────────
 

@@ -7,6 +7,10 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcPositionData : IDomainDataBase
     {
+        /// <summary>默认零坐标不是出生；只有受校验的放置成功后才为 true。</summary>
+        public bool IsPlaced { get; internal set; }
+        /// <summary>成功进入本位面时的稳定序号；只是位置数据，不是额外的成员登记。</summary>
+        public long BirthOrder { get; internal set; } = -1;
         /// <summary>所在位面ID</summary>
         public int PlaneId { get; set; }
 

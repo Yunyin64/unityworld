@@ -12,10 +12,64 @@ namespace UnityWorld.Game.World
         public static List<IDomainMgrBase> _domains = new();  // 统一管理列表，方便统一Tick
         public static List<IGameplayMgrBase> _gameplays = new();  // 统一gameplay列表，方便统一Tick
 
+        public static bool IsAdvancingWeek { get; private set; }
+        private static bool _weeklyReady;
+        private static bool _weeklyFaulted;
+        public static WorldWeekResult LastWeekResult { get; private set; }
+        public static event Action<WorldWeekResult> WeekCompleted;
+
+        internal static void EnsureMutable()
+        {
+            if (IsAdvancingWeek || _weeklyFaulted)
+                throw new InvalidOperationException("世界正在周结算或已发生提交故障，当前不能修改。");
+        }
+
+        /// <summary>明确推进世界一周；日期与NPC一起结算，绝不折算成秒更新。</summary>
+        public static WorldWeekResult AdvanceWeek()
+        {
+            if (!_weeklyReady) throw new InvalidOperationException("世界尚未初始化。");
+            EnsureMutable();
+            IsAdvancingWeek = true;
+            bool committed = false;
+            var before = WorldTime.CurrentDate;
+            var results = new List<NpcWeekResult>();
+            try
+            {
+                NpcSystemPosition.ValidateExplorationDefinitions();
+                long week = checked(before.ElapsedWeeks + 1);
+                _ = new WorldDate(week);
+                // 世界只快照各位面成员；不建立全局参与名单或逐NPC移动计划。
+                var planes = PlaneMgr.Instance.GetAll().OrderBy(plane => plane.Id.Value)
+                    .Select(plane => (Plane: plane, Npcs: plane.NpcSystem.GetWeeklyNpcIds())).ToArray();
+                var transition = WorldTime.AdvanceWeek();
+                committed = true;
+                foreach (var item in planes) item.Plane.NpcSystem.AdvanceWeek(week, item.Npcs, results);
+                LastWeekResult = new(transition.Before, transition.After, true, results.AsReadOnly(), "");
+                var observers = WeekCompleted;
+                if (observers != null)
+                    foreach (Action<WorldWeekResult> observer in observers.GetInvocationList())
+                        try { observer(LastWeekResult); }
+                        catch (Exception ex)
+                        {
+                            try { LogMgr.Instance?.Warn("世界周完成观察者异常，本周已完成：{0}", ex); }
+                            catch { /* 诊断回调不能把成功周变成失败。 */ }
+                        }
+                return LastWeekResult;
+            }
+            catch (Exception ex) when (committed)
+            {
+                _weeklyFaulted = true;
+                LastWeekResult = new(before, WorldTime.CurrentDate, false, results.AsReadOnly(), ex.ToString());
+                return LastWeekResult;
+            }
+            finally { IsAdvancingWeek = false; }
+        }
+
         // ── 元气系统 ──────────────────────────────────────
 
         /// <summary>元气天道管理器：持有原初快照、计算五行收支偏差、暴露失衡权重</summary>
-        public static AuraDaoMgr AuraDaoMgr { get; private set; } = new();
+        // 只在Initialize中创建。独立位面调用保护方法时，不能替换它已安装的天道实例。
+        public static AuraDaoMgr AuraDaoMgr { get; private set; }
 
         /// <summary>地块元气系统：每 Tick 将 TileModifier 累积到 Tile.CurrentAura 并清理过期修正</summary>
         public static TileSystemAura TileSystemAura { get; private set; } = new();
@@ -76,6 +130,8 @@ namespace UnityWorld.Game.World
                 PlaneMgr.Instance.CreateMainPlane(seed, mapProfileId);
                 // 所有可能失败的加载与地图发布成功之后才建立新世界时间。
                 WorldTime.Initialize(seed);
+                _weeklyReady = true;
+                _weeklyFaulted = false;
             }
             catch
             {
@@ -95,6 +151,12 @@ namespace UnityWorld.Game.World
         /// <summary>宿主退出时结束各系统，释放 Lua、事件与日志资源。</summary>
         public static void End()
         {
+            if (IsAdvancingWeek)
+                throw new InvalidOperationException("世界周结算期间不能销毁世界。");
+            // 先让位置系统解绑位面成员，再按逆序销毁位面与管理器。
+            _domains.OfType<NpcMgr>().FirstOrDefault()?.PositionSystem.Clear();
+            _weeklyReady = false; _weeklyFaulted = false;
+            WeekCompleted = null; LastWeekResult = null;
             for (int i = _gameplays.Count - 1; i >= 0; i--)
                 _gameplays[i].End();
             for (int i = _domains.Count - 1; i >= 0; i--)
@@ -109,6 +171,8 @@ namespace UnityWorld.Game.World
         /// </summary>
         public static void Tick(float deltaTime)
         {
+            if (IsAdvancingWeek)
+                throw new InvalidOperationException("世界周结算期间不能执行秒更新。");
             // ① 推进世界物理时间
             WorldTime.Advance(deltaTime);
 

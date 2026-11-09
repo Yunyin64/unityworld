@@ -26,7 +26,8 @@ namespace UnityWorld.Game.Domain
         /// <summary>Detached read-only projection: callers may inspect/copy it without mutating the world.</summary>
         public MapWater Water { get => _water.Copy(); internal set => _water = value.Copy(); }
         public bool BlockAllMovement { get; internal set; }
-        public IReadOnlyList<string> AllowedMovement { get; internal set; } = Array.Empty<string>();
+        // null 表示继承类型定义；显式空集合表示禁止，不能按“没有权限”回退放行。
+        public IReadOnlyList<string> AllowedMovement { get; internal set; }
 
         // ── 五行元气 ──────────────────────────────────────
 
@@ -57,6 +58,15 @@ namespace UnityWorld.Game.Domain
         }
 
         // ── 修正源管理 ────────────────────────────────────
+
+        /// <summary>地理与元气观察副本，不携带活动Modifier引用，也不另造地图摘要类型。</summary>
+        public Tile CopyForObservation() => new(Id, CurrentAura)
+        {
+            TypeId = TypeId, Source = Source, RegionId = RegionId, LandMarkId = LandMarkId,
+            IsFixed = IsFixed, HasForcedLandmark = HasForcedLandmark,
+            Environment = Environment.Copy(), Water = Water, BlockAllMovement = BlockAllMovement,
+            AllowedMovement = AllowedMovement == null ? null : Array.AsReadOnly(AllowedMovement.ToArray())
+        };
 
         /// <summary>向本地块添加一个修正源</summary>
         public void AddModifier(TileModifier modifier)

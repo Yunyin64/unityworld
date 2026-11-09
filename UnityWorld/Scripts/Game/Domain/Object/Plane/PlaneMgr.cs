@@ -126,13 +126,15 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 销毁指定位面（主世界不可销毁）。
-        /// 注意：位面内的NPC不会自动销毁，调用方应先处理NPC的迁移或清除。
+        /// 位面内NPC实体保留；解除其落地与未完成移动，之后可重新放置。
         /// </summary>
         public bool Destroy(PlaneId id)
         {
+            UnityWorld.Game.World.WorldMgr.EnsureMutable();
             if (!_planes.TryGetValue(id, out var plane)) return false;
             if (plane.Kind == PlaneTypes.PlaneKind.MainPlane) return false; // 主世界不可销毁
 
+            plane.NpcSystem.ClearMembers();
             plane.MarkDestroyed();
             LandMarkMgr.Instance?.RemovePlane(id);
             RegionMgr.Instance?.RemovePlane(id);
@@ -181,18 +183,10 @@ namespace UnityWorld.Game.Domain
                             TileId targetTileId = default,
                             NpcSystemPosition? posSystem = null)
         {
-            if (!_planes.TryGetValue(targetPlaneId, out var target)) return false;
-            if (target.State == PlaneTypes.PlaneState.Destroyed)    return false;
-
-            // 从当前位面移除
-            var current = FindPlaneOfNpc(npcId);
-            current?.RemoveNpc(npcId);
-
-            // 加入目标位面
-            target.AddNpc(npcId);
-
-
-            return true;
+            // 兼容入口也必须写回真实坐标，不能只移动成员列表。
+            var owner = NpcMgr.Instance?.PositionSystem;
+            if (owner == null || posSystem != null && !ReferenceEquals(owner, posSystem)) return false;
+            return owner.TryPlace(npcId, targetPlaneId.Value, targetTileId);
         }
 
         // ── Tick ─────────────────────────────────────────

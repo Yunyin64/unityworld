@@ -11,6 +11,27 @@ using UnityWorld.Game.World;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+// 移动的测试／演示有自己的生命周期，不能落入默认战斗或逐帧秒更新。
+if (args.Contains("--npc-movement-demo"))
+{
+    Environment.ExitCode = UnityWorld.ConsoleHost.NpcMovementConsole.Run(args);
+    return;
+}
+if (args.Contains("--npc-movement-tests"))
+{
+    try
+    {
+        if (args.Length != 1) throw new ArgumentException("--npc-movement-tests 必须单独使用。");
+        UnityWorld.Tests.NpcMovementTests.Run();
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine("NPC_MOVEMENT_FAILED " + ex);
+        Environment.ExitCode = 1;
+    }
+    return;
+}
+
 // 纯历法测试必须先分派，避免为时间换算加载 Lua 或生成整个世界。
 if (args.Contains("--world-calendar-tests"))
 {
