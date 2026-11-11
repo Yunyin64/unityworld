@@ -76,6 +76,16 @@ public sealed class PlaneSystemNpc
             uint h = 2166136261;
             foreach (uint word in new[] { (uint)WorldTime.RandomSeed, (uint)_plane.Id.Value, (uint)birthOrder,
                 (uint)(birthOrder >> 32), (uint)week, (uint)(week >> 32), purpose }) h = (h ^ word) * 16777619;
+            // 种类与落脚格都取各自随机流的第一个数。打散新增用途的种子，
+            // 避免一旦抽中 Move 就总往少数方向走；用途 1、2 沿用原有出生和选格序列。
+            if (purpose >= 3)
+            {
+                h ^= h >> 16;
+                h *= 0x85ebca6bu;
+                h ^= h >> 13;
+                h *= 0xc2b2ae35u;
+                h ^= h >> 16;
+            }
             return new Rng((int)h);
         }
     }

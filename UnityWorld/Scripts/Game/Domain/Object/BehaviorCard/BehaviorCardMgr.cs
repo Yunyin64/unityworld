@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityWorld.Core;
 using UnityWorld.Game.Data;
+using UnityWorld.Game.World;
 
 namespace UnityWorld.Game.Domain
 {
@@ -52,10 +53,17 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void GiveCard(int npcId, string defineId)
         {
+            WorldMgr.EnsureMutable();
+            TryGiveCard(npcId, defineId);
+        }
+
+        /// <summary>周结算内部确认卡已入手。公开命令与通知回调不能在结算中再发卡。</summary>
+        internal bool TryGiveCard(int npcId, string defineId)
+        {
             if (BehaviorCardDataMgr.Instance?.Get(defineId) == null)
             {
                 LogMgr.Instance.Warn("[BehaviorCardMgr] GiveCard 找不到 BehaviorCardDefine '{0}'", defineId);
-                return;
+                return false;
             }
             if (!_cardTable.TryGetValue(npcId, out var list))
             {
@@ -64,13 +72,18 @@ namespace UnityWorld.Game.Domain
             }
             list.Add(new BehaviorCard(defineId, npcId));
             LogMgr.Instance.Dbg("[BehaviorCardMgr] GiveCard npc={0} card={1}", npcId, defineId);
+            return true;
         }
+
+        /// <summary>角色注销时释放其持卡；单纯离开位面仍保留持卡。</summary>
+        internal void RemoveNpcCards(int npcId) => _cardTable.Remove(npcId);
 
         /// <summary>
         /// 移除指定 NPC 的指定行为卡（移除第一个匹配的 DefineId）
         /// </summary>
         public void RemoveCard(int npcId, string defineId)
         {
+            WorldMgr.EnsureMutable();
             if (!_cardTable.TryGetValue(npcId, out var list)) return;
             var card = list.FirstOrDefault(c => c.DefineId == defineId);
             if (card != null)
@@ -100,6 +113,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public void UseCard(int npcId, string defineId, Rng? rng = null)
         {
+            WorldMgr.EnsureMutable();
             if (!_cardTable.TryGetValue(npcId, out var list)) return;
             var card = list.FirstOrDefault(c => c.DefineId == defineId);
             if (card == null)
@@ -169,8 +183,8 @@ namespace UnityWorld.Game.Domain
 
             
 
-            // 通过工厂创建
-            var behavior = BehaviorMgr.Instance.Create(behaviorId, define.BehaviorDuration);
+            // 旧卡的秒制 OnTick 概率要使用本次用卡的随机数，与周探索独立。
+            var behavior = BehaviorMgr.Instance.Create(behaviorId, define.BehaviorDuration, rng: rng);
             if (behavior == null) return null;
 
             // 设置 Story 条目

@@ -22,6 +22,13 @@ namespace UnityWorld.Game.Domain
 
         // ── 运行时状态 ─────────────────────────────────────────────────────────────
 
+        /// <summary>由实例的构造入口决定时钟。同一种行为可以来自秒制行为卡，也可以来自世界周指令。</summary>
+        public bool IsWeeklyManaged { get; }
+
+        /// <summary>周行为启动时绑定的位面与实际地块。只有周实例使用这两个值。</summary>
+        public int PlaneId { get; }
+        public TileId FromTile { get; }
+
         /// <summary>行为持续时间（外部传入，如 BehaviorCardDefine.BehaviorDuration）</summary>
         public float Duration { get; protected set; }
 
@@ -49,6 +56,13 @@ namespace UnityWorld.Game.Domain
             _rng = rng;
         }
 
+        protected BehaviorBase(int planeId, TileId fromTile) : this(float.PositiveInfinity)
+        {
+            IsWeeklyManaged = true;
+            PlaneId = planeId;
+            FromTile = fromTile;
+        }
+
         // ── 生命周期 ─────────────────────────────────────────────────────────────
 
         /// <summary>
@@ -65,6 +79,8 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public virtual void OnTick(float deltaTime)
         {
+            // 即使调用方直接传入秒数，周行动也只能由世界过周推进。
+            if (IsWeeklyManaged) return;
             ElapsedTime += deltaTime;
 
             // 结算 OnTick（概率触发）

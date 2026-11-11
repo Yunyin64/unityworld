@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 namespace UnityWorld.Game.Domain;
 
 /// <summary>行为的只读输出。真实状态仍保存于既有位置数据和主行为。</summary>
@@ -5,4 +7,10 @@ public sealed record NpcActionSnapshot(int NpcId, bool IsPlaced, int? PlaneId, T
     string State, TileId? From, TileId? Target, double Progress, double TotalDistance);
 
 public sealed record NpcWeekResult(int NpcId, long BirthOrder, string Kind, TileId? Target, float Speed,
-    NpcActionSnapshot Before, NpcActionSnapshot After, double CompletedProgress, string Reason);
+    NpcActionSnapshot Before, NpcActionSnapshot After, double CompletedProgress, string Reason)
+{
+    // 周末即使都为空闲，也能从本周行动及实际授卡事实区分抵达、探索和工作。
+    public string? Action { get; init; }
+    public string? EventId { get; init; }
+    public string? GrantedCardId { get; init; }
+}

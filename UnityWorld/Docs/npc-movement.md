@@ -1,4 +1,4 @@
-# NPC 按周移动
+# NPC 周行动与移动
 
 ## 职责与入口
 
@@ -25,35 +25,37 @@ var npc = plane.NpcSystem.Spawn(new BirthContext());
 var position = NpcMgr.Instance.PositionSystem.GetPosition(npc.Id);
 ```
 
-规则：已有NPC的显式放置调用`PositionSystem.TryPlace(id, planeId, tile)`；位置与成员一起更新。此入口不是自动跨位面旅行，移动途中不允许改位置。`PlaneMgr.MoveNpc`兼容入口同样委托位置系统。`Plane.RemoveNpc`会解除落地，销毁非主位面也会结束其中未完成移动并解除成员，NPC实体保留以便重新放置。`NpcMgr.Remove`则清理实体与子系统。世界结束先解除位面成员，再销毁系统。
+已有 NPC 通过 `PositionSystem.TryPlace(id, planeId, tile)` 放置，位置与成员一起更新。启动周行动后，角色锁定所在格，直到行动结束。`PlaneMgr.MoveNpc` 同样委托位置系统。`Plane.RemoveNpc` 或销毁位面会解除落地并释放周行动，保留 NPC 实体以便重新放置。`NpcMgr.Remove` 同时清理实体与持卡。世界结束先解除位面成员，再销毁系统。
 
 数字例子：默认坐标为(0,0)但未落地时GetPosition返回null；成功放进Plane后才参与该位面结算。中途创建失败后，下次成功出生仍得到原来的下一个序号。
 
 ## 一周行动
 
-规则：`WorldMgr.AdvanceWeek()`遍历各Plane的NPC，调用行为系统处理该周。空闲时从自己和合法六邻格中等概率随机选择一次，选择自己停留一周。主行为非空且不是周移动时返回busy；途中保持原目标，不能普通打断。到达后下一周才重新决策。
+每次 `WorldMgr.AdvanceWeek()` 推进整个世界一周。已有周主行为直接续办，已有秒制主行为返回 `busy`，主槽空闲才选新的周行动。当周到达、受阻或原地行动结束，都等下周再选。
 
-数字例子：合法六邻格共7个候选，各1/7；两个邻格阻挡后共5个候选，各1/5。只剩自己时正常停留，不无限重抽。
+| 周主行为 | 启动与结算 |
+| --- | --- |
+| Move | 指定一个合法非自身邻格，锁定后每周推进路程，到达时换格。 |
+| Explore | 留在启动时的地块，花一周，从本格地形的 `EncounterRefs` 中至多抽一个遭遇，再按该遭遇的概率判断是否命中。命中可获得一张行为卡，使用卡要另外发起。 |
+| Work | 留在原格一周，记录已工作。本次工作的本地事件、发卡数和收益均为零。 |
+
+调用方可以显式使用 `TryStartMove(id, target)`、`TryStartExplore(id)`、`TryStartWork(id)`。返回成功时主槽已占用，日期和坐标仍是启动前的值。随后调用一次世界过周，才结算这个动作。手动指定和自动选出的行为共用启动校验。
 
 规则：相邻距离统一100，不乘地形消耗。行为每周读取最终速度，推进自己的进度；到达由NpcSystemPosition写回目标格。未到达真实位置留在原格，状态move；到达后状态idle。零速度保留进度；高速只完成一格，多余距离不结转。
 
 数字例子：默认50，第一周50/100、第二周到达。速度50→25→0→25，进度50→75→75→100。速度150一周完成一格，多出的50不用。
 
-规则：需要显式指定邻格时，可使用`BehaviorSystem.TryStartMove(id, target)`这个真实行为入口；它只启动，不推进日期或进度。当前没有玩家输入界面。
-
 ## 策略预留
 
-规则：策略扩展只在NpcSystemBehavior中留`SelectMoveTargetByStrategy`，方法体只有TODO注释，当前不填写target。外层单独执行简单随机选择。没有interface、选择器实现类、注入属性或上下文实体。
+三个函数的实现留给人格 AI。`GetPreferredDestinations` 提供多个想去的点，`SelectWeeklyBehavior` 选择本周行为，`SelectMoveTargetByStrategy` 只在决定开始 Move 时选本步的合法邻格。合法性校验和随机默认选择都在函数外。不同选择分别使用世界种子、位面、出生序和周序派生的随机数。
 
-```csharp
-private void SelectMoveTargetByStrategy(
-    Npc npc, IReadOnlyList<TileId> candidates, ref TileId? target)
-{
-    // TODO: 未来在这里填写策略；当前不设置target，继续使用外层随机选择。
-}
-```
+当 Move、Explore、Work 都能执行时，每种行为的默认机会都是 1/3。选中 Move 后，若有 6 个合法邻格，每格机会为 1/6；若有 2 个，每格机会为 1/2。移速为零或没有合法邻格时，Explore 和 Work 各占 1/2。位置系统的公开查询仍含本格，供现有调用方查看。
 
-未来填写策略只选目标，仍由外层校验和行为／位置系统执行，不能在这里直接改坐标或推进时间。
+## 本地探索配置
+
+`Data/ExploreEncounters.json` 中每条记录使用 `ID`、取值 0 到 1 的 `Chance` 和可选的 `BehaviorCardId`。地形的 `EncounterRefs` 引用事件 ID，所有引用在世界加载时校验。正式地形当前均为空，一次探索仍会正常完成并记录无发现。
+
+例如，验收格仅引用一个命中率为 1 且会授卡的事件。探索一周后，周结果记录事件和卡 ID，角色持有的指定卡增加 1 张、使用次数为 0。在同一格工作一周，事件判定次数为 0。
 
 ## 属性与显示
 
@@ -65,9 +67,9 @@ private void SelectMoveTargetByStrategy(
 
 ## 时间与结果
 
-规则：纯时间入口WorldTime.AdvanceWeek / WorldCalendar.AdvanceWeek继续只改日期；旧WorldMgr.Tick继续按秒更新且不推进周移动。世界过周也不调用秒Tick、战斗、故事、修炼或地块元气。
+`WorldTime.AdvanceWeek()` 单独推进日期。`WorldMgr.Tick(dt)` 推进旧行为卡及次要行为的秒数。周主行为只在世界过周时处理，探索授卡在这一轮 NPC 结算中完成。
 
-规则：`BehaviorSystem.GetAction(id)`提供必要的不可变行为观察；`WorldWeekResult`包含Before／After日期、完成标记及逐NPC结果，结果区分waited、moving、arrived、busy、blocked、skipped和错误。世界完成后观察`WorldMgr.WeekCompleted`，原周历通知只承诺日期已更新，NPC可能尚未结算。回调只读，周重入和本功能的可变命令被拒绝，观察者异常不把成功周变成待重试。
+`BehaviorSystem.GetAction(id)` 读取角色当前状态。`WorldWeekResult` 给出前后日期及每个 NPC 的本周结果。查看 `Kind` 可区分 `moving`、`arrived`、`explored`、`worked`、`busy`、`blocked`、`skipped` 和错误。事件与卡 ID 只在实际命中和发卡时有值。在 `WorldMgr.WeekCompleted` 中可以读取完整结果，原周历通知可能早于 NPC 结算。
 
 数字例子：开局4000年新年无普通月相，过一周为一月新月，再过一周为上弦。直接读取WorldDate.MoonPhase，不能用总周数模4覆盖特殊周。
 
@@ -84,9 +86,9 @@ dotnet run --no-build --project Console/UnityWorld.Console.csproj -- --npc-movem
 dotnet run --no-build --project Console/UnityWorld.Console.csproj -- --world-calendar-tests
 ```
 
-演示默认20人8周，仅为可调参数。零人数／周数合法，负数、未知或重复参数拒绝。控制台输出真实出生位置、逐周日期／月相、目标、状态和进度。当前范围仅后端与控制台，Godot预览不标作真实模拟。
+演示默认 20 人、8 周。控制台每周列出每个角色的行为、实际坐标和终态。移动显示目标与路程；探索显示命中事件和所得卡，无发现时显示 `none`。同一种子和输入可以重放。零人数或零周有效，负数、未知或重复参数会被拒绝。
 
-## 原文件改动说明
+## 早期周移动改动记录
 
 - Plane.cs：唯一集合收进Data，操作委托所属System，保留原查询方法。
 - PlaneMgr.cs：兼容放置交给位置系统，销毁位面清理成员与落地。

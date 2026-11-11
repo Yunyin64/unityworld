@@ -35,6 +35,7 @@ public static partial class NpcMovementTests
         }
         finally { WorldMgr.End(); }
         ReplayAndLifecycle();
+        ConfiguredExploration();
         Console.WriteLine($"NPC_MOVEMENT_OK assertions={_assertions}");
     }
     private static void Attributes()

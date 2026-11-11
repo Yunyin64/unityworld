@@ -32,7 +32,8 @@ namespace UnityWorld.Game.Domain
         public bool TryPlace(int id, int planeId, TileId tile)
         {
             WorldMgr.EnsureMutable();
-            if (NpcMgr.Instance.BehaviorSystem.GetPrimary(id) is MoveBehavior { IsWeeklyManaged: true }) return false;
+            // 周行动锁定启动时的格子，普通放置不能在执行前把探索或工作搬到别处。
+            if (NpcMgr.Instance.BehaviorSystem.GetPrimary(id)?.IsWeeklyManaged == true) return false;
             return PlaceCore(id, planeId, tile);
         }
 
@@ -72,7 +73,7 @@ namespace UnityWorld.Game.Domain
         {
             if (_dataTable.TryGetValue(id, out var data) && data.IsPlaced && data.PlaneId == planeId)
             {
-                NpcMgr.Instance.BehaviorSystem.StopWeeklyMove(id);
+                NpcMgr.Instance.BehaviorSystem.StopWeeklyAction(id);
                 data.IsPlaced = false; data.BirthOrder = -1; data.MoveState = NpcTypes.MoveState.Idle;
             }
         }
@@ -135,6 +136,7 @@ namespace UnityWorld.Game.Domain
 
         public override void Unregister(int id)
         {
+            NpcMgr.Instance?.BehaviorSystem.StopWeeklyAction(id);
             foreach (var plane in PlaneMgr.Instance?.GetAll() ?? Enumerable.Empty<Plane>()) plane.NpcSystem.RemoveMember(id);
             base.Unregister(id);
         }

@@ -19,6 +19,7 @@ namespace UnityWorld.Game.Data
         // ── 子管理器 ──────────────────────────────────────────
         private List<IDataMgrBase> _datamgrs  = new();
         public MapCatalog MapCatalog { get; private set; }
+        internal ExploreEncounterData ExploreEncounters { get; private set; }
 
         // ── 初始化 ────────────────────────────────────────────
 
@@ -79,6 +80,9 @@ namespace UnityWorld.Game.Data
             {
                 mgr.Load();
             }
+            // 地形和行为卡均已加载，先校验本格遭遇引用，再把新数据交给世界。
+            candidate.ExploreEncounters = ExploreEncounterData.Load(
+                Path.Combine(baseDir, "Data", "ExploreEncounters.json"), candidate.MapCatalog, BehaviorCardDataMgr.Instance);
             Instance = candidate;
             LogMgr.Instance.Dbg("[GameDataMgr] 所有数据加载完成");
         }

@@ -33,13 +33,14 @@ public static partial class NpcMovementTests
         Check(position.GetMoveCandidates(npc.Id).Count==5,"过滤阻挡剩五格");
         TileValue(plane.GetTile(origin.Neighbor(1)),nameof(Tile.BlockAllMovement),false);
         TileValue(plane.GetTile(origin.Neighbor(2)),nameof(Tile.BlockAllMovement),false);
-        Check(!behavior.TryStartMove(npc.Id,target.Neighbor(0)),"远格启动拒绝");
+        Check(!behavior.TryStartMove(npc.Id,origin) && !behavior.TryStartMove(npc.Id,target.Neighbor(0)),"本格和远格启动拒绝");
         Start(npc,target);
         int ticks=WorldTime.CurrentTick; float seconds=WorldTime.TotalTime;
         var first=Week().Npcs.Single();
         Check(first.Kind=="moving" && first.After.Progress==50 && first.After.CurrentTile==origin && first.After.State=="move","第一周50/100不换格");
         Check(position.GetMoveCandidates(npc.Id).Count==0 && first.Target==target,"途中锁定");
-        Check(!behavior.TryStartMove(npc.Id,origin.Neighbor(1)),"途中不能改目标");
+        Check(!behavior.TryStartMove(npc.Id,origin.Neighbor(1)) && !behavior.TryStartExplore(npc.Id)
+            && !behavior.TryStartWork(npc.Id),"途中不能改目标或另起主行为");
         Reject<InvalidOperationException>(()=>behavior.InterruptPrimary(npc.Id),"途中不能普通打断");
         Check(!position.TryPlace(npc.Id,plane.Id.Value,target),"途中不能改位置");
         Check(WorldTime.CurrentTick==ticks && WorldTime.TotalTime==seconds,"周结算不改秒时钟");
@@ -55,10 +56,14 @@ public static partial class NpcMovementTests
         {
             Speed(npc,speed); var from=position.GetPosition(npc.Id).TileId;
             Start(npc,from.Neighbor(0)); var result=Week().Npcs.Single();
-            Check(result.Kind=="arrived" && result.Target==from.Neighbor(0) && result.After.State=="idle","高速只走一格");
+            Check(result.Action=="move" && result.Kind=="arrived" && result.CompletedProgress==100
+                && result.Target==from.Neighbor(0) && result.After.State=="idle","高速只走一格，多余速度不转入下一步");
         }
         Speed(npc,0);
-        Check(position.GetMoveCandidates(npc.Id).Count==1 && Week().Npcs.Single().Kind=="waited","零速随机只能停留");
+        var stoppedAt=position.GetPosition(npc.Id).TileId;
+        Check(position.GetMoveCandidates(npc.Id).Count==1 && !behavior.TryStartMove(npc.Id,stoppedAt.Neighbor(0)),"零速保留本格查询且不能启动移动");
+        var stationary=Week().Npcs.Single();
+        Check(stationary.Kind is "explored" or "worked" && stationary.After.CurrentTile==stoppedAt,"零速自动在本格探索或工作");
         Speed(npc,50);
         var current=position.GetPosition(npc.Id).TileId; Start(npc,current.Neighbor(0)); Week();
         var missing=plane.GetTile(current.Neighbor(0)); plane.RemoveTile(missing.Id);
@@ -95,7 +100,8 @@ public static partial class NpcMovementTests
         Check(oldWeek==WorldTime.CurrentDate.ElapsedWeeks && unchanged==behavior.GetAction(npc.Id),"预检失败日期位置不变");
         mgr.Remove(npc.Id); Check(Week().Npcs.Count==0 && !plane.ContainsNpc(npc.Id),"途中注销不复活");
         var stay=Fixture(1,1); var waiter=Placed(stay,TileId.Zero);
-        Check(Week().Npcs.Single().Kind=="waited" && position.GetPosition(waiter.Id).TileId==TileId.Zero,"正速度选择自己固定一周");
+        var isolated=Week().Npcs.Single();
+        Check(isolated.Kind is "explored" or "worked" && position.GetPosition(waiter.Id).TileId==TileId.Zero,"有速度但孤立的地块只能探索或工作");
         mgr.Remove(waiter.Id);
         var people=Enumerable.Range(0,20).Select(i=>Placed(i<12?plane:stay,i<12?origin:TileId.Zero)).ToArray();
         Speed(people[0],float.NaN);

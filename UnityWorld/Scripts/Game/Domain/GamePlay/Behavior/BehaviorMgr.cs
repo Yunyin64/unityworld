@@ -5,8 +5,7 @@ using UnityWorld.Game.Data;
 namespace UnityWorld.Game.Domain
 {
     /// <summary>
-    /// 功法运行时管理器：管理 NPC 功法持有、修炼进度、节点解锁
-    /// （本次仅搭建骨架，不实现生成逻辑和 Tick 逻辑）
+    /// 通过行为卡的类型与时长创建行为实例。
     /// </summary>
     public class BehaviorMgr : IGameplayMgrBase
     {
@@ -25,7 +24,7 @@ namespace UnityWorld.Game.Domain
         }
 
 
-/// <summary>
+        /// <summary>
         /// 根据 BehaviorId 创建对应的 BehaviorBase 子类实例
         /// </summary>
         /// <param name="behaviorId">行为 ID</param>
@@ -44,6 +43,7 @@ namespace UnityWorld.Game.Domain
                 MoveBehavior.BehaviorIdConstant => new MoveBehavior(duration, storyEntries, rng),
                 PracticeBehavior.BehaviorIdConstant => new PracticeBehavior(duration, storyEntries, rng),
                 ExploreBehavior.BehaviorIdConstant => new ExploreBehavior(duration, storyEntries, rng),
+                WorkBehavior.BehaviorIdConstant => new WorkBehavior(duration, storyEntries, rng),
                 SocialBehavior.BehaviorIdConstant => new SocialBehavior(duration, storyEntries, rng),
                 _ => new ExtraBehavior(behaviorId, duration, storyEntries, rng)
             };

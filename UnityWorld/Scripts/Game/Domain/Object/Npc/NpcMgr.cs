@@ -226,6 +226,8 @@ namespace UnityWorld.Game.Domain
             if (CardSystem.Contains(id))
                 foreach (var card in CardSystem.GetData(id).AllCards)
                     CardMgr.Instance?.UnregisterCard(card.Id);
+            // 探索获得的行为卡由持卡管理器保存，角色注销时一并释放。
+            BehaviorCardMgr.Instance?.RemoveNpcCards(id);
             BioSystem.Unregister(id); PositionSystem.Unregister(id); TraitSystem.Unregister(id);
             CardSystem.Unregister(id); CultivationSystem.Unregister(id);
             BackpackSystem.Unregister(id);

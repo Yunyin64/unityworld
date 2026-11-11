@@ -5,7 +5,7 @@ using UnityWorld.Game.World;
 
 namespace UnityWorld.ConsoleHost;
 
-/// <summary>明确启动的短演示；自动选目标，时间仅由此处逐周推进。</summary>
+/// <summary>每周展示 NPC 选择的主行为、实际落脚格和本地探索结果。</summary>
 public static class NpcMovementConsole
 {
     public static int Run(string[] args)
@@ -47,7 +47,16 @@ public static class NpcMovementConsole
                 if (!result.Complete) throw new InvalidOperationException("本周已提交但未完整完成，不能重试："+result.Error);
                 Console.WriteLine($"WEEK elapsed={result.After.ElapsedWeeks} date={result.After} moon={result.After.MoonPhase?.ToString() ?? "none"}");
                 foreach (var npc in result.Npcs)
-                    Console.WriteLine(FormattableString.Invariant($"NPC order={npc.BirthOrder} id={npc.NpcId} result={npc.Kind} tile={npc.After.CurrentTile} target={npc.Target} state={npc.After.State} progress={npc.CompletedProgress}/100 speed={npc.Speed} reason={npc.Reason}"));
+                {
+                    // 周末多种行为都回到 idle，本周做了什么应读周结果，不能从终态反推。
+                    string details = npc.Action switch
+                    {
+                        "move" => FormattableString.Invariant($" target={npc.Target} progress={npc.CompletedProgress}/{MoveBehavior.AdjacentDistance} speed={npc.Speed}"),
+                        "explore" => $" event={npc.EventId ?? "none"} card={npc.GrantedCardId ?? "none"}",
+                        _ => ""
+                    };
+                    Console.WriteLine($"NPC order={npc.BirthOrder} id={npc.NpcId} action={npc.Action} result={npc.Kind} tile={npc.After.CurrentTile} state={npc.After.State}{details} reason={npc.Reason}");
+                }
             }
             Console.WriteLine($"NPC_MOVEMENT_DEMO_OK population={plane.NpcCount} elapsed={WorldTime.CurrentDate.ElapsedWeeks}");
             return 0;

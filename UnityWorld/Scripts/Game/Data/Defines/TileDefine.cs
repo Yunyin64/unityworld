@@ -40,7 +40,7 @@ public sealed class TileDefine : DefineBase
     public bool BlocksAllMovement { get; set; }
     /// <summary>预留资源内容引用；本期不执行采集。</summary>
     public List<string> ResourceRefs { get; set; } = new();
-    /// <summary>预留遭遇内容引用；本期不执行事件。</summary>
+    /// <summary>周探索可以在本格判定的遭遇 ID，空列表表示没有配置本地遭遇。</summary>
     public List<string> EncounterRefs { get; set; } = new();
 }
 

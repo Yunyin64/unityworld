@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Collections.Generic;
 using UnityWorld.Core;
 using UnityWorld.Game.World;
@@ -8,7 +10,7 @@ namespace UnityWorld.Game.Domain
     /// NPC 行为子系统：管理 NPC 的行为槽（主行为 + 次要行为）
     /// 负责：注册、添加、打断、Tick 推进、自然结束、便捷查询
     /// </summary>
-    public class NpcSystemBehavior : NpcSystemBase<NpcBehaviorData>
+    public partial class NpcSystemBehavior : NpcSystemBase<NpcBehaviorData>
     {
         protected override Dictionary<int, NpcBehaviorData> _dataTable { get; set; } = new();
 
@@ -34,8 +36,8 @@ namespace UnityWorld.Game.Domain
             if (!_dataTable.TryGetValue(npc.Id, out var data)) return;
 
             // 推进主行为
-            // 周移动由世界结算持有；原来的秒持续时间不能自然结束它。
-            if (data.PrimaryBehavior != null && data.PrimaryBehavior is not MoveBehavior { IsWeeklyManaged: true })
+            // 周主行为由世界过周推进。秒 Tick 只推进旧主行为及下方的次要行为。
+            if (data.PrimaryBehavior is { IsWeeklyManaged: false })
             {
                 data.PrimaryBehavior.OnTick(deltaTime);
 
@@ -70,6 +72,8 @@ namespace UnityWorld.Game.Domain
         public bool AddPrimary(int npcId, BehaviorBase behavior)
         {
             WorldMgr.EnsureMutable();
+            // 周实例已绑定特定位置，不能由旧行为卡入口挂到别的角色。
+            if (behavior.IsWeeklyManaged) return false;
             if (!_dataTable.TryGetValue(npcId, out var data))
             {
                 LogMgr.Instance.Warn("[NpcSystemBehavior] AddPrimary 找不到 NPC {0}", npcId);
@@ -98,8 +102,8 @@ namespace UnityWorld.Game.Domain
             if (!_dataTable.TryGetValue(npcId, out var data)) return;
             if (data.PrimaryBehavior == null) return;
             // 普通打断入口不能让NPC绕过途中锁定；受阻／注销由内部提交清理。
-            if (data.PrimaryBehavior is MoveBehavior { IsWeeklyManaged: true })
-                throw new InvalidOperationException("周移动尚未到达，不能换目标或打断。");
+            if (data.PrimaryBehavior.IsWeeklyManaged)
+                throw new InvalidOperationException("周主行为尚未结算完成，不能普通打断。");
 
             data.PrimaryBehavior.OnInterrupt();
             data.PrimaryBehavior = null;
@@ -111,102 +115,6 @@ namespace UnityWorld.Game.Domain
         public BehaviorBase? GetPrimary(int npcId)
         {
             return _dataTable.TryGetValue(npcId, out var data) ? data.PrimaryBehavior : null;
-        }
-
-        /// <summary>内部无故事回调提交；周管理模式只占用主行为槽，不结算秒故事。</summary>
-        private void SetWeeklyMove(int id, MoveBehavior next)
-        {
-            if (!_dataTable.TryGetValue(id, out var data)) throw new InvalidOperationException("NPC行为数据缺失。");
-            if (next != null) next.Ownerint = id;
-            data.PrimaryBehavior = next;
-            NpcMgr.Instance.PositionSystem.SetMoving(id, next != null);
-        }
-
-        public NpcActionSnapshot GetAction(int id)
-        {
-            var position = NpcMgr.Instance.PositionSystem.GetPosition(id);
-            var primary = GetPrimary(id);
-            var move = primary as MoveBehavior;
-            bool weekly = move?.IsWeeklyManaged == true;
-            return new(id, position != null, position?.PlaneId, position?.TileId,
-                weekly ? "move" : primary == null ? "idle" : "busy",
-                weekly ? move.FromTile : null, weekly ? move.TargetTile : null,
-                weekly ? move.Progress : 0, weekly ? MoveBehavior.AdjacentDistance : 0);
-        }
-
-        /// <summary>真实移动启动入口，未来手动选择也可复用；不推进日期或移动进度。</summary>
-        public bool TryStartMove(int id, TileId target)
-        {
-            WorldMgr.EnsureMutable();
-            if (GetPrimary(id) != null) return false;
-            var position = NpcMgr.Instance.PositionSystem.GetPosition(id);
-            if (position == null || target == position.TileId ||
-                !NpcMgr.Instance.PositionSystem.GetMoveCandidates(id).Contains(target)) return false;
-            SetWeeklyMove(id, new MoveBehavior(position.PlaneId, position.TileId, target));
-            return true;
-        }
-
-        // 预留移动策略扩展点：未来根据npc和合法候选填写target。
-        // 现在方法体保持为空，target不赋值；外层使用独立的随机选格逻辑。
-        // 这里只选目标，不改位置、不推进时间，填入的目标仍需外层校验。
-        private void SelectMoveTargetByStrategy(Npc npc, IReadOnlyList<TileId> candidates, ref TileId? target)
-        {
-            // TODO: 未来在这里填写策略；当前不设置target，继续使用外层随机选择。
-        }
-
-        internal void StopWeeklyMove(int id)
-        {
-            if (GetPrimary(id) is MoveBehavior { IsWeeklyManaged: true }) SetWeeklyMove(id, null);
-        }
-
-        private TileId ChooseRandomMoveTarget(Plane plane, NpcPositionData position, long week, IReadOnlyList<TileId> candidates)
-            => candidates[plane.NpcSystem.CreateRandom(position.BirthOrder, week, 2).Range(0, candidates.Count)];
-
-        /// <summary>位面遍历到NPC后，使用原主行为槽决定／推进这一周。</summary>
-        internal NpcWeekResult OnWeek(Plane plane, int id, long week)
-        {
-            var mgr = NpcMgr.Instance;
-            var before = GetAction(id);
-            var position = mgr.PositionSystem.GetPosition(id);
-            var npc = mgr.GetById(id);
-            var primary = GetPrimary(id);
-            var move = primary as MoveBehavior;
-            bool weekly = move?.IsWeeklyManaged == true;
-            NpcWeekResult Result(string kind, float speed = 0, TileId? target = null, double progress = 0, string reason = "")
-                => new(id, position?.BirthOrder ?? -1, kind, target ?? before.Target, speed,
-                    before, GetAction(id), progress, reason);
-
-            if (npc == null || position == null || position.PlaneId != plane.Id.Value || !mgr.BioSystem.GetData(id).IsAlive)
-            {
-                if (weekly) SetWeeklyMove(id, null);
-                return Result("skipped", reason: "NPC不存在、死亡或不属于此位面。");
-            }
-            if (plane.State != PlaneTypes.PlaneState.Active) return Result("skipped", reason: "位面未激活。");
-            if (primary != null && !weekly) return Result("busy", reason: "已有其他主行为。");
-            if (!plane.TileSystem.CanWalk(position.TileId) || weekly && (move.PlaneId != position.PlaneId ||
-                move.FromTile != position.TileId || !plane.TileSystem.CanWalk(move.TargetTile)))
-            {
-                if (weekly) SetWeeklyMove(id, null);
-                return Result("blocked", progress: weekly ? move.Progress : 0, reason: "来源或目标已失效。");
-            }
-            float speed;
-            try { speed = mgr.PositionSystem.GetActionSpeed(npc); }
-            catch (Exception ex) { return Result("invalid_state", progress: weekly ? move.Progress : 0, reason: ex.Message); }
-            if (!weekly)
-            {
-                var candidates = mgr.PositionSystem.GetMoveCandidates(id);
-                TileId? selected = null;
-                SelectMoveTargetByStrategy(npc, candidates, ref selected);
-                var target = selected ?? ChooseRandomMoveTarget(plane, position, week, candidates);
-                if (!candidates.Contains(target)) return Result("decision_error", speed, target, reason: "目标不在合法候选中。");
-                if (target == position.TileId) return Result("waited", speed, target);
-                move = new MoveBehavior(position.PlaneId, position.TileId, target);
-                SetWeeklyMove(id, move);
-            }
-            string outcome = move.AdvanceWeek(npc, speed);
-            if (outcome != "moving") SetWeeklyMove(id, null);
-            return Result(outcome, speed, move.TargetTile, move.Progress,
-                outcome == "blocked" ? "目标无法到达。" : "");
         }
 
         /// <summary>
@@ -243,6 +151,8 @@ namespace UnityWorld.Game.Domain
         /// <summary>添加次要行为</summary>
         public void AddSecondary(int npcId, BehaviorBase behavior)
         {
+            WorldMgr.EnsureMutable();
+            if (behavior.IsWeeklyManaged) throw new ArgumentException("周主行为不能放入次要槽。", nameof(behavior));
             if (!_dataTable.TryGetValue(npcId, out var data)) return;
             
             behavior.Ownerint = npcId;
@@ -253,6 +163,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>移除次要行为</summary>
         public void RemoveSecondary(int npcId, string behaviorId)
         {
+            WorldMgr.EnsureMutable();
             if (!_dataTable.TryGetValue(npcId, out var data)) return;
 
             for (int i = data.SecondaryBehaviors.Count - 1; i >= 0; i--)

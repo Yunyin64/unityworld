@@ -104,6 +104,8 @@ namespace UnityWorld.Game.World
                 _gameplays.Add(AuraDaoMgr);
                 _gameplays.Add(new CombatMgr(seed));
                 _gameplays.Add(new CultivationMgr(seed));
+                // 行为卡经由此工厂创建按秒运行的实例，与世界周行为共享类型。
+                _gameplays.Add(new BehaviorMgr());
             
             
             
