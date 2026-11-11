@@ -9,6 +9,8 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="*Checks.cs" />
+    <!-- 播放器检查按主题拆成 partial 文件，显式收录子目录中的全部分片。 -->
+    <Compile Include="PresentationPlayerChecks/**/*.cs" />
     <Compile Include="../../scripts/client/battle/**/*.cs" LinkBase="Battle" />
     <ProjectReference Include="../../UnityWorld/UnityWorld.csproj" />
   </ItemGroup>
