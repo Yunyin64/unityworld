@@ -13,7 +13,10 @@ public static class MapConsole
     {
         int seed = 12345;
         string profile = "china-inspired-v1", configHash = null;
-        string output = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "docs", "world-map-preview"));
+        // 统一写入核心项目的 Docs，兼容从仓库根目录或核心目录启动。
+        string outputRoot = Directory.Exists(Path.Combine(Environment.CurrentDirectory, "UnityWorld", "Data"))
+            ? Path.Combine(Environment.CurrentDirectory, "UnityWorld") : Environment.CurrentDirectory;
+        string output = Path.GetFullPath(Path.Combine(outputRoot, "Docs", "world-map-preview"));
         try
         {
             var flags = new HashSet<string>(StringComparer.Ordinal);
@@ -39,6 +42,8 @@ public static class MapConsole
             if (values.TryGetValue("--profile", out var profileText)) profile = profileText;
             if (values.TryGetValue("--output", out var outputText)) output = Path.GetFullPath(outputText);
             string baseDir = values.TryGetValue("--data-root", out var root) ? Path.GetFullPath(root) : FindDataRoot();
+            // 显式指定数据根目录时，默认输出同样跟随该目录；--output 仍优先。
+            if (!values.ContainsKey("--output")) output = Path.Combine(baseDir, "Docs", "world-map-preview");
             if (flags.Contains("--map-data-tests") || flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapDataTests.Run(baseDir);
             if (flags.Contains("--map-generator-tests") || flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapGeneratorTests.Run(baseDir);
             if (flags.Contains("--map-runtime-tests") || flags.Contains("--map-generation-tests")) UnityWorld.Tests.MapRuntimeTests.Run(baseDir);

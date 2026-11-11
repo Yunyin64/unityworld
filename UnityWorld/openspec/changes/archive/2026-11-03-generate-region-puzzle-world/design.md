@@ -138,7 +138,7 @@ LandMarkDefine 只提供一个 AuraOffset（默认五行零）：仅创世自然
 
 拟扩展命令：`--map-generate --seed N --profile <ID> --output <目录>`、`--map-generation-tests`。参数在世界初始化前解析；诊断模式只调用核心生成，不进入 NPC/战斗 Tick。现有正常世界入口使用相同生成服务，不能出现“预览成功、游戏仍是空白”的双实现。
 
-输出每次运行独立目录中的 `manifest.json`、`map.json`、`diagnostics.json`、`map.html`（内嵌 SVG 或 Canvas 视图）；可额外导出 SVG。默认建议放外层已忽略的 `docs/world-map-preview/`，也允许明确输出路径。成功清单最后发布，失败使用独立失败报告；重跑不把旧成功文件当作新结果。
+输出每次运行独立目录中的 `manifest.json`、`map.json`、`diagnostics.json`、`map.html`（内嵌 SVG 或 Canvas 视图）；可额外导出 SVG。默认建议放外层已忽略的 `UnityWorld/Docs/world-map-preview/`，也允许明确输出路径。成功清单最后发布，失败使用独立失败报告；重跑不把旧成功文件当作新结果。
 
 预览展示全图、缩放、图例、地区边界、选格详情和环境/来源图层，标签安全转义。HTML 内嵌导出数据，避免本地 file 页面跨文件加载限制。候选拒绝统计聚合计数并保留有限样本；选格需要的填充决策记录保留，避免对每次拒绝输出海量日志。
 

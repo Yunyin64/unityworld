@@ -9,14 +9,20 @@ using UnityWorld.Game.World;
 
 namespace Xianxia.Client;
 
-public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest }
+public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration }
 
 /// <summary>Godot 宿主：加载核心 DLL，驱动世界并在退出时释放资源。</summary>
 public partial class GameBootstrap : Node
 {
+    public const string ExplorationScene = "res://scenes/exploration/exploration_view.tscn";
     private bool _running;
     private bool _ownsWorld;
     public static ClientHostMode CurrentMode { get; private set; }
+
+    // 各世界宿主共用数据根目录规则；Godot 可从内存加载程序集，无法依赖 Assembly.Location。
+    internal static string ResolveDataRoot() => OS.HasFeature("editor")
+        ? ProjectSettings.GlobalizePath("res://UnityWorld")
+        : Path.GetDirectoryName(OS.GetExecutablePath()) ?? throw new InvalidOperationException("无法定位游戏数据根目录。");
 
     /// <summary>Explicit mode first, actual requested scene next, project default only as the final fallback.</summary>
     public static ClientHostMode ResolveHostMode(string[] userArgs, string[] engineArgs, string? currentScene, string? defaultScene)
@@ -26,10 +32,13 @@ public partial class GameBootstrap : Node
         bool observer = userArgs.Contains("--battle-observer") || userArgs.Any(a =>
             a.StartsWith("--observer-case=", StringComparison.Ordinal) || a.StartsWith("--observer-case-input=", StringComparison.Ordinal));
         bool world = userArgs.Contains("--world");
-        if ((editor ? 1 : 0) + (observer ? 1 : 0) + (world ? 1 : 0) > 1)
-            throw new InvalidOperationException("不能同时指定编辑器、观察器或世界宿主模式。");
+        bool exploration = userArgs.Contains("--exploration");
+        // 显式模式只允许一个世界所有者；原有烟测始终优先处理。
+        if ((editor ? 1 : 0) + (observer ? 1 : 0) + (world ? 1 : 0) + (exploration ? 1 : 0) > 1)
+            throw new InvalidOperationException("不能同时指定编辑器、观察器、探索或世界宿主模式。");
         if (editor) return ClientHostMode.TemplateEditor;
         if (observer) return ClientHostMode.Observer;
+        if (exploration) return ClientHostMode.Exploration;
         if (world) return ClientHostMode.World;
         string? requestedScene = engineArgs.LastOrDefault(a => a.EndsWith(".tscn", StringComparison.OrdinalIgnoreCase));
         string? scene = !string.IsNullOrWhiteSpace(requestedScene) ? requestedScene
@@ -38,6 +47,8 @@ public partial class GameBootstrap : Node
             return ClientHostMode.TemplateEditor;
         if (scene?.EndsWith("battle_observer.tscn", StringComparison.OrdinalIgnoreCase) == true)
             return ClientHostMode.Observer;
+        if (string.Equals(Path.GetFileName(scene), "exploration_view.tscn", StringComparison.OrdinalIgnoreCase))
+            return ClientHostMode.Exploration;
         return ClientHostMode.World;
     }
 
@@ -48,17 +59,15 @@ public partial class GameBootstrap : Node
         {
             CurrentMode = ResolveHostMode(OS.GetCmdlineUserArgs(), OS.GetCmdlineArgs(),
                 GetTree().CurrentScene?.SceneFilePath, ProjectSettings.GetSetting("application/run/main_scene").AsString());
-            // The editor reads definitions only; observer owns its separate world in BattleObserverSession.
-            if (CurrentMode is ClientHostMode.TemplateEditor or ClientHostMode.Observer)
+            // 探索会话在确认行走时才推进世界周，Bootstrap 不再创建第二个世界或执行物理帧秒 Tick。
+            if (CurrentMode is ClientHostMode.TemplateEditor or ClientHostMode.Observer or ClientHostMode.Exploration)
             {
                 SetPhysicsProcess(false);
+                if (CurrentMode == ClientHostMode.Exploration && OS.GetCmdlineUserArgs().Contains("--exploration"))
+                    Callable.From(OpenRequestedExplorationScene).CallDeferred();
                 return;
             }
-            // Godot 可以从内存加载 DLL，此时 Assembly.Location 为空。
-            string baseDir = OS.HasFeature("editor")
-                ? ProjectSettings.GlobalizePath("res://UnityWorld")
-                : Path.GetDirectoryName(OS.GetExecutablePath())
-                    ?? throw new InvalidOperationException("无法定位游戏数据根目录。");
+            string baseDir = ResolveDataRoot();
             LogMgr.LogFilePath = ProjectSettings.GlobalizePath("user://Logs/game.log");
             WorldMgr.Initialize(12345, baseDir);
             _ownsWorld = true;
@@ -81,6 +90,19 @@ public partial class GameBootstrap : Node
             _running = false;
             GD.PushError($"[GameBootstrap] {exception}");
             GetTree().Quit(1);
+        }
+    }
+
+    // 允许只传 --exploration 从默认场景进入。直接运行探索场景时保留已建立的会话。
+    private void OpenRequestedExplorationScene()
+    {
+        var tree = GetTree();
+        if (tree.CurrentScene?.SceneFilePath == ExplorationScene) return;
+        var error = tree.ChangeSceneToFile(ExplorationScene);
+        if (error != Error.Ok)
+        {
+            GD.PushError($"无法打开探索场景 {ExplorationScene}：{error}");
+            tree.Quit(1);
         }
     }
 

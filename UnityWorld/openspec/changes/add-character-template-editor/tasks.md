@@ -4,15 +4,15 @@
 
 ## 1. 阶段 A：先生成 UI 面板并整理已有素材
 
-- [x] 1.1 复核 design.md 的现有素材清单，将最后一版布局图与用户战斗风格截图分别复制到 `docs/art/template-editor/reference.png`、`battle-style-reference.png`，记录复用/UI新增/缺图文字规则；验证两张参考可打开且作为后续 UI 实现依据。
+- [x] 1.1 复核 design.md 的现有素材清单，将最后一版布局图与用户战斗风格截图分别复制到 `UnityWorld/Docs/art/template-editor/reference.png`、`battle-style-reference.png`，记录复用/UI新增/缺图文字规则；验证两张参考可打开且作为后续 UI 实现依据。
 - [x] 1.2 使用 imagegen 生成独立无字铜边羊皮纸面板，保存 `assets/art/ui/template_editor/panel_frame.png`；验证透明外沿、内容净空及拉伸后四角不变形，记录实际九宫格边距。
 - [x] 1.3 建立 `assets/presentation/template_editor_visuals.json`，仅登记已有角色、面板、裁切与缩放，复用现有卡图映射；验证引用指向实际文件，卡牌/角色缺图以名称文字呈现，无灰狼/赤炎狼/狼牙/兽皮补图任务。
 - [x] 1.4 在素材清单中定义按钮/Keyword 的普通、悬停、选中、禁用及拖放红绿反馈样式；验证这些状态可用现有 Theme/StyleBox/简单绘制完成，不增加逐 Keyword 位图需求。
-- [x] 1.5 汇总 `docs/art/template-editor/asset-manifest.json` 与简短 UI 素材预览，记录面板提示词、尺寸、alpha、裁切/拉伸边界及缺图名称显示规则；做一次已有资源及 UI 面板加载/目视检查即可进入阶段 B，不以卡图齐全为门槛。
+- [x] 1.5 汇总 `UnityWorld/Docs/art/template-editor/asset-manifest.json` 与简短 UI 素材预览，记录面板提示词、尺寸、alpha、裁切/拉伸边界及缺图名称显示规则；做一次已有资源及 UI 面板加载/目视检查即可进入阶段 B，不以卡图齐全为门槛。
 
 ## 2. 阶段 B：核查并补齐必要核心接口
 
-- [x] 2.1 素材阶段通过后按 design.md 第 4 节复核当前 `NpcMgr`、`NpcBackpackLayout`、Stat 与出生字段消费，形成 `docs/template-editor/backend-gap-check.md`；验证逐项注明复用/必补/暂不支持、涉及路径和依据，不重新泛泛调查全项目。
+- [x] 2.1 素材阶段通过后按 design.md 第 4 节复核当前 `NpcMgr`、`NpcBackpackLayout`、Stat 与出生字段消费，形成 `UnityWorld/Docs/template-editor/backend-gap-check.md`；验证逐项注明复用/必补/暂不支持、涉及路径和依据，不重新泛泛调查全项目。
 - [x] 2.2 定义纯模板校验输入与结构化报告（严重程度、问题码、字段、条目序号、格子）；验证报告能同时定位独立的引用问题和越界问题，不创建运行时实体。
 - [x] 2.3 抽取/实现共用定义校验，覆盖主功法固定格、形状、重复条目、绑定、兼容和 `占格 ≤ SP ≤ 容量`；用少量内存样例确认合法输入通过、缺主功法/重叠/越界/错误绑定给出原因。
 - [x] 2.4 实现独立属性/布局预览，沿用 Stat 默认值、夹紧和公式；验证现有默认八维的 HP/MP/SP 与核心一致，不调用 `StatMgr.CreateBlock` 或创建 NPC，无法求值时明确返回不可用。

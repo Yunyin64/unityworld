@@ -176,7 +176,8 @@ internal sealed class ObserverVerificationDriver
         _canvas.AddChild(gallery);
         Panel(gallery, new Rect2(0, 0, 1460, 740), Style(new Color("172f33")));
         Text(gallery, "素材核验 · 静态容器预览（非战斗实例）", new Rect2(28, 16, 1400, 40), 26, Ink);
-        using var manifest = JsonDocument.Parse(File.ReadAllText(ProjectSettings.GlobalizePath("res://docs/art/card_asset_manifest.json")));
+        // 素材台账已统一归入核心项目 Docs，仍按磁盘文件读取。
+        using var manifest = JsonDocument.Parse(File.ReadAllText(ProjectSettings.GlobalizePath("res://UnityWorld/Docs/art/card_asset_manifest.json")));
         var items = manifest.RootElement.GetProperty("cards").EnumerateArray()
             .Where(c => c.TryGetProperty("texture", out var texture) && texture.ValueKind == JsonValueKind.String).ToArray();
         int index = 0;

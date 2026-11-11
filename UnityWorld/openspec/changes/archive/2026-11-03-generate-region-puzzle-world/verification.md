@@ -23,7 +23,7 @@
 - 生成器版本：`region-puzzle-v1`
 - 配置摘要：`45b5e1d5ea27a09282e3a7a2011ffff48b4bd30e61ff073f3119201b749fdce1`
 - 结构摘要：`bbb6dea5990a62a807354f8bb63b0ddd024cad518f45200ace56ebf000fb0a05`
-- 输出：外层 `docs/world-map-preview/seed-20261031-20261031-032716-fb569de3/map.html`
+- 输出：外层 `UnityWorld/Docs/world-map-preview/seed-20261031-20261031-032716-fb569de3/map.html`
 - 40000 格、169 个完整地区、3762 个固定边界格、717 个水系格；本次生成阶段合计约 1.10 秒，仅为本机观测值。
 
 已在浏览器实际验证全图渲染、湿度图层、点选地块、地区下拉定位、填充候选权重展开；浏览器未记录脚本错误。页面可以本地打开，数据自包含。控制台导出和真实 `WorldMgr.Initialize` 在相同种子/配置下结构摘要一致，真实入口导出核验时世界 Tick 为零。
@@ -46,10 +46,10 @@
 
 20 个种子的完整验收：1..20 全部成功、每张 40000 格、固定边界只有一个摘要。地区覆盖率实际范围约 32.63%～37.74%，低于 42% 软目标时保留警告，必需地区、完整性、水系和通路均通过。
 
-原有回归分支全部通过：core-smoke（3 Tick、40000 格）、backpack-model（72）、backpack-combat（88）、backpack-timing（59）、effect-migration（85）、activation-migration（91）、template-backpack（92）。各次日志位于外层 `docs/world-map-preview/verification/`。
+原有回归分支全部通过：core-smoke（3 Tick、40000 格）、backpack-model（72）、backpack-combat（88）、backpack-timing（59）、effect-migration（85）、activation-migration（91）、template-backpack（92）。各次日志位于外层 `UnityWorld/Docs/world-map-preview/verification/`。
 
-地图专项最终日志：`docs/world-map-preview/verification/map-final-tests.log`。
-批量报告：`docs/world-map-preview/verification/batch-1-20-20261031-031825-9198ed4c71c74050b96068173ecec21a.json`。
+地图专项最终日志：`UnityWorld/Docs/world-map-preview/verification/map-final-tests.log`。
+批量报告：`UnityWorld/Docs/world-map-preview/verification/batch-1-20-20261031-031825-9198ed4c71c74050b96068173ecec21a.json`。
 
 ## 复核修复
 
@@ -77,7 +77,7 @@
 - 核心／Console 构建通过（0 错误；现有警告仍在）。完整地图测试通过：数据 37、生成器 12992、运行时 720、诊断 12，共 13761 个断言。包含地区附带和独立来源的两类地标分阶段、人工慢变、晚生自然慢变、移除停止及快照隔离。
 - core-smoke：3 ticks、40000 tiles；backpack-tests 模型与战斗回归通过，战斗 88 断言。
 - 数据审计 57 文件通过，脚本自测 8 断言通过；OpenSpec 严格校验及 git diff --check 通过。
-- 日志：外层 docs/world-map-preview/aura-phase-tests.log、aura-phase-core-smoke-test.log、aura-phase-backpack-tests.log。
+- 日志：外层 UnityWorld/Docs/world-map-preview/aura-phase-tests.log、aura-phase-core-smoke-test.log、aura-phase-backpack-tests.log。
 
 ## 2026-11-03 固定锚点地区复用验收
 
@@ -92,7 +92,7 @@
 - v2 下 1..20 种子全部成功、每张 40000 格，固定摘要仅 1 个；普通地区覆盖率 32.09%..37.96%，低于 42% 的软目标仍如实警告。
 - core-smoke：3 ticks／40000 tiles；backpack-tests 模型及战斗通过（战斗 88 断言）。纯生成与独立真实世界入口在种子 20261031 的结构摘要一致，真实入口 ticks=0。
 - 最新配置摘要：2b32a909c65e0da19131b240965347df2214a757c6cca8b626a9e12d1f10769e；版本 region-puzzle-v2；种子 20261031 结构摘要 7971946df9ff0a1c6c3b5045c95430ef4fc2038264769da3f15ebbbd2ea47655。
-- 最新预览：外层 docs/world-map-preview/fixed-region-verification/seed-20261031-20261102-161035-c0d871db/map.html；浏览器实看地形和生成来源图层，固定地区显示正常，页面错误日志为空。
-- 批量报告：外层 docs/world-map-preview/fixed-region-verification/batch-1-20-20261102-161052-86693a672a9f476285abbb8b972555ed.json。文件夹名时间来自执行宿主 UTC，验收日期使用用户当前本地日期。
-- 日志：外层 docs/world-map-preview/fixed-region-tests.log、fixed-region-batch.log、fixed-region-core-smoke-test.log、fixed-region-backpack-tests.log、fixed-region-runtime-hash.log。
+- 最新预览：外层 UnityWorld/Docs/world-map-preview/fixed-region-verification/seed-20261031-20261102-161035-c0d871db/map.html；浏览器实看地形和生成来源图层，固定地区显示正常，页面错误日志为空。
+- 批量报告：外层 UnityWorld/Docs/world-map-preview/fixed-region-verification/batch-1-20-20261102-161052-86693a672a9f476285abbb8b972555ed.json。文件夹名时间来自执行宿主 UTC，验收日期使用用户当前本地日期。
+- 日志：外层 UnityWorld/Docs/world-map-preview/fixed-region-tests.log、fixed-region-batch.log、fixed-region-core-smoke-test.log、fixed-region-backpack-tests.log、fixed-region-runtime-hash.log。
 - OpenSpec 严格校验和 git diff --check 通过；尚未提交或归档。

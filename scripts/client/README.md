@@ -9,11 +9,12 @@ dotnet build Xianxia.Client.csproj
 godot --path . res://scenes/templates/character_template_editor.tscn -- --template-editor
 ```
 
-将 `godot` 替换为本机 Godot .NET 可执行文件路径。实际操作、个人文件位置和人工检查见 [模板编辑器快速开始](../../docs/template-editor/QUICKSTART.md)，完整观察器说明见 [根目录 README](../../README_GODOT.md)。
+将 `godot` 替换为本机 Godot .NET 可执行文件路径。实际操作、个人文件位置和人工检查见 [模板编辑器快速开始](../../UnityWorld/Docs/template-editor/QUICKSTART.md)，完整观察器说明见 [根目录 README](../../README_GODOT.md)。
 
 | 目录／文件 | 职责 |
 | --- | --- |
-| `GameBootstrap.cs` | 明确识别 editor / observer / world / smoke 模式；编辑器不创建或推进世界，观察器独立拥有模拟会话 |
+| `GameBootstrap.cs` | 识别编辑器、探索、观察、普通世界与烟测宿主。探索场景独立持有世界，每次行程命令向核心提交一周。 |
+| `exploration/`、`ui/exploration/` | 读取同进程角色、地图、周历与行程。玩家点格预览、再点合法邻格启程。默认自动按间隔续行，手动模式由右下「继续」逐周推进。界面按当前窗口锚定日期、面板和右下控件。[启动与操作](../../README_GODOT.md#探索试玩) |
 | `templates/` | 只读内容目录、客户端模板配置检查与 HP/MP/SP 预览、草稿文档与稳定卡实例身份、转换与保存、动态筛选、冻结试战输入与独立进程启动 |
 | `ui/templates/` | 模板列表、属性/卡牌详情、背包拖放、动态 Keyword 筛选、素材与操作对话框 |
 | `battle/` | 观察案例、真实模拟会话、值快照和表现事实；读取个人模板快照与旧项目模板案例 |
@@ -28,4 +29,4 @@ godot --path . res://scenes/templates/character_template_editor.tscn -- --templa
 godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 ```
 
-数据协议见 [data-format.md](../../docs/template-editor/data-format.md)，冻结快照和进程参数见 [trial-input.md](../../docs/template-editor/trial-input.md)，核心字段支持范围见 [backend-gap-check.md](../../docs/template-editor/backend-gap-check.md)。
+数据协议见 [data-format.md](../../UnityWorld/Docs/template-editor/data-format.md)，冻结快照和进程参数见 [trial-input.md](../../UnityWorld/Docs/template-editor/trial-input.md)，核心字段支持范围见 [backend-gap-check.md](../../UnityWorld/Docs/template-editor/backend-gap-check.md)。

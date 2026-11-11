@@ -64,8 +64,20 @@
 !/tools/client-observer/
 !/tools/client-observer/**
 
-# 根目录开发资料不进入版本库
-/docs/
+# 开发资料统一位于 UnityWorld/Docs；迁入的本机资料沿用原忽略范围。
+/UnityWorld/Docs/.gdignore
+/UnityWorld/Docs/滴天髓.md
+/UnityWorld/Docs/黄帝内经.md
+/UnityWorld/Docs/三命通会.md
+/UnityWorld/Docs/易经.md
+/UnityWorld/Docs/渊海子平.md
+/UnityWorld/Docs/art/*
+!/UnityWorld/Docs/art/exploration_asset_manifest.md
+/UnityWorld/Docs/godot/
+/UnityWorld/Docs/template-editor/
+/UnityWorld/Docs/world-map-migration/
+/UnityWorld/Docs/world-map-migration-repeat/
+/UnityWorld/Docs/world-map-preview/
 
 # 构建产物不进入版本库；客户端 .uid 仍正常跟踪
 **/bin/

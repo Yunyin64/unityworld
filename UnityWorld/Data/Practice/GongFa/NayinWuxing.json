@@ -56,12 +56,12 @@
       "Identity": "留存MP，让金系攻击等到轮末再显锋芒。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 420,
           "Quote": "宝藏龙宫珠孕蛟室"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 235,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -148,12 +148,12 @@
       "Identity": "火法与相邻金系攻击配合，只提高下一次拼点，不积累永久成长。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 448,
           "Quote": "天地为炉阴阳为炭"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 239,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -242,12 +242,12 @@
       "Identity": "让木法术正交连片，以布局换取防守、续航和定向补灵。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 476,
           "Quote": "枝干撼风柯条撑月"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 241,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -337,12 +337,12 @@
       "Identity": "沿实际扫描先后顺序为后方卡补灵、解冻和加强拼点。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 504,
           "Quote": "大地连途平田万顷"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 245,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -430,12 +430,12 @@
       "Identity": "争取明确胜差，以破盾和胜负反馈体现锋利。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 436,
           "Quote": "盘根错节所以别利器"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 247,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -522,12 +522,12 @@
       "Identity": "直接叠加和利用现有灼烧状态，压制对方正面五行状态。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 464,
           "Quote": "野焚燎原延烧极目"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 251,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -614,12 +614,12 @@
       "Identity": "横条两端留出空隙，以小卡避实、清理负面并缓冲重招。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 516,
           "Quote": "山环细浪雪涌飞湍"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 255,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -706,12 +706,12 @@
       "Identity": "用现有持久护盾的高低切换攻守，允许主动耗盾进攻。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 496,
           "Quote": "此土有成有未成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 257,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -806,12 +806,12 @@
       "Identity": "紧随火法施放金法，用已有施法顺序体现火炼金。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 428,
           "Quote": "形明体洁乃金之正色也"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 261,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -898,12 +898,12 @@
       "Identity": "靠小差落败、平局和格挡恢复状态，柔性调整眼前的拼点。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 480,
           "Quote": "隋堤袅娜汉苑轻盈"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 265,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -992,12 +992,12 @@
       "Identity": "MP不足时恢复与清理更有效，也可把现有MP用于即时防守。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 532,
           "Quote": "八家凿之以同饮"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 269,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1084,12 +1084,12 @@
       "Identity": "围绕法术上下共边布局，以普通护盾保护下方出手。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 512,
           "Quote": "盖蔽雪霜之积"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 271,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1176,12 +1176,12 @@
       "Identity": "读取双方现有待发槽，直接截击对方攻守动作。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 444,
           "Quote": "九天号令电掣金蛇之势"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 275,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1268,12 +1268,12 @@
       "Identity": "在冻结和减速压力下稳住防线，通过已有解控恢复正常节奏。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 472,
           "Quote": "苍松冬秀"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 279,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1361,12 +1361,12 @@
       "Identity": "用本轮水法次数与上一张法术记录维持水势，不保存层数。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 524,
           "Quote": "混混无穷滔滔不竭"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 283,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1455,12 +1455,12 @@
       "Identity": "直接回收、改色或搬运格上异色灵元，不另设材料。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 432,
           "Quote": "宝质藏砂直教淘洗为珍"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 287,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1547,12 +1547,12 @@
       "Identity": "用一格火法轻量进攻，顺带恢复、解控和推动扫描。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 460,
           "Quote": "草间熠燿花里荧煌"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 289,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1639,12 +1639,12 @@
       "Identity": "把法术布成左右支柱和上下横梁，利用现有位置与空隙。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 488,
           "Quote": "戊戌为栋己亥为梁"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 293,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1731,12 +1731,12 @@
       "Identity": "利用背包侧边与边缘位置，自保、清理通用状态并反击。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 492,
           "Quote": "遮霜护雪之功"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 295,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1825,12 +1825,12 @@
       "Identity": "Size1小卡辅佐相邻大卡，支援只使用通用加值、补灵和解冻。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 424,
           "Quote": "润色杯盘增光宫室"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 299,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -1917,12 +1917,12 @@
       "Identity": "水火邻接配合，借助已有灵元引导与补给，在火攻之外维持点亮。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 452,
           "Quote": "以木为心以水为油"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 301,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2011,12 +2011,12 @@
       "Identity": "让雨露穿过不同扫描行，以跨行治疗、解冻和支援照顾上下法术。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 528,
           "Quote": "天上雨露发生万物无不赖之"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 305,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2103,12 +2103,12 @@
       "Identity": "只读取上一张己方法术，以跨五行顺序衔接不同收益。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 508,
           "Quote": "九州无所不通万国无行不至"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 309,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2196,12 +2196,12 @@
       "Identity": "不同名金法交替出手，只读取上一张成功法术。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 440,
           "Quote": "美容首饰增光腻肌"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 311,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2288,12 +2288,12 @@
       "Identity": "让普通治疗、持久护盾和MP相互补足，按当前缺口选择攻守。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 468,
           "Quote": "此木供蚕为弧其用甚大"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 315,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2381,12 +2381,12 @@
       "Identity": "通过通用移位改变卡牌和灵元的前后关系，借边界位置进攻。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 520,
           "Quote": "惊涛薄岸骇浪浮天"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 319,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2475,12 +2475,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2567,12 +2567,12 @@
       "Identity": "重视背包上行与一轮施法的开端、收尾，不引入额外相位。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 456,
           "Quote": "戊午为太阳则刚己未为太阴则柔"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 327,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2659,12 +2659,12 @@
       "Identity": "用多张单格法术分散到不同扫描行，汇成一次较大的出手。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 484,
           "Quote": "数颗枝头累累多子"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 331,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -2751,12 +2751,12 @@
       "Identity": "利用背包格上仍然存在的多色灵元与充足MP支撑多格法术。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 536,
           "Quote": "海水不择细流故能成其大"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 335,
           "Purpose": "核对干支对应与纳音取象"
         }

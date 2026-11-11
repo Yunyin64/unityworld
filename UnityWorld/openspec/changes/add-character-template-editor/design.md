@@ -68,9 +68,9 @@
 
 ### 2. 素材：仅生成 UI 面板，已有 Card 缺图显示名称
 
-**风格和参考：**以用户战斗截图为材质来源，最后一版参考图为布局来源。当前参考文件为 `C:/Users/Administrator/.codex/generated_images/01a18bd2-159d-72e1-9147-767e31b7f29a/exec-b367cc63-a5d8-4061-966d-5c81d774d43d.png`；实施阶段复制到 `docs/art/template-editor/reference.png` 作为可追溯设计参考，不作为 UI 背景切热点。
+**风格和参考：**以用户战斗截图为材质来源，最后一版参考图为布局来源。当前参考文件为 `C:/Users/Administrator/.codex/generated_images/01a18bd2-159d-72e1-9147-767e31b7f29a/exec-b367cc63-a5d8-4061-966d-5c81d774d43d.png`；实施阶段复制到 `UnityWorld/Docs/art/template-editor/reference.png` 作为可追溯设计参考，不作为 UI 背景切热点。
 
-用户补充确认必须使用该参考图。页面保留它的两组模板库、背包/动态 Keyword 卡库、属性详情和底栏构图，再按真实数据调整文字与内容。风格截图源文件为 `C:/Users/ADMINI~1/AppData/Local/Temp/codex-clipboard-f99d03ff-ead7-4cc5-a3d2-9472e6451cb3.png`，阶段 A 同时复制为 `docs/art/template-editor/battle-style-reference.png`；参考图里的未有卡图按名称文字实现，不作为补图要求。
+用户补充确认必须使用该参考图。页面保留它的两组模板库、背包/动态 Keyword 卡库、属性详情和底栏构图，再按真实数据调整文字与内容。风格截图源文件为 `C:/Users/ADMINI~1/AppData/Local/Temp/codex-clipboard-f99d03ff-ead7-4cc5-a3d2-9472e6451cb3.png`，阶段 A 同时复制为 `UnityWorld/Docs/art/template-editor/battle-style-reference.png`；参考图里的未有卡图按名称文字实现，不作为补图要求。
 
 | 已有资源 | 复用方式 |
 | --- | --- |
@@ -89,7 +89,7 @@
 
 按钮普通/悬停/按下/禁用、Keyword 多选、非法落点、选中边框和搜索/刷新/锁等小符号使用 Theme/StyleBox/现有字体或简单绘制，不各生成一张图片。角色、怪物和卡牌缺图直接采用名称文字，不把缺图自动转成生成待办。
 
-素材台账记录 UI 面板生成提示词、已有资源来源、实际尺寸、alpha、建议裁切与检查结果，输出到 `docs/art/template-editor/asset-manifest.json`。新增 `assets/presentation/template_editor_visuals.json` 管理面板及确实存在的角色预览引用；卡牌继续读取现有 `card_visuals.json`，不为狼牙/兽皮添加不存在的图片路径。已有资源缺失时以名称显示，不在后端定义写贴图路径。
+素材台账记录 UI 面板生成提示词、已有资源来源、实际尺寸、alpha、建议裁切与检查结果，输出到 `UnityWorld/Docs/art/template-editor/asset-manifest.json`。新增 `assets/presentation/template_editor_visuals.json` 管理面板及确实存在的角色预览引用；卡牌继续读取现有 `card_visuals.json`，不为狼牙/兽皮添加不存在的图片路径。已有资源缺失时以名称显示，不在后端定义写贴图路径。
 
 参考图中的“炎爪、猛扑、火盾”不被视为已存在玩法卡，赤炎狼图片也不是交付要求。正式页面由真实目录加载内容；演示复制现有模板，再从已有可用 Card 中配装，不新增示例玩法卡或怪物图。
 

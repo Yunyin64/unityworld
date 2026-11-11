@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <Compile Remove="Program.cs;Console\**;Scripts\Tests\**" />
+    <!-- Docs 保存参考代码和本机验证样例，统一归档后也不参与核心库编译。 -->
+    <Compile Remove="Docs\**" />
     <Compile Remove="Scripts\Core\Game\Boot\**" />
     <Compile Remove="Scripts\Core\Game\Domain\**" />
     <Compile Remove="Scripts\Core\Game\Save\**" />

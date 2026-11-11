@@ -55,7 +55,7 @@ python tools/audit_world_map.py --source tools/map_legacy_source --migrate
 生成可核对输出及源文件副本：
 
 ```powershell
-python tools/audit_world_map.py --source tools/map_legacy_source --migrate --output ../docs/world-map-migration
+python tools/audit_world_map.py --source tools/map_legacy_source --migrate --output Docs/world-map-migration
 ```
 
 输出包含转换后的文件、`source/` 原始副本及 `migration-report.json`。输出位置必须在源目录之外；原始副本不同则拒绝覆盖。转换前一次性检查所有输入，失败不会先写出部分转换。SchemaVersion=2 的输入保持内容不变，再次转换不会重复更换类型或增加初值。

@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "background": { "texture": "res://assets/art/exploration/backgrounds/gray_fog.png" },
+  "actor": {
+    "key": "jade_swordsman",
+    "texture": "res://assets/art/characters/jade_swordsman.png",
+    "region": [58, 157, 1183, 991],
+    "portraitRegion": [450, 260, 480, 445]
+  },
+  "panel": {
+    "texture": "res://assets/art/ui/template_editor/panel_frame.png",
+    "sourceMargins": [150, 150, 150, 150],
+    "displayMargins": [14, 14, 14, 14]
+  },
+  "variantKey": ["worldSeed", "planeId", "q", "r"],
+  "fallback": { "terrain": "core-color-and-symbol", "actor": "bound-npc-name", "reportMissing": true },
+  "terrain": {
+    "plain": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [4, 4, 504, 332], "variants": [[11, 22, 255, 173], [188, 136, 312, 191]], "displayScale": 1.0
+    },
+    "grassland": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [516, 4, 504, 332], "variants": [[523, 22, 255, 173], [700, 136, 312, 191]], "displayScale": 1.0
+    },
+    "basin": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [1028, 4, 504, 332], "variants": [[1031, 8, 424, 282], [1104, 49, 424, 282]], "displayScale": 1.0
+    },
+    "alpine_meadow": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [4, 345, 504, 332], "variants": [[11, 363, 255, 173], [188, 477, 312, 191]], "displayScale": 1.0
+    },
+    "plateau": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [516, 345, 504, 332], "variants": [[519, 349, 424, 282], [592, 390, 424, 282]], "displayScale": 1.0
+    },
+    "forest": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [1028, 345, 504, 332], "variants": [[1035, 363, 255, 173], [1212, 477, 312, 191]], "displayScale": 1.0
+    },
+    "bamboo_forest": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [4, 687, 504, 332], "variants": [[11, 705, 255, 173], [188, 819, 312, 191]], "displayScale": 1.0
+    },
+    "rainforest": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [516, 687, 504, 332], "variants": [[523, 705, 255, 173], [700, 819, 312, 191]], "displayScale": 1.0
+    },
+    "forest_mountain": {
+      "texture": "res://assets/art/exploration/terrain/earth_and_wood.png",
+      "region": [1028, 687, 504, 332], "variants": [[1035, 705, 255, 173], [1212, 819, 312, 191]], "displayScale": 1.0
+    },
+    "hill": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [4, 4, 504, 332], "variants": [[11, 22, 255, 173], [188, 136, 312, 191]], "displayScale": 1.0
+    },
+    "loess_hill": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [516, 4, 504, 332], "variants": [[519, 8, 424, 282], [592, 49, 424, 282]], "displayScale": 1.0
+    },
+    "mountain": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [1028, 4, 504, 332], "variants": [[1035, 22, 255, 173], [1212, 136, 312, 191]], "displayScale": 1.0
+    },
+    "barren_mountain": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [4, 345, 504, 332], "variants": [[11, 363, 255, 173], [188, 477, 312, 191]], "displayScale": 1.0
+    },
+    "karst": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [516, 345, 504, 332], "variants": [[519, 349, 424, 282], [592, 390, 424, 282]], "displayScale": 1.0
+    },
+    "red_cliff": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [1028, 345, 504, 332], "variants": [[1031, 349, 424, 282], [1104, 390, 424, 282]], "displayScale": 1.0
+    },
+    "snow_mountain": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [4, 687, 504, 332], "variants": [[7, 691, 424, 282], [80, 732, 424, 282]], "displayScale": 1.0
+    },
+    "volcano": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [516, 687, 504, 332], "variants": [[519, 691, 424, 282], [592, 732, 424, 282]], "displayScale": 1.0
+    },
+    "great_wall": {
+      "texture": "res://assets/art/exploration/terrain/mountain_and_wall.png",
+      "region": [1028, 687, 504, 332], "variants": [[1031, 691, 424, 282], [1104, 732, 424, 282]], "displayScale": 1.0
+    },
+    "desert": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [4, 4, 504, 332], "variants": [[7, 8, 424, 282], [80, 49, 424, 282]], "displayScale": 1.0
+    },
+    "gobi": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [516, 4, 504, 332], "variants": [[519, 8, 424, 282], [592, 49, 424, 282]], "displayScale": 1.0
+    },
+    "dry_valley": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [1028, 4, 504, 332], "variants": [[1031, 8, 424, 282], [1104, 49, 424, 282]], "displayScale": 1.0
+    },
+    "river": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [4, 345, 504, 332], "variants": [[7, 349, 424, 282], [80, 390, 424, 282]], "displayScale": 1.0
+    },
+    "lake": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [516, 345, 504, 332], "variants": [[519, 349, 424, 282], [592, 390, 424, 282]], "displayScale": 1.0
+    },
+    "ocean": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [1028, 345, 504, 332], "variants": [[1031, 349, 424, 282], [1104, 390, 424, 282]], "displayScale": 1.0
+    },
+    "coast": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [4, 687, 504, 332], "variants": [[7, 691, 424, 282], [80, 732, 424, 282]], "displayScale": 1.0
+    },
+    "wetland": {
+      "texture": "res://assets/art/exploration/terrain/sand_and_water.png",
+      "region": [516, 687, 504, 332], "variants": [[519, 691, 424, 282], [592, 732, 424, 282]], "displayScale": 1.0
+    }
+  }
+}

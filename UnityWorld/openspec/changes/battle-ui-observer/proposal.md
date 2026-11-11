@@ -32,7 +32,7 @@ Godot 已引用真实 C# 模拟器，但当前战斗场景仍显示写死的背�
 ## Impact
 
 - OpenSpec 文档位于 `C:\Unity\Game\unityworld\UnityWorld\openspec\changes\battle-ui-observer`；实际目标客户端位于同一仓库外层 `C:\Unity\Game\unityworld`，不是另一个后端工程。
-- 实施涉及外层 `scripts/client/`、`scenes/`、`assets/`、`docs/art/`、客户端验证目录，以及必要的 `project.godot`、`Xianxia.Client.csproj`、`README_GODOT.md`。
+- 实施涉及外层 `scripts/client/`、`scenes/`、`assets/`、`UnityWorld/Docs/art/`、客户端验证目录，以及必要的 `project.godot`、`Xianxia.Client.csproj`、`README_GODOT.md`。
 - `UnityWorld/Scripts/`、`UnityWorld/Data/`、核心/控制台工程及主规格均不在实施修改范围。核心接口缺口或已存在错误另行汇报，不借 UI 接入修后端。
 - 复用 .NET 项目引用、现有贴图与 Godot 控件；不引入前端专用战斗规则、后端 Godot 依赖或资源字段。
 - 首版完成口径：现有控制台默认案例与客户端输入及结果对齐、暂停/单步/当前案例重开可验证、蓝白扫描线与真实状态协调、后端受保护文件无改动、11 种卡定义和 5 种灵元均有可加载映射，其余素材有明确状态。全库图片全部生成不是首版完成的隐含条件。

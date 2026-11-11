@@ -13,7 +13,7 @@
 
 ## 结果与证据
 
-证据根目录：C:/Unity/Game/unityworld/docs/。
+证据根目录：C:/Unity/Game/unityworld/UnityWorld/Docs/。
 
 | 验证 | 结果 | 证据 |
 |---|---|---|
@@ -31,8 +31,8 @@
 参考结构摘要：f0a0b03a3389b08365af17c98ecb43c188a5011ef9fe5965a580bdded7dfa1f4。
 配置摘要：ad3e2967a3ca772605d9f1720ac0d7d05b5e140c4d3809dea9476a9256f573e5。
 
-预览：C:/Unity/Game/unityworld/docs/world-map-preview/hydrology-v3/seed-20261031-20261103-072856-cfb3f6ab/map.html。
-对照：C:/Unity/Game/unityworld/docs/world-map-preview/hydrology-v3/comparison.html；v2/v3地形、三轴环境及来源截图均保留。
+预览：C:/Unity/Game/unityworld/UnityWorld/Docs/world-map-preview/hydrology-v3/seed-20261031-20261103-072856-cfb3f6ab/map.html。
+对照：C:/Unity/Game/unityworld/UnityWorld/Docs/world-map-preview/hydrology-v3/comparison.html；v2/v3地形、三轴环境及来源截图均保留。
 
 ## 连续性与密度
 

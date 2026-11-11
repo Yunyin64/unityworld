@@ -37,12 +37,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -111,12 +111,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -190,12 +190,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -264,12 +264,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -343,12 +343,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }
@@ -422,12 +422,12 @@
       "Identity": "只读取当前空格与灵元分布，通过回收或搬移现有灵元调整布局。",
       "ClassicalSources": [
         {
-          "Path": "docs/三命通会.md",
+          "Path": "UnityWorld/Docs/三命通会.md",
           "Line": 500,
           "Quote": "浪回所积波渚而成"
         },
         {
-          "Path": "docs/渊海子平.md",
+          "Path": "UnityWorld/Docs/渊海子平.md",
           "Line": 323,
           "Purpose": "核对干支对应与纳音取象"
         }

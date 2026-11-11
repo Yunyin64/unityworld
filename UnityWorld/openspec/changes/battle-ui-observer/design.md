@@ -16,7 +16,7 @@
 | `CombatNpc.cs`、`CombatCard.cs`、`StatEntry.cs` | 部分 GetStat 会执行 Lua hook，部分属性访问会更新缓存；必须审计展示读取路径 |
 | `CombatScene.Cleanup`、`CombatNpcModifierFunc.cs` | 单场清理不覆盖全部直接注册的 Modifier 监听，不能假定 new Scene 已清除前场 |
 | `UnityWorld/Scripts/Core/Utils/Math/Rng.cs` | 静态已使用 ID 集合不会随 WorldMgr.End 清空，同进程重新初始化可能改变随机消耗和行动排序 |
-| `assets/art/`、`docs/art/asset_manifest.json` | 有背景、静态人物、三类面板、四类道具图；无 Card ID 图片映射 |
+| `assets/art/`、`UnityWorld/Docs/art/asset_manifest.json` | 有背景、静态人物、三类面板、四类道具图；无 Card ID 图片映射 |
 
 Godot MCP 的 `get_godot_version` 与 `get_project_info` 已成功返回；版本为 `4.7.2.stable.mono.official.ed1daf0bf`，项目为外层 `C:\Unity\Game\unityworld`。本轮没有启动战斗或编辑场景。
 
@@ -52,8 +52,8 @@ Godot MCP 的 `get_godot_version` 与 `get_project_info` 已成功返回；版�
 | `assets/art/cards/` | 首批卡图，文件名使用定义 ID |
 | `assets/art/icons/mana/`、`assets/presentation/mana_visuals.json` | 金木水火土五张灵元图标及按元素 ID 的客户端映射 |
 | `assets/presentation/card_visuals.json` | 客户端定义 ID → 资源路径、裁切、比例和来源的映射 |
-| `docs/art/card_asset_manifest.json` | 分别记录 Card 与灵元资源的素材台账、批次状态、来源、尺寸、提示词和验收结果；五种灵元不计入 88 个 Card 定义 |
-| `docs/art/battle_observer_integration.md` | 字段来源、已验证读取白名单、限制及运行验收说明 |
+| `UnityWorld/Docs/art/card_asset_manifest.json` | 分别记录 Card 与灵元资源的素材台账、批次状态、来源、尺寸、提示词和验收结果；五种灵元不计入 88 个 Card 定义 |
+| `UnityWorld/Docs/art/battle_observer_integration.md` | 字段来源、已验证读取白名单、限制及运行验收说明 |
 | `tools/client-observer/` | 不依赖 Godot 的适配层验证入口、资源审计脚本；引用现有核心，不把测试加到后端 |
 | `project.godot`、`Xianxia.Client.csproj`、`README_GODOT.md` | 仅进行客户端入口、必要编译项和使用说明调整 |
 

@@ -1,7 +1,7 @@
 """Strict batch audit + lossless legacy map-data migration. Default/check never writes.
 
 python tools/audit_world_map.py --check
-python tools/audit_world_map.py --source tools/map_legacy_source --migrate --output ../docs/map-migration
+python tools/audit_world_map.py --source tools/map_legacy_source --migrate --output Docs/map-migration
 python tools/audit_world_map.py --self-test
 """
 import argparse, copy, hashlib, json, math, re, shutil, tempfile

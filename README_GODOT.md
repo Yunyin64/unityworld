@@ -1,8 +1,27 @@
-# Godot 模板编辑与战斗观察客户端
+# Godot 探索、模板编辑与战斗观察客户端
+
+项目文档统一放在 [UnityWorld/Docs](UnityWorld/Docs/File.md)，素材台账位于其中的 `art` 目录。
+
+## 探索试玩
+
+用 Godot .NET 打开项目，选中 [exploration_view.tscn](scenes/exploration/exploration_view.tscn) 后按 **F6**。命令行也可从仓库根目录启动：
+
+```powershell
+dotnet build Xianxia.Client.csproj
+godot --path . res://scenes/exploration/exploration_view.tscn -- --exploration
+```
+
+先点格子预览地形和路程，再点同一个合法邻格确认启程。启程立即经过一周。默认使用**自动**模式，此后每隔片刻继续已确认的这段路，每次只走一周。抵达、遇阻、结算失败或进度不再增加时停止。抵达后等你选择下一格。
+
+右下角放缩放和自动／手动切换。手动模式会多出「继续」，途中点一次才再过一周。两种模式都允许途中切换；点地图只查看地点，当前行程的目的地仍由出发时的选择决定。滚轮也可缩放，中键可拖图。改变窗口宽高后，日期仍在顶部中央，人物和地点面板贴左，操作组贴右下。[探索素材清单](UnityWorld/Docs/art/exploration_asset_manifest.md)
+
+例如，默认速度每周 50，相邻距离 100。确认首周后是新月，人物留在原格，进度 50/100。自动模式稍后走完第二周并停下；若在首周切到手动，则等你按「继续」才到达。第二周是上弦，人物从原格走到目标格，镜头随行。
+
+## 模板编辑与战斗观察
 
 使用 Godot 4.7.2 .NET 打开根目录 `project.godot`，按 F5 进入人物／怪物模板编辑器。默认场景现为 `res://scenes/templates/character_template_editor.tscn`：左侧区分只读的“项目模板”和可编辑的“我的模板”，复制后可调整属性、摆放已有 Card、保存个人草稿并进入原战斗观察界面试战。
 
-编辑器快速使用、个人库位置、六项人工检查及当前验证边界见 [模板编辑器快速开始](docs/template-editor/QUICKSTART.md)。卡牌 Keyword 筛选由实际目录生成，多选为“同时满足”；缺图卡牌显示名称，仍可编辑。编辑器只加载定义，试战启动独立游戏窗口；关闭试战后可继续编辑，未保存内容不会被试战隐式保存。
+编辑器快速使用、个人库位置、六项人工检查及当前验证边界见 [模板编辑器快速开始](UnityWorld/Docs/template-editor/QUICKSTART.md)。卡牌 Keyword 筛选由实际目录生成，多选为“同时满足”；缺图卡牌显示名称，仍可编辑。编辑器只加载定义，试战启动独立游戏窗口；关闭试战后可继续编辑，未保存内容不会被试战隐式保存。
 
 原战斗观察场景仍是 `res://scenes/battle/battle_observer.tscn`，可用下方命令直接运行，或在编辑器顶部点击“战斗观察”。原静态素材预览保留在 `res://scenes/tests/battle_assets_preview.tscn`，可选中后按 F6 单独运行。以下战斗操作与历史验证记录继续保留。
 
@@ -87,10 +106,10 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--
 | `assets/art/icons/artifacts/jade_sword.png` | 原有玉剑，复用于长剑，原图保留 |
 | `assets/presentation/card_visuals.json` | Card 定义 ID → 图片/裁切/朝向；状态仍按实例 ID 管理 |
 | `assets/presentation/mana_visuals.json` | 既有元素 ID → 图标；激活亮度由客户端绘制 |
-| `docs/art/card_asset_manifest.json` | 全量 88 个 Card 和独立 5 元素台账、提示词、来源及检查状态 |
-| `docs/art/battle_asset_gaps.md` | 其余卡图、UI、动作帧和特效缺口；后续批次待确认 |
-| `docs/art/battle_observer_integration.md` | 字段白名单、事件缺口、案例覆盖及详细基线 |
-| `docs/art/observer-evidence/` | 本次结构化验证摘要、源码边界与复核记录 |
+| `UnityWorld/Docs/art/card_asset_manifest.json` | 全量 88 个 Card 和独立 5 元素台账、提示词、来源及检查状态 |
+| `UnityWorld/Docs/art/battle_asset_gaps.md` | 其余卡图、UI、动作帧和特效缺口；后续批次待确认 |
+| `UnityWorld/Docs/art/battle_observer_integration.md` | 字段白名单、事件缺口、案例覆盖及详细基线 |
+| `UnityWorld/Docs/art/observer-evidence/` | 本次结构化验证摘要、源码边界与复核记录 |
 | `.local-verification/battle-observer/` | 本机完整运行日志、逐 Tick 大文件和画面证据 |
 
 缺图时保留卡名/元素名和真实布局，不隐藏卡或停止战斗。首批范围为 15 张新增图片 + 1 张长剑复用；生成、落盘、加载和格内可读性分别记在台账中，其余 17 种已迁移卡及其他旧卡没有获得自动生成许可。人物仍是静态单帧，蓝白扫描和受光由客户端绘制，并不代表完整角色动作帧已具备。
@@ -101,11 +120,11 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--
 
 本轮原有回归合计 487 条断言通过；Godot 烟测通过。最终自动播放、单步及三次重开均与基线完整输入和 741 帧一致；另用不同双种子、案例 ID 和 30 Tick 上限验证重开没有回退默认输入。连续 18 个显示帧证实同 Tick 内插值与双方独立扫描，暂停后保持稳定；1440×810 和 1600×900 均完成画面检查。443 个受保护文件哈希无变化。
 
-最终摘要见 `docs/art/observer-evidence/godot-data-comparisons.json` 和 `visual-verification.json`，画面在同目录的 `screenshots/`。11 种卡和 5 种灵元均通过加载与静态素材图集验收；重伤在默认战斗中未产生，按明确标注的两格素材预览核验，没有改核心数据强行制造战斗画面。
+最终摘要见 `UnityWorld/Docs/art/observer-evidence/godot-data-comparisons.json` 和 `visual-verification.json`，画面在同目录的 `screenshots/`。11 种卡和 5 种灵元均通过加载与静态素材图集验收；重伤在默认战斗中未产生，按明确标注的两格素材预览核验，没有改核心数据强行制造战斗画面。
 
 原有 C# 告警、NuGet/NCalcSync 告警、重复 Trigger ID、缺 ExtraElementDefines/Item 及两张主功法 Lua 的“未 return table”提示均保留，详见接入说明。`UnityWorld/.gdignore` 阻止后端被 Godot 导入，后端不需要 `.uid`。正式导出包的数据和 NLua 原生依赖打包尚不在本次验证范围。
 
-旧素材预览曾于 2026-10-14 完成 Godot .NET 运行和 10 张原素材加载验证，截图保留在 `docs/art/battle_assets_preview.png`，来源见 `asset_manifest.json`、`generation_prompts.md`。旧预览的 5×6 示例布局、数值和日志不是本观察器的战斗数据。
+旧素材预览曾于 2026-10-14 完成 Godot .NET 运行和 10 张原素材加载验证，截图保留在 `UnityWorld/Docs/art/battle_assets_preview.png`，来源见 `asset_manifest.json`、`generation_prompts.md`。旧预览的 5×6 示例布局、数值和日志不是本观察器的战斗数据。
 
 ## 旧预览视觉组件复用
 
@@ -113,7 +132,7 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--
 
 两侧背包、中央人物、上方待发与底部信息沿用旧构图，真实数据仍是当前五乘五布局。顶部提供播放/暂停/单步/当前案例重开。小格保留名称、分段底色点亮与冻结/使用反馈，悬停查看完整实例信息；属性框显示当前值/真实上限。
 
-新画面见 `docs/art/observer-evidence/screenshots-preview-skin/`；本轮对照结果见 `preview-skin-verification.json`。
+新画面见 `UnityWorld/Docs/art/observer-evidence/screenshots-preview-skin/`；本轮对照结果见 `preview-skin-verification.json`。
 
 ## 2026-10-31 战斗表现扩展
 
