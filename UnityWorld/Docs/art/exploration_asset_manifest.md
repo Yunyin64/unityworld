@@ -1,6 +1,6 @@
 # 探索画面素材
 
-人物、日期和选中地点的摆位参考[玩家标注图](../../openspec/changes/add-exploration-core-ui/references/user-blank-regions.png)。地图铺满 HUD 下方。右下缩放、模式与手动「继续」沿用现有边饰；头像下方、右侧状态与底部行为面板仍留白，可见地形或灰雾。
+人物、日期和选中地点的摆位参考[玩家标注图](../../openspec/changes/archive/2026-11-12-add-exploration-core-ui/references/user-blank-regions.png)。地图铺满 HUD 下方。右下缩放、模式与手动「继续」沿用现有边饰；头像下方、右侧状态与底部行为面板仍留白，可见地形或灰雾。
 
 | 画面 | 来源与制作要求 |
 | --- | --- |

@@ -17,7 +17,7 @@
 | `UnityWorld/Data/Stat/NpcExplorationStat.json` | 现行 `ExploreActionSpeed` 和 `ExploreDisplayRadius` 分别默认 50 和 5。位置系统从 NPC 属性块读取最终值并处理半径取整。 |
 | `UnityWorld/Data/TileDefines/`、`assets/presentation/template_editor_visuals.json` | 26 个地形 ID 需要展示映射。角色、头像、材质、字体可从现有资源复用。 |
 
-本变更维护 `exploration-ui`、`exploration-map-view` 和 `exploration-visual-assets`。日期语义归 [add-world-calendar](../add-world-calendar/proposal.md)，NPC 落地、移动、世界周结算及 `exploration-stats` 归 [add-npc-weekly-movement](../add-npc-weekly-movement/proposal.md)。水系按当前大陆的 `river / lake / ocean` 数据绘制。[已有水文设计](../improve-world-hydrology/design.md)
+本变更维护 `exploration-ui`、`exploration-map-view` 和 `exploration-visual-assets`。日期语义归 [add-world-calendar](../2026-11-12-add-world-calendar/proposal.md)，NPC 落地、移动、世界周结算及 `exploration-stats` 归 [add-npc-weekly-movement](../2026-11-12-add-npc-weekly-movement/proposal.md)。水系按当前大陆的 `river / lake / ocean` 数据绘制。[已有水文设计](../2026-11-12-improve-world-hydrology/design.md)
 
 ### 视觉参考
 
@@ -113,7 +113,7 @@ godot --path . res://scenes/exploration/exploration_view.tscn -- --exploration
 1. 客户端使用宿主已有的数据目录解析规则。首版种子 12345。独立会话调用 `WorldMgr.Initialize(seed, dataRoot)`，成功后记录世界归属，再调用 `WorldMgr.Start()`。初始化发现其他宿主已持有世界时显示诊断。启动未完成时也只释放本会话成功创建的世界。
 2. 在 `PlaneMgr.Instance.MainPlane` 上调用一次 `plane.NpcSystem.Spawn(new BirthContext())`。这个入口完成实体出生、注册和合法落地。首版生成一人，会话绑定返回的 `npc.Id`。显示身份与全部后续命令都使用该 ID。地图资源、模板编辑器的模板 ID 和视觉资源 key 各自只用于各自用途。
 3. 首次读取位置、动作、局部地块与日期。初始没有已确认的行程时保持当前周。角色失效或世界故障时显示诊断、停止续行。场景退出时取消尚未触发的自动续行、释放自己的世界。
-4. 游戏会话与核心通过现有项目引用在同一进程内调用。控制台演示已经使用真实出生及全世界过周，供核对 API 使用方式。[控制台示例](../../../Console/NpcMovementConsole.cs)
+4. 游戏会话与核心通过现有项目引用在同一进程内调用。控制台演示已经使用真实出生及全世界过周，供核对 API 使用方式。[控制台示例](../../../../Console/NpcMovementConsole.cs)
 
 ### 7. 刷新当前角色与地图
 

@@ -1,3 +1,6 @@
+> **暂时废弃**（2026-11-12）：本文为旧战斗说明，保留供参考，暂不作为当前实现或新增内容的依据。
+> 现行战斗规则见[背包规则](../../openspec/specs/combat-backpack/spec.md)、[扫描规则](../../openspec/specs/combat-backpack-scan/spec.md)、[对拼排程](../../openspec/specs/combat-contest-scheduling/spec.md)，并以当前代码为准。
+
 # 战斗系统 · 卡牌生命周期与数据格式
 ### 标准用法示例、卡牌在战斗中的完整生命周期、ManaCost 数据格式
 

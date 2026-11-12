@@ -20,8 +20,8 @@
 
 ### Modified Capabilities
 
-- `npc-movement` — 调整 Move 与自动停留、默认抽选和观察结果之间的关系。该能力已在 [周移动变更](../add-npc-weekly-movement/specs/npc-movement/spec.md) 实现，尚未归档到主规格。本变更沿用同名能力及其原条目，归档时先同步前置变更，再合入此增量。
-- `world-weekly-simulation` — 明确本周选中的 Explore 可以在结算内处理本地事件和授卡，同时隔离旧秒制故事及其他系统。基线也来自[周移动变更](../add-npc-weekly-movement/specs/world-weekly-simulation/spec.md)。
+- `npc-movement` — 调整 Move 与自动停留、默认抽选和观察结果之间的关系。该能力已在 [周移动变更](../2026-11-12-add-npc-weekly-movement/specs/npc-movement/spec.md) 实现，尚未归档到主规格。本变更沿用同名能力及其原条目，归档时先同步前置变更，再合入此增量。
+- `world-weekly-simulation` — 明确本周选中的 Explore 可以在结算内处理本地事件和授卡，同时隔离旧秒制故事及其他系统。基线也来自[周移动变更](../2026-11-12-add-npc-weekly-movement/specs/world-weekly-simulation/spec.md)。
 
 ## Impact
 

@@ -25,7 +25,7 @@
 
 ### Modified Capabilities
 
-本次消费现行 `tile-mgr`、地形和水文能力。历法归 [add-world-calendar](../add-world-calendar/proposal.md)，世界周结算、落地、移动和 `exploration-stats` 归 [add-npc-weekly-movement](../add-npc-weekly-movement/proposal.md)。UI 的规格只定义玩家可见行为与客户端接入。
+本次消费现行 `tile-mgr`、地形和水文能力。历法归 [add-world-calendar](../2026-11-12-add-world-calendar/proposal.md)，世界周结算、落地、移动和 `exploration-stats` 归 [add-npc-weekly-movement](../2026-11-12-add-npc-weekly-movement/proposal.md)。UI 的规格只定义玩家可见行为与客户端接入。
 
 ## Impact
 
