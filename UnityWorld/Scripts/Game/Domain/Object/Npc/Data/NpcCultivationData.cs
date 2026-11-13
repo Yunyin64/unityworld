@@ -73,7 +73,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>五行亲和</summary>
         public ElementalAffinity Affinity { get; set; } = ElementalAffinity.Zero;
         public NpcGongFaData GongFaData { get; set; } = new();
-        public NpcPraticeData PracticeData { get; set; } = new();
+        public NpcPracticeData PracticeData { get; set; } = new();
 
         public NpcCultivationData Clone()
         {
@@ -122,6 +122,6 @@ namespace UnityWorld.Game.Domain
             Tu = (int)Stats.Get("AffinityTu")
         };
         public NpcGongFaData GongFa =>CultivationData.GongFaData;
-        public NpcPraticeData PracticeData =>CultivationData.PracticeData;
+        public NpcPracticeData PracticeData =>CultivationData.PracticeData;
     }
 }

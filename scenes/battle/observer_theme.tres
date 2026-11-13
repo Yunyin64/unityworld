@@ -1,0 +1,111 @@
+[gd_resource type="Theme" format=3 uid="uid://vu7sn1frnnmm"]
+
+[sub_resource type="StyleBoxFlat" id="Hover"]
+bg_color = Color(0.23529, 0.38431, 0.39608, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.61569, 0.57255, 0.40392, 0.8)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="Dark"]
+bg_color = Color(0.16, 0.21, 0.2, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.69, 0.64, 0.45, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="Pressed"]
+bg_color = Color(0.32157, 0.47059, 0.47451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.61569, 0.57255, 0.40392, 0.8)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="Cell"]
+bg_color = Color(0.82, 0.78, 0.65, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.48, 0.36, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="CopperCard"]
+bg_color = Color(0.82745, 0.61176, 0.47451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.48, 0.36, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="JadeCard"]
+bg_color = Color(0.56863, 0.72549, 0.62745, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.48, 0.36, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Header"]
+bg_color = Color(0.92, 0.85, 0.66, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="SystemFont" id="Font"]
+font_names = PackedStringArray("Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif")
+
+[resource]
+default_font = SubResource("Font")
+default_font_size = 20
+Button/colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+Button/font_sizes/font_size = 17
+Button/styles/hover = SubResource("Hover")
+Button/styles/normal = SubResource("Dark")
+Button/styles/pressed = SubResource("Pressed")
+CellPanel/base_type = &"Panel"
+CellPanel/styles/panel = SubResource("Cell")
+CopperCard/base_type = &"Panel"
+CopperCard/styles/panel = SubResource("CopperCard")
+DarkPanel/base_type = &"Panel"
+DarkPanel/styles/panel = SubResource("Dark")
+JadeCard/base_type = &"Panel"
+JadeCard/styles/panel = SubResource("JadeCard")
+Label/colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+OptionButton/colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+OptionButton/font_sizes/font_size = 17
+OptionButton/styles/normal = SubResource("Dark")
+PaperPanel/base_type = &"Panel"
+PaperPanel/styles/panel = SubResource("Header")

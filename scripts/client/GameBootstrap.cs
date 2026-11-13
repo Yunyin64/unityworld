@@ -9,12 +9,16 @@ using UnityWorld.Game.World;
 
 namespace Xianxia.Client;
 
-public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration }
+public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration, TestHome, ObserverWorker }
 
 /// <summary>Godot 宿主：加载核心 DLL，驱动世界并在退出时释放资源。</summary>
 public partial class GameBootstrap : Node
 {
     public const string ExplorationScene = "res://scenes/exploration/exploration_view.tscn";
+    public const string HomeScene = "res://scenes/home/test_home.tscn";
+    public const string TemplateScene = "res://scenes/templates/character_template_editor.tscn";
+    private static GameBootstrap? _instance;
+    private bool _changingScene;
     private bool _running;
     private bool _ownsWorld;
     public static ClientHostMode CurrentMode { get; private set; }
@@ -28,6 +32,7 @@ public partial class GameBootstrap : Node
     public static ClientHostMode ResolveHostMode(string[] userArgs, string[] engineArgs, string? currentScene, string? defaultScene)
     {
         if (userArgs.Contains("--core-smoke-test")) return ClientHostMode.CoreSmokeTest;
+        if (userArgs.Any(a => a.StartsWith("--observer-worker=", StringComparison.Ordinal))) return ClientHostMode.ObserverWorker;
         bool editor = userArgs.Contains("--template-editor") || userArgs.Contains("--character-template-editor");
         bool observer = userArgs.Contains("--battle-observer") || userArgs.Any(a =>
             a.StartsWith("--observer-case=", StringComparison.Ordinal) || a.StartsWith("--observer-case-input=", StringComparison.Ordinal));
@@ -49,22 +54,30 @@ public partial class GameBootstrap : Node
             return ClientHostMode.Observer;
         if (string.Equals(Path.GetFileName(scene), "exploration_view.tscn", StringComparison.OrdinalIgnoreCase))
             return ClientHostMode.Exploration;
+        if (Path.GetFileName(scene) is "test_home.tscn" or "battle_window_check.tscn") return ClientHostMode.TestHome;
         return ClientHostMode.World;
     }
 
     /// <summary>由 Godot 宿主提供数据目录，核心不依赖引擎的程序集加载方式。</summary>
     public override void _Ready()
     {
+        _instance = this;
+        GetTree().SceneChanged += FinishNavigation;
         try
         {
             CurrentMode = ResolveHostMode(OS.GetCmdlineUserArgs(), OS.GetCmdlineArgs(),
                 GetTree().CurrentScene?.SceneFilePath, ProjectSettings.GetSetting("application/run/main_scene").AsString());
-            // 探索会话在确认行走时才推进世界周，Bootstrap 不再创建第二个世界或执行物理帧秒 Tick。
-            if (CurrentMode is ClientHostMode.TemplateEditor or ClientHostMode.Observer or ClientHostMode.Exploration)
+            if (CurrentMode != ClientHostMode.World && CurrentMode != ClientHostMode.CoreSmokeTest)
             {
                 SetPhysicsProcess(false);
-                if (CurrentMode == ClientHostMode.Exploration && OS.GetCmdlineUserArgs().Contains("--exploration"))
-                    Callable.From(OpenRequestedExplorationScene).CallDeferred();
+                if (CurrentMode == ClientHostMode.ObserverWorker)
+                {
+                    UI.ObserverWorker.Start(this);
+                    return;
+                }
+                // 显式模式允许从默认首页直达；F6 的场景路径已由上面的判定识别。
+                if (CurrentMode != ClientHostMode.TestHome)
+                    Callable.From(() => OpenTool(CurrentMode)).CallDeferred();
                 return;
             }
             string baseDir = ResolveDataRoot();
@@ -93,18 +106,36 @@ public partial class GameBootstrap : Node
         }
     }
 
-    // 允许只传 --exploration 从默认场景进入。直接运行探索场景时保留已建立的会话。
-    private void OpenRequestedExplorationScene()
+    public static void OpenHome() => OpenTool(ClientHostMode.TestHome);
+
+    /// <summary>切换前先交给目标宿主模式，旧页面的退出回调仍然只释放自己的资源。</summary>
+    public static void OpenTool(ClientHostMode target) => _instance?.Navigate(target);
+
+    private void Navigate(ClientHostMode target)
     {
+        string scene = target switch
+        {
+            ClientHostMode.TestHome => HomeScene,
+            ClientHostMode.Exploration => ExplorationScene,
+            ClientHostMode.TemplateEditor => TemplateScene,
+            ClientHostMode.Observer => BattleWindows.BattleLauncher.ObserverScene,
+            _ => throw new ArgumentOutOfRangeException(nameof(target))
+        };
         var tree = GetTree();
-        if (tree.CurrentScene?.SceneFilePath == ExplorationScene) return;
-        var error = tree.ChangeSceneToFile(ExplorationScene);
+        if (_changingScene || tree.CurrentScene?.SceneFilePath == scene) return;
+        var previous = CurrentMode;
+        CurrentMode = target;
+        _changingScene = true;
+        var error = tree.ChangeSceneToFile(scene);
         if (error != Error.Ok)
         {
-            GD.PushError($"无法打开探索场景 {ExplorationScene}：{error}");
-            tree.Quit(1);
+            CurrentMode = previous;
+            _changingScene = false;
+            GD.PushError($"无法切换到场景 {scene}：{error}");
         }
     }
+
+    private void FinishNavigation() => _changingScene = false;
 
     /// <summary>使用物理帧步长推进引擎无关的世界逻辑。</summary>
     public override void _PhysicsProcess(double delta)
@@ -115,6 +146,8 @@ public partial class GameBootstrap : Node
     /// <summary>释放当前宿主持有的核心状态。</summary>
     public override void _ExitTree()
     {
+        GetTree().SceneChanged -= FinishNavigation;
+        _instance = null;
         _running = false;
         if (_ownsWorld) WorldMgr.End();
         _ownsWorld = false;

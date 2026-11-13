@@ -2,15 +2,15 @@ using Godot;
 using System;
 using System.Linq;
 using Xianxia.Client.Battle;
-using static Xianxia.Client.UI.ObserverWidgets;
 
 namespace Xianxia.Client.UI;
 
-/// <summary>保持原观察器构图，组合面板并把显示态路由给具体控件。</summary>
+/// <summary>绑定正式场景的控件，把观察快照与表现状态路由给各面板。</summary>
 internal sealed class ObserverBattleLayout
 {
-    public Control Canvas { get; } = new() { Size = new Vector2(1600, 900) };
-    public ObserverPreviewSkin Skin { get; } = new();
+    public Control Canvas { get; }
+    public Control Field { get; }
+    public ScrollContainer FieldScroll { get; }
     public ObserverArtCatalog Art { get; } = new();
     public ObserverBackpackView[] Packs { get; } = new ObserverBackpackView[2];
     public ObserverActorPanel[] Actors { get; } = new ObserverActorPanel[2];
@@ -21,71 +21,133 @@ internal sealed class ObserverBattleLayout
     public Button Pause { get; }
     public Button Step { get; }
     public Button Restart { get; }
+    public Button Return { get; }
     public Label Status { get; }
     public string? PresentationCaption { get; set; }
     private readonly Label _info, _recent;
     private readonly Label[] _scans = new Label[2], _scanStates = new Label[2];
     private readonly OptionButton _cases;
+    private readonly Control _packsArea, _duel, _pendingSlots, _recentPanel, _logView, _footerLog, _fieldLog, _header, _historyPaper;
+    private readonly Control _history;
+    private readonly float _originalPendingTop, _originalRecentTop;
+    private readonly Vector2 _headerSize, _paperSize;
 
     public ObserverBattleLayout(Control host, Action play, Action pause, Action step, Action restart)
     {
-        host.Theme = Skin.Theme;
-        host.AddChild(Canvas);
-        Image(Canvas, Skin.Arena, new Rect2(0, 0, 1600, 900));
-        Canvas.AddChild(new ColorRect { Color = new Color(0.06f, 0.11f, 0.13f, 0.16f), Size = new Vector2(1600, 900), MouseFilter = Control.MouseFilterEnum.Ignore });
-        Panel(Canvas, new Rect2(425, 20, 750, 72), Skin.Header);
-        Text(Canvas, "青岚山 · 论剑台", new Rect2(445, 22, 710, 42), 29, PaperInk, HorizontalAlignment.Center);
-        _info = Text(Canvas, "正在装配案例…", new Rect2(437, 62, 726, 26), 15, PaperMuted, HorizontalAlignment.Center);
-        Text(Canvas, "战斗观察 · 真实模板", new Rect2(1224, 20, 350, 30), 16, Ink, HorizontalAlignment.Right);
-        _cases = new OptionButton { Position = new Vector2(24, 22), Size = new Vector2(326, 38) };
-        _cases.AddThemeFontSizeOverride("font_size", 17);
-        _cases.AddThemeStyleboxOverride("normal", Skin.Dark);
-        _cases.AddThemeColorOverride("font_color", Ink);
-        _cases.AddItem("正式模板 A / B");
-        foreach (string title in new[] { "布局/模板断言：无完整战斗", "背包战斗：手工布置待适配", "时钟/效果/事件：注入待适配" })
-        {
-            _cases.AddItem(title);
-            _cases.SetItemDisabled(_cases.ItemCount - 1, true);
-        }
-        _cases.TooltipText = "只显示已适配的真实案例；未适配测试保留原控制台断言。";
-        Canvas.AddChild(_cases);
-        Panel(Canvas, new Rect2(505, 104, 590, 52), Skin.Dark);
-        Play = Button(Canvas, Skin, "播放", new Rect2(516, 113, 76, 34), play);
-        Pause = Button(Canvas, Skin, "暂停", new Rect2(602, 113, 76, 34), pause);
-        Step = Button(Canvas, Skin, "单步 +1", new Rect2(688, 113, 100, 34), step);
-        Restart = Button(Canvas, Skin, "重开当前案例 ↻", new Rect2(798, 113, 286, 34), restart);
+        Canvas = host.GetNode<Control>("%Canvas");
+        FieldScroll = Canvas.GetNode<ScrollContainer>("FieldScroll");
+        Field = FieldScroll.GetNode<Control>("Field");
+        _packsArea = Field.GetNode<Control>("Packs");
+        _duel = Field.GetNode<Control>("Duel");
+        _pendingSlots = _duel.GetNode<Control>("Pending");
+        _recentPanel = _duel.GetNode<Control>("RecentPanel");
+        _originalPendingTop = _pendingSlots.OffsetTop;
+        _originalRecentTop = _recentPanel.OffsetTop;
+        _fieldLog = Field.GetNode<Control>("LogSlot");
+        _footerLog = Canvas.GetNode<Control>("FooterLog");
+        _logView = _footerLog.GetNode<Control>("Log");
+        _header = Canvas.GetNode<Control>("Header");
+        _history = host.GetNode<Control>("History");
+        _historyPaper = _history.GetNode<Control>("Paper");
+        _headerSize = _header.Size;
+        _paperSize = _historyPaper.Size;
+        _info = Canvas.GetNode<Label>("Header/Info");
+        _info.Text = "正在装配案例…";
+        _recent = _duel.GetNode<Label>("RecentPanel/Recent");
+        _recent.Text = "";
+        _cases = Canvas.GetNode<OptionButton>("Cases");
+        Play = Canvas.GetNode<Button>("Playback/Play");
+        Pause = Canvas.GetNode<Button>("Playback/Pause");
+        Step = Canvas.GetNode<Button>("Playback/Step");
+        Restart = Canvas.GetNode<Button>("Playback/Restart");
+        Return = Canvas.GetNode<Button>("Return");
+        Return.Visible = false;
+        Play.Pressed += play;
+        Pause.Pressed += pause;
+        Step.Pressed += step;
+        Restart.Pressed += restart;
         Restart.TooltipText = "保留当前案例完整输入，重启观察器游戏窗口。";
-        Status = Text(Canvas, "正在初始化", new Rect2(390, 163, 820, 27), 16, Ink, HorizontalAlignment.Center);
+        Status = Canvas.GetNode<Label>("Status");
+        Status.Text = "正在初始化";
+        var skin = new ObserverPreviewSkin();
         for (int i = 0; i < 2; i++)
         {
-            float x = i == 0 ? 24 : 1228;
-            Image(Canvas, Skin.Backpack, new Rect2(x, 166, 348, 522));
-            Text(Canvas, i == 0 ? "我方 · 储物阵" : "敌方 · 储物阵", new Rect2(x + 25, 195, 298, 44), 24, PaperInk, HorizontalAlignment.Center);
-            _scans[i] = Text(Canvas, "等待快照", new Rect2(x + 24, 260, 300, 25), 15, PaperMuted, HorizontalAlignment.Center);
-            Packs[i] = new ObserverBackpackView { Position = new Vector2(x + 24, 296), Size = new Vector2(300, 360) };
-            Packs[i].Configure(Art, Skin.Cell);
-            Canvas.AddChild(Packs[i]);
-            Panel(Canvas, new Rect2(x + 4, 694, 340, 40), Skin.Dark);
-            _scanStates[i] = Text(Canvas, "", new Rect2(x + 12, 698, 324, 32), 14, Ink, HorizontalAlignment.Center);
-            Actors[i] = new ObserverActorPanel(Canvas, Skin, i);
+            string side = i == 0 ? "Left" : "Right";
+            var pack = _packsArea.GetNode<Control>(side + "Pack");
+            _scans[i] = pack.GetNode<Label>("Scan");
+            _scans[i].Text = "等待快照";
+            _scanStates[i] = pack.GetNode<Label>("ScanState/Progress");
+            _scanStates[i].Text = "";
+            Packs[i] = pack.GetNode<ObserverBackpackView>("Grid");
+            Packs[i].GetNode<Control>("GridPreview").Visible = false;
+            Packs[i].Configure(Art, skin.Cell);
+            Actors[i] = new ObserverActorPanel(_duel.GetNode<Control>(side + "Actor"), Canvas.GetNode<Control>(side + "Stats"));
         }
-        Pending = new ObserverPendingPanel(Canvas, Skin, Art);
-        Panel(Canvas, new Rect2(530, 387, 540, 49), Skin.Dark);
-        _recent = Text(Canvas, "开场记录", new Rect2(543, 392, 514, 39), 14, Ink, HorizontalAlignment.Center);
-        Effects = new ObserverPresentationLayer();
-        Canvas.AddChild(Effects);
+        Pending = new ObserverPendingPanel(_pendingSlots, Canvas, Art);
+        Effects = Field.GetNode<ObserverPresentationLayer>("Effects");
         Effects.Configure(this);
-        Log = new ObserverLogPanel(Canvas, Skin);
+        Log = new ObserverLogPanel(Canvas, _logView, _history);
+        host.Resized += Arrange;
+        Canvas.Resized += Arrange;
+        Field.Resized += Arrange;
+        Arrange();
     }
 
-    public void Fit(Vector2 size)
+    // 真正的字号和格子大小只由窗口倍率决定。空间不足时换行或滚动，始终使用同一组节点。
+    private void Arrange()
     {
-        float scale = Mathf.Min(size.X / 1600, size.Y / 900);
-        Canvas.Scale = new Vector2(scale, scale);
-        Canvas.Position = (size - new Vector2(1600, 900) * scale) / 2;
+        if (Field.Size.X <= 0 || Canvas.Size.X <= 0) return;
+        // 宽屏保留场景内的原构图；窄屏两侧背包仍贴边，中间先排两人，空间再不足就上下排。
+        var leftPack = Packs[0].GetParent<Control>();
+        var rightPack = Packs[1].GetParent<Control>();
+        float center = Field.Size.X / 2;
+        float innerLeft = leftPack.GetRect().End.X;
+        float innerRight = rightPack.Position.X;
+        float gap = innerRight - innerLeft;
+        bool stackedActors = gap < Actors[0].ActorSize.X + Actors[1].ActorSize.X + 36;
+        bool recentBelow = gap < _recentPanel.Size.X + 16;
+        bool stagger = !stackedActors && gap < 596;
+        float footerGap = Canvas.GetNode<Control>("RightStats").Position.X - Canvas.GetNode<Control>("LeftStats").GetRect().End.X;
+        bool logInField = footerGap < _logView.Size.X + 16;
+        float logHeight = logInField ? _logView.Size.Y + 19 : 0;
+        float band = stackedActors ? 636 : 584;
+        float lowerHeight = (stackedActors ? _pendingSlots.Size.Y + 12 : 0) + (recentBelow ? _recentPanel.Size.Y + 12 : 0);
+        Field.CustomMinimumSize = new Vector2(0, band + lowerHeight + logHeight);
+        _packsArea.OffsetBottom = _duel.OffsetBottom = -lowerHeight - logHeight;
+        float pendingY = stackedActors ? band + 6 : _originalPendingTop;
+        _pendingSlots.Position = new Vector2(_pendingSlots.Position.X, pendingY);
+        _recentPanel.Position = new Vector2(_recentPanel.Position.X, recentBelow
+            ? (stackedActors ? pendingY + _pendingSlots.Size.Y + 10 : band + 6) : _originalRecentTop);
+
+        if (stackedActors)
+        {
+            Actors[0].Arrange(-Actors[0].ActorSize.X / 2, 32, false);
+            Actors[1].Arrange(-Actors[1].ActorSize.X / 2, 352, false);
+        }
+        else
+        {
+            float left = Mathf.Max(Actors[0].PreferredLeft, innerLeft - center + 12);
+            float right = Mathf.Min(Actors[1].PreferredLeft, innerRight - center - Actors[1].ActorSize.X - 12);
+            float? top = recentBelow ? pendingY + _pendingSlots.Size.Y + 12 : null;
+            Actors[0].Arrange(left, top, false);
+            Actors[1].Arrange(right, top + 28, stagger);
+        }
+        var logParent = logInField ? _fieldLog : _footerLog;
+        if (_logView.GetParent() != logParent) _logView.Reparent(logParent, false);
+        Log.CompactShortcut.Visible = logInField;
+
+        float headerWidth = Mathf.Clamp(Canvas.Size.X - 2 * (_cases.GetRect().End.X + 12), 80, _headerSize.X);
+        _header.OffsetLeft = -headerWidth / 2;
+        _header.OffsetRight = headerWidth / 2;
+        // 展开战报浮在可见窗口上方；外层滚动过后，收起按钮仍在屏内。
+        var paperSize = _paperSize.Min(_history.GetParent<Control>().Size - new Vector2(40, 40));
+        _historyPaper.OffsetLeft = -paperSize.X / 2;
+        _historyPaper.OffsetRight = paperSize.X / 2;
+        _historyPaper.OffsetTop = -paperSize.Y / 2;
+        _historyPaper.OffsetBottom = paperSize.Y / 2;
     }
 
-    public void Submit(BattleObserverSession session, BattlePresentationPlayer player, string directory)
+    public void Submit(IBattleObserverState session, BattlePresentationPlayer player, string directory)
     {
         var snapshot = player.DisplaySnapshot;
         var latest = session.CurrentSnapshot;

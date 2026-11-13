@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace UnityWorld.Core
 {
-    public class AssatMgr:IDomainMgrBase
+    /// <summary>资源管理入口，统一处理资源路径中的空白与分隔符。</summary>
+    public class AssetMgr:IDomainMgrBase
     {
-        public static AssatMgr Instance { get; private set; }
+        public static AssetMgr Instance { get; private set; }
 
-        public string Name => "AssatMgr";
+        public string Name => "AssetMgr";
 
         public string Desc => "";
 

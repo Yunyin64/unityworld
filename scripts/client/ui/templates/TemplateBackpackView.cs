@@ -30,6 +30,9 @@ public partial class TemplateBackpackView : Control
     public event Action<string, int, int>? MoveRequested;
     public event Action<string, int, int>? AddRequested;
 
+    public override void _Ready() => MouseExited += () => DetailTips.Hide(this);
+    public override void _ExitTree() => DetailTips.Hide(this);
+
     public TemplateBackpackView()
     {
         CustomMinimumSize = new Vector2(250, 240);
@@ -57,7 +60,9 @@ public partial class TemplateBackpackView : Control
             }
             catch (Exception exception) { _layout = null; _layoutError = exception.Message; }
         }
-        TooltipText = _readOnly ? "项目模板只读；复制到我的模板后可拖放编辑。" : "拖入卡牌以添加 · 拖动调整位置 · 右键移除";
+        // 编辑状态可能刷新卡牌实例；下次悬停按当前草稿解析，而非复用上一个实例。
+        DetailTips.Hide(this);
+        TooltipText = EmptyCellHint();
         QueueRedraw();
     }
 
@@ -73,12 +78,19 @@ public partial class TemplateBackpackView : Control
         if (@event is InputEventMouseMotion motion)
         {
             var entry = EntryAt(motion.Position);
-            if (entry == null) return;
+            if (entry == null || GetViewport().GuiIsDragging())
+            {
+                DetailTips.Hide(this);
+                if (!GetViewport().GuiIsDragging()) TooltipText = EmptyCellHint();
+                return;
+            }
             _cards.TryGetValue(entry.CardDefineId, out var card);
             string name = card == null ? entry.CardDefineId : TemplateCardTile.NameOf(card);
-            TooltipText = $"{name} [{entry.CardDefineId}]\n位置 {entry.Position} · 实例 {entry.EntryId}"
+            TooltipText = "";
+            string description = $"[{entry.CardDefineId}]\n位置 {entry.Position} · 实例 {entry.EntryId}"
                 + (entry.EntryId == _draft.MainEntryId ? "\n主功法位置固定" : _readOnly ? "\n项目模板只读" : "\n拖动移动 · 右键移除")
                 + (card == null ? "\n卡牌定义缺失" : $"\n占格 {card.Size} · {card.Desc}");
+            DetailTips.ShowCard(this, entry.EntryId, name, description, _art?.Card(entry.CardDefineId));
         }
         if (@event is not InputEventMouseButton { Pressed: true } mouse) return;
         var hit = EntryAt(mouse.Position);
@@ -94,10 +106,15 @@ public partial class TemplateBackpackView : Control
         if (_readOnly || _draft == null) return default;
         var entry = EntryAt(atPosition);
         if (entry == null || entry.EntryId == _draft.MainEntryId) return default;
+        DetailTips.Hide(this);
         _cards.TryGetValue(entry.CardDefineId, out var card);
         SetDragPreview(TemplateCardTile.DragPreview(card == null ? entry.CardDefineId : TemplateCardTile.NameOf(card)));
         return new Godot.Collections.Dictionary { ["kind"] = "entry", ["id"] = entry.EntryId };
     }
+
+    private string EmptyCellHint() => _readOnly
+        ? "项目模板只读；复制到我的模板后可拖放编辑。"
+        : "拖入卡牌以添加 · 拖动调整位置 · 右键移除";
 
     public override bool _CanDropData(Vector2 atPosition, Variant data)
     {

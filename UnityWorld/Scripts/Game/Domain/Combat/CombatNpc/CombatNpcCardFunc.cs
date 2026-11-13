@@ -10,7 +10,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>候补池：静默，不Tick、不占SP</summary>
         protected List<CombatCard> Reserve { get; set; } = new();
 
-        private Queue<(ComabtFieldChangeType,CombatCard,ComabtCardDisplaceType,PresentationOrigin)> _changes = new();
+        private Queue<(CombatFieldChangeType,CombatCard,CombatCardDisplaceType,PresentationOrigin)> _changes = new();
 
         public List<CombatCard> GetField()
         {
@@ -35,13 +35,13 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void RemoveCombatCard(CombatCard card)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Remove, card, ComabtCardDisplaceType.None, Scene.CapturePresentationOrigin()));
+            _changes.Enqueue((CombatFieldChangeType.Remove, card, CombatCardDisplaceType.None, Scene.CapturePresentationOrigin()));
             if (Field.Contains(card)) Scene.MarkPresentationEffect();
         }
 
         public void AddCombatCard(CombatCard card)
         {
-            _changes.Enqueue((ComabtFieldChangeType.Add, card, ComabtCardDisplaceType.None, Scene.CapturePresentationOrigin()));
+            _changes.Enqueue((CombatFieldChangeType.Add, card, CombatCardDisplaceType.None, Scene.CapturePresentationOrigin()));
             if (Scene.PresentationRecordingEnabled && CanObserveAdd(card)) Scene.MarkPresentationEffect();
         }
         // 只做无副作用的请求有效性检查；验证失败仍由原 DealFieldChange 路径负责抛出。
@@ -51,7 +51,7 @@ namespace UnityWorld.Game.Domain.Combat
             catch { return false; }
         }
         
-        public void DisplaceCombatCard(CombatCard card, ComabtCardDisplaceType toPlace)
+        public void DisplaceCombatCard(CombatCard card, CombatCardDisplaceType toPlace)
         {
             throw new NotSupportedException("旧线性位移卡需按背包位置重新设计。");
         }
@@ -103,7 +103,7 @@ namespace UnityWorld.Game.Domain.Combat
                 using var presentationOrigin = Scene.EnterPresentationOrigin(origin);
                 switch (changeType)
                 {
-                    case ComabtFieldChangeType.Add:
+                    case CombatFieldChangeType.Add:
                         var manaBefore = Scene.PresentationRecordingEnabled ? Backpack.Mana.ToDictionary(p => p.Key, p => p.Value) : null;
                         var replaced = Backpack.Insert(card, card.HasKeyword("Wound"));
                         // 原背包在入场时创建空蓄灵；现在由战斗卡重置自己的状态。
@@ -120,7 +120,7 @@ namespace UnityWorld.Game.Domain.Combat
                         Log($"[Field+] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
-                    case ComabtFieldChangeType.Remove:
+                    case CombatFieldChangeType.Remove:
                         Backpack.RemoveCard(card.Id);
                         // 离场同步释放卡上资源，保留原先删除背包蓄灵记录的语义。
                         card.ClearAssignedMana();
@@ -128,17 +128,17 @@ namespace UnityWorld.Game.Domain.Combat
                         Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
-                    case ComabtFieldChangeType.Displace:
+                    case CombatFieldChangeType.Displace:
                         Field.Remove(card);
                         switch (displaceType)
                         {
-                            case ComabtCardDisplaceType.First:
+                            case CombatCardDisplaceType.First:
                                 Field.Insert(0, card);
                                 break;
-                            case ComabtCardDisplaceType.Last:
+                            case CombatCardDisplaceType.Last:
                                 Field.Add(card);
                                 break;
-                            case ComabtCardDisplaceType.Random:
+                            case CombatCardDisplaceType.Random:
                                 var idx = Field.Count > 0
                                     ? Scene.Soul.Random(0, Field.Count + 1)
                                     : 0;
@@ -151,7 +151,7 @@ namespace UnityWorld.Game.Domain.Combat
                         Log($"[Displace] {card.DisplayName} -> {displaceType}");
                         break;
 
-                    case ComabtFieldChangeType.Deploy:
+                    case CombatFieldChangeType.Deploy:
                         if (!Reserve.Contains(card))
                         {
                             Log($"[Deploy] 警告：{card.DisplayName} 不在 Reserve 中，跳过");
@@ -164,7 +164,7 @@ namespace UnityWorld.Game.Domain.Combat
                         Log($"[Deploy] {card.DisplayName} Reserve→Field，当前SP={GetSp()}");
                         break;
 
-                    case ComabtFieldChangeType.Recall:
+                    case CombatFieldChangeType.Recall:
                         if (!Field.Contains(card))
                         {
                             Log($"[Recall] 警告：{card.DisplayName} 不在 Field 中，跳过");

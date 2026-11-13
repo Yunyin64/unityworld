@@ -1,0 +1,279 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateCardLibraryPanel.cs" id="Library"]
+[ext_resource type="Theme" path="res://scenes/templates/editor_theme.tres" id="Theme"]
+
+[sub_resource type="StyleBoxFlat" id="PreviewBox"]
+bg_color = Color(0.4627, 0.4353, 0.3373, 0.5647)
+border_color = Color(0.5176, 0.4824, 0.3804, 1)
+border_width_left = 1
+border_width_right = 1
+border_width_top = 1
+border_width_bottom = 1
+
+[node name="CardLibrary" type="Panel"]
+offset_right = 800.0
+offset_bottom = 314.0
+theme = ExtResource("Theme")
+script = ExtResource("Library")
+
+[node name="CardHeading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 14.0
+offset_right = 144.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 25
+text = "卡牌库"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="CardSearch" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 154.0
+offset_top = 16.0
+offset_right = -304.0
+offset_bottom = 50.0
+placeholder_text = "搜索名称 / ID / 描述"
+
+[node name="RefreshLibrary" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -290.0
+offset_top = 16.0
+offset_right = -208.0
+offset_bottom = 50.0
+text = "刷新"
+
+[node name="ClearFilters" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 16.0
+offset_right = -92.0
+offset_bottom = 50.0
+text = "清空筛选"
+
+[node name="CardCount" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -86.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 15
+text = "999 张"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+horizontal_alignment = 2
+
+[node name="KeywordHeading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 62.0
+offset_right = 102.0
+offset_bottom = 87.0
+theme_override_font_sizes/font_size = 18
+text = "关键词"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="MatchAll" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 90.0
+offset_right = 102.0
+offset_bottom = 110.0
+theme_override_font_sizes/font_size = 13
+text = "同时满足"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_color = Color(0.3843, 0.4, 0.3098, 1)
+
+[node name="KeywordScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 106.0
+offset_top = 58.0
+offset_right = -110.0
+offset_bottom = 138.0
+horizontal_scroll_mode = 0
+
+[node name="KeywordList" type="HFlowContainer" parent="KeywordScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="KeywordSample0" type="Button" parent="KeywordScroll/KeywordList" groups=["template_layout_preview"]]
+layout_mode = 2
+theme_type_variation = &"KeywordButton"
+text = "全部"
+
+[node name="KeywordSample1" type="Button" parent="KeywordScroll/KeywordList" groups=["template_layout_preview"]]
+layout_mode = 2
+theme_type_variation = &"KeywordButton"
+text = "四字样文"
+
+[node name="KeywordSample2" type="Button" parent="KeywordScroll/KeywordList" groups=["template_layout_preview"]]
+layout_mode = 2
+theme_type_variation = &"KeywordButton"
+text = "四字样文"
+
+[node name="KeywordSample3" type="Button" parent="KeywordScroll/KeywordList" groups=["template_layout_preview"]]
+layout_mode = 2
+theme_type_variation = &"KeywordButton"
+text = "四字样文"
+
+[node name="ExpandKeywords" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_top = 62.0
+offset_right = -24.0
+offset_bottom = 92.0
+text = "展开"
+
+[node name="ElementHeading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 145.0
+offset_right = 70.0
+offset_bottom = 175.0
+theme_override_font_sizes/font_size = 16
+text = "需求"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="ElementFilter" type="OptionButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 70.0
+offset_top = 144.0
+offset_right = 240.0
+offset_bottom = 176.0
+text = "全部元素"
+
+[node name="SizeHeading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 254.0
+offset_top = 145.0
+offset_right = 302.0
+offset_bottom = 175.0
+theme_override_font_sizes/font_size = 16
+text = "占格"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="SizeFilter" type="OptionButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 306.0
+offset_top = 144.0
+offset_right = 416.0
+offset_bottom = 176.0
+text = "不限"
+
+[node name="CompatibilityFilter" type="OptionButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 430.0
+offset_top = 144.0
+offset_right = 608.0
+offset_bottom = 176.0
+text = "全部状态"
+
+[node name="CardResults" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 184.0
+offset_right = -20.0
+offset_bottom = -18.0
+horizontal_scroll_mode = 0
+
+[node name="CardList" type="HFlowContainer" parent="CardResults"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="SampleCard0" type="Panel" parent="CardResults/CardList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(132, 102)
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="SampleTitle" type="Label" parent="CardResults/CardList/SampleCard0"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 128.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 15
+text = "这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+horizontal_alignment = 1
+
+[node name="SampleCard1" type="Panel" parent="CardResults/CardList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(132, 102)
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="SampleTitle" type="Label" parent="CardResults/CardList/SampleCard1"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 128.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 15
+text = "这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+horizontal_alignment = 1
+
+[node name="SampleCard2" type="Panel" parent="CardResults/CardList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(132, 102)
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="SampleTitle" type="Label" parent="CardResults/CardList/SampleCard2"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 128.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 15
+text = "这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+horizontal_alignment = 1

@@ -1,0 +1,103 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
+
+[ext_resource type="Script" path="res://scripts/client/ui/ObserverBackpackView.cs" id="grid"]
+
+[ext_resource type="Texture2D" uid="uid://csgwgadfmi5bs" path="res://assets/art/ui/backpack_base.png" id="backpack"]
+
+[sub_resource type="AtlasTexture" id="Texture_backpack"]
+atlas = ExtResource("backpack")
+region = Rect2(0, 0, 1122, 1402)
+
+[node name="Backpack" type="Control"]
+offset_right = 348.0
+offset_bottom = 568.0
+mouse_filter = 2
+theme = ExtResource("theme")
+
+[node name="Scroll" type="TextureRect" parent="."]
+offset_right = 348.0
+offset_bottom = 522.0
+mouse_filter = 2
+texture = SubResource("Texture_backpack")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Title" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 29.0
+offset_right = 323.0
+offset_bottom = 73.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 24
+text = "我方 · 储物阵"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Scan" type="Label" parent="."]
+offset_left = 24.0
+offset_top = 94.0
+offset_right = 324.0
+offset_bottom = 119.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 15
+text = "5×5 · 第 1 轮 · 第 1 行"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Grid" type="Control" parent="."]
+offset_left = 24.0
+offset_top = 130.0
+offset_right = 324.0
+offset_bottom = 490.0
+mouse_filter = 0
+clip_contents = true
+script = ExtResource("grid")
+
+[node name="GridPreview" type="Panel" parent="Grid"]
+offset_right = 300.0
+offset_bottom = 360.0
+mouse_filter = 2
+theme_type_variation = &"CellPanel"
+
+[node name="Caption" type="Label" parent="Grid/GridPreview"]
+offset_top = 135.0
+offset_right = 300.0
+offset_bottom = 205.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 20
+text = "背包格与卡牌"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="ScanState" type="Panel" parent="."]
+offset_left = 4.0
+offset_top = 528.0
+offset_right = 344.0
+offset_bottom = 568.0
+mouse_filter = 2
+theme_type_variation = &"DarkPanel"
+
+[node name="Progress" type="Label" parent="ScanState"]
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 332.0
+offset_bottom = 36.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 14
+text = "行进度 0/10   加速 0 · 减速 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true

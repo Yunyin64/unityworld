@@ -1,0 +1,90 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
+
+[node name="PendingSlot" type="Control"]
+offset_right = 150.0
+offset_bottom = 175.0
+mouse_filter = 2
+theme = ExtResource("theme")
+
+[node name="Frame" type="Panel" parent="."]
+offset_right = 150.0
+offset_bottom = 175.0
+mouse_filter = 2
+theme_type_variation = &"PaperPanel"
+
+[node name="ArtWell" type="Panel" parent="."]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 126.0
+mouse_filter = 2
+theme_type_variation = &"JadeCard"
+
+[node name="Empty" type="Label" parent="."]
+offset_left = 10.0
+offset_top = 40.0
+offset_right = 140.0
+offset_bottom = 150.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 18
+text = "尚无待发\n空槽"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Content" type="Control" parent="."]
+offset_right = 150.0
+offset_bottom = 175.0
+mouse_filter = 2
+
+[node name="ArtWell" type="Panel" parent="Content"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 126.0
+mouse_filter = 2
+theme_type_variation = &"JadeCard"
+
+[node name="Art" type="TextureRect" parent="Content"]
+offset_left = 22.0
+offset_top = 15.0
+offset_right = 128.0
+offset_bottom = 120.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Content"]
+offset_left = 7.0
+offset_top = 128.0
+offset_right = 143.0
+offset_bottom = 154.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 20
+text = "这里显示七个字"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Details" type="Label" parent="Content"]
+offset_left = 5.0
+offset_top = 154.0
+offset_right = 145.0
+offset_bottom = 173.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 13
+text = "斩击 · 金"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Contact" type="Marker2D" parent="Content"]
+position = Vector2(140, 70)

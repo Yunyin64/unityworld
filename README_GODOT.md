@@ -2,6 +2,31 @@
 
 项目文档统一放在 [UnityWorld/Docs](UnityWorld/Docs/File.md)，素材台账位于其中的 `art` 目录。
 
+## 测试首页与可视布局
+
+用 Godot .NET 打开仓库根的 `project.godot`，按 **F5** 进入测试首页。点「地图测试」或「角色模板编辑器」会在当前窗口打开相应工具，点工具里的「返回首页」可以继续测试另一项。地图返回会结束本次行程；模板有未保存修改时可以保存、放弃或取消。
+
+主游戏窗口、独立试战窗口和重开后的观察器默认以 **1920×1080** 打开。首页的「界面缩放」可选 75%、100%、125%、150%；各工具也可用 **Ctrl + 加号**（或等号）、**Ctrl + 减号**调整，**Ctrl + 0** 恢复 100%。设置自动保存，新开的窗口沿用该倍率。
+
+改窗口分辨率只改变可用空间。比如 100% 时，240 像素宽的控件从 1920×1080 换到 1280×720 后仍宽 240 像素；手动调到 125% 后才宽 300 像素。角落控件按各自窗口边缘定位。窄窗口可滚动查看放不下的内容，地图自己的加减号仍控制地图视野。
+
+在 2D 编辑器中打开对应的场景即可直接检查和调整布局。保存后按 **F6** 调试当前页。
+
+用 F5 调试时，如果浮窗四周出现黑边，在浮窗右上角的 **⋮ → 嵌入式窗口尺寸** 里选择 **伸展以适应**。Godot 将这个选项保存在当前电脑的项目编辑器设置里。右上角显示实际游戏分辨率，拖动浮窗后会跟着变。
+
+| 场景 | 可以直接调整的区域 |
+| --- | --- |
+| [地图测试](scenes/exploration/exploration_view.tscn) | 地图、人物名牌、日期、地点详情、缩放和行程操作 |
+| [角色模板编辑器](scenes/templates/character_template_editor.tscn) | 模板库、背包装配、卡库、详情和试战按钮 |
+| [战斗观察器](scenes/battle/battle_observer.tscn) | 两侧背包、人物、Buff、待发槽、播放控制和战报 |
+| [卡牌详情](scenes/ui/CardTip.tscn) · [Buff 详情](scenes/ui/BuffTip.tscn) | 供各窗口悬浮层实例化的图片、标题、文本和宽度 |
+
+角色模板编辑器的主场景负责摆放各区域。修改区域内部布局时，直接打开 [模板库](scenes/templates/template_library.tscn)、[背包装配区](scenes/templates/template_loadout.tscn) 或 [卡库](scenes/templates/template_card_library.tscn)。例如，卡库的搜索框和关键词列表都在卡库子场景里。
+
+**场景拆分检查豁免**　以后盘点客户端 `.tscn` 的大小、行数或节点数时，跳过 [战斗素材预览](scenes/tests/battle_assets_preview.tscn)。它用于查看原始素材，观察器仍通过固定节点路径读取其中的皮肤资源。
+
+动态栏位在编辑器中显示容量样文，如「这里显示七个字」。正式内容由 C# 绑定。移动背包请选中背包面板或它的子场景，卡面绘制、拖放和悬浮会使用它的新位置。卡牌和 Buff 的排版分别在各自的提示场景中调整。
+
 ## 探索试玩
 
 用 Godot .NET 打开项目，选中 [exploration_view.tscn](scenes/exploration/exploration_view.tscn) 后按 **F6**。命令行也可从仓库根目录启动：
@@ -19,7 +44,7 @@ godot --path . res://scenes/exploration/exploration_view.tscn -- --exploration
 
 ## 模板编辑与战斗观察
 
-使用 Godot 4.7.2 .NET 打开根目录 `project.godot`，按 F5 进入人物／怪物模板编辑器。默认场景现为 `res://scenes/templates/character_template_editor.tscn`：左侧区分只读的“项目模板”和可编辑的“我的模板”，复制后可调整属性、摆放已有 Card、保存个人草稿并进入原战斗观察界面试战。
+在测试首页选择「角色模板编辑器」。左侧区分只读的“项目模板”和可编辑的“我的模板”，复制后可调整属性、摆放已有 Card、保存个人草稿并进入原战斗观察界面试战。
 
 编辑器快速使用、个人库位置、六项人工检查及当前验证边界见 [模板编辑器快速开始](UnityWorld/Docs/template-editor/QUICKSTART.md)。卡牌 Keyword 筛选由实际目录生成，多选为“同时满足”；缺图卡牌显示名称，仍可编辑。编辑器只加载定义，试战启动独立游戏窗口；关闭试战后可继续编辑，未保存内容不会被试战隐式保存。
 
@@ -43,7 +68,7 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 - **播放**：每秒推进 10 个完整战斗 Tick；蓝白横向光线按双方各自扫描进度向下移动。
 - **暂停**：立即停止逻辑时钟，已提交的短动画收尾后静止；继续播放不补跑暂停期间的时间。
 - **单步 +1**：暂停时推进一个完整 Tick。充能可令一步扫过多行，仍只增加一个 Tick。
-- **重开当前案例（重启观察器）**：启动新的游戏窗口并退出旧窗口，保留完整案例、双种子、参与者顺序、步数配置及数据/核心版本。数据版本变化会停止重放并显示诊断；不会换回另一套默认数据。
+- **重开当前案例**：在独立观察器里重启该战斗窗口，在当前窗口里只更换后台模拟进程，保留完整案例、双种子、参与者顺序、步数配置及数据/核心版本。数据版本变化会停止重放并显示诊断；不会换回另一套默认数据。
 - 悬停卡片查看实例 ID、真实占格、点亮需求、冻结及累计使用/生效次数。两张同定义射击共用图片，但状态独立。
 
 属性区显示气血 当前/上限、灵力 当前/上限、SP 占用/角色上限，以及护盾当前值。上限通过核心只读投影取得，不修改原属性缓存；SP 上限不是背包格数。不可用上限显示 ? 并提供诊断。HP 归零后加伤口并恢复 HP 是核心行为，失败以核心结果为准。
@@ -93,7 +118,7 @@ $verifyDir = Join-Path (Get-Location) '.local-verification/battle-observer/godot
 godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--observer-verify=$verifyDir" --observer-mode=step
 ```
 
-`--observer-mode=auto` 使用实际播放时钟；`--observer-restarts=3` 在完成后连续启动三个新观察器进程并携带当前输入。每次运行写 `godot-<模式>-<编号>.jsonl` 和同名 `.jsonl.case.json`，可与共享 CLI 基线严格比较。窗口尺寸可用 Godot 的 `--resolution 1600x900` 参数；默认窗口为 1440×810。
+`--observer-mode=auto` 使用实际播放时钟；`--observer-restarts=3` 在完成后连续启动三个新观察器进程并携带当前输入。每次运行写 `godot-<模式>-<编号>.jsonl` 和同名 `.jsonl.case.json`，可与共享 CLI 基线严格比较。窗口尺寸可用 Godot 的 `--resolution 1600x900` 参数；默认窗口为 1920×1080。
 
 自动操作通过 viewport 注入鼠标移动、按下和释放，经过 Godot GUI 命中检测，覆盖实际按钮回调和坐标路径；它不是操作系统鼠标控制，也不是人工验收。自动播放验证另保存连续 18 个显示帧、光线位置样本及暂停稳定检查，用于检查插值而不是只看逻辑 Tick 截图。各次验证是否通过以输出证据为准，不以入口存在、编译或启动成功代替验收。
 

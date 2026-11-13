@@ -1,0 +1,121 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateLibraryPanel.cs" id="Library"]
+[ext_resource type="Theme" path="res://scenes/templates/editor_theme.tres" id="Theme"]
+
+[node name="TemplateLibrary" type="Panel"]
+offset_right = 292.0
+offset_bottom = 744.0
+theme = ExtResource("Theme")
+script = ExtResource("Library")
+
+[node name="LibraryHeading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 268.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 25
+text = "模板库"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="TemplateSearch" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 272.0
+offset_bottom = 96.0
+placeholder_text = "搜索名称或 ID"
+
+[node name="AllKinds" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 106.0
+offset_right = 100.0
+offset_bottom = 140.0
+text = "全部"
+
+[node name="HumanKind" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 106.0
+offset_top = 106.0
+offset_right = 186.0
+offset_bottom = 140.0
+text = "人物"
+
+[node name="MonsterKind" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 192.0
+offset_top = 106.0
+offset_right = 272.0
+offset_bottom = 140.0
+text = "怪物"
+
+[node name="TemplateScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 152.0
+offset_right = 274.0
+offset_bottom = -74.0
+horizontal_scroll_mode = 0
+
+[node name="TemplateList" type="VBoxContainer" parent="TemplateScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="SampleRow0" type="Button" parent="TemplateScroll/TemplateList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 36)
+theme_type_variation = &"KeywordButton"
+text = "项目模板"
+
+[node name="SampleRow1" type="Button" parent="TemplateScroll/TemplateList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 64)
+theme_type_variation = &"KeywordButton"
+text = "这里显示七个字"
+
+[node name="SampleRow2" type="Button" parent="TemplateScroll/TemplateList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 36)
+theme_type_variation = &"KeywordButton"
+text = "我的模板"
+
+[node name="SampleRow3" type="Button" parent="TemplateScroll/TemplateList" groups=["template_layout_preview"]]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 64)
+theme_type_variation = &"KeywordButton"
+text = "这里显示七个字"
+
+[node name="ImportTemplates" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -60.0
+offset_right = 138.0
+offset_bottom = -22.0
+text = "导入"
+
+[node name="ExportTemplate" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 148.0
+offset_top = -60.0
+offset_right = 272.0
+offset_bottom = -22.0
+text = "导出 JSON"

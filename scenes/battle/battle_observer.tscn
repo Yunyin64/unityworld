@@ -1,12 +1,696 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/client/ui/BattleObserverView.cs" id="1"]
+[ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
+
+[ext_resource type="Script" path="res://scripts/client/ui/BattleObserverView.cs" id="view"]
+
+[ext_resource type="Script" path="res://scripts/client/ui/ObserverPresentationLayer.cs" id="effects"]
+
+[ext_resource type="PackedScene" path="res://scenes/battle/observer_backpack.tscn" id="backpack"]
+
+[ext_resource type="PackedScene" path="res://scenes/battle/observer_stats.tscn" id="stats"]
+
+[ext_resource type="PackedScene" path="res://scenes/battle/observer_pending_slot.tscn" id="pending_slot"]
+
+[ext_resource type="Texture2D" uid="uid://0vnny23xh8lb" path="res://assets/art/backgrounds/qinglan_arena.png" id="background"]
+
+[ext_resource type="Texture2D" uid="uid://b2pt0vjebwphv" path="res://assets/art/ui/combat_log_panel.png" id="log"]
+
+[ext_resource type="Texture2D" uid="uid://jkgy44wet68s" path="res://assets/art/characters/jade_swordsman.png" id="swordsman"]
+
+[ext_resource type="Texture2D" uid="uid://cvcemg44806je" path="res://assets/art/characters/crimson_cultivator.png" id="pyromancer"]
+
+[sub_resource type="AtlasTexture" id="Texture_background"]
+atlas = ExtResource("background")
+region = Rect2(0, 0, 1672, 941)
+
+[sub_resource type="AtlasTexture" id="Texture_log"]
+atlas = ExtResource("log")
+region = Rect2(0, 61, 2172, 598)
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman"]
+atlas = ExtResource("swordsman")
+region = Rect2(58, 157, 1183, 991)
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer"]
+atlas = ExtResource("pyromancer")
+region = Rect2(44, 78, 1201, 1118)
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_face"]
+atlas = ExtResource("swordsman")
+region = Rect2(450, 260, 480, 445)
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_face"]
+atlas = ExtResource("pyromancer")
+region = Rect2(205, 200, 500, 460)
 
 [node name="BattleObserver" type="Control"]
+mouse_filter = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1")
+theme = ExtResource("theme")
+script = ExtResource("view")
+
+[node name="PageScroll" type="ScrollContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+follow_focus = true
+mouse_filter = 1
+
+[node name="Canvas" type="Control" parent="PageScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(980, 500)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Arena" type="TextureRect" parent="PageScroll/Canvas"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("Texture_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="PageScroll/Canvas"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.06, 0.11, 0.13, 0.16)
+
+[node name="FieldScroll" type="ScrollContainer" parent="PageScroll/Canvas"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 166.0
+offset_bottom = -150.0
+follow_focus = true
+horizontal_scroll_mode = 0
+mouse_filter = 1
+
+[node name="Field" type="Control" parent="PageScroll/Canvas/FieldScroll"]
+custom_minimum_size = Vector2(0, 584)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Packs" type="Control" parent="PageScroll/Canvas/FieldScroll/Field"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="LeftPack" parent="PageScroll/Canvas/FieldScroll/Field/Packs" instance=ExtResource("backpack")]
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 24.0
+offset_top = -292.0
+offset_right = 372.0
+offset_bottom = 276.0
+
+[node name="RightPack" parent="PageScroll/Canvas/FieldScroll/Field/Packs" instance=ExtResource("backpack")]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -372.0
+offset_top = -292.0
+offset_right = -24.0
+offset_bottom = 276.0
+
+[node name="Duel" type="Control" parent="PageScroll/Canvas/FieldScroll/Field"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Pending" type="Control" parent="PageScroll/Canvas/FieldScroll/Field/Duel"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -208.0
+offset_top = 34.0
+offset_right = 208.0
+offset_bottom = 209.0
+mouse_filter = 2
+
+[node name="Left" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending" instance=ExtResource("pending_slot")]
+offset_right = 150.0
+offset_bottom = 175.0
+
+[node name="Right" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending" instance=ExtResource("pending_slot")]
+offset_left = 266.0
+offset_right = 416.0
+offset_bottom = 175.0
+
+[node name="Title" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending"]
+offset_left = 154.0
+offset_top = 29.0
+offset_right = 262.0
+offset_bottom = 64.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 24
+text = "待 发"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Value" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending"]
+offset_left = 152.0
+offset_top = 70.0
+offset_right = 264.0
+offset_bottom = 110.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(1, 0.91373, 0.60392, 1)
+theme_override_font_sizes/font_size = 26
+text = "— : —"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Status" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending"]
+offset_left = 152.0
+offset_top = 115.0
+offset_right = 264.0
+offset_bottom = 140.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 14
+text = "等待出招"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="CollisionAnchor" type="Marker2D" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending"]
+position = Vector2(208, 70)
+
+[node name="RecentPanel" type="Panel" parent="PageScroll/Canvas/FieldScroll/Field/Duel"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -270.0
+offset_top = 221.0
+offset_right = 270.0
+offset_bottom = 270.0
+mouse_filter = 2
+theme_type_variation = &"DarkPanel"
+
+[node name="Recent" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RecentPanel"]
+offset_left = 13.0
+offset_top = 5.0
+offset_right = 527.0
+offset_bottom = 44.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 14
+text = "最近两条战斗记录"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="LeftActor" type="Control" parent="PageScroll/Canvas/FieldScroll/Field/Duel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -342.0
+offset_top = -304.0
+offset_right = -112.0
+offset_bottom = -83.0
+mouse_filter = 2
+
+[node name="Image" type="TextureRect" parent="PageScroll/Canvas/FieldScroll/Field/Duel/LeftActor"]
+offset_right = 230.0
+offset_bottom = 221.0
+mouse_filter = 2
+texture = SubResource("Texture_swordsman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeadAnchor" type="Marker2D" parent="PageScroll/Canvas/FieldScroll/Field/Duel/LeftActor"]
+position = Vector2(112, 26)
+
+[node name="Name" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/LeftActor"]
+offset_left = 2.0
+offset_top = 222.0
+offset_right = 212.0
+offset_bottom = 250.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 20
+text = "这里显示七个字"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_outline_color = Color(0.22745, 0.27451, 0.23137, 1)
+theme_override_constants/outline_size = 3
+
+[node name="BuffScroll" type="ScrollContainer" parent="PageScroll/Canvas/FieldScroll/Field/Duel/LeftActor"]
+offset_left = -38.0
+offset_top = 258.0
+offset_right = 252.0
+offset_bottom = 296.0
+mouse_filter = 1
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="Buffs" type="HBoxContainer" parent="PageScroll/Canvas/FieldScroll/Field/Duel/LeftActor/BuffScroll"]
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="Status" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/LeftActor"]
+offset_left = -38.0
+offset_top = 258.0
+offset_right = 252.0
+offset_bottom = 290.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 15
+text = "状态名称×2"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="RightActor" type="Control" parent="PageScroll/Canvas/FieldScroll/Field/Duel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 133.0
+offset_top = -276.0
+offset_right = 352.0
+offset_bottom = -92.0
+mouse_filter = 2
+
+[node name="Image" type="TextureRect" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RightActor"]
+offset_right = 219.0
+offset_bottom = 184.0
+mouse_filter = 2
+texture = SubResource("Texture_pyromancer")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeadAnchor" type="Marker2D" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RightActor"]
+position = Vector2(105, 19)
+
+[node name="Name" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RightActor"]
+offset_left = -9.0
+offset_top = 194.0
+offset_right = 201.0
+offset_bottom = 222.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 20
+text = "这里显示七个字"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_outline_color = Color(0.22745, 0.27451, 0.23137, 1)
+theme_override_constants/outline_size = 3
+
+[node name="BuffScroll" type="ScrollContainer" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RightActor"]
+offset_left = -49.0
+offset_top = 230.0
+offset_right = 241.0
+offset_bottom = 268.0
+mouse_filter = 1
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="Buffs" type="HBoxContainer" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RightActor/BuffScroll"]
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="Status" type="Label" parent="PageScroll/Canvas/FieldScroll/Field/Duel/RightActor"]
+offset_left = -49.0
+offset_top = 230.0
+offset_right = 241.0
+offset_bottom = 262.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 15
+text = "状态名称×2"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="LogSlot" type="Control" parent="PageScroll/Canvas/FieldScroll/Field"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -314.0
+offset_top = -145.0
+offset_right = 314.0
+offset_bottom = -12.0
+mouse_filter = 2
+
+[node name="Effects" type="Control" parent="PageScroll/Canvas/FieldScroll/Field"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+z_index = 5
+script = ExtResource("effects")
+
+[node name="Header" type="Panel" parent="PageScroll/Canvas"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -375.0
+offset_top = 20.0
+offset_right = 375.0
+offset_bottom = 92.0
+mouse_filter = 2
+theme_type_variation = &"PaperPanel"
+
+[node name="Title" type="Label" parent="PageScroll/Canvas/Header"]
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 2.0
+offset_right = -20.0
+offset_bottom = 44.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 29
+text = "青岚山 · 论剑台"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Info" type="Label" parent="PageScroll/Canvas/Header"]
+anchor_right = 1.0
+offset_left = 12.0
+offset_top = 42.0
+offset_right = -12.0
+offset_bottom = 68.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.32, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 15
+text = "正式模板 · Tick 0/5000 · 种子 12345 / 67890"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="ObserverTitle" type="Label" parent="PageScroll/Canvas"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -240.0
+offset_top = 20.0
+offset_right = -26.0
+offset_bottom = 50.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 16
+text = "战斗观察 · 真实模板"
+horizontal_alignment = 2
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Cases" type="OptionButton" parent="PageScroll/Canvas"]
+offset_left = 24.0
+offset_top = 22.0
+offset_right = 350.0
+offset_bottom = 60.0
+mouse_filter = 0
+tooltip_text = "只显示已适配的真实案例；未适配测试保留原控制台断言。"
+item_count = 4
+selected = 0
+popup/item_0/text = "正式模板 A / B"
+popup/item_0/id = 0
+popup/item_1/text = "布局/模板断言：无完整战斗"
+popup/item_1/id = 1
+popup/item_1/disabled = true
+popup/item_2/text = "背包战斗：手工布置待适配"
+popup/item_2/id = 2
+popup/item_2/disabled = true
+popup/item_3/text = "时钟/效果/事件：注入待适配"
+popup/item_3/id = 3
+popup/item_3/disabled = true
+
+[node name="Return" type="Button" parent="PageScroll/Canvas"]
+offset_left = 24.0
+offset_top = 70.0
+offset_right = 160.0
+offset_bottom = 107.0
+mouse_filter = 0
+text = "返回来源页"
+
+[node name="Playback" type="Panel" parent="PageScroll/Canvas"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -295.0
+offset_top = 104.0
+offset_right = 295.0
+offset_bottom = 156.0
+mouse_filter = 2
+theme_type_variation = &"DarkPanel"
+
+[node name="Play" type="Button" parent="PageScroll/Canvas/Playback"]
+offset_left = 11.0
+offset_top = 9.0
+offset_right = 87.0
+offset_bottom = 43.0
+mouse_filter = 0
+text = "播放"
+
+[node name="Pause" type="Button" parent="PageScroll/Canvas/Playback"]
+offset_left = 97.0
+offset_top = 9.0
+offset_right = 173.0
+offset_bottom = 43.0
+mouse_filter = 0
+text = "暂停"
+
+[node name="Step" type="Button" parent="PageScroll/Canvas/Playback"]
+offset_left = 183.0
+offset_top = 9.0
+offset_right = 283.0
+offset_bottom = 43.0
+mouse_filter = 0
+text = "单步 +1"
+
+[node name="Restart" type="Button" parent="PageScroll/Canvas/Playback"]
+offset_left = 293.0
+offset_top = 9.0
+offset_right = 579.0
+offset_bottom = 43.0
+mouse_filter = 0
+text = "重开当前案例 ↻"
+
+[node name="Status" type="Label" parent="PageScroll/Canvas"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -410.0
+offset_top = 163.0
+offset_right = 410.0
+offset_bottom = 190.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 16
+text = "已暂停 · 单步推进完整 Tick"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="LeftStats" parent="PageScroll/Canvas" instance=ExtResource("stats")]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = -150.0
+offset_right = 474.0
+offset_bottom = -17.0
+
+[node name="RightStats" parent="PageScroll/Canvas" instance=ExtResource("stats")]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -474.0
+offset_top = -150.0
+offset_right = -22.0
+offset_bottom = -17.0
+
+[node name="FooterLog" type="Control" parent="PageScroll/Canvas"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -314.0
+offset_top = -150.0
+offset_right = 314.0
+offset_bottom = -17.0
+mouse_filter = 2
+
+[node name="Log" type="Control" parent="PageScroll/Canvas/FooterLog"]
+offset_right = 628.0
+offset_bottom = 133.0
+mouse_filter = 2
+
+[node name="Scroll" type="TextureRect" parent="PageScroll/Canvas/FooterLog/Log"]
+offset_right = 628.0
+offset_bottom = 133.0
+mouse_filter = 2
+texture = SubResource("Texture_log")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Title" type="Label" parent="PageScroll/Canvas/FooterLog/Log"]
+offset_left = 50.0
+offset_top = 18.0
+offset_right = 475.0
+offset_bottom = 46.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 21
+text = "战斗记录"
+horizontal_alignment = 0
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Expand" type="Button" parent="PageScroll/Canvas/FooterLog/Log"]
+offset_left = 514.0
+offset_top = 21.0
+offset_right = 596.0
+offset_bottom = 47.0
+mouse_filter = 0
+text = "展开"
+theme_override_font_sizes/font_size = 14
+
+[node name="Recent" type="RichTextLabel" parent="PageScroll/Canvas/FooterLog/Log"]
+offset_left = 50.0
+offset_top = 53.0
+offset_right = 590.0
+offset_bottom = 107.0
+mouse_filter = 0
+theme_override_colors/default_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/normal_font_size = 15
+scroll_active = false
+autowrap_mode = 0
+selection_enabled = true
+text = "T0 · 双方角色已入场"
+
+[node name="CompactLog" type="Button" parent="PageScroll/Canvas"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -145.0
+offset_top = 70.0
+offset_right = -26.0
+offset_bottom = 107.0
+visible = false
+text = "查看战报"
+mouse_filter = 0
+
+[node name="History" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+visible = false
+z_index = 20
+
+[node name="Mask" type="ColorRect" parent="History"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+color = Color(0.03, 0.07, 0.08, 0.66)
+
+[node name="Paper" type="Panel" parent="History"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -560.0
+offset_top = -320.0
+offset_right = 560.0
+offset_bottom = 310.0
+mouse_filter = 2
+theme_type_variation = &"PaperPanel"
+
+[node name="Title" type="Label" parent="History/Paper"]
+anchor_right = 1.0
+offset_left = 35.0
+offset_top = 21.0
+offset_right = -150.0
+offset_bottom = 63.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/font_size = 25
+text = "战斗记录 · 完整历史可滚动查看"
+horizontal_alignment = 0
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Close" type="Button" parent="History/Paper"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -125.0
+offset_top = 23.0
+offset_right = -35.0
+offset_bottom = 61.0
+mouse_filter = 0
+text = "收起"
+
+[node name="Entries" type="RichTextLabel" parent="History/Paper"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 35.0
+offset_top = 84.0
+offset_right = -35.0
+offset_bottom = -36.0
+mouse_filter = 0
+theme_override_colors/default_color = Color(0.2, 0.22, 0.17, 1)
+theme_override_font_sizes/normal_font_size = 18
+scroll_following = true
+selection_enabled = true
+
+[node name="Portrait" parent="PageScroll/Canvas/LeftStats" index="1"]
+offset_left = 29.0
+offset_right = 99.0
+texture = SubResource("Texture_swordsman_face")
+
+[node name="Portrait" parent="PageScroll/Canvas/RightStats" index="1"]
+offset_left = 22.0
+offset_right = 92.0
+texture = SubResource("Texture_pyromancer_face")
+
+[node name="Title" parent="PageScroll/Canvas/FieldScroll/Field/Packs/RightPack" index="1"]
+text = "敌方 · 储物阵"
+
+[node name="ArtWell" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending/Right" index="1"]
+theme_type_variation = &"CopperCard"
+
+[node name="ArtWell" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending/Right/Content" index="0"]
+theme_type_variation = &"CopperCard"
+
+[node name="Contact" parent="PageScroll/Canvas/FieldScroll/Field/Duel/Pending/Right/Content" index="4"]
+position = Vector2(10, 70)
+
+[editable path="PageScroll/Canvas/FieldScroll/Field/Packs/LeftPack"]
+
+[editable path="PageScroll/Canvas/FieldScroll/Field/Packs/RightPack"]
+
+[editable path="PageScroll/Canvas/LeftStats"]
+
+[editable path="PageScroll/Canvas/RightStats"]
+
+[editable path="PageScroll/Canvas/FieldScroll/Field/Duel/Pending/Left"]
+
+[editable path="PageScroll/Canvas/FieldScroll/Field/Duel/Pending/Right"]

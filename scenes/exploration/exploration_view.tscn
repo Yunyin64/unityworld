@@ -1,13 +1,389 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://4asq4w5skyhx"]
 
-[ext_resource type="Script" path="res://scripts/client/ui/exploration/ExplorationView.cs" id="1"]
+[ext_resource type="Texture2D" uid="uid://jkgy44wet68s" path="res://assets/art/characters/jade_swordsman.png" id="Actor"]
+[ext_resource type="Script" uid="uid://cn0ha8pxxfw0r" path="res://scripts/client/ui/exploration/ExplorationCalendar.cs" id="Calendar"]
+[ext_resource type="Texture2D" uid="uid://bjhnix02i2jqp" path="res://assets/art/exploration/backgrounds/gray_fog.png" id="Fog"]
+[ext_resource type="Script" uid="uid://ctg83rl634y0f" path="res://scripts/client/exploration/ExplorationMap.cs" id="Map"]
+[ext_resource type="Texture2D" uid="uid://u6h5lktn5rpl" path="res://scenes/templates/panel_frame_256.png" id="PaperArt"]
+[ext_resource type="Theme" uid="uid://n4uiqj7xb77n" path="res://assets/presentation/test_ui_theme.tres" id="Theme"]
+[ext_resource type="Script" uid="uid://b7t3675ehv73i" path="res://scripts/client/exploration/ExplorationTileThumbnail.cs" id="Tile"]
+[ext_resource type="Script" uid="uid://cola5td0ppent" path="res://scripts/client/ui/exploration/ExplorationView.cs" id="View"]
 
-[node name="Exploration" type="Control"]
+[sub_resource type="StyleBoxTexture" id="Paper"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+texture = ExtResource("PaperArt")
+texture_margin_left = 19.0
+texture_margin_top = 19.0
+texture_margin_right = 19.0
+texture_margin_bottom = 19.0
+
+[sub_resource type="SystemFont" id="Titles"]
+font_names = PackedStringArray("KaiTi", "STKaiti", "SimSun", "Noto Serif CJK SC")
+
+[sub_resource type="StyleBoxFlat" id="PortraitRim"]
+bg_color = Color(0.27, 0.24, 0.19, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.71, 0.6, 0.39, 1)
+corner_radius_top_left = 45
+corner_radius_top_right = 45
+corner_radius_bottom_right = 45
+corner_radius_bottom_left = 45
+
+[sub_resource type="StyleBoxFlat" id="PortraitMask"]
+bg_color = Color(0.39, 0.45, 0.42, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.86, 0.79, 0.57, 1)
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+
+[sub_resource type="AtlasTexture" id="Portrait"]
+atlas = ExtResource("Actor")
+region = Rect2(450, 260, 480, 445)
+
+[sub_resource type="ButtonGroup" id="Modes"]
+
+[node name="Exploration" type="Control" unique_id=961694692]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+theme = ExtResource("Theme")
+script = ExtResource("View")
+
+[node name="Mist" type="TextureRect" parent="." unique_id=732959716]
+self_modulate = Color(0.84, 0.84, 0.85, 1)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("Fog")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LocalMap" type="Control" parent="." unique_id=1320208957]
+unique_name_in_owner = true
+clip_contents = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("Map")
+
+[node name="Hud" type="Control" parent="." unique_id=1401640991]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="IdentityPlate" type="Panel" parent="Hud" unique_id=372933644]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 39.0
+offset_right = 294.0
+offset_bottom = 116.0
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("Paper")
+
+[node name="ActorName" type="Label" parent="Hud/IdentityPlate" unique_id=1198799581]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 60.0
+offset_top = 17.0
+offset_right = 233.0
+offset_bottom = 51.0
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_fonts/font = SubResource("Titles")
+theme_override_font_sizes/font_size = 24
+text = "这里显示七个字"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Identity" type="Label" parent="Hud/IdentityPlate" unique_id=1133332973]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 65.0
+offset_top = 41.0
+offset_right = 235.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 15
+text = "这里显示七个字"
+clip_text = true
+
+[node name="PortraitFrame" type="Panel" parent="Hud" unique_id=992474821]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 31.0
+offset_right = 109.0
+offset_bottom = 120.0
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("PortraitRim")
+
+[node name="Mask" type="Panel" parent="Hud/PortraitFrame" unique_id=1299996732]
+clip_children = 2
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PortraitMask")
+
+[node name="Portrait" type="TextureRect" parent="Hud/PortraitFrame/Mask" unique_id=1209530350]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("Portrait")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Calendar" type="Panel" parent="Hud" unique_id=1117013656]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -205.0
+offset_top = 24.0
+offset_right = 205.0
+offset_bottom = 76.0
+mouse_force_pass_scroll_events = false
+script = ExtResource("Calendar")
+
+[node name="WorldDate" type="Label" parent="Hud/Calendar" unique_id=1701738072]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 11.0
+offset_right = -18.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_color = Color(0.96, 0.91, 0.77, 1)
+theme_override_fonts/font = SubResource("Titles")
+theme_override_font_sizes/font_size = 24
+text = "这里显示日期和月相文字"
+horizontal_alignment = 1
+
+[node name="Place" type="PanelContainer" parent="Hud" unique_id=809739033]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 42.0
+offset_top = -131.0
+offset_right = 310.0
+offset_bottom = 191.0
+grow_vertical = 2
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("Paper")
+
+[node name="PlaceScroll" type="ScrollContainer" parent="Hud/Place" unique_id=1561882773]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 232)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Fields" type="VBoxContainer" parent="Hud/Place/PlaceScroll" unique_id=180119025]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
-script = ExtResource("1")
+theme_override_constants/separation = 4
+
+[node name="Heading" type="HBoxContainer" parent="Hud/Place/PlaceScroll/Fields" unique_id=2048538674]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Where" type="Label" parent="Hud/Place/PlaceScroll/Fields/Heading" unique_id=412965903]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 14
+text = "四字占位"
+
+[node name="Coordinates" type="Label" parent="Hud/Place/PlaceScroll/Fields/Heading" unique_id=1828430690]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 15
+text = "(—, —)"
+horizontal_alignment = 2
+
+[node name="PlaceTitle" type="Label" parent="Hud/Place/PlaceScroll/Fields" unique_id=357302127]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_fonts/font = SubResource("Titles")
+theme_override_font_sizes/font_size = 28
+text = "这里显示七个字"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Thumbnail" type="ColorRect" parent="Hud/Place/PlaceScroll/Fields" unique_id=734246085]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 101)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.43, 0.45, 0.36, 1)
+script = ExtResource("Tile")
+
+[node name="Terrain" type="Label" parent="Hud/Place/PlaceScroll/Fields" unique_id=1497269675]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 16
+text = "这里显示通行信息"
+autowrap_mode = 3
+
+[node name="Distance" type="Label" parent="Hud/Place/PlaceScroll/Fields" unique_id=1159889234]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 16
+text = "这里显示距离信息"
+autowrap_mode = 3
+
+[node name="Region" type="Label" parent="Hud/Place/PlaceScroll/Fields" unique_id=1255943003]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 15
+text = "这里显示地区和路程"
+autowrap_mode = 3
+
+[node name="Journey" type="Label" parent="Hud/Place/PlaceScroll/Fields" unique_id=2091832540]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 15
+text = "这里显示行程文字"
+autowrap_mode = 3
+
+[node name="Feedback" type="Label" parent="Hud/Place/PlaceScroll/Fields" unique_id=582665883]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.18, 0.19, 0.16, 1)
+theme_override_font_sizes/font_size = 15
+text = "这里显示操作提示"
+autowrap_mode = 3
+
+[node name="Controls" type="Panel" parent="Hud" unique_id=782712749]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -60.0
+offset_right = -20.0
+offset_bottom = -18.0
+mouse_force_pass_scroll_events = false
+
+[node name="ZoomOut" type="Button" parent="Hud/Controls" unique_id=364392849]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 39.0
+offset_bottom = 39.0
+tooltip_text = "缩小地图"
+text = "−"
+
+[node name="ZoomIn" type="Button" parent="Hud/Controls" unique_id=1535971889]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 104.0
+offset_top = 3.0
+offset_right = 140.0
+offset_bottom = 39.0
+tooltip_text = "放大地图"
+text = "+"
+
+[node name="AutoMode" type="Button" parent="Hud/Controls" unique_id=1470794330]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 152.0
+offset_top = 3.0
+offset_right = 224.0
+offset_bottom = 39.0
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("Modes")
+text = "自动"
+
+[node name="ManualMode" type="Button" parent="Hud/Controls" unique_id=599023185]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 225.0
+offset_top = 3.0
+offset_right = 297.0
+offset_bottom = 39.0
+toggle_mode = true
+button_group = SubResource("Modes")
+text = "手动"
+
+[node name="Zoom" type="Label" parent="Hud/Controls" unique_id=1576858440]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 42.0
+offset_top = 8.0
+offset_right = 107.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.96, 0.91, 0.77, 1)
+theme_override_font_sizes/font_size = 18
+text = "100%"
+horizontal_alignment = 1
+
+[node name="ContinueTrip" type="Button" parent="Hud/Controls" unique_id=379720266]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 188.0
+offset_top = -42.0
+offset_right = 300.0
+offset_bottom = -6.0
+text = "继续"
+
+[node name="ReturnHome" type="Button" parent="Hud" unique_id=330497794]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_top = 24.0
+offset_right = -20.0
+offset_bottom = 64.0
+text = "返回首页"
+
+[node name="WeekTimer" type="Timer" parent="." unique_id=1988941982]
+unique_name_in_owner = true
+wait_time = 0.65
+one_shot = true
+
+[node name="Diagnostic" type="Label" parent="." unique_id=844961920]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 24.0
+offset_top = 140.0
+offset_right = 504.0
+offset_bottom = 290.0
+autowrap_mode = 3

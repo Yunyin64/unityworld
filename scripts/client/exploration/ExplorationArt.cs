@@ -19,21 +19,17 @@ public sealed class ExplorationArt
         new(1, 0.5f), new(0.75f, 1), new(0.25f, 1), new(0, 0.5f), new(0.25f, 0), new(0.75f, 0)
     };
 
-    public Texture2D? Background { get; }
     public Texture2D? Actor { get; }
     public Texture2D? Portrait { get; }
-    public StyleBox Panel { get; }
 
     public ExplorationArt()
     {
         using var document = JsonDocument.Parse(FileAccess.GetFileAsString(Manifest));
         var config = document.RootElement;
-        Background = Texture(config.GetProperty("background"));
         var actor = config.GetProperty("actor");
         var actorTexture = Texture(actor);
         Actor = Crop(actorTexture, ReadRegion(actor.GetProperty("region")));
         Portrait = Crop(actorTexture, ReadRegion(actor.GetProperty("portraitRegion")));
-        Panel = MakePanel(config.GetProperty("panel"));
         foreach (var item in config.GetProperty("terrain").EnumerateObject())
         {
             var entry = item.Value;
@@ -76,30 +72,6 @@ public sealed class ExplorationArt
 
     private static Texture2D? Crop(Texture2D? texture, Rect2 region) =>
         texture != null && Within(texture, region) ? new AtlasTexture { Atlas = texture, Region = region, FilterClip = true } : null;
-
-    private StyleBox MakePanel(JsonElement entry)
-    {
-        var texture = Texture(entry);
-        if (texture == null) return new StyleBoxFlat { BgColor = new Color("E1D4B5") };
-        var source = entry.GetProperty("sourceMargins");
-        var display = entry.GetProperty("displayMargins");
-        using var image = texture.GetImage();
-        if (image.IsCompressed()) image.Decompress();
-        // Preserve the existing editor texture. Resize its exploration copy so the four
-        // nine-slice corners use the lighter display margins at the HUD's native scale.
-        float xRatio = display[0].GetSingle() / source[0].GetSingle();
-        float yRatio = display[1].GetSingle() / source[1].GetSingle();
-        image.Resize(Math.Max(1, Mathf.RoundToInt(image.GetWidth() * xRatio)),
-            Math.Max(1, Mathf.RoundToInt(image.GetHeight() * yRatio)), Image.Interpolation.Lanczos);
-        var box = new StyleBoxTexture { Texture = ImageTexture.CreateFromImage(image) };
-        var sides = new[] { Side.Left, Side.Top, Side.Right, Side.Bottom };
-        for (int i = 0; i < sides.Length; i++)
-        {
-            box.SetTextureMargin(sides[i], display[i].GetSingle());
-            box.SetContentMargin(sides[i], display[i].GetSingle());
-        }
-        return box;
-    }
 
     private bool TryMaterial(ExplorationTile tile, int seed, int plane, out Texture2D? texture, out Rect2 region)
     {

@@ -110,6 +110,17 @@ public sealed record BattleCase
 /// <summary>Observer input routing shared by the UI and small command-line checks.</summary>
 public static class BattleCaseInput
 {
+    /// <summary>每次启动使用独立文件，旧窗口重开不会读到下一场的输入。</summary>
+    public static string Write(BattleCase input, string directory)
+    {
+        string folder = Path.Combine(Path.GetFullPath(directory), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        string path = Path.Combine(folder, "input.json");
+        using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+        using var writer = new StreamWriter(stream, new UTF8Encoding(false));
+        writer.Write(input.ToJson());
+        return path;
+    }
     public static BattleCase Load(IEnumerable<string> arguments, string catalogPath)
     {
         var args = arguments.ToArray();
@@ -159,6 +170,14 @@ public sealed record BattleDataFingerprint(string Sha256, IReadOnlyList<DataFile
 /// <summary>Shared source-identity and exact-order assembly adapter for all observer hosts.</summary>
 public static class BattleCaseFactory
 {
+    public static BattleCase VerifyVersion(BattleCase input, string fingerprint)
+    {
+        if (input.DataFingerprint.Length != 0 && input.DataFingerprint != fingerprint)
+            throw new InvalidOperationException($"数据版本已变化，已停止重放。期待 {input.DataFingerprint}；实际 {fingerprint}。");
+        if (input.CoreVersion.Length != 0 && input.CoreVersion != CoreVersion)
+            throw new InvalidOperationException($"核心版本已变化，已停止重放。期待 {input.CoreVersion}；实际 {CoreVersion}。");
+        return input with { DataFingerprint = fingerprint, CoreVersion = CoreVersion };
+    }
     /// <summary>Hash all JSON/Lua files under dataRoot/Data, including their relative path names.</summary>
     public static BattleDataFingerprint Fingerprint(string dataRoot)
     {

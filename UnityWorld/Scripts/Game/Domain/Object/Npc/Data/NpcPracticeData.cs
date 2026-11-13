@@ -5,7 +5,8 @@ using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain
 {
-    public class NpcPraticeData : IDomainDataBase
+    /// <summary>NPC 修炼进度；类型名统一为 Practice，保留原有数据字段和克隆行为。</summary>
+    public class NpcPracticeData : IDomainDataBase
     {
 
         /// <summary>当前境界等级</summary>
@@ -28,9 +29,9 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainDataBase ─────────────────────────────────
 
-        public NpcPraticeData Clone()
+        public NpcPracticeData Clone()
         {
-            var copy = (NpcPraticeData)MemberwiseClone();
+            var copy = (NpcPracticeData)MemberwiseClone();
             return copy;
         }
         IDomainDataBase IDomainDataBase.Clone() => Clone();
@@ -38,7 +39,7 @@ namespace UnityWorld.Game.Domain
 
         public void Log()
         {
-            LogMgr.Instance.Dbg("┌── PraticeData · 修炼进度 ──────────────────────────");
+            LogMgr.Instance.Dbg("┌── PracticeData · 修炼进度 ──────────────────────────");
             LogMgr.Instance.Dbg("│  当前境界:      {0}    境界进度: {1}", CurrentRealmLevel, RealmProgress);
             LogMgr.Instance.Dbg("│  当前修炼功法:  {0}", GetNowGongFa()?.ToString() ?? "无");
             LogMgr.Instance.Dbg("│  是否闭关:      {0}", IsInCultivation.ToString());

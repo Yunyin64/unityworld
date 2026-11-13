@@ -8,19 +8,16 @@ using Xianxia.Client.Battle;
 namespace Xianxia.Client.UI;
 
 /// <summary>只用显示时钟和事实值绘制瞬态。无 Tween 回调，取消后不会访问旧节点或回写状态。</summary>
-internal partial class ObserverPresentationLayer : Control
+public partial class ObserverPresentationLayer : Control
 {
     private ObserverBattleLayout? _layout;
     private IReadOnlyList<PresentationCue> _cues = Array.Empty<PresentationCue>();
     private IReadOnlyList<NpcSnapshot> _participants = Array.Empty<NpcSnapshot>();
     private readonly Dictionary<(int Generation, long Sequence), int> _textLanes = new();
 
-    public void Configure(ObserverBattleLayout layout)
+    internal void Configure(ObserverBattleLayout layout)
     {
         _layout = layout;
-        Size = new Vector2(1600, 900);
-        MouseFilter = MouseFilterEnum.Ignore;
-        ZIndex = 5;
     }
 
     public void Submit(IReadOnlyList<NpcSnapshot> participants, IReadOnlyList<PresentationCue> cues)
@@ -53,7 +50,7 @@ internal partial class ObserverPresentationLayer : Control
         float flash = _layout.Pending.CollisionFlash;
         if (flash > 0)
         {
-            var at = _layout.Pending.CollisionAnchor;
+            var at = From(_layout.Pending.CollisionAnchor, Vector2.Zero);
             DrawCircle(at, 26 + 16 * (1 - flash), new Color(1, 0.94f, 0.67f, flash * 0.22f));
             DrawLine(at - new Vector2(0, 34), at + new Vector2(0, 34), new Color(1, 1, 0.9f, flash), 4);
             DrawLine(at - new Vector2(21, 20), at + new Vector2(21, 20), new Color(1, 0.94f, 0.7f, flash), 3);
@@ -93,16 +90,19 @@ internal partial class ObserverPresentationLayer : Control
         var card = _participants.SelectMany(n => n.Cards).FirstOrDefault(c => c.Id == fact.Card.Id)
             ?? cue.AfterSnapshot.Participants.SelectMany(n => n.Cards).FirstOrDefault(c => c.Id == fact.Card.Id);
         if (card == null) return;
-        var targetBounds = pack.CardBounds(card.Cells);
-        var targetCenter = From(pack, targetBounds.GetCenter());
-        var start = _layout!.Actors[side].HeadAnchor + new Vector2(((int)(fact.Sequence % 3) - 1) * 38, 68);
+        var packToLayer = GetGlobalTransform().AffineInverse() * pack.GetGlobalTransform();
+        var targetBounds = packToLayer * pack.CardBounds(card.Cells);
+        var targetCenter = targetBounds.GetCenter();
+        var start = From(_layout!.Actors[side].HeadAnchor, Vector2.Zero) + new Vector2(((int)(fact.Sequence % 3) - 1) * 38, 68);
         float p = (float)cue.Progress;
         float travel = Ease(Mathf.Clamp((p - 0.23f) / 0.65f, 0, 1));
         var center = start.Lerp(targetCenter, travel) + new Vector2(0, -MathF.Sin(travel * MathF.PI) * 55);
         float scale = Mathf.Lerp(1.45f, 1, travel);
         float alpha = Mathf.Clamp(p / 0.12f, 0, 1);
         var bounds = new Rect2(center - targetBounds.Size * scale / 2, targetBounds.Size * scale);
-        var cells = pack.CardCells(card.Cells).Select(c => new Rect2(center + (c.Position - targetBounds.GetCenter()) * scale, c.Size * scale)).ToArray();
+        // 入包时也换算实际格子的大小；设计者缩放整块背包后，飞行卡与最终卡面连续衔接。
+        var cells = pack.CardCells(card.Cells).Select(c => packToLayer * c)
+            .Select(c => new Rect2(center + (c.Position - targetCenter) * scale, c.Size * scale)).ToArray();
         ObserverCardPainter.Draw(this, _layout.Art, card, bounds, cells, alpha, p > 0.88f ? (1 - p) / 0.12f : 0);
     }
 
@@ -117,7 +117,7 @@ internal partial class ObserverPresentationLayer : Control
         float pop = p < 0.16f ? 1 + MathF.Sin(p / 0.16f * MathF.PI) * 0.3f : 1;
         int lane = _textLanes.GetValueOrDefault((cue.Generation, cue.Event.Sequence));
         // 两列留足描边与放大宽度，避免并发的 20 和 12 视觉连成 2012。
-        var at = _layout!.Actors[side].HeadAnchor + new Vector2(lane % 2 == 0 ? -50 : 50, 22 + (lane / 2) * 38 - p * 21);
+        var at = From(_layout!.Actors[side].HeadAnchor, Vector2.Zero) + new Vector2(lane % 2 == 0 ? -50 : 50, 22 + (lane / 2) * 38 - p * 21);
         var color = damage.HpDamage > 0 ? new Color("ff8778") : new Color("9de7ff");
         FloatingText(text, at, (int)(34 * pop), color, Fade(p), 4);
     }
@@ -129,8 +129,8 @@ internal partial class ObserverPresentationLayer : Control
         if (side < 0) return;
         float p = (float)cue.Progress;
         int lane = _textLanes.GetValueOrDefault((cue.Generation, cue.Event.Sequence));
-        var at = _layout!.Actors[side].HeadAnchor + new Vector2(0, -25 - lane * 24 - p * 10);
-        FloatingText(cue.Event.Card.Name + " · 生效", at, 21, new Color("fff0b4"), Fade(p), 3);
+        var at = From(_layout!.Actors[side].HeadAnchor, Vector2.Zero) + new Vector2(0, -25 - lane * 24 - p * 10);
+        FloatingText(ObserverArtCatalog.CardName(cue.Event.Card.Name, cue.Event.Card.DefineId) + " · 生效", at, 21, new Color("fff0b4"), Fade(p), 3);
     }
 
     private void FloatingText(string text, Vector2 at, int size, Color color, float alpha, int outline)
@@ -170,7 +170,7 @@ internal partial class ObserverPresentationLayer : Control
         return -1;
     }
     // 所有落点从控件转换到统一效果画布；窗口缩放不改变零基格坐标。
-    private Vector2 From(Control control, Vector2 local) => GetGlobalTransform().AffineInverse() * (control.GetGlobalTransform() * local);
+    private Vector2 From(CanvasItem control, Vector2 local) => GetGlobalTransform().AffineInverse() * (control.GetGlobalTransform() * local);
     private static float Ease(float p) => p * p * (3 - 2 * p);
     private static float Fade(float p) => Mathf.Clamp(p / 0.06f, 0, 1) * Mathf.Clamp((1 - p) / 0.27f, 0, 1);
 }

@@ -20,6 +20,9 @@ public sealed class ObserverArtCatalog
         Load("res://assets/presentation/mana_visuals.json", "elements", _mana, null);
     }
 
+    internal static string CardName(string? name, string? defineId) =>
+        !string.IsNullOrWhiteSpace(name) ? name : !string.IsNullOrWhiteSpace(defineId) ? defineId : "卡牌名称缺失";
+
     /// <summary>返回卡图，缺图返回空并保留文字回退。</summary>
     public Texture2D? Card(string id) => Find(_cards, "card", id);
 

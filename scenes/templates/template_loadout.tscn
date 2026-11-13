@@ -1,0 +1,332 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateLoadoutPanel.cs" id="Loadout"]
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateBackpackView.cs" id="Backpack"]
+[ext_resource type="Theme" path="res://scenes/templates/editor_theme.tres" id="Theme"]
+
+[sub_resource type="StyleBoxFlat" id="PreviewBox"]
+bg_color = Color(0.4627, 0.4353, 0.3373, 0.5647)
+border_color = Color(0.5176, 0.4824, 0.3804, 1)
+border_width_left = 1
+border_width_right = 1
+border_width_top = 1
+border_width_bottom = 1
+
+[node name="BackpackPanel" type="Panel"]
+offset_right = 800.0
+offset_bottom = 420.0
+theme = ExtResource("Theme")
+script = ExtResource("Loadout")
+
+[node name="BackpackHeading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 172.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 25
+text = "背包装配"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="MainLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 194.0
+offset_top = 18.0
+offset_right = 274.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 17
+text = "主功法"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="MainChoice" type="OptionButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 270.0
+offset_top = 17.0
+offset_right = -262.0
+offset_bottom = 53.0
+text = "这里显示七个字"
+
+[node name="PackSummary" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -242.0
+offset_top = 18.0
+offset_right = -22.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 18
+text = "这里显示容量与占用"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Backpack" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 34.0
+offset_top = 64.0
+offset_right = 394.0
+offset_bottom = 384.0
+script = ExtResource("Backpack")
+
+[node name="GridSample" type="GridContainer" parent="Backpack" groups=["template_layout_preview"]]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 23.0
+offset_right = 337.0
+offset_bottom = 316.0
+mouse_filter = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 5
+
+[node name="Cell1" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell2" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell3" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell4" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell5" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell6" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell7" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell8" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell9" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell10" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell11" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell12" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell13" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell14" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell15" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell16" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell17" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell18" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell19" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell20" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell21" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell22" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell23" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell24" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="Cell25" type="Panel" parent="Backpack/GridSample"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PreviewBox")
+
+[node name="ActorName" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -372.0
+offset_top = 65.0
+offset_right = -48.0
+offset_bottom = 105.0
+theme_override_font_sizes/font_size = 23
+text = "这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+horizontal_alignment = 1
+
+[node name="ActorImage" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -356.0
+offset_top = 98.0
+offset_right = -56.0
+offset_bottom = 320.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PortraitSample" type="ReferenceRect" parent="ActorImage" groups=["template_layout_preview"]]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+border_color = Color(0.43, 0.44, 0.35, 0.8)
+border_width = 2.0
+
+[node name="UnplacedScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -380.0
+offset_top = 322.0
+offset_right = -30.0
+offset_bottom = 384.0
+horizontal_scroll_mode = 0
+
+[node name="UnplacedEntries" type="VBoxContainer" parent="UnplacedScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Help" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 32.0
+offset_top = 384.0
+offset_right = 762.0
+offset_bottom = 406.0
+theme_override_font_sizes/font_size = 14
+text = "拖入添加 · 拖动摆放 · 右键移除"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_color = Color(0.349, 0.3804, 0.2941, 1)

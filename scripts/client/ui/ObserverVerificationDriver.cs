@@ -18,7 +18,7 @@ internal sealed class ObserverVerificationDriver
     private readonly BattlePresentationPlayer _player;
     private readonly ObserverBattleLayout _layout;
     private readonly ObserverSessionOutput _output;
-    private bool _captureBusy, _finishedVerification, _capturedMotion, _mousePrepared;
+    private bool _captureBusy, _finishedVerification, _capturedMotion;
     private int _verifyStage;
     private double _pauseWait;
     private readonly string _pauseSnapshot;
@@ -205,16 +205,12 @@ internal sealed class ObserverVerificationDriver
         gallery.QueueFree();
     }
 
-    private void Click(Button button)
+    internal static void Click(Button button)
     {
         // 使用 Godot 真实 GUI 命中路径，避免直接发 Pressed 绕过遮挡与坐标检查。
-        var viewport = GetViewport();
+        var viewport = button.GetViewport();
         var point = button.GetGlobalRect().GetCenter();
-        if (!_mousePrepared)
-        {
-            if (viewport.GuiGetHoveredControl() == null) viewport.NotifyMouseEntered();
-            _mousePrepared = true;
-        }
+        if (viewport.GuiGetHoveredControl() == null) viewport.NotifyMouseEntered();
         viewport.PushInput(new InputEventMouseMotion { Position = point, GlobalPosition = point }, true);
         viewport.PushInput(new InputEventMouseButton { Position = point, GlobalPosition = point, ButtonIndex = MouseButton.Left, Pressed = true }, true);
         viewport.PushInput(new InputEventMouseButton { Position = point, GlobalPosition = point, ButtonIndex = MouseButton.Left, Pressed = false }, true);

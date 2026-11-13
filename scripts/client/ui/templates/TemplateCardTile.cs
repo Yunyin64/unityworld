@@ -10,6 +10,7 @@ public partial class TemplateCardTile : Control
 {
     private CardDefine? _card;
     private Texture2D? _texture;
+    private string _description = "";
     private bool _transpose, _canDrag, _hovered, _unavailable;
     private readonly StyleBoxFlat _normal = TemplateEditorSkin.Flat(new Color("D5C59E"), new Color("9D8D65"), 1, 5);
     private readonly StyleBoxFlat _hover = TemplateEditorSkin.Flat(new Color("E2D4AE"), new Color("668A68"), 2, 5);
@@ -19,8 +20,14 @@ public partial class TemplateCardTile : Control
     {
         CustomMinimumSize = new Vector2(108, 112);
         MouseFilter = MouseFilterEnum.Stop;
-        MouseEntered += () => { _hovered = true; QueueRedraw(); };
-        MouseExited += () => { _hovered = false; QueueRedraw(); };
+        MouseEntered += () =>
+        {
+            _hovered = true;
+            if (_card != null && !GetViewport().GuiIsDragging())
+                DetailTips.ShowCard(this, _card.ID, NameOf(_card), _description, _texture);
+            QueueRedraw();
+        };
+        MouseExited += () => { _hovered = false; DetailTips.Hide(this); QueueRedraw(); };
     }
 
     public void Configure(CardDefine card, Texture2D? texture, bool transpose, bool canDrag, string? unavailableReason = null)
@@ -28,7 +35,7 @@ public partial class TemplateCardTile : Control
         _card = card; _texture = texture; _transpose = transpose; _canDrag = canDrag;
         _unavailable = !string.IsNullOrWhiteSpace(unavailableReason);
         string requirements = string.Join("、", card.ManaCost.Select(p => $"{ObserverArtCatalog.ElementName(p.Key)} × {p.Value}"));
-        TooltipText = $"{NameOf(card)} [{card.ID}]\n占格 {card.Size} · {string.Join(" / ", card.Keywords)}\n灵元需求：{(requirements.Length == 0 ? "无" : requirements)}\n{card.Desc}"
+        _description = $"[{card.ID}]\n占格 {card.Size} · {string.Join(" / ", card.Keywords)}\n灵元需求：{(requirements.Length == 0 ? "无" : requirements)}\n{card.Desc}"
             + (string.IsNullOrWhiteSpace(unavailableReason) ? "" : "\n不可添加：" + unavailableReason);
         MouseDefaultCursorShape = canDrag ? CursorShape.PointingHand : CursorShape.Arrow;
         QueueRedraw();
@@ -43,9 +50,12 @@ public partial class TemplateCardTile : Control
     public override Variant _GetDragData(Vector2 atPosition)
     {
         if (!_canDrag || _card == null) return default;
+        DetailTips.Hide(this);
         SetDragPreview(DragPreview(NameOf(_card)));
         return new Godot.Collections.Dictionary { ["kind"] = "card", ["id"] = _card.ID };
     }
+
+    public override void _ExitTree() => DetailTips.Hide(this);
 
     internal static Control DragPreview(string title)
     {

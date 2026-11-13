@@ -42,15 +42,21 @@ internal sealed class ObserverSessionOutput : IDisposable
 
     public void Attach(BattleObserverSession session)
     {
-        session.FrameCommitted += frame => _frames?.WriteLine(BattleJson.SerializeFrame(frame));
+        if (_frames != null) session.FrameCommitted += frame => _frames.WriteLine(BattleJson.SerializeFrame(frame));
         session.PresentationCommitted += frame => _presentation.WriteLine(JsonSerializer.Serialize(frame, BattleJson.Options));
     }
 
     public void SaveInput(BattleCase battleCase)
     {
         File.WriteAllText(Path.Combine(SessionDirectory, "input.json"), battleCase.ToJson());
+        // 显示方式单独记录，不能掺进输入身份或改变重开比较。
+        string mode = Argument("--observer-worker=") == null ? "NewWindow" : "CurrentWindow";
+        File.WriteAllText(Path.Combine(SessionDirectory, "window-mode.txt"), mode);
         if (VerifyDirectory.Length > 0)
+        {
             File.WriteAllText(Path.Combine(VerifyDirectory, $"godot-{VerifyMode}-{RunIndex}.jsonl.case.json"), battleCase.ToJson());
+            File.WriteAllText(Path.Combine(VerifyDirectory, $"godot-{VerifyMode}-{RunIndex}.session.txt"), SessionDirectory);
+        }
     }
 
     public void AppendRecords(BattleObserverSession session)

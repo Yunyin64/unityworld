@@ -6,6 +6,7 @@ using System.Linq;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 using Xianxia.Client.Battle;
+using Xianxia.Client.BattleWindows;
 using Xianxia.Client.Templates;
 
 namespace Xianxia.Client.UI.Templates;
@@ -132,7 +133,7 @@ public partial class TemplateEditorView
         try
         {
             if (!_catalogSession.Refresh(_dataRoot)) { ShowNotice("刷新失败，继续使用原目录：" + _catalogSession.LastError); return; }
-            var changes = CardLibraryQuery.Reconcile(_filter, Catalog.Cards);
+            var changes = _cardLibrary.ReconcileFilters(Catalog.Cards);
             if (_readOnly && _draft != null)
             {
                 var current = Catalog.GetNpc(_draft.NpcFields.ID);
@@ -161,18 +162,20 @@ public partial class TemplateEditorView
         file.Canceled += file.QueueFree;
         file.FileSelected += path =>
         {
+            // 先交还模态焦点，随后可在同一窗口立即打开候选列表。
+            file.Hide();
             file.QueueFree();
             try { ShowImportCandidates(TemplateDraftStore.ImportText(File.ReadAllText(path))); }
             catch (Exception ex) { ShowNotice("无法读取导入文件：" + ex.Message); }
         };
-        file.PopupCentered(new Vector2I(820, 560));
+        TemplateDialogLayout.Show(file, new(820, 560));
     });
 
     private void ShowImportCandidates(IReadOnlyList<TemplateImportItem> candidates)
     {
         var dialog = new ConfirmationDialog { Title = "选择要导入的模板", OkButtonText = "导入所选", CancelButtonText = "取消", DialogHideOnOk = false };
         AddChild(dialog);
-        var scroll = new ScrollContainer { CustomMinimumSize = new Vector2(650, 320), HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled };
+        var scroll = new ScrollContainer { HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled };
         var rows = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         scroll.AddChild(rows); dialog.AddChild(scroll);
         var selections = new List<(CheckBox Check, TemplateDraft Draft)>();
@@ -181,7 +184,7 @@ public partial class TemplateEditorView
         {
             if (item.Draft == null)
             {
-                rows.AddChild(new Label { Text = $"第 {item.Index} 项无法导入：{item.Error}", AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(620, 0) });
+                rows.AddChild(new Label { Text = $"第 {item.Index} 项无法导入：{item.Error}", AutowrapMode = TextServer.AutowrapMode.WordSmart });
                 continue;
             }
             var check = new CheckBox
@@ -189,6 +192,8 @@ public partial class TemplateEditorView
                 Text = $"{DisplayTemplateName(item.Draft)}  [{item.Draft.NpcFields.ID}]" +
                     (existing.Contains(item.Draft.NpcFields.ID) ? "  · ID 冲突，导入后需改名" : ""), ButtonPressed = true
             };
+            check.ClipText = true;
+            check.TooltipText = check.Text;
             rows.AddChild(check); selections.Add((check, item.Draft)); existing.Add(item.Draft.NpcFields.ID);
         }
         if (candidates.Count == 0) rows.AddChild(new Label { Text = "文件中没有模板。" });
@@ -210,7 +215,7 @@ public partial class TemplateEditorView
             _notice = $"已导入 {saved.Count} 个独立个人草稿。" + (errors.Count > 0 ? " 部分失败：" + string.Join("；", errors) : "");
             Revalidate(); RefreshEditor();
         };
-        dialog.PopupCentered(new Vector2I(740, 440));
+        TemplateDialogLayout.Show(dialog, new(740, 440));
     }
 
     private void ExportTemplate()
@@ -239,7 +244,7 @@ public partial class TemplateEditorView
             }
             catch (Exception ex) { ShowNotice("导出失败：" + ex.Message); }
         };
-        file.PopupCentered(new Vector2I(820, 560));
+        TemplateDialogLayout.Show(file, new(820, 560));
     }
 
     private void BeginTrial()
@@ -269,7 +274,7 @@ public partial class TemplateEditorView
             }
             else throw new InvalidDataException("请选择试战对手。");
             var input = TemplateTrialService.Freeze(Catalog, TemplateDocumentConverter.ToDefinition(_draft), opponent, _trialSettings, _draft.DraftId);
-            var launch = TemplateTrialLauncher.Launch(input, _dataRoot);
+            var launch = BattleLauncher.OpenBattle(input, BattleWindowMode.NewWindow);
             ShowNotice($"已启动原战斗观察界面（进程 {launch.ProcessId}），编辑草稿保留。输入：{launch.InputPath}");
         }
         catch (Exception ex) { ShowNotice("无法启动试战：" + ex.Message); }
@@ -282,7 +287,7 @@ public partial class TemplateEditorView
             Catalog.AssertDiskUnchanged();
             string path = ProjectSettings.GlobalizePath("res://assets/testing/battle_cases.json");
             var input = BattleCaseCatalog.Load(path) with { DataFingerprint = Catalog.DataFingerprint, CoreVersion = BattleCaseFactory.CoreVersion };
-            var launch = TemplateTrialLauncher.Launch(input, _dataRoot);
+            var launch = BattleLauncher.OpenBattle(input, BattleWindowMode.NewWindow);
             ShowNotice($"已打开原默认战斗案例（进程 {launch.ProcessId}），当前编辑保留。");
         }
         catch (Exception ex) { ShowNotice("无法打开战斗观察：" + ex.Message); }
@@ -383,14 +388,19 @@ public partial class TemplateEditorView
         _leaveDialogOpen = true;
         var dialog = new ConfirmationDialog
         {
-            Title = "草稿尚未保存", DialogText = $"“{DisplayTemplateName(_draft)}”有未保存修改。",
+            Title = "草稿尚未保存",
             OkButtonText = "保存并继续", CancelButtonText = "取消", DialogHideOnOk = false
         };
         AddChild(dialog);
+        var message = TemplateDialogLayout.AddScrollableText(dialog, $"“{DisplayTemplateName(_draft)}”有未保存修改。");
         var discard = dialog.AddButton("放弃修改", false, "discard");
         void Close() { _leaveDialogOpen = false; dialog.QueueFree(); }
         dialog.Canceled += Close;
-        dialog.Confirmed += () => { if (SaveTemplate()) { Close(); next(); } };
+        dialog.Confirmed += () =>
+        {
+            if (SaveTemplate()) { Close(); next(); }
+            else TemplateDialogLayout.SetMessage(dialog, message, _notice);
+        };
         discard.Pressed += () =>
         {
             try
@@ -410,7 +420,7 @@ public partial class TemplateEditorView
             }
             catch (Exception ex) { ShowNotice("无法恢复已保存草稿：" + ex.Message); }
         };
-        dialog.PopupCentered(new Vector2I(540, 210));
+        TemplateDialogLayout.Show(dialog, compactMessage: message);
     }
 
     private static string DisplayTemplateName(TemplateDraft draft) => string.IsNullOrWhiteSpace(draft.NpcFields.DisplayName) ? draft.NpcFields.ID : draft.NpcFields.DisplayName;

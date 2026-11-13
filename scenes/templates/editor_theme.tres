@@ -1,0 +1,207 @@
+[gd_resource type="Theme" format=3 uid="uid://c041crnp8km5a"]
+
+[ext_resource type="Texture2D" uid="uid://u6h5lktn5rpl" path="res://scenes/templates/panel_frame_256.png" id="Frame"]
+
+[sub_resource type="StyleBoxFlat" id="Buttondisabled"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2235, 0.2588, 0.2392, 0.851)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4549, 0.4588, 0.3843, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Buttonfocus"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9176, 0.8353, 0.549, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Buttonhover"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2353, 0.3843, 0.3961, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8392, 0.7843, 0.5529, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Buttonnormal"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.1608, 0.2118, 0.2, 0.9216)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6902, 0.6392, 0.451, 0.851)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Buttonpressed"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.3216, 0.4706, 0.4745, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8902, 0.7922, 0.4706, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Buttonselected"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2157, 0.3882, 0.2824, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7843, 0.7176, 0.4706, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Chipnormal"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.8667, 0.8157, 0.6549, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6157, 0.5725, 0.4039, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="Input"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.1608, 0.2118, 0.2, 0.9216)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6157, 0.5725, 0.4039, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxTexture" id="Paper"]
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+texture = ExtResource("Frame")
+texture_margin_left = 31.0
+texture_margin_top = 31.0
+texture_margin_right = 31.0
+texture_margin_bottom = 31.0
+
+[sub_resource type="StyleBoxFlat" id="Chipselected"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2157, 0.3882, 0.2824, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7843, 0.7176, 0.4706, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="SystemFont" id="Font"]
+font_names = PackedStringArray("Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif")
+
+[resource]
+default_font = SubResource("Font")
+default_font_size = 18
+Button/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+Button/font_sizes/font_size = 16
+Button/styles/disabled = SubResource("Buttondisabled")
+Button/styles/focus = SubResource("Buttonfocus")
+Button/styles/hover = SubResource("Buttonhover")
+Button/styles/normal = SubResource("Buttonnormal")
+Button/styles/pressed = SubResource("Buttonpressed")
+KeywordButton/base_type = &"Button"
+KeywordButton/colors/font_color = Color(0.2, 0.2196, 0.1686, 1)
+KeywordButton/styles/hover = SubResource("Buttonselected")
+KeywordButton/styles/normal = SubResource("Chipnormal")
+Label/colors/font_color = Color(0.2, 0.2196, 0.1686, 1)
+LineEdit/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+LineEdit/colors/font_placeholder_color = Color(0.6627, 0.6745, 0.5961, 1)
+LineEdit/styles/focus = SubResource("Buttonfocus")
+LineEdit/styles/normal = SubResource("Input")
+LineEdit/styles/read_only = SubResource("Buttondisabled")
+OptionButton/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+OptionButton/font_sizes/font_size = 16
+OptionButton/styles/disabled = SubResource("Buttondisabled")
+OptionButton/styles/focus = SubResource("Buttonfocus")
+OptionButton/styles/hover = SubResource("Buttonhover")
+OptionButton/styles/normal = SubResource("Buttonnormal")
+OptionButton/styles/pressed = SubResource("Buttonpressed")
+Panel/styles/panel = SubResource("Paper")
+PopupMenu/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+PopupMenu/styles/panel = SubResource("Input")
+SelectedButton/base_type = &"Button"
+SelectedButton/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+SelectedButton/styles/hover = SubResource("Buttonselected")
+SelectedButton/styles/normal = SubResource("Buttonselected")
+SelectedKeyword/base_type = &"Button"
+SelectedKeyword/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+SelectedKeyword/styles/hover = SubResource("Buttonselected")
+SelectedKeyword/styles/normal = SubResource("Chipselected")
+TextEdit/colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+TextEdit/colors/font_placeholder_color = Color(0.6627, 0.6745, 0.5961, 1)
+TextEdit/styles/focus = SubResource("Buttonfocus")
+TextEdit/styles/normal = SubResource("Input")
+TextEdit/styles/read_only = SubResource("Buttondisabled")
+TrialToolbar/base_type = &"Panel"
+TrialToolbar/styles/panel = SubResource("Buttonnormal")

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 using Xianxia.Client.Battle;
@@ -68,12 +67,7 @@ public static class TemplateTrialService
         var copy = input.Copy();
         BattleCaseFactory.Validate(copy);
         AssertDataIdentity(copy, dataRoot);
-        var directory = Path.Combine(Path.GetFullPath(trialsDirectory), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(directory);
-        var path = Path.Combine(directory, "input.json");
-        using (var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-        using (var writer = new StreamWriter(stream, new UTF8Encoding(false))) writer.Write(copy.ToJson());
-        return path;
+        return BattleCaseInput.Write(copy, trialsDirectory);
     }
 
     public static void AssertDataIdentity(BattleCase input, string dataRoot)

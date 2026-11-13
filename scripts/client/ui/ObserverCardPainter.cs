@@ -56,8 +56,18 @@ internal static class ObserverCardPainter
         var font = view.GetThemeDefaultFont();
         var nameArea = LabelArea(cells, false);
         var nameAt = nameArea.Position + new Vector2(3, 14);
-        view.DrawStringOutline(font, nameAt, card.Name, HorizontalAlignment.Center, nameArea.Size.X - 6, 13, 3, new Color("263c43", alpha));
-        view.DrawString(font, nameAt, card.Name, HorizontalAlignment.Center, nameArea.Size.X - 6, 13, new Color("f5f0d7", alpha));
+        string name = ObserverArtCatalog.CardName(card.Name, card.DefineId);
+        float labelWidth = nameArea.Size.X - 6;
+        if (font.GetStringSize(name, fontSize: 13).X > labelWidth)
+        {
+            // 只缩短绘制用的文本，详情始终保留全名。按字素截断可保留整字和组合字符。
+            var boundaries = System.Globalization.StringInfo.ParseCombiningCharacters(name);
+            int end = Math.Min(boundaries.Length - 1, Math.Max(0, (int)labelWidth));
+            while (end > 0 && font.GetStringSize(name[..boundaries[end]] + "…", fontSize: 13).X > labelWidth) end--;
+            name = name[..boundaries[end]] + "…";
+        }
+        view.DrawStringOutline(font, nameAt, name, HorizontalAlignment.Center, nameArea.Size.X - 6, 13, 3, new Color("263c43", alpha));
+        view.DrawString(font, nameAt, name, HorizontalAlignment.Center, nameArea.Size.X - 6, 13, new Color("f5f0d7", alpha));
         string tag = card.IsFrozen ? "冻结" : card.IsMain ? "主功法" : card.IsWound ? "伤口" : "";
         if (tag.Length == 0) return;
         var tagArea = LabelArea(cells, true);

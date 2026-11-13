@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace Xianxia.Client.UI;
 
@@ -8,8 +7,6 @@ internal static class ObserverWidgets
 {
     public static readonly Color Ink = new("e8e3ce");
     public static readonly Color Muted = new("afc7c5");
-    public static readonly Color PaperInk = new(0.2f, 0.22f, 0.17f);
-    public static readonly Color PaperMuted = new(0.32f, 0.35f, 0.27f);
 
     public static Label Text(Control parent, string text, Rect2 rect, int size, Color color, HorizontalAlignment align = HorizontalAlignment.Left)
     {
@@ -19,19 +16,6 @@ internal static class ObserverWidgets
         label.AddThemeColorOverride("font_color", color);
         parent.AddChild(label);
         return label;
-    }
-
-    public static Button Button(Control parent, ObserverPreviewSkin skin, string text, Rect2 rect, Action action)
-    {
-        var button = new Button { Text = text, Position = rect.Position, Size = rect.Size };
-        button.AddThemeFontSizeOverride("font_size", 17);
-        button.AddThemeStyleboxOverride("normal", skin.Dark);
-        button.AddThemeColorOverride("font_color", Ink);
-        button.AddThemeStyleboxOverride("hover", Style(new Color("3c6265")));
-        button.AddThemeStyleboxOverride("pressed", Style(new Color("527879")));
-        button.Pressed += action;
-        parent.AddChild(button);
-        return button;
     }
 
     public static Panel Panel(Control parent, Rect2 rect, StyleBox style)

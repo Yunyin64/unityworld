@@ -1,5 +1,20 @@
 # Battle observer verification
 
+## 验证两种战斗窗口
+
+客户端调用 `BattleLauncher.OpenBattle(battleCase, BattleWindowMode.CurrentWindow)` 或 `NewWindow`。两种方式使用同一份冻结输入并从 Tick 0 暂停。模板编辑器固定传 `NewWindow`。同窗调用保留并暂停原页面，点击「返回」还原焦点和处理状态。后台观察进程负责真实模拟，重开只替换该进程。独立观察窗口内的重开沿用原先的新进程重启。
+
+在仓库根用 PowerShell 7 运行验收。将 `$engine` 指向本机的 Godot 4.7 .NET 编辑器可执行文件。
+
+```powershell
+$engine = (Get-Command godot).Source
+./tools/client-observer/verify-windows.ps1 -Godot $engine
+```
+
+验收宿主使用世界种子 4521、战斗种子 7324 和 16 步上限，依次验证当前窗口自动播放和单步、两次重开、打断管道、模板装配失败、数据版本变化和返回来源。它也通过同一公开入口打开和关闭一个真实独立窗口。在 Windows 上检查父窗口及新开的观察窗口有窗口句柄，后台模拟没有可见主窗口。脚本随后启动原独立观察场景，操作实际播放、暂停和单步按钮，比较两种方式从 Tick 0 到 16 的快照、表现事件、输入及完整战报，验证独立窗口重开一次；最后仅杀掉专用验收父进程并确认其 worker 自行退出。
+
+成功时终端显示 `BATTLE_WINDOW_OK` 和 `WINDOW_REPLAY_MATCH`。本次命令、模式与比较结果可从输出目录中的 `case.json`、`result.txt`、两个同窗日志副本与 `new-window/*.session.txt` 追溯，默认位于 `.local-verification/battle-windows/<本次运行>/`。观察会话目录里的 `window-mode.txt` 单独记录窗口方式。故障用例预期出现的错误也保存在该次日志。开发场景 `res://scenes/tests/battle_window_check.tscn` 仅用于复现同窗调用，传 `--battle-window-check=<输出目录>` 启动检查。
+
 This standalone .NET 8 program compiles the same value contracts, case adapter, and session as the Godot client. It references the shared core, including the presentation-only observation and readonly stat extensions. Original console test entry points and gameplay data remain unchanged. Its own `bin/` and `obj/` stay under this tool directory; Godot compiles only `scripts/client/**/*.cs`.
 
 Run from the outer repository root in PowerShell:

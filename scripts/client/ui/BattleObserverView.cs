@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Xianxia.Client.Battle;
-using Xianxia.Client.Templates;
+using Xianxia.Client.BattleWindows;
 
 namespace Xianxia.Client.UI;
 
@@ -24,16 +24,20 @@ public partial class BattleObserverView : Control
 
     public override void _Ready()
     {
-        if (GameBootstrap.CurrentMode != ClientHostMode.Observer) return;
+        if (_source == null && GameBootstrap.CurrentMode != ClientHostMode.Observer) return;
         try
         {
             _layout = new ObserverBattleLayout(this,
-                () => { _session.Play(); Refresh(); },
-                () => { _session.Pause(); Refresh(); },
-                () => { _session.Step(); Refresh(); },
+                () => ControlSession("play"), () => ControlSession("pause"), () => ControlSession("step"),
                 () => RestartObserver(false));
-            Resized += () => _layout.Fit(Size);
-            _layout.Fit(Size);
+            _layout.Return.Visible = _source != null;
+            if (_source != null)
+            {
+                _layout.Return.Pressed += CloseEmbedded;
+                _layout.Restart.TooltipText = "保留当前窗口和调用页面，用原案例重开战斗。";
+                BeginEmbedded(_inputPath!);
+                return;
+            }
             _output = new ObserverSessionOutput();
             _output.Attach(_session);
             _player.AnimationsEnabled = !OS.GetCmdlineUserArgs().Contains("--observer-no-animations");
@@ -66,7 +70,9 @@ public partial class BattleObserverView : Control
         if (_quitting || _fixture || _layout == null || _viewError != null) return;
         try
         {
-            _session.Update(delta);
+            if (_source != null) UpdateEmbedded();
+            else _session.Update(delta);
+            if (_viewError != null) return;
             // 暂停或正常结束只停逻辑；已经交付的表现继续走客户端时钟。
             _player.Update(delta);
             Refresh();
@@ -77,6 +83,12 @@ public partial class BattleObserverView : Control
 
     private void Refresh()
     {
+        if (_source != null)
+        {
+            if (_remote != null && _replacement == null && _viewError == null)
+                _layout?.Submit(_remote, _player, _remote.Directory);
+            return;
+        }
         if (_layout == null || _output == null) return;
         _layout.Submit(_session, _player, _output.SessionDirectory);
         _output.AppendRecords(_session);
@@ -86,6 +98,19 @@ public partial class BattleObserverView : Control
 
     internal void RestartObserver(bool verification)
     {
+        if (_source != null)
+        {
+            if (_replacement != null || _quitting) return;
+            try
+            {
+                _remote?.Command("pause", true);
+                string frozenPath = _remote == null ? _inputPath! :
+                    BattleCaseInput.Write(_remote.Case, ProjectSettings.GlobalizePath("user://BattleInputs"));
+                BeginEmbedded(frozenPath);
+            }
+            catch (Exception error) { ShowFailure(error); }
+            return;
+        }
         _session.Pause();
         Refresh();
         try
@@ -95,7 +120,7 @@ public partial class BattleObserverView : Control
             BattleCaseFactory.Validate(frozen);
             string restartPath = Path.Combine(_output.SessionDirectory, "restart-input.json");
             File.WriteAllText(restartPath, frozen.ToJson(), new UTF8Encoding(false));
-            var args = TemplateTrialLauncher.ObserverArguments(restartPath, _dataRoot);
+            var args = BattleLauncher.ObserverArguments(restartPath, _dataRoot);
             if (!_player.AnimationsEnabled) args.Add("--observer-no-animations");
             if (verification && _output != null)
             {
@@ -132,6 +157,7 @@ public partial class BattleObserverView : Control
         GD.PushError($"[BattleObserver] {exception}");
         if (_layout != null)
         {
+            if (_source != null) _layout.Restart.Disabled = false;
             _layout.Status.Text = "观察器初始化/运行失败：" + exception.Message;
             _layout.Status.TooltipText = exception.ToString();
             _layout.Play.Disabled = _layout.Pause.Disabled = _layout.Step.Disabled = true;
@@ -148,5 +174,6 @@ public partial class BattleObserverView : Control
         _player.Cancel();
         _session.Dispose();
         _output?.Dispose();
+        ReleaseEmbedded();
     }
 }

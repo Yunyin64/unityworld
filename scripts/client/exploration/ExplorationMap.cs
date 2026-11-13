@@ -5,6 +5,7 @@ using UnityWorld.Game.Domain;
 namespace Xianxia.Client.Exploration;
 
 /// <summary>Displays one character's visible tiles. Camera and selection never issue world commands.</summary>
+[Tool]
 public partial class ExplorationMap : Control
 {
     private static readonly Color GridInk = new("373F3BCC");
@@ -17,9 +18,7 @@ public partial class ExplorationMap : Control
     private const float FollowSeconds = 0.28f;
     private const float ClickSlop = 5f;
 
-    private readonly Control _surface = new() { MouseFilter = MouseFilterEnum.Ignore };
-    private readonly Control _outgoingRim = new() { MouseFilter = MouseFilterEnum.Ignore };
-    private readonly Control _incomingRim = new() { MouseFilter = MouseFilterEnum.Ignore };
+    private Control _surface = null!, _outgoingRim = null!, _incomingRim = null!;
     private ExplorationArt? _art;
     private ExplorationSnapshot? _state;
     private ExplorationSnapshot? _previous;
@@ -39,6 +38,14 @@ public partial class ExplorationMap : Control
 
     public override void _Ready()
     {
+        if (Engine.IsEditorHint())
+        {
+            Resized += QueueRedraw;
+            return;
+        }
+        _surface = new Control { MouseFilter = MouseFilterEnum.Ignore };
+        _outgoingRim = new Control { MouseFilter = MouseFilterEnum.Ignore };
+        _incomingRim = new Control { MouseFilter = MouseFilterEnum.Ignore };
         // The map covers the window behind the HUD. All three terrain layers share the
         // same camera and clip at the true window bounds.
         ClipContents = true;
@@ -57,6 +64,24 @@ public partial class ExplorationMap : Control
         MouseExited += ClearHover;
         SetProcess(false);
         RedrawMap();
+    }
+
+    // 编辑器用实际地图的投影展示中性网格，不加载世界、NPC 或伪造地形数据。
+    public override void _Draw()
+    {
+        if (!Engine.IsEditorHint()) return;
+        float edge = GetMapEdgeLength();
+        for (int q = -4; q <= 4; q++)
+        {
+            for (int r = Math.Max(-4, -q - 4); r <= Math.Min(4, -q + 4); r++)
+            {
+                var center = Size / 2 + ExplorationHexProjection.Project(new TileId(q, r), edge);
+                var points = ExplorationHexProjection.Outline(center, edge * 0.97f);
+                DrawColoredPolygon(points, new Color(0.21f, 0.32f, 0.27f, 0.18f));
+                for (int i = 0; i < points.Length; i++)
+                    DrawLine(points[i], points[(i + 1) % points.Length], new Color(0.22f, 0.3f, 0.24f, 0.45f), 1, true);
+            }
+        }
     }
 
     public void Configure(ExplorationArt art)

@@ -11,22 +11,22 @@ config_version=5
 [application]
 
 config/name="修仙slg"
-run/main_scene="res://scenes/templates/character_template_editor.tscn"
+run/main_scene="res://scenes/home/test_home.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
+ClientUiScale="*res://scripts/client/ui/ClientUiScale.cs"
 GameBootstrap="*res://scripts/client/GameBootstrap.cs"
 
 [display]
 
-window/size/viewport_width=1600
-window/size/viewport_height=900
-window/size/window_width_override=1440
-window/size/window_height_override=810
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1920
+window/size/window_height_override=1080
+window/stretch/mode="disabled"
 
 [dotnet]
 

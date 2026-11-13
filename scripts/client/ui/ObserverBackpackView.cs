@@ -16,6 +16,7 @@ public partial class ObserverBackpackView : Control
     private int _scanRound = -1;
     private readonly Dictionary<int, float> _flashes = new();
     private readonly HashSet<int> _hidden = new();
+    private Vector2? _hoverPosition;
     public float ScanLineFraction => _line;
     public int? NpcId => _npc?.Id;
 
@@ -25,6 +26,11 @@ public partial class ObserverBackpackView : Control
         _cellStyle = cellStyle;
         ClipContents = true;
         MouseFilter = MouseFilterEnum.Stop;
+        MouseExited += () =>
+        {
+            _hoverPosition = null;
+            DetailTips.Hide(this);
+        };
     }
 
     /// <summary>卡面消费局部表现状态；扫描时钟独立读取最新已提交快照，不等待动画。</summary>
@@ -39,7 +45,9 @@ public partial class ObserverBackpackView : Control
             _elapsed = 0;
         }
         _scanRound = scan.Round;
+        bool changed = !ReferenceEquals(_npc, npc);
         _npc = npc;
+        if (changed && _hoverPosition.HasValue) UpdateTip(_hoverPosition.Value);
         QueueRedraw();
     }
 
@@ -78,17 +86,28 @@ public partial class ObserverBackpackView : Control
 
     public override void _GuiInput(InputEvent @event)
     {
-        if (@event is not InputEventMouseMotion motion || _npc == null) return;
-        int x = (int)(motion.Position.X / (Size.X / _npc.Backpack.Width));
-        int y = (int)(motion.Position.Y / (Size.Y / _npc.Backpack.Height));
+        if (@event is not InputEventMouseMotion motion) return;
+        _hoverPosition = motion.Position;
+        UpdateTip(motion.Position);
+    }
+
+    private void UpdateTip(Vector2 local)
+    {
+        if (_npc == null || Size.X <= 0 || Size.Y <= 0) { DetailTips.Hide(this); return; }
+        int x = Mathf.FloorToInt(local.X / (Size.X / _npc.Backpack.Width));
+        int y = Mathf.FloorToInt(local.Y / (Size.Y / _npc.Backpack.Height));
         var card = _npc.Cards.FirstOrDefault(c => c.Cells.Any(cell => cell.X == x && cell.Y == y));
         if (card != null)
         {
             string resources = string.Join("、", card.RequiredElements.Select(e => $"{ObserverArtCatalog.ElementName(e.Element)} ×{e.Amount}"));
-            TooltipText = $"{card.Name} [{card.DefineId}]\n实例 {card.Id} · 占格 {card.Size}\n状态 {card.Phase}{(card.IsFrozen ? " · 冻结" : "")}\n真实点亮 {card.AssignedElements.Count}/{card.RequiredElements.Sum(e => e.Amount)} · 需求 {resources}\n累计使用 {card.UseCount} · 生效 {card.ApplyCount}";
+            TooltipText = "";
+            string title = ObserverArtCatalog.CardName(card.Name, card.DefineId);
+            string detail = $"定义 {card.DefineId} · 实例 {card.Id} · 占格 {card.Size}\n状态 {card.Phase}{(card.IsFrozen ? " · 冻结" : "")}\n真实点亮 {card.AssignedElements.Count}/{card.RequiredElements.Sum(e => e.Amount)} · 需求 {resources}\n累计使用 {card.UseCount} · 生效 {card.ApplyCount}";
+            DetailTips.ShowCard(this, $"{_npc.Id}/{card.Id}", title, detail, _art?.Card(card.DefineId));
         }
         else
         {
+            DetailTips.Hide(this);
             var mana = _npc.Backpack.Mana.FirstOrDefault(m => m.X == x && m.Y == y);
             TooltipText = $"格 ({x + 1}, {y + 1})" + (mana == null ? "" : $"\n{ObserverArtCatalog.ElementName(mana.Element)}灵元 · 仍在原格");
         }

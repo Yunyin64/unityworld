@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateEditorView.cs" id="1"]
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateEditorView.cs" id="Editor"]
+[ext_resource type="PackedScene" path="res://scenes/templates/template_library.tscn" id="LibraryScene"]
+[ext_resource type="PackedScene" path="res://scenes/templates/template_loadout.tscn" id="LoadoutScene"]
+[ext_resource type="PackedScene" path="res://scenes/templates/template_card_library.tscn" id="CardScene"]
+[ext_resource type="Theme" path="res://scenes/templates/editor_theme.tres" id="Theme"]
+[ext_resource type="Texture2D" path="res://assets/art/backgrounds/qinglan_arena.png" id="Background"]
 
 [node name="CharacterTemplateEditor" type="Control"]
 layout_mode = 3
@@ -9,4 +14,342 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1")
+theme = ExtResource("Theme")
+script = ExtResource("Editor")
+
+[node name="PageScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+follow_focus = true
+
+[node name="EditorCanvas" type="Control" parent="PageScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1000, 520)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="PageScroll/EditorCanvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("Background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="PageScroll/EditorCanvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.05, 0.1, 0.12, 0.16)
+
+[node name="TitlePanel" type="Panel" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -164.0
+offset_top = 5.0
+offset_right = 164.0
+offset_bottom = 75.0
+
+[node name="Heading" type="Label" parent="PageScroll/EditorCanvas/TitlePanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 10.0
+offset_top = 1.0
+offset_right = -10.0
+offset_bottom = 36.0
+theme_override_font_sizes/font_size = 25
+text = "人物模板编辑器"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+horizontal_alignment = 1
+
+[node name="EditorTab" type="Button" parent="PageScroll/EditorCanvas/TitlePanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -140.0
+offset_top = 36.0
+offset_right = -6.0
+offset_bottom = 66.0
+text = "模板编辑"
+theme_type_variation = &"SelectedButton"
+
+[node name="DefaultBattle" type="Button" parent="PageScroll/EditorCanvas/TitlePanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 6.0
+offset_top = 36.0
+offset_right = 140.0
+offset_bottom = 66.0
+text = "战斗观察"
+
+[node name="ReturnHome" type="Button" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 128.0
+offset_bottom = 56.0
+text = "返回首页"
+
+[node name="CurrentTemplate" type="Label" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 0.5
+offset_left = 140.0
+offset_top = 20.0
+offset_right = -176.0
+offset_bottom = 58.0
+theme_override_font_sizes/font_size = 17
+text = "这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.8078, 1)
+
+[node name="NewTemplate" type="Button" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -334.0
+offset_top = 16.0
+offset_right = -260.0
+offset_bottom = 56.0
+text = "新建"
+
+[node name="CopyTemplate" type="Button" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -252.0
+offset_top = 16.0
+offset_right = -150.0
+offset_bottom = 56.0
+text = "复制模板"
+
+[node name="SaveDraft" type="Button" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -142.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 56.0
+text = "保存草稿"
+theme_type_variation = &"SelectedButton"
+
+[node name="TemplateLibrary" parent="PageScroll/EditorCanvas" instance=ExtResource("LibraryScene")]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 82.0
+offset_right = 308.0
+offset_bottom = -74.0
+
+[node name="WorkspaceScroll" type="ScrollContainer" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 320.0
+offset_top = 82.0
+offset_right = -480.0
+offset_bottom = -74.0
+follow_focus = true
+
+[node name="Workspace" type="Control" parent="PageScroll/EditorCanvas/WorkspaceScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(800, 744)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="BackpackPanel" parent="PageScroll/EditorCanvas/WorkspaceScroll/Workspace" instance=ExtResource("LoadoutScene")]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_bottom = 420.0
+offset_right = 0.0
+
+[node name="CardLibrary" parent="PageScroll/EditorCanvas/WorkspaceScroll/Workspace" instance=ExtResource("CardScene")]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 430.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="CharacterDetails" type="Panel" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -468.0
+offset_top = 82.0
+offset_right = -16.0
+offset_bottom = -74.0
+
+[node name="DetailsScroll" type="ScrollContainer" parent="PageScroll/EditorCanvas/CharacterDetails"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+horizontal_scroll_mode = 0
+
+[node name="CharacterDetailsMount" type="VBoxContainer" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="SampleField0" type="Label" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll/CharacterDetailsMount" groups=["template_layout_preview"]]
+theme_override_font_sizes/font_size = 25
+text = "这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+layout_mode = 2
+
+[node name="SampleField1" type="Label" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll/CharacterDetailsMount" groups=["template_layout_preview"]]
+theme_override_font_sizes/font_size = 18
+text = "基础信息"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+layout_mode = 2
+
+[node name="SampleField2" type="Label" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll/CharacterDetailsMount" groups=["template_layout_preview"]]
+theme_override_font_sizes/font_size = 18
+text = "模板名称　这里显示七个字"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+layout_mode = 2
+
+[node name="SampleField3" type="Label" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll/CharacterDetailsMount" groups=["template_layout_preview"]]
+theme_override_font_sizes/font_size = 18
+text = "基础属性"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+layout_mode = 2
+
+[node name="SampleField4" type="Label" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll/CharacterDetailsMount" groups=["template_layout_preview"]]
+theme_override_font_sizes/font_size = 18
+text = "扩展字段"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+layout_mode = 2
+
+[node name="SampleField5" type="Label" parent="PageScroll/EditorCanvas/CharacterDetails/DetailsScroll/CharacterDetailsMount" groups=["template_layout_preview"]]
+theme_override_font_sizes/font_size = 18
+text = "选中卡牌"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+layout_mode = 2
+
+[node name="TrialToolbar" type="Panel" parent="PageScroll/EditorCanvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -60.0
+offset_right = -16.0
+offset_bottom = -14.0
+theme_type_variation = &"TrialToolbar"
+
+[node name="Status" type="Label" parent="PageScroll/EditorCanvas/TrialToolbar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 4.0
+offset_right = -798.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 16
+text = "这里显示配置和校验结果"
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_color = Color(0.9333, 0.9059, 0.8196, 1)
+
+[node name="CheckDraft" type="Button" parent="PageScroll/EditorCanvas/TrialToolbar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -780.0
+offset_top = 5.0
+offset_right = -664.0
+offset_bottom = 41.0
+text = "检查配置"
+
+[node name="Opponent" type="OptionButton" parent="PageScroll/EditorCanvas/TrialToolbar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -650.0
+offset_top = 5.0
+offset_right = -384.0
+offset_bottom = 41.0
+text = "这里显示七个字"
+
+[node name="TrialSettings" type="Button" parent="PageScroll/EditorCanvas/TrialToolbar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -372.0
+offset_top = 5.0
+offset_right = -288.0
+offset_bottom = 41.0
+text = "参数"
+
+[node name="StartTrial" type="Button" parent="PageScroll/EditorCanvas/TrialToolbar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -274.0
+offset_top = 5.0
+offset_right = -18.0
+offset_bottom = 41.0
+text = "进入试战"
+theme_type_variation = &"SelectedButton"
+
+[node name="DetailMount" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2

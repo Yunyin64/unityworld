@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://assets/presentation/test_ui_theme.tres" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="Frame"]
+bg_color = Color(0.1, 0.16, 0.14, 0.985)
+border_color = Color(0.69, 0.59, 0.39, 1)
+border_width_left = 2
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 13.0
+content_margin_bottom = 13.0
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_left = 5
+corner_radius_bottom_right = 5
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 3
+
+[node name="BuffTip" type="PanelContainer"]
+offset_right = 280.0
+grow_horizontal = 1
+mouse_filter = 2
+theme = ExtResource("1")
+theme_override_styles/panel = SubResource("Frame")
+
+[node name="Content" type="VBoxContainer" parent="."]
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Content"]
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="ImageSlot" type="ColorRect" parent="Content/Header"]
+custom_minimum_size = Vector2(36, 36)
+color = Color(0.23, 0.29, 0.23, 1)
+mouse_filter = 2
+
+[node name="Image" type="TextureRect" parent="Content/Header/ImageSlot"]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Content/Header"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+text = "这里显示七个字"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.97, 0.88, 0.66, 1)
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Divider" type="HSeparator" parent="Content"]
+mouse_filter = 2
+
+[node name="Description" type="Label" parent="Content"]
+unique_name_in_owner = true
+text = "层数　—
+持续时间　—"
+autowrap_mode = 3
+theme_override_constants/line_spacing = 4
+theme_override_colors/font_color = Color(0.9, 0.89, 0.78, 1)
+mouse_filter = 2

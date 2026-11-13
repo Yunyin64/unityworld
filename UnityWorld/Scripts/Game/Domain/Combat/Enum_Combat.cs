@@ -17,7 +17,8 @@ namespace UnityWorld.Game.Domain.Combat
         Finished,
     }
 
-        public enum ComabtFieldChangeType
+        /// <summary>战场卡牌变更类型；名称统一为 Combat，成员顺序和数值保持不变。</summary>
+        public enum CombatFieldChangeType
         {
             Displace,
             Remove,
@@ -27,7 +28,8 @@ namespace UnityWorld.Game.Domain.Combat
             /// <summary>从 Field 召回到 Reserve</summary>
             Recall
         }
-        public enum ComabtCardDisplaceType
+        /// <summary>卡牌在战场中的位移方式，成员顺序同时决定原有枚举数值。</summary>
+        public enum CombatCardDisplaceType
         {
             None,
             First,

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityWorld.Game.Domain.Combat;
 using Xianxia.Client.Battle;
-using static Xianxia.Client.UI.ObserverWidgets;
 
 namespace Xianxia.Client.UI;
 
@@ -14,36 +13,37 @@ internal sealed class ObserverPendingPanel
     private readonly Control[] _content = new Control[2];
     private readonly TextureRect[] _images = new TextureRect[2];
     private readonly Label[] _names = new Label[2], _details = new Label[2], _empty = new Label[2];
-    private readonly Vector2[] _origins = { new(592, 200), new(858, 200) };
+    private readonly Vector2[] _origins = new Vector2[2];
+    private readonly Marker2D[] _contacts = new Marker2D[2];
+    private readonly Control _canvas;
     private readonly Label _title, _value, _status;
     private readonly ObserverArtCatalog _art;
-    public Vector2 CollisionAnchor => new(800, 270);
+    public Marker2D CollisionAnchor { get; }
     public float CollisionFlash { get; private set; }
-    public IReadOnlyList<Vector2> ContentPositions => _content.Select(c => c.Position).ToArray();
+    // 验收夹具记录设计画布坐标，不将窗口缩放计入卡槽运动。
+    public IReadOnlyList<Vector2> ContentPositions => _content
+        .Select(c => _canvas.GetGlobalTransform().AffineInverse() * c.GlobalPosition).ToArray();
 
-    public ObserverPendingPanel(Control canvas, ObserverPreviewSkin skin, ObserverArtCatalog art)
+    public ObserverPendingPanel(Control panel, Control canvas, ObserverArtCatalog art)
     {
         _art = art;
+        _canvas = canvas;
+        CollisionAnchor = panel.GetNode<Marker2D>("CollisionAnchor");
         for (int i = 0; i < 2; i++)
         {
-            var origin = _origins[i];
-            Panel(canvas, new Rect2(origin, new Vector2(150, 175)), skin.Header);
-            var emptyBox = (StyleBoxFlat)skin.Cell.Duplicate();
-            emptyBox.BgColor = i == 0 ? new Color("91b9a0") : new Color("d39c79");
-            Panel(canvas, new Rect2(origin + new Vector2(10, 10), new Vector2(130, 116)), emptyBox);
-            _empty[i] = Text(canvas, "尚无待发\n空槽", new Rect2(origin + new Vector2(10, 40), new Vector2(130, 110)), 18, PaperMuted, HorizontalAlignment.Center);
-            var container = _content[i] = new Control { Position = origin, Size = new Vector2(150, 175), MouseFilter = Control.MouseFilterEnum.Ignore };
-            canvas.AddChild(container);
-            var artBox = (StyleBoxFlat)skin.Cell.Duplicate();
-            artBox.BgColor = i == 0 ? new Color("91b9a0") : new Color("d39c79");
-            Panel(container, new Rect2(10, 10, 130, 116), artBox);
-            _images[i] = Image(container, null, new Rect2(22, 15, 106, 105), true);
-            _names[i] = Text(container, "", new Rect2(7, 128, 136, 26), 20, PaperInk, HorizontalAlignment.Center);
-            _details[i] = Text(container, "", new Rect2(5, 154, 140, 19), 13, PaperMuted, HorizontalAlignment.Center);
+            var slot = panel.GetNode<Control>(i == 0 ? "Left" : "Right");
+            _empty[i] = slot.GetNode<Label>("Empty");
+            var card = _content[i] = slot.GetNode<Control>("Content");
+            _origins[i] = card.Position;
+            _contacts[i] = card.GetNode<Marker2D>("Contact");
+            _images[i] = card.GetNode<TextureRect>("Art");
+            _names[i] = card.GetNode<Label>("Name");
+            _details[i] = card.GetNode<Label>("Details");
+            card.Visible = false;
         }
-        _title = Text(canvas, "待 发", new Rect2(746, 229, 108, 35), 24, Ink, HorizontalAlignment.Center);
-        _value = Text(canvas, "— : —", new Rect2(744, 270, 112, 40), 26, new Color("ffe99a"), HorizontalAlignment.Center);
-        _status = Text(canvas, "等待出招", new Rect2(744, 315, 112, 25), 14, Ink, HorizontalAlignment.Center);
+        _title = panel.GetNode<Label>("Title");
+        _value = panel.GetNode<Label>("Value");
+        _status = panel.GetNode<Label>("Status");
     }
 
     public void Submit(IReadOnlyList<NpcSnapshot> participants, IReadOnlyList<PresentationCue> cues)
@@ -68,13 +68,18 @@ internal sealed class ObserverPendingPanel
             _content[i].Visible = item != null;
             _empty[i].Visible = item == null;
             _images[i].Texture = item == null ? null : _art.Card(item.DefineId);
-            _names[i].Text = item?.Name ?? "";
+            _names[i].Text = item == null ? "" : ObserverArtCatalog.CardName(item.Name, item.DefineId);
+            _names[i].TooltipText = _names[i].Text;
             _details[i].Text = item == null ? "" : $"{ContestName(item.ContestType)} · {ObserverArtCatalog.ElementName(item.Element)}";
             if (contestCue?.Event.Contest is not { } active || item == null) continue;
             float p = (float)contestCue.Progress;
             float approach = p < 0.46f ? Ease(p / 0.46f) : p < 0.61f ? 1 : 1 - Ease((p - 0.61f) / 0.39f);
             float shake = p >= 0.46f && p < 0.75f ? MathF.Sin(p * 110) * 2.8f * (1 - p) : 0;
-            _content[i].Position += new Vector2((i == 0 ? 1 : -1) * 68 * approach, shake);
+            // 碰撞距离取槽内接触点和中央标记；拖动、缩放待发区域后仍得到同一落点。
+            var slot = _content[i].GetParent<Control>();
+            var toSlot = slot.GetGlobalTransform().AffineInverse();
+            var travel = toSlot * CollisionAnchor.GlobalPosition - toSlot * _contacts[i].GlobalPosition;
+            _content[i].Position += travel * approach + new Vector2(0, shake);
             if (p >= 0.46f && p <= 0.7f)
             {
                 CollisionFlash = 1 - (p - 0.46f) / 0.24f;

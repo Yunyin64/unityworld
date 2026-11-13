@@ -38,6 +38,7 @@ internal sealed class ObserverPresentationFixture
             _snapshot = Initial();
             _player.Submit(new BattlePresentationFrame(1, _session, 0, true, _snapshot, Array.Empty<CombatPresentationEvent>(), 0, 0));
             await Capture("00-initial", 12);
+            await ObserverDetailFixture.Check(_view, _layout, _player, _directory);
 
             var water = Card(101);
             Advance(WithCard(water with { AssignedElements = new[] { "Shui" } }),

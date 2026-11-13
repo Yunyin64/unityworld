@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 using Xianxia.Client.Templates;
+using static Xianxia.Client.UI.Templates.TemplateEditorWidgets;
 
 namespace Xianxia.Client.UI.Templates;
 
@@ -131,22 +132,24 @@ public partial class TemplateEditorView
         var dao=new LineEdit{Text=target.NpcFields.DaoTitle,Editable=!_readOnly};Row(list,"道号",dao);
         dialog.GetOkButton().Disabled=_readOnly;
         dialog.Confirmed+=()=>{if(CanChange(target)){target.NpcFields.Surname=surname.Text;target.NpcFields.GivenName=given.Text;target.NpcFields.DaoTitle=dao.Text;DraftEdited(target);RefreshDetails();}dialog.QueueFree();};
-        dialog.Canceled+=()=>dialog.QueueFree();AddChild(dialog);dialog.PopupCentered(new(480,250));
+        dialog.Canceled+=()=>dialog.QueueFree();AddChild(dialog);TemplateDialogLayout.Show(dialog,new(480,250));
     }
     private void ShowExtendedFields(TemplateDraft target)
     {
-        var dialog=new AcceptDialog{Title="扩展字段与支持状态",OkButtonText="关闭",DialogText=
+        var dialog=new AcceptDialog{Title="扩展字段与支持状态",OkButtonText="关闭"};
+        TemplateDialogLayout.AddScrollableText(dialog,
             $"初始年龄：{target.NpcFields.InitAge}（当前出生流程尚未消费）\n初始境界：{target.NpcFields.InitCultivationLevel}（尚未接通）\n特质：{string.Join("、",target.NpcFields.InitialTraits)}（尚未生效）\n"+
             "五行亲和由 Soul 生成；道途尚未由模板主功法回写。\n这些已有字段会保留在草稿和导出中。\n\n额外属性：\n"+
             string.Join("\n",target.NpcFields.InitStat.Where(p=>!new[]{"QiXue","TiPo","QiGan","LingJi","ShenShi","WuXing","JiYuan","MeiLi"}.Contains(p.Key)).Select(p=>p.Key+" = "+p.Value))+
-            "\n\n旧卡组："+string.Join("、",target.NpcFields.InitCardDeck)};
-        dialog.Confirmed+=()=>dialog.QueueFree();AddChild(dialog);dialog.PopupCentered(new(650,360));
+            "\n\n旧卡组："+string.Join("、",target.NpcFields.InitCardDeck));
+        dialog.Confirmed+=()=>dialog.QueueFree();AddChild(dialog);TemplateDialogLayout.Show(dialog,new(650,360));
     }
     private void ShowUnresolved(TemplateDraft target,UnresolvedTemplateBinding binding)
     {
-        var dialog=new ConfirmationDialog{Title="未解析的导入项",OkButtonText="移除该错误项",CancelButtonText="保留",DialogText=binding.FieldPath+"\n"+binding.Reason+"\n\n"+binding.Original.GetRawText()};
+        var dialog=new ConfirmationDialog{Title="未解析的导入项",OkButtonText="移除该错误项",CancelButtonText="保留"};
+        TemplateDialogLayout.AddScrollableText(dialog,binding.FieldPath+"\n"+binding.Reason+"\n\n"+binding.Original.GetRawText());
         dialog.GetOkButton().Disabled=_readOnly;
         dialog.Confirmed+=()=>{if(CanChange(target)){target.UnresolvedBindings.Remove(binding);target.MarkDirty();RefreshEditor();}dialog.QueueFree();};
-        dialog.Canceled+=()=>dialog.QueueFree();AddChild(dialog);dialog.PopupCentered(new(650,300));
+        dialog.Canceled+=()=>dialog.QueueFree();AddChild(dialog);TemplateDialogLayout.Show(dialog,new(650,300));
     }
 }

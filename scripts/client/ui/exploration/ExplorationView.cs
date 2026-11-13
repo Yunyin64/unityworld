@@ -8,48 +8,27 @@ namespace Xianxia.Client.UI.Exploration;
 /// <summary>在地图上确认目的地，自动或手动逐周结算这段行程。</summary>
 public partial class ExplorationView : Control
 {
-    private const double WeekDisplaySeconds = 0.65;
     private ExplorationSession? _session;
     private ExplorationArt _art = null!;
     private ExplorationMap _map = null!;
     private ExplorationHud _hud = null!;
     private Timer _weekTimer = null!;
     private ExplorationSnapshot? _scheduledWeek;
-    private Window? _window;
-    private Window.ContentScaleModeEnum _previousScaleMode;
     private TileId _selected;
     private bool _submitting, _automatic = true, _autoPaused;
 
     public override void _Ready()
     {
         if (GameBootstrap.CurrentMode != ClientHostMode.Exploration) return;
+        GetNode<Button>("%ReturnHome").Pressed += GameBootstrap.OpenHome;
         try
         {
-            // 探索 HUD 使用窗口像素和边缘锚点。其他场景继续使用项目原有的拉伸设置。
-            _window = GetWindow();
-            _previousScaleMode = _window.ContentScaleMode;
-            _window.ContentScaleMode = Window.ContentScaleModeEnum.Disabled;
             _art = new ExplorationArt();
-            var fog = new TextureRect
-            {
-                Texture = _art.Background, ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
-                StretchMode = TextureRect.StretchModeEnum.KeepAspectCovered, MouseFilter = MouseFilterEnum.Ignore,
-                SelfModulate = new Color("d5d5d7")
-            };
-            AddChild(fog);
-            fog.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-            // 地图直接铺满窗口。HUD 独立叠在上层，拖图时格子可以经过面板背后。
-            _map = new ExplorationMap { Name = "LocalMap" };
-            AddChild(_map);
-            _map.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            _map = GetNode<ExplorationMap>("%LocalMap");
             _map.Configure(_art);
-            var hudLayer = new Control { Name = "Hud", MouseFilter = MouseFilterEnum.Ignore };
-            AddChild(hudLayer);
-            hudLayer.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-            _weekTimer = new Timer { WaitTime = WeekDisplaySeconds, OneShot = true };
-            AddChild(_weekTimer);
+            _weekTimer = GetNode<Timer>("%WeekTimer");
             _weekTimer.Timeout += AdvanceScheduledWeek;
-            _hud = new ExplorationHud(hudLayer, _art, _map, SetAutomatic, ContinueManually);
+            _hud = new ExplorationHud(this, _art, _map, SetAutomatic, ContinueManually);
             _map.TileSelected += SelectTile;
             _map.ZoomChanged += _hud.ShowZoom;
 
@@ -62,12 +41,14 @@ public partial class ExplorationView : Control
         catch (Exception ex)
         {
             GD.PushError($"[Exploration] {ex}");
-            var diagnostic = new Label
-            {
-                Text = "探索启动失败：" + ex.Message, Position = new(24, 295), Size = new(245, 300),
-                AutowrapMode = TextServer.AutowrapMode.WordSmart, MouseFilter = MouseFilterEnum.Ignore
-            };
-            AddChild(diagnostic);
+            GetNode<Control>("Hud/Place").Hide();
+            GetNode<Control>("Hud/IdentityPlate").Hide();
+            GetNode<Control>("Hud/PortraitFrame").Hide();
+            GetNode<Control>("Hud/Calendar").Hide();
+            GetNode<Control>("Hud/Controls").Hide();
+            var diagnostic = GetNode<Label>("%Diagnostic");
+            diagnostic.Text = "探索启动失败：" + ex.Message;
+            diagnostic.Show();
         }
     }
 
@@ -152,10 +133,13 @@ public partial class ExplorationView : Control
 
     public override void _ExitTree()
     {
+        if (IsInstanceValid(_weekTimer))
+        {
+            _weekTimer.Stop();
+            _weekTimer.Timeout -= AdvanceScheduledWeek;
+        }
         _scheduledWeek = null;
         _session?.Dispose();
         _session = null;
-        if (GodotObject.IsInstanceValid(_window))
-            _window!.ContentScaleMode = _previousScaleMode;
     }
 }

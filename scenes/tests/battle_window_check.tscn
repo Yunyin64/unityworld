@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/BattleWindows/BattleWindowCheck.cs" id="1"]
+
+[node name="BattleWindowCheck" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Caller" type="Button" parent="."]
+offset_right = 190.0
+offset_bottom = 42.0
+text = "战斗入口验收"

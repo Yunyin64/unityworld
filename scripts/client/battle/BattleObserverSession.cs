@@ -12,7 +12,7 @@ using UnityWorld.Game.World;
 namespace Xianxia.Client.Battle;
 
 /// <summary>Owns one world and one battle in a fresh process. Rendering only consumes copied values.</summary>
-public sealed class BattleObserverSession : IDisposable
+public sealed class BattleObserverSession : IBattleObserverState, IDisposable
 {
     private readonly BattleSnapshotProjector _projector = new();
     private BattleRecordCollector? _collector;
@@ -70,12 +70,7 @@ public sealed class BattleObserverSession : IDisposable
             BattleCaseFactory.Validate(Case);
             DataIdentity = BattleCaseFactory.Fingerprint(dataRoot);
             DataFingerprint = DataIdentity.Sha256;
-            if (Case.DataFingerprint.Length != 0 && Case.DataFingerprint != DataFingerprint)
-                throw new InvalidOperationException($"数据版本已变化，已停止重放。期待 {Case.DataFingerprint}；实际 {DataFingerprint}。");
-            var coreVersion = BattleCaseFactory.CoreVersion;
-            if (Case.CoreVersion.Length != 0 && Case.CoreVersion != coreVersion)
-                throw new InvalidOperationException($"核心版本已变化，已停止重放。期待 {Case.CoreVersion}；实际 {coreVersion}。");
-            Case = Case with { DataFingerprint = DataFingerprint, CoreVersion = coreVersion };
+            Case = BattleCaseFactory.VerifyVersion(Case, DataFingerprint);
             if (WorldMgr._domains.Count != 0 || WorldMgr._gameplays.Count != 0)
                 throw new InvalidOperationException("其他宿主已初始化世界；观察器不会接管或结束它。");
             _ownsWorld = true;

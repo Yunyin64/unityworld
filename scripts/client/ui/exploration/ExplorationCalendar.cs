@@ -4,10 +4,10 @@ using UnityWorld.Game.World;
 namespace Xianxia.Client.UI.Exploration;
 
 /// <summary>墨绿历牌及单枚月相。节日的 MoonPhase 为空，牌上仅显示核心日期。</summary>
-internal partial class ExplorationCalendar : Control
+[Tool]
+public partial class ExplorationCalendar : Panel
 {
     public MoonPhase? Moon { get; set; }
-    public float MoonX { get; set; }
 
     public override void _Draw()
     {
@@ -23,7 +23,10 @@ internal partial class ExplorationCalendar : Control
             DrawColoredPolygon(new[] { p + Vector2.Up * 5, p + Vector2.Right * 3, p + Vector2.Down * 5, p + Vector2.Left * 3 }, new Color("b39a6c"));
         }
         if (Moon is not MoonPhase phase) return;
-        var center = new Vector2(MoonX, h / 2);
+        var date = GetNode<Label>("%WorldDate");
+        var font = date.GetThemeFont("font");
+        var textWidth = font.GetStringSize(date.Text, fontSize: date.GetThemeFontSize("font_size")).X;
+        var center = new Vector2(Mathf.Max(18, date.Position.X + (date.Size.X - textWidth) / 2 - 15), h / 2);
         const float radius = 11;
         var ivory = new Color("e4d0a0");
         DrawCircle(center, radius, new Color("1c2523"));
