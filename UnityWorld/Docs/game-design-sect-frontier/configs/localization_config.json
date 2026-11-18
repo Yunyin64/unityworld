@@ -1,0 +1,294 @@
+{
+  "version": "0.3.0",
+  "tuning_status": "initial",
+  "entries": [
+    {
+      "key": "tutorial.primer",
+      "context": "初得功法",
+      "zh-CN": "先装上《引气诀》，再把木剑式放进行囊。试试灵元什么时候能送到剑上。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "角色自己开始修炼"
+    },
+    {
+      "key": "tutorial.herb",
+      "context": "溪边采药",
+      "zh-CN": "溪边长着青纹草。采下一份，可以试用，也可以留作突破辅材。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "本格探索"
+    },
+    {
+      "key": "tutorial.beast",
+      "context": "林间遇狼",
+      "zh-CN": "前方有灰狼。战败会留下伤口卡，影响修行与战力；可带伤继续，也可花培养时间疗伤。",
+      "max_length": null,
+      "tone": "提醒",
+      "notes": "允许跳过对白"
+    },
+    {
+      "key": "tutorial.peer_20",
+      "context": "20岁修士战",
+      "zh-CN": "今年二十岁，明锋修士前来应战。",
+      "max_length": null,
+      "tone": "平实",
+      "notes": "指定 enemy_peer_20"
+    },
+    {
+      "key": "tutorial.peer_24",
+      "context": "24岁修士战",
+      "zh-CN": "今年二十四岁，对手为守衡修士。战后按实际修为判断突破，伤势与疗伤可能延后进度。",
+      "max_length": null,
+      "tone": "平实",
+      "notes": "指定 enemy_peer_24；先战后判断突破，24岁突破为顺利培养基准"
+    },
+    {
+      "key": "tutorial.found",
+      "context": "突破结果",
+      "zh-CN": "本段突破成功，结果已锁定。等待结束后即可安排下一步。",
+      "max_length": null,
+      "tone": "平实",
+      "notes": "角色可用时间由现实等待状态提供"
+    },
+    {
+      "key": "sect.founded",
+      "context": "中央山门",
+      "zh-CN": "中央山门已经立起。周围六处地尚且无主，可安排完成培养与等待的筑基弟子去开拓。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "创派只拥有中央一格"
+    },
+    {
+      "key": "sect.unowned",
+      "context": "无主地提示",
+      "zh-CN": "此地无主，当前宗门收益为 0。派筑基或更高境界修士到位占领，才能开始产出。",
+      "max_length": null,
+      "tone": "制度说明",
+      "notes": "到位成功占领后切换地块归属"
+    },
+    {
+      "key": "sect.recruit",
+      "context": "普通招徒",
+      "zh-CN": "本次招徒需 {cost} 灵石。新弟子从十六岁开始修炼。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "保留 cost；前六次2石，之后8石；本战略回合未接收且余额足够时可用"
+    },
+    {
+      "key": "sect.recruit_used",
+      "context": "本回合接收已用",
+      "zh-CN": "本战略回合已接收一名弟子，下回合可继续招徒。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "各类接收共享每战略回合上限"
+    },
+    {
+      "key": "sect.ring_complete",
+      "context": "第一圈完成",
+      "zh-CN": "六名早期弟子已完成培养，第一圈七格均有人驻守。玩家快照修士战已开放。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "门槛为本稿提案"
+    },
+    {
+      "key": "war.bridge",
+      "context": "有主地侦察",
+      "zh-CN": "溪桥会守着白石渡。僵持期间低境弟子可临时占据并获取实际收益，战役结算时撤销临时占据。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "正式地权按战役条件判定；时长、收益倍率与同地多名低境弟子仲裁待调"
+    },
+    {
+      "key": "core.seal",
+      "context": "元婴镇守",
+      "zh-CN": "接管须同时满足攻方元婴胜、守方金丹未胜攻方金丹，以及己方合格修士到位接防。守方金丹获胜时，大阵阻止接管，守方元婴败北仍留城守权。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "大阵只参与占领门槛，不触发金丹对元婴对局；跨大境界直接判高境界胜并跳过战斗"
+    },
+    {
+      "key": "sect.no_staff",
+      "context": "驻守人手不足",
+      "zh-CN": "暂无可用的筑基修士。查看培养、等待和当前岗位，再安排人选。",
+      "max_length": null,
+      "tone": "平实",
+      "notes": "后接查看弟子簿"
+    },
+    {
+      "key": "war.realm",
+      "context": "宣战资格不足",
+      "zh-CN": "{tile} 已有归属。须由金丹或更高境界领战。跨大境界直接判高境界胜；同境金丹、元婴领地战进入现实时间僵持。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "保留 tile；跨境跳过战斗模拟"
+    },
+    {
+      "key": "life.end",
+      "context": "寿终履历",
+      "zh-CN": "{name}，享年 {age} 岁。履历已收入宗谱，原岗位按接替情况处理。",
+      "max_length": null,
+      "tone": "克制",
+      "notes": "按实际寿命上限判断，与潜力耗尽分开结算"
+    },
+    {
+      "key": "peer.lock",
+      "context": "修士战按钮",
+      "zh-CN": "锁定背包并对战",
+      "max_length": null,
+      "tone": "动作",
+      "notes": "按钮可自适应"
+    },
+    {
+      "key": "peer.title",
+      "context": "模式标题",
+      "zh-CN": "修士战（同龄试剑）",
+      "max_length": null,
+      "tone": "中性",
+      "notes": "后续可短称修士战"
+    },
+    {
+      "key": "peer.source_record",
+      "context": "来源",
+      "zh-CN": "玩家快照",
+      "max_length": null,
+      "tone": "中性",
+      "notes": "六名早期弟子培养完成且占满第一圈后按提案开放"
+    },
+    {
+      "key": "peer.source_fixture",
+      "context": "来源",
+      "zh-CN": "模板修士",
+      "max_length": null,
+      "tone": "中性",
+      "notes": "前期正常对手为固定NPC，按年龄和境界取配置"
+    },
+    {
+      "key": "peer.early_loss",
+      "context": "前期对战失利",
+      "zh-CN": "战败留下伤口卡，影响修行与战力。可以带伤继续，也可以花培养时间疗伤。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "伤势与疗伤会影响培养进度，24岁突破为顺利培养基准"
+    },
+    {
+      "key": "cultivation.yearly_gain",
+      "context": "年度修炼反馈",
+      "zh-CN": "本年修炼已结算，修为 +{gain}。",
+      "max_length": null,
+      "tone": "清楚",
+      "notes": "保留 gain；本年只结算一次"
+    },
+    {
+      "key": "cultivation.begin",
+      "context": "开始培养",
+      "zh-CN": "{name} 将离开当前岗位，开始{realm}培养。确认后按实际接替情况结算原岗位。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 name、realm"
+    },
+    {
+      "key": "cultivation.potential_exhausted",
+      "context": "潜力耗尽",
+      "zh-CN": "本段突破潜力已耗尽。等待结束后，可安排合适岗位。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "人物仍存活，按寿命判断在世时间"
+    },
+    {
+      "key": "cultivation.wait",
+      "context": "现实等待",
+      "zh-CN": "本段经历 {years} 年，需等待 {hours} 小时。剩余 {remaining}。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "明确角色年与现实小时；减免使用统一规则"
+    },
+    {
+      "key": "cultivation.available",
+      "context": "人物可用",
+      "zh-CN": "{name} 已结束等待。可按境界和岗位资格安排任职、地图行动或下一段培养。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 name；ready时一次性应用结果到宗门，再按境界与潜力开放操作"
+    },
+    {
+      "key": "cultivation.ascended",
+      "context": "化神可用",
+      "zh-CN": "已达化神。完成本段等待后，继续安排任职与地图行动。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "后续化神培养另定"
+    },
+    {
+      "key": "rear.assign",
+      "context": "岗位预览",
+      "zh-CN": "预计岗位产出 {output}。能力、性格和关系的影响已计入。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 output，允许展开修正明细"
+    },
+    {
+      "key": "rear.qi_support",
+      "context": "练气后勤",
+      "zh-CN": "可在山门承担后勤；移动与占领资格从筑基开放。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "山门内任职"
+    },
+    {
+      "key": "life.extend",
+      "context": "延寿预览",
+      "zh-CN": "使用后寿命上限增加 {years} 年，达到 {lifespan} 岁。突破潜力线仍为 {potential_age} 岁。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 years、lifespan、potential_age"
+    },
+    {
+      "key": "development.research",
+      "context": "研究项目",
+      "zh-CN": "完成后提升{effect}。当前进度 {progress}。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 effect、progress；按战略回合推进，完成效果供后续入段锁定"
+    },
+    {
+      "key": "development.archive",
+      "context": "功法收藏",
+      "zh-CN": "已收藏{method}。整理完成后可用于{usage}。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 method、usage；按战略回合整理，完成效果供后续入段锁定"
+    },
+    {
+      "key": "development.population",
+      "context": "人口与候选",
+      "zh-CN": "人口与影响力已扩大候选来源，查看本次样本与资质。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "样本量由统一数值给出；每名人物保留生成时资质"
+    },
+    {
+      "key": "world.optional_campaign",
+      "context": "战区入口",
+      "zh-CN": "参与战区争霸，组织进攻与接防，争取核心城池与奇观。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "同境金丹元婴领地战耗现实时间，临时占据在战役结算时撤销；正式接管后按赛季目标记贡献"
+    },
+    {
+      "key": "cultivation.wait_eligibility",
+      "context": "免等资格",
+      "zh-CN": "本段{eligibility}。判断依据为{reason}。确认入段后本段资格锁定，下一段重新判断。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "保留 eligibility、reason；开服窗口、金丹进程与人数额度的具体阈值待定"
+    },
+    {
+      "key": "cultivation.locked_effects",
+      "context": "入段效果",
+      "zh-CN": "本段功法与科技效果已锁定，新取得的成果可在后续入段时使用。",
+      "max_length": null,
+      "tone": "直接",
+      "notes": "本段效果快照锁定，结果到ready才用于宗门"
+    }
+  ]
+}

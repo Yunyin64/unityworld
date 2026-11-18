@@ -1,4 +1,7 @@
 [gd_scene format=3 uid="uid://d4nmp1yv0ncjl"]
+; tscn-size-ignore: user-approved static art preview; no UI split required.
+; 维护约定：这是集中展示战斗素材的静态预览，保留完整布局，不需要拆分。
+; 日常结构检查跳过本场景的大小、行数和节点数拆分提醒；ObserverPreviewSkin 依赖现有节点路径。
 
 [ext_resource type="Texture2D" uid="uid://0vnny23xh8lb" path="res://assets/art/backgrounds/qinglan_arena.png" id="background"]
 [ext_resource type="Texture2D" uid="uid://csgwgadfmi5bs" path="res://assets/art/ui/backpack_base.png" id="backpack"]

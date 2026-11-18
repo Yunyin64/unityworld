@@ -1,0 +1,22 @@
+id,name,type,trigger,objective,reward,dialogue_key,repeatable,design_intent,tuning_status,target_age,opponent_id
+mission_primer,初得功法,教学,首徒或早期弟子16岁开局,装上基础功法和招式，开始本格修炼,引气诀、配套灵元与木剑式,tutorial.primer,false,开启个人修炼和背包操作,initial,16,
+mission_herb,溪边采药,教学,完成 mission_primer,在本格采药，探索穿插在年度修炼中,青纹草,tutorial.herb,false,本年基础修炼仅结算一次，探索取得材料,initial,,
+mission_beast,林间遇狼,教学,完成 mission_herb,在本格迎战灰狼，战败后选择带伤继续或花培养时间疗伤,战报回放与对应历练奖励,tutorial.beast,false,战败留下伤口卡，带伤影响修行效率与战力，疗伤占用培养时间,initial,,enemy_wolf
+mission_peer,同庚初试,修士战,本人达到20岁节点,与指定20岁模板NPC交手,当届履历；战败留下伤口卡，影响后续修行与战力,tutorial.peer_20,false,前期正常对手来自固定NPC,initial,20,enemy_peer_20
+mission_peer_24,同庚再战,修士战,本人达到24岁节点,与指定24岁模板NPC交手，处理伤口并按实际修为判断可用突破,当届履历；战败留下伤口卡，可花培养时间疗伤,tutorial.peer_24,false,修士战在年龄节点先于突破结算,initial,24,enemy_peer_24
+mission_found,筑基开宗,立宗,首徒练气段突破成功，锁定结果的现实等待已结束,建立中央山门并命名宗门,中央山门、宗门功能与自身8灵石开宗资本,sect.founded,false,顺利培养以16到24岁共8年为基准，伤势与疗伤可能延后突破，等待按实际培养年数计算,initial,,
+mission_recruit,初收弟子,招徒,已开宗，前六次招徒尚未用完，本战略回合未接收弟子且有2灵石,通过普通招徒按钮花2灵石招收一名16岁高资质半固定弟子,一名untrained早期弟子，记录本次招徒和本战略回合接收次数,sect.recruit,true,前六次2石，其后8石，每战略回合最多接收一人,initial,,
+mission_random_recruit,继续招徒,招徒,前六次招徒已完成，本战略回合未接收弟子且有8灵石,通过同一招徒按钮花8灵石选择随机资质和起手的候选,一名untrained随机弟子，从16岁开始首段培养,sect.recruit,true,随正常招徒次数转为随机候选，每战略回合上限共用,initial,,
+mission_post,第一面新旗,宗门,一名新筑基弟子的培养结果等待已结束，存在可达无主普通地,派不同于中央守将的筑基及以上弟子到位占领并驻守,该地获得宗门归属，开始按规则产出,sect.unowned,false,培养或等待中不可地图行动，占领需要实际可用修士到位,initial,,
+mission_ring,首圈成形,宗门,六名早期弟子完成练气培养与等待，中央与六格均有不同合格修士驻守,查看第一圈名册和地块记录,提案开放玩家快照修士战,sect.ring_complete,false,个人培养接到实际占地，玩家快照门槛为提案,initial,,
+mission_war,白石渡易旗,征战,金丹或更高境界可从相邻己方补给地领战中立有主地,跨境直接判高境界胜；同境金丹、元婴战占用现实时间进入地权僵持，战役结算取胜并实际接防,临时占据者获取窗口内实际收益，结算撤临占；满足战役接管条件后渡口易主,war.bridge,false,低境弟子可在僵持窗口临时占据，正式地权依战役结算判定；时长、收益倍率及同地仲裁待调,initial,,enemy_boatman
+mission_core,潮眼台换印,镇守,自选战区核心目标可争，有已结束等待的元婴或更高境界能到位接防,同时满足攻方元婴胜、守方金丹未战胜攻方金丹、己方合格修士实际接防,核心接管条件全部满足才取得控制；临时占据收益按窗口实际结算，战役结束撤临占,core.seal,false,守方金丹胜则大阵阻止接管，守方元婴虽败仍留城守权；大阵仅判占领门槛，不触发金丹对元婴对局,initial,,
+mission_begin_stage,开始一段培养,培养,人物处于untrained或ready，当前境界仍有突破潜力,确认并锁定本段免等资格、功法收藏和科技效果，卸任后开始培养,按实际接替人重新结算旧岗位,cultivation.begin,true,下一段重新判断资格与效果；本段结果到ready才用于宗门,initial,,
+mission_wait_result,等待培养结果可用,培养,本段突破或潜力耗尽，结果已锁定,本段实际年数乘1现实小时计算等待，再使用本段入段时锁定的免等资格,到ready时一次性应用人物与所得到宗门，开放任职、地图及合格的下一段培养,cultivation.wait,true,锁定结果期间不以旧状态继续任职或出征,initial,,
+mission_potential_exit,潜力耗尽后安排,培养,练气达到60岁仍未突破,结束练气培养，锁定结果并完成现实等待,存活人物可承担山门后勤，基础寿命300岁,cultivation.potential_exhausted,false,潜力线与寿命分别判断,initial,60,
+mission_assign_rear,安排后方岗位,经营,人物存活且培养等待已结束，岗位资格满足,比较能力、性格和协作关系并确认任职,每战略回合按在岗人物能力与修正项结算输出,rear.assign,true,培养失利者也有后方用途,initial,,
+mission_use_lifespan,延长在世时间,经营,持有延寿物品，人物符合使用状态,消费一份物品，查看寿命上限变化,增加物品对应寿命年数，潜力线保持,life.extend,true,延寿支持长期人物经营,initial,,
+mission_research,安排技术研究,经营,已解锁可研究项目，有可用研究人员,选择项目，安排人员和资源，按战略回合推进,提高后续入段锁定的培养资源或战力上限,development.research,true,能力性格关系参与可见产出,initial,,
+mission_archive,整理收藏功法,经营,获得可收藏功法，有可用整理人员,安排藏经整理并投入资源，每战略回合推进,完成后扩大后续入段锁定的培养配置或构筑上限,development.archive,true,功法收藏反馈到下一代,initial,,
+mission_population,扩大候选来源,经营,人口或宗门影响力发生变化,查看人口与影响力发展带来的候选来源和样本量,扩大后续候选样本，增加发现高资质人物的机会,development.population,true,每名人物保留生成时的资质,initial,,
+mission_ascended_return,化神继续任用,培养,元婴段突破到化神且现实等待结束,继续安排岗位或地图任务,化神角色保持可用，后续化神培养内容另定,cultivation.ascended,false,高阶突破后保留角色与宗门用途,initial,,

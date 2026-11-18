@@ -1,0 +1,90 @@
+{
+  "version": "0.3.0",
+  "tuning_status": "initial",
+  "entries": [
+    {
+      "id": "enemy_wolf",
+      "name": "林间灰狼",
+      "role": "新手妖兽",
+      "hp": null,
+      "damage": null,
+      "speed": null,
+      "attack_pattern": "开局先做一次可观察的进攻",
+      "counterplay": "让木剑式或护身招式尽早点亮",
+      "spawn_stage": "练气本格探索",
+      "design_intent": "先教读出手顺序",
+      "tuning_status": "initial",
+      "match_age": null
+    },
+    {
+      "id": "enemy_lantern",
+      "name": "挑灯修士",
+      "role": "常规历练模板",
+      "hp": null,
+      "damage": null,
+      "speed": null,
+      "attack_pattern": "护身招式在攻击前进入扫描",
+      "counterplay": "比较防御生效前后的两个回放点",
+      "spawn_stage": "练气及后续按境界配置",
+      "design_intent": "本地历练使用可预览的模板盘",
+      "tuning_status": "initial",
+      "match_age": null
+    },
+    {
+      "id": "enemy_peer_20",
+      "name": "明锋修士",
+      "role": "20岁指定NPC",
+      "hp": null,
+      "damage": null,
+      "speed": null,
+      "attack_pattern": "灵元位于基础攻击之前，较早完成第一招",
+      "counterplay": "比较自己灵元供给和木剑式先后点亮的位置",
+      "spawn_stage": "20岁修士战节点，按当前境界实例化",
+      "design_intent": "第一次修士战检验点亮与第一招时序",
+      "tuning_status": "initial",
+      "match_age": 20
+    },
+    {
+      "id": "enemy_peer_24",
+      "name": "守衡修士",
+      "role": "24岁指定NPC",
+      "hp": null,
+      "damage": null,
+      "speed": null,
+      "attack_pattern": "先以护身招式应对早期攻势，再接攻击",
+      "counterplay": "依据护身生效时间调整自己的攻击顺序",
+      "spawn_stage": "24岁修士战节点，按当前境界实例化",
+      "design_intent": "第二次修士战检验护身时机与进攻布局",
+      "tuning_status": "initial",
+      "match_age": 24
+    },
+    {
+      "id": "enemy_peer",
+      "name": "同庚修士",
+      "role": "前期正常固定修士模板池",
+      "hp": null,
+      "damage": null,
+      "speed": null,
+      "attack_pattern": "按年龄和境界路由到固定的合法盘面",
+      "counterplay": "查看战报后调整下一届准备",
+      "spawn_stage": "高境界及其他四年节点按年龄和境界实例化",
+      "design_intent": "第一圈完成前，修士战持续采用固定NPC来源",
+      "tuning_status": "initial",
+      "match_age": null
+    },
+    {
+      "id": "enemy_boatman",
+      "name": "溪桥会把头",
+      "role": "中立领地守军模板",
+      "hp": null,
+      "damage": null,
+      "speed": null,
+      "attack_pattern": "先护身，再以重招争渡",
+      "counterplay": "从守军侦察信息安排领战人和接防人",
+      "spawn_stage": "金丹争地",
+      "design_intent": "提供可复现的有主地样本",
+      "tuning_status": "initial",
+      "match_age": null
+    }
+  ]
+}

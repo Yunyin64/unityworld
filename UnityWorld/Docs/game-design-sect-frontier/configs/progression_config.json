@@ -1,0 +1,437 @@
+{
+  "version": "0.3.0",
+  "tuning_status": "initial",
+  "notes": "每段培养以突破或潜力耗尽结束。potential_deadline_age为严格上限，达到时先结束潜力；base_lifespan为寿命，两者独立。结算年龄只提交一次。等待按本段经过年数乘现实1小时。到时ready才可任职、出征或开始下一段。所有高阶潜力与寿命、经营老化速度及复合免等待条件为initial。",
+  "entries": [
+    {
+      "id": "qi",
+      "stage": "练气",
+      "unlock_condition": "首徒生成或招徒入门",
+      "reward": "筑基后可去邻格和占无主普通地",
+      "difficulty_target": "学会取舍修为和术牌",
+      "expected_session_count": null,
+      "design_intent": "留在本格先把一个人养成",
+      "tuning_status": "initial",
+      "entry_progress": 0,
+      "threshold": 64,
+      "move_turns_per_tile": null,
+      "can_claim_unowned": false,
+      "can_attack_owned": false,
+      "can_guard_core": false,
+      "next_stage": "foundation",
+      "normal_aptitude_multiplier": 1,
+      "high_aptitude_multiplier": 2,
+      "initial_disciple_count": 6,
+      "regular_match_unlock_gate": "initial_cohort_foundation_and_first_full_ring",
+      "early_founder_count": 1,
+      "early_start_age": 16,
+      "early_base_progress": 4,
+      "early_aptitude_multiplier": 2,
+      "early_template_match_ages": "20|24",
+      "early_match_rule": "20/24岁到龄打指定NPC模板，未到潜力截止年龄时先战后突破；达到60岁先potential_exhausted。六名初始弟子曾筑基且山门与原始六邻格首次实际满员后永久开放普通异步匹配，下一场新建对局生效。",
+      "early_target_breakthrough_age": 24,
+      "early_expected_years": 8,
+      "early_opponent_source": "direct_template",
+      "early_match_enemy_20": "enemy_peer_20",
+      "early_match_enemy_24": "enemy_peer_24",
+      "potential_deadline_age": 60,
+      "potential_deadline_comparison": "age < deadline",
+      "base_lifespan": 300,
+      "stage_end_results": "breakthrough|potential_exhausted",
+      "wait_hours_per_cultivation_year": 1,
+      "management_years_per_real_day": 1,
+      "requires_ready_for_assignment": true,
+      "recruitment_per_turn_cap": 1
+    },
+    {
+      "id": "foundation",
+      "stage": "筑基",
+      "unlock_condition": "练气突破",
+      "reward": "金丹后可一回合到邻格并争夺有主普通地",
+      "difficulty_target": "同时安排培养和第一圈派驻",
+      "expected_session_count": null,
+      "design_intent": "每增加一名合格驻守者才能正式多守一格",
+      "tuning_status": "initial",
+      "entry_progress": 0,
+      "threshold": 72,
+      "move_turns_per_tile": 2,
+      "can_claim_unowned": true,
+      "can_attack_owned": false,
+      "can_guard_core": false,
+      "next_stage": "golden_core",
+      "normal_aptitude_multiplier": 1,
+      "high_aptitude_multiplier": 1,
+      "initial_disciple_count": null,
+      "regular_match_unlock_gate": "initial_cohort_foundation_and_first_full_ring",
+      "early_founder_count": null,
+      "early_start_age": null,
+      "early_base_progress": null,
+      "early_aptitude_multiplier": null,
+      "early_template_match_ages": null,
+      "early_match_rule": null,
+      "early_target_breakthrough_age": null,
+      "early_expected_years": null,
+      "early_opponent_source": null,
+      "early_match_enemy_20": null,
+      "early_match_enemy_24": null,
+      "potential_deadline_age": 150,
+      "potential_deadline_comparison": "age < deadline",
+      "base_lifespan": 600,
+      "stage_end_results": "breakthrough|potential_exhausted",
+      "wait_hours_per_cultivation_year": 1,
+      "management_years_per_real_day": 1,
+      "requires_ready_for_assignment": true,
+      "recruitment_per_turn_cap": null
+    },
+    {
+      "id": "golden_core",
+      "stage": "金丹",
+      "unlock_condition": "筑基突破",
+      "reward": "元婴后可镇守核心城池或奇观",
+      "difficulty_target": "进攻后安排接防",
+      "expected_session_count": null,
+      "design_intent": "培养机动攻坚人手",
+      "tuning_status": "initial",
+      "entry_progress": 0,
+      "threshold": 112,
+      "move_turns_per_tile": 1,
+      "can_claim_unowned": true,
+      "can_attack_owned": true,
+      "can_guard_core": false,
+      "next_stage": "nascent_soul",
+      "normal_aptitude_multiplier": 1,
+      "high_aptitude_multiplier": 1,
+      "initial_disciple_count": null,
+      "regular_match_unlock_gate": "initial_cohort_foundation_and_first_full_ring",
+      "early_founder_count": null,
+      "early_start_age": null,
+      "early_base_progress": null,
+      "early_aptitude_multiplier": null,
+      "early_template_match_ages": null,
+      "early_match_rule": null,
+      "early_target_breakthrough_age": null,
+      "early_expected_years": null,
+      "early_opponent_source": null,
+      "early_match_enemy_20": null,
+      "early_match_enemy_24": null,
+      "potential_deadline_age": 400,
+      "potential_deadline_comparison": "age < deadline",
+      "base_lifespan": 1500,
+      "stage_end_results": "breakthrough|potential_exhausted",
+      "wait_hours_per_cultivation_year": 1,
+      "management_years_per_real_day": 1,
+      "requires_ready_for_assignment": true,
+      "recruitment_per_turn_cap": null
+    },
+    {
+      "id": "nascent_soul",
+      "stage": "元婴",
+      "unlock_condition": "金丹突破",
+      "reward": "达成化神，结算等待结束后可回到经营",
+      "difficulty_target": "在冲关、攻地和守核心间取舍",
+      "expected_session_count": null,
+      "design_intent": "重要人物长期保留，延寿支持继续任职",
+      "tuning_status": "initial",
+      "entry_progress": 0,
+      "threshold": 160,
+      "move_turns_per_tile": 1,
+      "can_claim_unowned": true,
+      "can_attack_owned": true,
+      "can_guard_core": true,
+      "next_stage": "spirit_transformation",
+      "normal_aptitude_multiplier": 1,
+      "high_aptitude_multiplier": 1,
+      "initial_disciple_count": null,
+      "regular_match_unlock_gate": "initial_cohort_foundation_and_first_full_ring",
+      "early_founder_count": null,
+      "early_start_age": null,
+      "early_base_progress": null,
+      "early_aptitude_multiplier": null,
+      "early_template_match_ages": null,
+      "early_match_rule": null,
+      "early_target_breakthrough_age": null,
+      "early_expected_years": null,
+      "early_opponent_source": null,
+      "early_match_enemy_20": null,
+      "early_match_enemy_24": null,
+      "potential_deadline_age": 1000,
+      "potential_deadline_comparison": "age < deadline",
+      "base_lifespan": 3000,
+      "stage_end_results": "breakthrough|potential_exhausted",
+      "wait_hours_per_cultivation_year": 1,
+      "management_years_per_real_day": 1,
+      "requires_ready_for_assignment": true,
+      "recruitment_per_turn_cap": null
+    }
+  ],
+  "early_game": {
+    "tuning_status": "initial",
+    "founder_count": 1,
+    "initial_cohort_size": 6,
+    "ordinary_recruit_unlock": "first_six_recruitments_completed",
+    "initial_age": 16,
+    "target_breakthrough_age": 24,
+    "breakthrough_gate": "actual_stage_progress_with_optional_material_credit",
+    "appearance_generation": "randomized_name_and_appearance",
+    "growth_and_starting_loadout": "fixed_per_initial_template",
+    "opponent_source": "direct_template",
+    "direct_template_matches": [
+      {
+        "age": 20,
+        "enemy_id": "enemy_peer_20"
+      },
+      {
+        "age": 24,
+        "enemy_id": "enemy_peer_24"
+      }
+    ],
+    "template_match_timing": "age_node_before_same_year_breakthrough",
+    "other_early_template_enemy_id": "enemy_peer",
+    "other_early_template_instantiation": "current_age_and_realm",
+    "regular_match_gate": "initial_cohort_foundation_and_first_full_ring",
+    "notes": "前6次招徒各2石，此后普通随机招徒8石；每战略回合最多1人。24岁为本段基础修炼8年的自然结果。培养进度不推进战略回合。普通匹配在六名初始弟子曾筑基并首次实际守满山门与原始六邻格后永久开放。",
+    "regular_match_unlock_requirements": {
+      "initial_cohort_reached_foundation": 6,
+      "headquarters_staffed": true,
+      "initial_ring_staffed_count": 6,
+      "count_scope": "initial_headquarters_and_six_neighbors",
+      "unlocked_flag_persists": true,
+      "effective_from": "next_new_match"
+    },
+    "before_regular_match_unlock": "direct_template",
+    "initial_recruit_index": {
+      "initial_value": 0,
+      "maximum_value": 6,
+      "increment_on": "successful_recruit_commit",
+      "failed_attempt": "no_cost_and_no_increment",
+      "duplicate_request": "return_existing_generated_disciple"
+    },
+    "expected_early_cultivation_years": 8,
+    "base_cultivation_progress": 4,
+    "early_aptitude_multiplier": 2,
+    "early_progress_rule": "one_annual_base_cultivation_award_with_exploration_and_npc_battles",
+    "per_turn_intake_cap": 1,
+    "intake_cap_scope": [
+      "initial_recruit",
+      "ordinary_recruit"
+    ],
+    "wait_exemption": {
+      "status": "draft",
+      "application_mode": "normal_wait_until_composite_policy_configured",
+      "budget_scope": "sect",
+      "budget_scope_status": "proposal_adjustable",
+      "eligible_stage_ids": [
+        "qi",
+        "foundation"
+      ],
+      "eligible_stage_ids_status": "proposal_adjustable",
+      "open_window_hours": null,
+      "distinct_npc_cap": null,
+      "golden_core_scope": null,
+      "golden_core_gate_condition": null,
+      "eligibility": "server_age_hours < open_window_hours AND golden_core_gate_open AND (npc_already_counted OR distinct_reserved_or_used_npc_count < distinct_npc_cap) AND stage_id IN eligible_stage_ids",
+      "unconfigured_policy_result": "normal_wait",
+      "reservation_timing": "atomic_at_successful_stage_entry",
+      "count_basis": "distinct_character_ids_in_reserved_or_used",
+      "same_character_next_stage": "no_additional_person_count_but_recheck_window_progress_and_stage",
+      "lock_fields": [
+        "policy_version",
+        "eligibility_result",
+        "reservation_id",
+        "budget_scope_id",
+        "character_id",
+        "stage_id"
+      ],
+      "gate_changes_mid_stage": "honor_locked_exemption_for_this_stage",
+      "failed_entry": "no_reservation_consumption",
+      "duplicate_entry": "reuse_original_reservation",
+      "wait_hours_override": 0,
+      "test_fixture": {
+        "purpose": "fixture_only_not_production_defaults",
+        "open_window_hours": 72,
+        "distinct_npc_cap": 7,
+        "budget_scope": "sect",
+        "golden_core_scope": "sect",
+        "golden_core_gate_open": true,
+        "eligible_stage_ids": [
+          "qi",
+          "foundation"
+        ]
+      },
+      "notes": "开服窗口、人数上限、金丹事件如何开关以及作用范围待定。人数按本宗预算是提案，首徒和前六名不会自动获得资格。未配置时按常规等待。测试样例只验证原子准入与复查。 资格预占、旧岗位解除与cultivating状态在同一事务提交，后续校验失败时整体回滚。"
+    }
+  },
+  "stage_lifecycle": {
+    "stage_result_values": [
+      "breakthrough",
+      "potential_exhausted"
+    ],
+    "status_values": [
+      "untrained",
+      "ready",
+      "cultivating",
+      "pending",
+      "deceased"
+    ],
+    "start_gate": "alive_and_potential_open_and_(untrained_entering_first_stage_or_ready_entering_later_stage)",
+    "on_start": [
+      "atomically_check_and_reserve_configured_wait_exemption",
+      "detach_current_assignment_atomically",
+      "invalidate_live_territory_defense_participation",
+      "set_status_cultivating"
+    ],
+    "on_result": [
+      "commit_age_and_result_once",
+      "store_frozen_stage_result",
+      "set_ready_at_from_completion_time",
+      "set_pending_if_wait_positive_else_set_ready_immediately"
+    ],
+    "potential_exhaustion": {
+      "trigger": "projected_age >= potential_deadline_age",
+      "priority": "before_same_step_breakthrough_or_material_spend",
+      "permanent_for_current_stage": true,
+      "kills_character": false,
+      "after_ready": "management_roles_allowed_by_current_realm"
+    },
+    "breakthrough": {
+      "trigger": "projected_age < potential_deadline_age AND progress + material_credit >= threshold",
+      "advance_realm": true,
+      "reset_next_stage_progress": true,
+      "start_next_stage_automatically": false
+    },
+    "ready_transition": "authoritative_now_utc >= ready_at_utc; effective_ready_time_is_ready_at_utc_even_if_offline",
+    "pending_permissions": {
+      "assignment": false,
+      "expedition": false,
+      "production": false,
+      "start_next_stage": false
+    },
+    "cultivating_permissions": {
+      "assignment": false,
+      "expedition": false,
+      "production": false,
+      "start_another_stage": false
+    },
+    "ready_permissions": {
+      "assignment": "allowed_if_realm_and_life_requirements_met",
+      "expedition": "allowed_if_realm_and_life_requirements_met",
+      "start_next_stage": "allowed_if_stage_result_breakthrough_and_next_stage_defined"
+    },
+    "job_restore": "explicit_new_assignment_after_ready",
+    "spirit_transformation": {
+      "forced_retirement": false,
+      "after_wait": "ready_for_management",
+      "next_cultivation_stage": "outside_current_design_scope",
+      "base_lifespan_policy": "retain_last_configured_base_lifespan",
+      "base_lifespan_initial": 3000,
+      "tuning_status": "initial",
+      "notes": "化神独立寿命尚未调参，暂沿用元婴3000年基础值并保留累计延寿。"
+    },
+    "entry_transaction": "check_untrained_first_stage_or_ready_later_stage_and_life_and_potential; reserve_exemption_if_eligible; detach_assignment_if_any; set_cultivating; commit_all_or_none",
+    "new_character_status": "untrained",
+    "untrained_permissions": {
+      "start_first_stage": true,
+      "assignment": false,
+      "expedition": false,
+      "map_actions": false,
+      "production": false
+    },
+    "assignment_production_start": "actual_successful_assignment_time_only_no_backdating_to_ready_at"
+  },
+  "stage_result_fields": {
+    "stage_run_id": "唯一培养记录ID，重复提交沿用",
+    "character_id": "同一角色ID，培养和经营共用",
+    "stage_id": "此次进入的境界",
+    "entry_age": "进入本段时实际年龄",
+    "exit_age": "本段结束时实际年龄",
+    "cultivation_years": "exit_age - entry_age",
+    "stage_result": "breakthrough 或 potential_exhausted",
+    "status": "untrained、cultivating、pending、ready 或 deceased；新招人物从untrained开始",
+    "potential_exhausted": "当前境界永久耗尽标记",
+    "completed_at_utc": "首次成功提交本段结果的权威时间",
+    "wait_seconds": "cultivation_years * 3600，适用免等待时为0",
+    "ready_at_utc": "completed_at_utc + wait_seconds；逻辑转ready与经营老化起点，不依赖点击领取",
+    "age_commit_key": "本段年龄仅提交一次的记录键",
+    "wait_rule_version": "成功入段时锁定的规则版本，本段结算沿用",
+    "wait_exemption_decision": "入段时的复合条件判定与reservation_id，未获资格则常规等待",
+    "management_age_accounted_through_utc": "已结算经营老化的权威时间游标，重进与重试只补其后的增量",
+    "management_age_fraction": "不足1游戏年的累计年龄小数，跨离线与读取保留"
+  },
+  "wait_fields": {
+    "basis": "exit_age_minus_entry_age",
+    "real_hours_per_cultivation_year": 1,
+    "start_at": "completed_at_utc",
+    "advance_character_age_while_pending": false,
+    "retry_behavior": "reuse_existing_result_and_ready_at",
+    "completion_authority": "server_or_single_player_host_utc",
+    "offline_time_counts": true,
+    "exemption_source": "immutable_successful_stage_entry_reservation",
+    "ready_does_not_require_claim": true,
+    "management_aging_begins_at": "ready_at_utc"
+  },
+  "time_domains": {
+    "cultivation": {
+      "advances": "active_stage_local_age",
+      "result_age_commit": "once_on_stage_result",
+      "advances_world_or_other_characters": false
+    },
+    "strategy": {
+      "turn_duration_seconds": null,
+      "duration_tuning_status": "initial_unset",
+      "turn_is_character_age_year": false,
+      "movement_unit": "strategy_turn",
+      "income_unit": "strategy_turn"
+    },
+    "management_aging": {
+      "tuning_status": "initial",
+      "game_years_per_real_day": 1,
+      "real_day_seconds": 86400,
+      "applies_to_statuses": [
+        "ready"
+      ],
+      "applies_while_assigned_or_idle": true,
+      "fractional_age_accumulates": true,
+      "catch_up_before_starting_stage": true,
+      "paused_in_statuses": [
+        "untrained",
+        "cultivating",
+        "pending"
+      ],
+      "potential_deadline_check": "mark_current_stage_potential_exhausted_at_deadline",
+      "lifespan_check": "deceased_when_age_reaches_base_plus_extensions",
+      "after_wait_start_at": "ready_at_utc",
+      "offline_ready_age_catch_up": "advance_from_ready_at_or_last_accounted_time_even_without_claim",
+      "settlement_cursor": "management_age_accounted_through_utc",
+      "fractional_remainder_field": "management_age_fraction",
+      "claim_button_changes_aging_start": false,
+      "duplicate_settlement": "reuse_existing_cursor_and_fraction_only_apply_unaccounted_elapsed_time"
+    }
+  },
+  "longevity": {
+    "lifespan_formula": "current_realm_base_lifespan + accumulated_extension_years",
+    "extensions_survive_breakthrough": true,
+    "using_item_consumes_inventory_once": true,
+    "same_item_repeat_limit": null,
+    "total_extension_limit": null,
+    "restores_exhausted_potential": false,
+    "changes_potential_deadline": false,
+    "can_revive_deceased": false,
+    "items": [
+      {
+        "item_id": "item_lifespan_small",
+        "name": "小延寿丹",
+        "extension_years": 30
+      },
+      {
+        "item_id": "item_lifespan_medium",
+        "name": "归元丹",
+        "extension_years": 100
+      },
+      {
+        "item_id": "item_lifespan_large",
+        "name": "长生药",
+        "extension_years": 300
+      }
+    ]
+  }
+}

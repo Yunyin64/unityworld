@@ -1,0 +1,20 @@
+﻿id,currency,source_or_sink,action,amount,frequency,formula,design_intent,tuning_status,choice_count,selection_count,per_stage_cap,starter_tile_count,participant_cap,aptitude_scaled,recruitment_sequence_limit,per_turn_cap,shared_recruitment_per_turn_cap,time_basis,item_id,lifespan_extension_years
+sect_founding,灵石,source,创派库房初始资源,8,每宗门一次,8,首次开宗时库房有8灵石,initial,,,,,,False,,,,event,,
+ordinary_recruit,灵石,sink,普通招徒,-8,前6次招徒完成后；共享每宗每战略回合招徒1人的上限,-8,普通随机招徒三选一，展示与复开沿用该次候选,initial,3,1,,,,False,,1,1,strategy_turn,,
+home_income,灵石,source,山门固定收入,2,每宗门每战略回合一次,2,山门固定资源流，独立于具体个人岗位；岗位加成另算,initial,,,,1,,False,,,,strategy_turn,,
+mineral_ferry_staffed,灵石,source,矿或货栈占领收入,2,每处已有合格驻守的占领地每战略回合,2 × 已占且合格驻守格数,周边四格矿或货栈，未占地收入为0,initial,,,,4,,False,,,,strategy_turn,,
+herb_staffed,辅材,source,药圃占领收入,2,每处已有合格驻守的占领地每战略回合,2 × 已占且合格驻守格数,周边两处药圃，未占地收入为0,initial,,,,2,,False,,,,strategy_turn,,
+breakthrough_material,辅材,sink,冲关时使用辅材,-8,每人每段至多一次；年龄严格小于潜力线且可成功冲关时扣,-8,备足8份辅材可选择使用；无药可全靠修为突破,initial,,,1,,,False,,,,event,,
+breakthrough_credit,修为抵扣,source,冲关时折算材料,4,同一笔已提交的8份突破辅材,使用完整8份辅材时抵4点，否则为0,每段仅一次，仅当次判定有效，不增加积存修为,initial,,,1,,,False,,,,event,,
+train,修为,source,修炼,4,个人本段培养每经过1游戏年结算一次,4 × 当前境界资质倍数,稳定的修为来源,initial,,,,,,True,,,,local_cultivation_year,,
+explore,修为,source,探索,1,个人本段培养每经过1游戏年结算一次,1 × 当前境界资质倍数,用部分闭关收益换事件,initial,,,,,,True,,,,local_cultivation_year,,
+spar_pve_win,修为,source,实战胜利,2,个人本段培养每经过1游戏年结算一次,2 × 当前境界资质倍数,实战学习快于探索,initial,,,,,,True,,,,local_cultivation_year,,
+spar_pve_loss,修为,source,实战落败,1,个人本段培养每经过1游戏年结算一次,1 × 当前境界资质倍数,练手失败仍有积累,initial,,,,,,True,,,,local_cultivation_year,,
+duel_win_card,术牌,source,普通同龄试剑获胜,1,每个四年节点一次,1,三张合法候选里选一张,initial,3,1,,,,False,,,,event,,
+duel_progress,修为,source,普通同龄试剑结算,0,胜负均适用,0,胜给选牌，败后战报列出留在卡组的伤口,initial,,,,,,False,,,,event,,
+territory_attack_supply,灵石,sink,主动攻地行粮,-2,每场实际进场的主动攻地一次,-2 × 实际进场的主动攻地场数,守方免费；排队未进场不扣。满圈收入可兼顾招徒和出战,initial,,,,,,False,,,,event,,
+initial_recruit,灵石,sink,前六次招徒,-2,每宗门前6次招徒；共享每战略回合招徒1人的上限,-2,16岁入门的高资质半固定弟子，初始成长和起手预设，序号与已生成记录防重复,initial,1,1,,,6,False,6,1,1,strategy_turn,,
+early_cultivation_year,修为,source,早期年度基础修炼,4,个人本段培养每经过1游戏年结算一次,4 × 早期高资质倍数2 = 8,首徒与前六名练气阶段每本段游戏年基础修炼8点，探索与NPC战穿插其中,initial,,,,,7,True,,,,local_cultivation_year,,
+consume_item_lifespan_small,item_lifespan_small,sink,使用小延寿丹,-1,每次有效使用消耗库存1份,库存-1；寿命上限+30,延长寿命以保留重要人物；已耗尽突破潜力永久保留,initial,,,,,,False,,,,event,item_lifespan_small,30
+consume_item_lifespan_medium,item_lifespan_medium,sink,使用归元丹,-1,每次有效使用消耗库存1份,库存-1；寿命上限+100,延长寿命以保留重要人物；已耗尽突破潜力永久保留,initial,,,,,,False,,,,event,item_lifespan_medium,100
+consume_item_lifespan_large,item_lifespan_large,sink,使用长生药,-1,每次有效使用消耗库存1份,库存-1；寿命上限+300,延长寿命以保留重要人物；已耗尽突破潜力永久保留,initial,,,,,,False,,,,event,item_lifespan_large,300

@@ -1,0 +1,78 @@
+{
+  "version": "0.3.0",
+  "tuning_status": "initial",
+  "entries": [
+    {
+      "id": "ability_wood_cut",
+      "name": "木剑出锋",
+      "input": "卡片满亮并获合法扫描机会",
+      "cooldown_sec": null,
+      "cost": "见招式点亮要求",
+      "effect": "尝试攻击，依战斗模板结算",
+      "upgrade_values": "盘面顺序可调整",
+      "feedback": "亮边、剑音与战报行号",
+      "design_intent": "演示先得灵元再出招",
+      "tuning_status": "initial"
+    },
+    {
+      "id": "ability_guard",
+      "name": "贴符护身",
+      "input": "卡片满亮并获合法扫描机会",
+      "cooldown_sec": null,
+      "cost": "见招式点亮要求",
+      "effect": "获得护身效果，依战斗模板结算",
+      "upgrade_values": "盘面顺序可调整",
+      "feedback": "符纹闭合且战报记护身生效",
+      "design_intent": "选择防御生效时机",
+      "tuning_status": "initial"
+    },
+    {
+      "id": "ability_steward",
+      "name": "执事任职",
+      "input": "人物存活且培养等待已结束，在山门任命到本岗位",
+      "cooldown_sec": null,
+      "cost": "占用本人实际岗位",
+      "effect": "每战略回合结算。管理能力形成基础事务效率，性格适配与协作关系修正输出",
+      "upgrade_values": "能力与性格关系修正值见统一数值规则",
+      "feedback": "任命前后输出预览与协作关系说明",
+      "design_intent": "练气可在山门后勤工作",
+      "tuning_status": "initial"
+    },
+    {
+      "id": "ability_research",
+      "name": "研究任职",
+      "input": "人物存活且培养等待已结束，在山门任命到本岗位",
+      "cooldown_sec": null,
+      "cost": "占用本人实际岗位",
+      "effect": "每战略回合结算。研究能力推进所选技术，性格与同事关系影响协作效率",
+      "upgrade_values": "能力与性格关系修正值见统一数值规则",
+      "feedback": "任命前后输出预览与协作关系说明",
+      "design_intent": "完成的成果供后续入段锁定，本段沿用入段时效果",
+      "tuning_status": "initial"
+    },
+    {
+      "id": "ability_herb_management",
+      "name": "药圃管理",
+      "input": "人物存活且培养等待已结束，在山门任命到本岗位",
+      "cooldown_sec": null,
+      "cost": "占用本人实际岗位",
+      "effect": "每战略回合结算。药理能力管理已控药圃供给，与在岗守将关系修正配合效率",
+      "upgrade_values": "能力与性格关系修正值见统一数值规则",
+      "feedback": "任命前后输出预览与协作关系说明",
+      "design_intent": "山门管理岗位与地块实际驻守各按记录结算",
+      "tuning_status": "initial"
+    },
+    {
+      "id": "ability_archive",
+      "name": "藏经整理",
+      "input": "人物存活且培养等待已结束，在山门任命到本岗位",
+      "cooldown_sec": null,
+      "cost": "占用本人实际岗位",
+      "effect": "每战略回合结算。学识推进收藏功法整理，性格与研究人员关系影响协作",
+      "upgrade_values": "能力与性格关系修正值见统一数值规则",
+      "feedback": "任命前后输出预览与协作关系说明",
+      "design_intent": "完成的成果供后续入段锁定，本段沿用入段时效果",
+      "tuning_status": "initial"
+    }
+  ]
+}

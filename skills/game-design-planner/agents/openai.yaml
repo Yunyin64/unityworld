@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Design Planner"
+  short_description: "Generate complete game design packages from concept inputs."
+  default_prompt: "Use $game-design-planner to turn my game concept into a complete design package."
