@@ -9,7 +9,9 @@
     "Keywords": [
       "ZhaoShi"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 1
+    },
     "Tags": [
       "武器",
       "攻击",
@@ -17,8 +19,8 @@
       "剑"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_form_jian_ci",
@@ -30,7 +32,9 @@
     "Keywords": [
       "ZhaoShi"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 1
+    },
     "Tags": [
       "武器",
       "攻击",
@@ -38,8 +42,8 @@
       "剑"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_form_jian_qi",
@@ -51,7 +55,9 @@
     "Keywords": [
       "ZhaoShi"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 1
+    },
     "Tags": [
       "武器",
       "攻击",
@@ -59,8 +65,8 @@
       "剑"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_form_dao_zhan",
@@ -303,7 +309,9 @@
     "Keywords": [
       "ZhaoShi"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 1
+    },
     "Tags": [
       "武器",
       "攻击",
@@ -311,7 +319,7 @@
       "爪"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   }
 ]

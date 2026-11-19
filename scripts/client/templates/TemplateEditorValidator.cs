@@ -142,21 +142,38 @@ public static class TemplateEditorValidator
 
         if (template.InitEquip == null) Error("equip.null", "装备绑定列表不能为 null。", "InitEquip");
         var equipEntries = template.InitEquip ?? [];
-        var equipBindings = new HashSet<int>();
+        var equipBindings = new Dictionary<int, NpcSystemBackpack.EquippedForms>();
         for (int i = 0; i < equipEntries.Count; i++)
         {
             var entry = equipEntries[i]; string field = $"InitEquip[{i}]";
             int? index = Resolve(entry.CardID, entry.PlacementIndex, field);
             var equip = string.IsNullOrWhiteSpace(entry.EquipID) ? null : definitions.GetEquip(entry.EquipID);
             if (equip == null) Error("equip.missing", $"装备定义不存在：{entry.EquipID}。", field + ".EquipID", index);
-            if (index.HasValue && equip != null && !equipBindings.Add(index.Value))
+            if (index is int cardIndex && equip != null && !equipBindings.TryAdd(cardIndex, new(equip.ID, equip.FormListBase)))
                 Error("equip.duplicate", "同一实例被重复绑定装备。", field, index);
         }
+        var forms = new List<NpcSystemBackpack.PlacedForm>();
         for (int i = 0; i < placements.Count; i++)
         {
-            if (placements[i]?.ParentPlacementIndex is not int parent) continue;
-            if (parent < 1 || parent > placements.Count || parent == i + 1 || !equipBindings.Contains(parent))
+            var entry = placements[i];
+            if (entry == null) continue;
+            if (cards[i] is { } card && CardKeywordRoles.TryGetMain(card.Keywords, out var main, out _) && main == CardMainKeyword.ZhaoShi)
+            {
+                forms.Add(new(i + 1, card.ID, entry.ParentPlacementIndex, entry.Value is { X: >= 1, Y: >= 1 }));
+                continue;
+            }
+            if (entry.ParentPlacementIndex is int parent && (parent == i + 1 || !equipBindings.ContainsKey(parent)))
                 Error("parent.invalid", $"父装备序号 {parent} 无效、引用自身或没有有效装备绑定。", $"InitCardPlacements[{i}].ParentPlacementIndex", i + 1);
+        }
+        foreach (var issue in NpcSystemBackpack.CheckEquipmentForms(equipBindings, forms))
+        {
+            string field = issue.Code switch
+            {
+                "form.parent" or "form.owner" => "ParentPlacementIndex",
+                "form.position" => "Value",
+                _ => "Key"
+            };
+            Error(issue.Code, issue.Message, $"InitCardPlacements[{issue.EntryId - 1}].{field}", issue.EntryId);
         }
 
         Warning("field.age-unused", "当前出生流程未消费 InitAge；原值保留，运行时年龄仍从 0 初始化。", "InitAge");
@@ -187,13 +204,13 @@ public static class TemplateEditorValidator
         List<BackpackCell> shape;
         try { shape = card.GetShape(); }
         catch (Exception exception) { return [new("card.shape", TemplateIssueSeverity.Error, exception.Message, "Shape")]; }
-        return ValidateCardProperties(card.Size, shape, card.Keywords, card.ManaCost, card.ScanActivatable,
+        return ValidateCardProperties(card.ID, card.Size, shape, card.Keywords, card.ManaCost, card.MaxUsesPerRound,
             card.CompatibilityStatus, card.CompatibilityReason);
     }
 
     /// <summary>编辑器的卡牌配置诊断，供卡库提示与模板检查使用。</summary>
-    private static IReadOnlyList<TemplateIssue> ValidateCardProperties(int size, IReadOnlyList<BackpackCell>? shape,
-        IReadOnlyList<string>? keywords, IReadOnlyDictionary<string, int>? mana, bool scanActivatable,
+    private static IReadOnlyList<TemplateIssue> ValidateCardProperties(string cardId, int size, IReadOnlyList<BackpackCell>? shape,
+        IReadOnlyList<string>? keywords, IReadOnlyDictionary<string, int>? mana, int maxUsesPerRound,
         string compatibility, string compatibilityReason)
     {
         var issues = new List<TemplateIssue>();
@@ -205,9 +222,12 @@ public static class TemplateEditorValidator
         if (shape == null || size < 1 || shape.Count != size || shape.Distinct().Count() != size ||
             shape.Any(p => p.X < 0 || p.Y < 0) || shape.Count > 0 && (shape.Min(p => p.X) != 0 || shape.Min(p => p.Y) != 0))
             Add("card.shape", "形状必须规范化、无重复且占格数等于正数 Size。", "Shape");
-        bool active = scanActivatable || keywords.Contains("FaShu") || keywords.Contains("ZhaoShi") || keywords.Contains("FaBao");
-        if (active && (mana.Values.Any(n => n <= 0) || mana.Values.Sum(n => (long)n) != size))
+        bool validMain = CardKeywordRoles.TryGetMain(keywords, out var main, out var mainError);
+        if (!validMain) Add("card.main", $"卡 {cardId} 的 {mainError}", "Keywords");
+        if (validMain && main != CardMainKeyword.Passive && (mana.Values.Any(n => n <= 0) || mana.Values.Sum(n => (long)n) != size))
             Add("card.mana-size", "主动卡的激活灵元总数必须等于 Size，且各需求为正数。", "ManaCost");
+        if (validMain && main == CardMainKeyword.ZhaoShi && maxUsesPerRound < 1)
+            Add("card.form-limit", "招式每轮成功发动上限必须为正数。", "MaxUsesPerRound");
         return issues.AsReadOnly();
     }
 

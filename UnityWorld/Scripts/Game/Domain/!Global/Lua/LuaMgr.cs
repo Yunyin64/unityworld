@@ -182,10 +182,11 @@ namespace UnityWorld.Game.Domain
         /// 加载卡牌 Lua 脚本，每次调用返回独立的 card table（不缓存）。
         /// 脚本在全局环境中执行，可访问 Init.lua 中定义的所有全局函数。
         /// </summary>
-        /// <param name="cardId">卡牌 Define ID（如 "card_form_quan_da"）</param>
+        /// <param name="define">卡牌定义。纯程序构造的卡可以没有目录定义。</param>
         /// <returns>脚本 return 的 card table，加载失败返回 null</returns>
-        public LuaTable LoadCardScript(CardDefine define)
+        public LuaTable LoadCardScript(CardDefine? define)
         {
+            if (define == null) return null;
             if (_runtime == null)
             {
                 LogMgr.Instance.Err("[LuaMgr] LoadCardScript: Lua State 未初始化");
@@ -269,6 +270,11 @@ namespace UnityWorld.Game.Domain
                 return;
             }
 
+            // 注册表与装配前的静态角色表必须对同名 Keyword 得出相同结果。
+            var isMain = CardKeywordRoles.IsMain(name);
+            if (table["Main"] is bool declaredMain && declaredMain != isMain)
+                throw new InvalidOperationException($"Keyword '{name}' 的 Main 标记与卡牌角色定义不符。");
+            table["Main"] = isMain;
             _keywordRegistry[name] = table;
         }
 

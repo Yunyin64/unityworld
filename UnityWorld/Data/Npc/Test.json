@@ -16,7 +16,7 @@
       "TiPo": 10,
       "QiGan": 30,
       "LingJi": 10,
-      "ShenShi": 11,
+      "ShenShi": 12,
       "WuXing": 10,
       "JiYuan": 10,
       "MeiLi": 10
@@ -71,6 +71,22 @@
           "Y": 4
         },
         "Key": "card_tu_slow"
+      },
+      {
+        "Value": {
+          "X": 5,
+          "Y": 3
+        },
+        "Key": "card_form_jian_zhan",
+        "ParentPlacementIndex": 3
+      },
+      {
+        "Value": {
+          "X": 1,
+          "Y": 5
+        },
+        "Key": "card_form_jian_ci",
+        "ParentPlacementIndex": 3
       }
     ],
     "InitGongFa": [

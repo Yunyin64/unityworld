@@ -50,7 +50,8 @@ namespace UnityWorld.Game.Domain
                 Defend = define.DefendBase,
                 Speed = define.SpeedBase,
                 Amount = define.AmountBase,
-                FormList = new List<string>(define.FormListBase),
+                FormList = new List<string>(define.FormListBase
+                    ?? throw new InvalidOperationException($"装备 {define.ID} 的招式清单无效。")),
             };
         }
 

@@ -85,7 +85,7 @@
 **/Logs/
 .godot/
 
-# 本机共享技能入口由 skills/Connect-Skills.ps1 建立
+# Claude 项目的本机共享技能链接
 /UnityWorld/.claude/skills/ask
 /UnityWorld/.claude/skills/data
 /UnityWorld/.claude/skills/extract-md-excerpt

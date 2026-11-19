@@ -8,7 +8,7 @@ namespace UnityWorld.Game.Domain.Combat
         internal void ScanRow()
         {
             if (!IsActive) return;
-            var used = false;
+            var rowActivationUsed = false;
             for (int x = 0; x < Backpack.Width; x++)
             {
                 var cell = new BackpackCell(x, Backpack.Row);
@@ -19,14 +19,7 @@ namespace UnityWorld.Game.Domain.Combat
                    // Log(selected == null ? $"格({x + 1},{cell.Y + 1}) 灵元留格" : $"格({x + 1},{cell.Y + 1}) 灵元进入 {selected.DefineId} 点亮={selected.LitCount}/{selected.GetSize()}");
                 }
                 if (Backpack.CardAt(cell) is not int id || !Backpack.IsCardCompleteAt(id, cell)) continue;
-                var card = Field.Single(c => c.Id == id);
-                // 即使缺灵、槽满或本行额度已用，末格仍须消费冻结；当格不补发。
-                if (card.ConsumeFreezeAtScanEnd()) continue;
-                if (!card.BaseData.HasScanOpportunity) continue;
-                if (used) { Log($"格({x + 1},{cell.Y + 1}) {card.DefineId} 本行机会已用"); continue; }
-                if (!card.HasActivationResources()) { Log($"格({x + 1},{cell.Y + 1}) {card.DefineId} 未亮满，继续扫描"); continue; }
-                used = card.TryUseFromScan();
-                Log($"格({x + 1},{cell.Y + 1}) {card.DefineId} {(used ? "使用" : "待发占位，保持点亮等待")}");
+                Field.Single(c => c.Id == id).ResolveScanEnd(ref rowActivationUsed);
             }
         }
     }

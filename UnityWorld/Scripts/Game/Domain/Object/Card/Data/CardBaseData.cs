@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using UnityWorld.Core;
 using UnityWorld.Game.Data;
 
@@ -17,12 +18,17 @@ namespace UnityWorld.Game.Domain
         public int Size { get; set; } = 1;
         public List<BackpackCell> Shape { get; set; } = [];
         public bool ScanActivatable { get; set; }
+        public int MaxUsesPerRound { get; set; } = 1;
         public bool? ProducesContest { get; set; }
         public string CompatibilityStatus { get; set; } = "Migrated";
         public string CompatibilityReason { get; set; } = "";
-        public bool HasScanOpportunity => ScanActivatable || Keywords.Contains("FaShu") || Keywords.Contains("ZhaoShi");
-        public bool HasEventOpportunity => Keywords.Contains("FaBao");
-        public bool HasActiveAbility => HasScanOpportunity || HasEventOpportunity;
+        // Main 由 Keywords 得出，卡实例持久化时也不单独写一份。
+        [JsonIgnore]
+        public CardMainKeyword MainKeyword => CardKeywordRoles.RequireMain(Keywords);
+        public bool HasScanOpportunity => MainKeyword != CardMainKeyword.Passive;
+        public bool HasActiveAbility => HasScanOpportunity;
+        // 旧事件调用方可读取此值；法宝现在只在背包末格发动。
+        public bool HasEventOpportunity => false;
 
         /// <summary>冷却时间（秒）</summary>
         public float Cooldown { get; set; } = 3f;

@@ -2,7 +2,7 @@
   {
     "ID": "card_fabao_jian",
     "DisplayName": "长剑",
-    "Desc": "剑气：当抽取mp时，造成<武器>射击伤",
+    "Desc": "激活期间，己方斩击对拼获胜后，己方下一次招式对拼点数 +1。",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 50,
@@ -18,7 +18,7 @@
       "斩",
       "剑"
     ],
-    "ProducesContest": true,
+    "ProducesContest": false,
     "CompatibilityStatus": "Migrated",
     "CompatibilityReason": ""
   },
@@ -31,7 +31,6 @@
     "Cooldown": 60,
     "Keywords": [
       "FaBao",
-      "Passive",
       "Armor"
     ],
     "ManaCost": {
@@ -61,8 +60,7 @@
       "狼"
     ],
     "Keywords": [
-      "FaBao",
-      "Passive"
+      "FaBao"
     ],
     "ProducesContest": false,
     "CompatibilityStatus": "Unmigrated",

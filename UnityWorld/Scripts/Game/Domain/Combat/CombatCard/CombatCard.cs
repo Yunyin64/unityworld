@@ -17,10 +17,15 @@ namespace UnityWorld.Game.Domain.Combat
 
         private bool isReady = false;
         private bool _usingActiveOpportunity;
+        private bool _buildingContest;
         private bool _awaitingApply;
-        private APIContext _activationEvent;
+        private bool _passiveActive;
+        private int _lastFormUseRound;
+        private int _formUsesInRound;
         internal long? PresentationActionId { get; private set; }
         internal long? PresentationContestId { get; set; }
+        /// <summary>被动在场生效。冻结影响下一次发动，当前激活仍可响应事件。</summary>
+        public bool IsPassiveActive => _passiveActive && Owner?.IsActive == true;
         public bool IsFrozen { get; private set; }
         public bool Freeze()
         {
@@ -51,15 +56,20 @@ namespace UnityWorld.Game.Domain.Combat
         public void PreStart()
         {
             InitializeLuaCards();
-            CallLua("PreStart");
+            if (BaseData.MainKeyword != CardMainKeyword.FaBao) CallLua("PreStart");
         }
 
         public void Start()
         {
             Ticks["Main"] = 0;
             Ticks["CD"] = 0;
-            SetPhase(BaseData.HasActiveAbility ? CombatCardPhase.Waiting : CombatCardPhase.Passive);
+            var main = BaseData.MainKeyword;
+            SetPhase(main == CardMainKeyword.Passive ? CombatCardPhase.Passive : CombatCardPhase.Waiting);
+            if (main == CardMainKeyword.FaBao) return;
+            if (main == CardMainKeyword.Passive) SetPassiveActive(true);
             CallLua("Start");
+            // 旧被动卡的显式 Apply 是开场效果。空被动仍只占格。
+            if (main == CardMainKeyword.Passive && this.HasHook("Apply")) Apply();
         }
         public void ReLoad()
         {
@@ -70,10 +80,11 @@ namespace UnityWorld.Game.Domain.Combat
         {
             ReLoad();
             var ctx = CreateCtx();
-            if (BaseData.HasActiveAbility) InvokeOwnHook("Tick", ctx);
+            var main = BaseData.MainKeyword;
+            if (main is CardMainKeyword.FaShu or CardMainKeyword.ZhaoShi) InvokeOwnHook("Tick", ctx);
             // Tick/OnTick 是同一生命周期的两种历史拼写，只选一个。
-            RunKeywordHooks("OnTick", ctx, "Tick");
-            if (!BaseData.HasActiveAbility || HasKeyword("Passive")) InvokeOwnHook("OnPassiveTick", ctx);
+            if (main != CardMainKeyword.FaBao || IsPassiveActive) RunKeywordHooks("OnTick", ctx, "Tick");
+            if (IsPassiveActive) InvokeOwnHook("OnPassiveTick", ctx);
             CardModifierTick();
             HookUse.Clear();
             Ticks["Main"]++;
@@ -108,87 +119,94 @@ namespace UnityWorld.Game.Domain.Combat
 
 
 
-        internal bool TryUseFromScan()
+        internal void ResolveScanEnd(ref bool rowActivationUsed)
         {
-            return BaseData.HasScanOpportunity && TryCommitUse(null);
+            var main = BaseData.MainKeyword;
+            var wasFrozen = IsFrozen;
+            if (!wasFrozen && !rowActivationUsed && CanUseAtScanEnd(main))
+            {
+                CommitScanUse(main, ref rowActivationUsed);
+                return;
+            }
+
+            // 即使本行额度已用，真实扫到末格也会结束未能续期的法宝被动。
+            if (main == CardMainKeyword.FaBao) SetPassiveActive(false);
+            if (wasFrozen) ConsumeFreezeAtScanEnd();
         }
 
-        /// <summary>返回本事件是否接收该机会；两通道收集完后按位置统一提交，不代表已成功 Use。</summary>
-        public bool TryUseFromEvent(APIContext eventCtx)
+        /// <summary>兼容旧调用。事件可驱动激活中的被动，主动发动只由扫描授权。</summary>
+        public bool TryUseFromEvent(APIContext eventCtx) => false;
+
+        private bool CanUseAtScanEnd(CardMainKeyword main)
         {
-            if (!BaseData.HasEventOpportunity || eventCtx == null || eventCtx.Scene != Scene || eventCtx.EventId == 0 || !Scene.IsCurrentEvent(eventCtx)) return false;
-            if (eventCtx.SuccessfulEventCards.Contains(Id) || !HasUseEligibility()) return false;
-            return Scene.RequestEventOpportunity(this, eventCtx);
+            if (!BaseData.HasScanOpportunity || Scene.IsFinished || !Owner.IsActive || _usingActiveOpportunity ||
+                _awaitingApply || CheckPhase(CombatCardPhase.InPending) || !HasActivationResources()) return false;
+            if (main == CardMainKeyword.FaBao) return true;
+            if (ProducesContest && Owner.PendingSlot != null) return false;
+            return main != CardMainKeyword.ZhaoShi || (Owner.HasCombatFormSource(this) &&
+                (_lastFormUseRound == Owner.Backpack.Round ? _formUsesInRound : 0) < BaseData.MaxUsesPerRound);
         }
 
-        internal bool TryCommitEventOpportunity(APIContext eventCtx)
-        {
-            if (!Scene.IsCurrentEvent(eventCtx) || eventCtx.SuccessfulEventCards.Contains(Id)) return false;
-            return TryCommitUse(eventCtx);
-        }
+        private bool ProducesContest => BaseData.ProducesContest ?? this.HasHook("Contest");
 
-        private bool HasUseEligibility()
-        {
-            return !Scene.IsFinished && Owner.IsActive && BaseData.HasActiveAbility && !IsFrozen && !_usingActiveOpportunity
-                && !_awaitingApply && !CheckPhase(CombatCardPhase.InPending) && HasActivationResources()
-                && (!(BaseData.ProducesContest ?? this.HasHook("Contest")) || Owner.PendingSlot == null);
-        }
-
-        private bool TryCommitUse(APIContext eventCtx)
+        private void CommitScanUse(CardMainKeyword main, ref bool rowActivationUsed)
         {
             Scene.ThrowIfEventAborted();
-            if (!HasUseEligibility()) return false;
-            // 只有本来能够提交的机会才可能构成循环；缺灵/冻结等自然停止不能误杀。
-            if (eventCtx != null && eventCtx.ActivationPath.Contains(Id))
+            var resourcesBefore = Scene.PresentationRecordingEnabled
+                ? CombatScene.PresentationCopy(AssignedElements.Select(e => e.ToString())) : null;
+            // 开始 Lua、广播事件或写出表现记录前，一次性提交灵元、行额度及招式次数。
+            rowActivationUsed = true;
+            ClearAssignedMana();
+            if (main == CardMainKeyword.ZhaoShi)
             {
-                if (eventCtx.ActivationPath.LastOrDefault() == Id)
+                if (_lastFormUseRound != Owner.Backpack.Round)
                 {
-                    Log($"拒绝自身派生事件重入 Event={eventCtx.EventId} Chain={eventCtx.ChainId}");
-                    return false;
+                    _lastFormUseRound = Owner.Backpack.Round;
+                    _formUsesInRound = 0;
                 }
-                Scene.AbortEventChain($"主动事件循环 Card={Id}:{DefineId} path={string.Join(" -> ", eventCtx.ActivationPath)} -> {Id}");
+                _formUsesInRound++;
             }
             _usingActiveOpportunity = true;
-            _awaitingApply = true;
-            _activationEvent = eventCtx;
-            eventCtx?.SuccessfulEventCards.Add(Id);
+            _awaitingApply = main != CardMainKeyword.FaBao;
             UseCount++;
             var parentOrigin = Scene.CapturePresentationOrigin();
             PresentationActionId = Scene.NextPresentationIdentity();
             PresentationContestId = null;
             using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(PresentationActionId,
                 parentOrigin?.ActionId, parentOrigin?.ContestId, null));
-            Log(eventCtx == null ? "扫描机会提交 Use" : $"条件机会提交 Use Event={eventCtx.EventId} Chain={eventCtx.ChainId} Trigger={eventCtx.EventName} Caster={eventCtx.Caster?.Id} Source={eventCtx.SourceCard?.Id}:{eventCtx.SourceCard?.DefineId}");
-            var resourcesBefore = Scene.PresentationRecordingEnabled
-                ? CombatScene.PresentationCopy(AssignedElements.Select(e => e.ToString())) : null;
-            // 使用已成功提交，由卡自身结束本次蓄灵，保留原来的清空时机。
-            ClearAssignedMana();
+            Log("末格扫描提交发动");
             if (resourcesBefore != null)
                 Scene.RecordPresentation(CombatPresentationKind.CardUsed, Owner, this,
                     origin: new PresentationOrigin(PresentationActionId, parentOrigin?.ActionId, parentOrigin?.ContestId, null),
                     used: new CardUsedPresentation(resourcesBefore, Array.AsReadOnly(Array.Empty<string>())));
-            Scene.BeginActivation(this, eventCtx);
+            Scene.BeginActivation(this);
             try { Use(); }
             finally
             {
                 try { Scene.EndActivation(); }
                 finally { _usingActiveOpportunity = false; }
             }
-            return true;
         }
 
-        public void Use()
+        private void Use()
         {
-            if (!_usingActiveOpportunity) throw new InvalidOperationException("Use 只能由扫描或条件机会授权。");
-            if (BaseData.ProducesContest ?? this.HasHook("Contest")) Contest();
+            if (!_usingActiveOpportunity) throw new InvalidOperationException("Use 只能由末格扫描授权。");
+            if (BaseData.MainKeyword == CardMainKeyword.FaBao)
+            {
+                SetPassiveActive(true);
+                Scene.TriggerCombatEvent("OnUse", CreateCtx());
+                return;
+            }
+            if (ProducesContest) Contest();
             Scene.TriggerCombatEvent("OnUse", CreateCtx());
             if (!CheckPhase(CombatCardPhase.InPending)) Apply();
         }
 
-        public void Contest()
+        private void Contest()
         {
-            if (!_usingActiveOpportunity) throw new InvalidOperationException("Contest 只能在受控主动使用时产生待发数据。");
-            CallLua("Contest");
+            _buildingContest = true;
+            try { CallLua("Contest"); }
+            finally { _buildingContest = false; }
         }
 
         public void Apply()
@@ -198,7 +216,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (ownsScope)
             {
                 _usingActiveOpportunity = true;
-                Scene.BeginActivation(this, _activationEvent);
+                Scene.BeginActivation(this);
             }
             try
             {
@@ -207,7 +225,7 @@ namespace UnityWorld.Game.Domain.Combat
                 ApplyCount++;
                 CallLua("Apply");
                 Scene.TriggerCombatEvent("OnApply", CreateCtx());
-                if (BaseData.HasActiveAbility) SetPhase(CombatCardPhase.Finished);
+                SetPhase(BaseData.HasActiveAbility ? CombatCardPhase.Finished : CombatCardPhase.Passive);
                 presentation?.Complete();
             }
             finally
@@ -227,8 +245,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             SourceCard = this,
             Caster = Owner,
-            Scene = Owner?.Scene,
-            TriggerEvent = _activationEvent
+            Scene = Owner?.Scene
         };
         private APIContext CreateCtx<T>(string key,T value)
         {
@@ -300,6 +317,32 @@ namespace UnityWorld.Game.Domain.Combat
             RunKeywordHooks(hookName, eventCtx, alias);
         }
 
+        internal void DispatchCombatEvent(string hookName, APIContext ctx)
+        {
+            if ((BaseData.MainKeyword is CardMainKeyword.FaBao or CardMainKeyword.Passive) && !IsPassiveActive) return;
+            CallLua(hookName, ctx);
+        }
+
+        private void SetPassiveActive(bool active)
+        {
+            if (_passiveActive == active) return;
+            _passiveActive = active;
+            CallLua(active ? "OnPassiveActivated" : "OnPassiveDeactivated");
+        }
+
+        internal void ModifyPairedContest(ContestData contest)
+        {
+            if (!IsPassiveActive || !this.HasHook("OnBeforePairedContest")) return;
+            var ctx = new APIContext { Caster = contest.OwnerNpc, Scene = Scene, SourceCard = contest.SourceCard };
+            ctx.Set("ContestData", contest);
+            var previous = contest.ContestValue;
+            using var presentation = Scene.BeginPresentationEffect(this, "OnBeforePairedContest");
+            this.CallLuaHook<bool>("OnBeforePairedContest", env, ctx);
+            Scene.ThrowIfEventAborted();
+            if (contest.ContestValue != previous) Scene.MarkPresentationEffect();
+            presentation?.Complete();
+        }
+
         private void InvokeOwnHook(string hookName, APIContext ctx)
         {
             using var presentation = Scene?.BeginPresentationEffect(this, hookName);
@@ -310,7 +353,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void End()
         {
-            
+            SetPassiveActive(false);
         }
         public void Cleanup()
         {

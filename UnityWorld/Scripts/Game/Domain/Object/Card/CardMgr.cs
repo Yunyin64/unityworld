@@ -40,6 +40,10 @@ namespace UnityWorld.Game.Domain
         // ── 从 Define 实例化 ──────────────────────────────────
         public Card InstantiateFromDefine(CardDefine cardDefine)
         {
+            // 先校验角色再分配实体 ID，避免无效定义留下半注册卡牌。
+            var main = CardKeywordRoles.RequireMain(cardDefine.Keywords, cardDefine.ID);
+            if (main == CardMainKeyword.ZhaoShi && cardDefine.MaxUsesPerRound < 1)
+                throw new InvalidOperationException($"招式 {cardDefine.ID} 的每轮发动上限必须为正数。");
             if (cardDefine.ManaCost.Keys.Any(k => k is "Min" or "Max"))
                 throw new InvalidOperationException($"卡 {cardDefine.ID} 的 Min/Max 灵元需求已 Deprecated，禁止实例化以免变成免费或无效费用。");
             var shape = cardDefine.GetShape();
@@ -57,6 +61,7 @@ namespace UnityWorld.Game.Domain
                     Size = cardDefine.Size,
                     Shape = shape,
                     ScanActivatable = cardDefine.ScanActivatable,
+                    MaxUsesPerRound = cardDefine.MaxUsesPerRound,
                     ProducesContest = cardDefine.ProducesContest,
                     CompatibilityStatus = cardDefine.CompatibilityStatus,
                     CompatibilityReason = cardDefine.CompatibilityReason,

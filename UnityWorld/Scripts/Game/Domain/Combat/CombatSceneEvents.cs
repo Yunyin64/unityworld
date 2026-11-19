@@ -15,20 +15,12 @@ namespace UnityWorld.Game.Domain.Combat
         private long _nextChainId;
         private bool _drainingEvents;
         private APIContext _currentEvent;
-        private bool _collectingEventOpportunities;
-        private readonly Dictionary<int, CombatCard> _eventOpportunities = new();
         public string EventFailure { get; private set; }
         public int LargestEventChain { get; private set; }
-        internal bool IsCurrentEvent(APIContext ctx) => _drainingEvents && ReferenceEquals(_currentEvent, ctx);
-        internal bool RequestEventOpportunity(CombatCard card, APIContext ctx)
-        {
-            if (!_collectingEventOpportunities || !IsCurrentEvent(ctx)) return false;
-            return _eventOpportunities.TryAdd(card.Id, card);
-        }
 
-        internal void BeginActivation(CombatCard card, APIContext trigger)
+        internal void BeginActivation(CombatCard card)
         {
-            var parent = trigger ?? _currentEvent;
+            var parent = _currentEvent;
             var path = parent == null ? new List<int>() : new List<int>(parent.ActivationPath);
             path.Add(card.Id);
             _activationFrames.Push((parent?.ChainId ?? ++_nextChainId, path));
@@ -84,28 +76,17 @@ namespace UnityWorld.Game.Domain.Combat
                     _eventHistory.Enqueue($"Event={ctx.EventId} Chain={ctx.ChainId} {ctx.EventName} Caster={ctx.Caster?.Id} Source={ctx.SourceCard?.Id}:{ctx.SourceCard?.DefineId} Path=[{string.Join(",", ctx.ActivationPath)}]");
                     while (_eventHistory.Count > 64) _eventHistory.Dequeue();
                     if (count > EventChainBudget) AbortEventChain($"事件链超过诊断预算 {EventChainBudget}");
-                    _eventOpportunities.Clear();
-                    _collectingEventOpportunities = true;
                     DispatchHookToAll(ctx.EventName, ctx);
                     var scopes = new List<(Scope scope, string id)>();
                     if (ctx.Caster != null) scopes.Add((Scope.CombatNpc, ctx.Caster.Id.ToString()));
                     if (ctx.SourceCard != null) scopes.Add((Scope.CombatCard, ctx.SourceCard.Id.ToString()));
                     EventMgr.Instance?.TriggerEvent(ctx.EventName, ctx, scopes.ToArray());
                     ThrowIfEventAborted();
-                    _collectingEventOpportunities = false;
-                    // 两通道全部条件收集完成后统一争槽；注册顺序不会抢先提交。
-                    foreach (var card in _eventOpportunities.Values.OrderBy(c => c.Owner.Id)
-                        .ThenBy(c => c.Owner.Backpack.GetCardPosition(c.Id)?.Y ?? int.MaxValue)
-                        .ThenBy(c => c.Owner.Backpack.GetCardPosition(c.Id)?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
-                        card.TryCommitEventOpportunity(ctx);
-                    _eventOpportunities.Clear();
                 }
             }
             finally
             {
                 _currentEvent = null;
-                _collectingEventOpportunities = false;
-                _eventOpportunities.Clear();
                 _drainingEvents = false;
                 if (EventFailure != null) { _eventQueue.Clear(); _eventPresentationOrigins.Clear(); }
             }

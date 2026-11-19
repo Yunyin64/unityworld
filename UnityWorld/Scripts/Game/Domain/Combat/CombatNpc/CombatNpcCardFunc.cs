@@ -75,6 +75,11 @@ namespace UnityWorld.Game.Domain.Combat
             return Field.Where(c => c.HasKeyword("ZhaoShi")).ToList();
         }
 
+        // 招式认该实例的已装备父来源，父卡的摆放与被动开关不参与判断。
+        internal bool HasCombatFormSource(CombatCard card) => card.ParentCardId != card.Id &&
+            CardData.EquippedFaBao.Contains(card.ParentCardId) &&
+            EquipMgr.Instance?.GetById(card.ParentCardId)?.FormList.Contains(card.DefineId) == true;
+
         public int GetCurrentZhaoShiCardId()
         {
             return CurrentZhaoShiCardId;
@@ -124,7 +129,7 @@ namespace UnityWorld.Game.Domain.Combat
                         Backpack.RemoveCard(card.Id);
                         // 离场同步释放卡上资源，保留原先删除背包蓄灵记录的语义。
                         card.ClearAssignedMana();
-                        Field.Remove(card);
+                        if (Field.Remove(card)) card.End();
                         Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
@@ -173,6 +178,7 @@ namespace UnityWorld.Game.Domain.Combat
                         Field.Remove(card);
                         Reserve.Add(card);
                         card.CallLua("OnRecall");
+                        card.End();
                         Log($"[Recall] {card.DisplayName} Field→Reserve，当前SP={GetSp()}");
                         break;
                 }

@@ -8,7 +8,6 @@ local card = setmetatable({}, { __index = CardBase })
 card.CardData = {
     Size = 1,
     Cooldown = 6,
-    CardType = "FaShu",
     ManaCost = { Huo = 1 },
 }
 

@@ -186,22 +186,24 @@ namespace UnityWorld.Game.Domain.Combat
         public CombatResult ResolveContest(ContestData contestA, ContestData contestB)
         {
             var ret = new CombatResult();
-            var npcA = contestA.OwnerNpc;
-            var npcB = contestB.OwnerNpc;
-
             if (contestA == null || contestB == null)
             {
-                Log($"  对拼跳过: [{npcA.GetName()}]槽={contestA != null} [{npcB.GetName()}]槽={contestB != null}");
+                Log("  对拼跳过：双方待发数据未齐全");
                 ret.Set("IsEmpty", true);
                 return ret;
             }
 
-            int valueA = contestA.ContestValue;
-            int valueB = contestB.ContestValue;
+            var npcA = contestA.OwnerNpc;
+            var npcB = contestB.OwnerNpc;
             var contestId = Scene.NextPresentationIdentity();
             contestA.PresentationContestId = contestB.PresentationContestId = contestId;
             contestA.SourceCard.PresentationContestId = contestB.SourceCard.PresentationContestId = contestId;
             using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(null, null, contestId, null));
+            // 下一次实际对拼才消费招式强化。入槽与轮末直击均不调用这个阶段。
+            npcA.ApplyPairedFormBonuses(contestA);
+            npcB.ApplyPairedFormBonuses(contestB);
+            int valueA = contestA.ContestValue;
+            int valueB = contestB.ContestValue;
             if (Scene.PresentationRecordingEnabled)
             {
                 ContestSidePresentation Side(ContestData data) => new(data.OwnerNpc.Id,
@@ -264,6 +266,7 @@ namespace UnityWorld.Game.Domain.Combat
             ctx.Set("Loser", loser);
             ctx.Set("Overflow", overflow);
             ctx.Set("WinnerType", winnerContest.ContestType);
+            ctx.Set("WinnerTypeName", winnerContest.ContestType.ToString());
             ctx.Set("LoserType", loserContest.ContestType);
             ctx.Set("WinnerCard", winnerContest.SourceCard);
             ctx.Set("LoserCard", loserContest.SourceCard);
@@ -273,6 +276,12 @@ namespace UnityWorld.Game.Domain.Combat
             contestB.SourceCard.Apply();
 
             return ret;
+        }
+
+        private void ApplyPairedFormBonuses(ContestData contest)
+        {
+            if (contest.SourceCard.BaseData.MainKeyword != CardMainKeyword.ZhaoShi) return;
+            foreach (var card in Field) card.ModifyPairedContest(contest);
         }
 
         private CombatResult ContestWin(CombatResult ctx, ContestData win, ContestData lose, int overflow)

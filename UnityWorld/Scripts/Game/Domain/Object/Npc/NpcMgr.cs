@@ -95,7 +95,7 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public Npc Assemble(NpcDefine define)
         {
-            // 模板配置检查由客户端编辑器负责；后端直接使用定义进入装配流程。
+            // 后端也校验显式位置和装备绑定，导入文件可绕过客户端进入这里。
             var ctx = NpcDefineMgr.ToBirthContext(define);
             ctx.AssemblySource = NpcAssemblySource.Template;
             var npc = ctx.MainNpc = new Npc(Soul.NewId());
@@ -119,8 +119,16 @@ namespace UnityWorld.Game.Domain
             var ctx = NpcDefineMgr.ToBirthContext(define);
             ctx.AssemblySource = source;
             ctx.MainNpc = new Npc(Soul.NewId());
-            InitializeSystems(ctx);
-            return ctx.MainNpc;
+            try
+            {
+                InitializeSystems(ctx);
+                return ctx.MainNpc;
+            }
+            catch
+            {
+                CleanupFailedAssembly(ctx.MainNpc);
+                throw;
+            }
         }
 
         private void InitializeSystems(BirthContext ctx)
@@ -191,21 +199,19 @@ namespace UnityWorld.Game.Domain
                 var equip = Equip.FromDefine(equipDefine);
                 equip.Id = card.Id;
                 EquipMgr.Instance.Add(card.Id, equip);
-                npc.EquipFaBao(card.Id);
+                // 模板中的招式实例由显式位置条目创建，装备登记不再额外发牌。
+                data.EquippedFaBao.Add(card.Id);
             }
             for (int i = 0; i < define.InitCardPlacements.Count; i++)
             {
                 if (define.InitCardPlacements[i].ParentPlacementIndex is not int parentIndex) continue;
                 if (parentIndex < 1 || parentIndex > data.AllCards.Count || parentIndex == i + 1 ||
                     EquipMgr.Instance.GetById(data.AllCards[parentIndex - 1].Id) == null)
-                    throw new InvalidOperationException($"位置条目 {i + 1} 的父装备序号 {parentIndex} 无效。");
+                    throw new InvalidOperationException($"位置条目 {i + 1}（{data.AllCards[i].DefineId}）的父装备序号 {parentIndex} 无效。");
                 data.AllCards[i].ParentCardId = data.AllCards[parentIndex - 1].Id;
             }
             BackpackSystem.InitializeTemplateLayout(npc, mains[0].Id);
-            var layout = npc.ValidateBackpackLayout();
-            int occupied = npc.GetFieldSize(), spMax = npc.GetSpMax(), capacity = layout.GetValidCells().Count;
-            if (spMax > capacity || occupied > spMax)
-                throw new InvalidOperationException($"SP 容量错误：上场占格 {occupied}，SP 上限 {spMax}，背包 {capacity}。");
+            npc.ValidateBackpackLayout();
         }
 
         private void CleanupFailedAssembly(Npc npc)

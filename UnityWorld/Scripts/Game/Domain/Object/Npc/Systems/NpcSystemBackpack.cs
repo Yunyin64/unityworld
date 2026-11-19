@@ -79,6 +79,84 @@ namespace UnityWorld.Game.Domain
             return definition;
         }
 
+        public sealed record EquippedForms(string EquipDefineId, IReadOnlyList<string>? Forms);
+        public sealed record PlacedForm(int EntryId, string DefineId, int? ParentEntryId, bool HasPosition);
+        public sealed record EquipmentFormIssue(int EntryId, string Code, string Message);
+
+        /// <summary>按装备条目核对自带招式及坐标。条目标识由调用方提供，格子范围和重叠由布局规则检查。</summary>
+        public static IEnumerable<EquipmentFormIssue> CheckEquipmentForms(
+            IReadOnlyDictionary<int, EquippedForms> equipment, IEnumerable<PlacedForm> forms)
+        {
+            var remaining = new Dictionary<(int ParentEntryId, string DefineId), int>();
+            foreach (var (entryId, item) in equipment)
+            {
+                if (item.Forms == null)
+                {
+                    yield return new(entryId, "equip.forms-invalid", $"装备 {item.EquipDefineId}/{entryId} 的招式清单无效。");
+                    continue;
+                }
+
+                foreach (var defineId in item.Forms)
+                {
+                    if (string.IsNullOrWhiteSpace(defineId))
+                    {
+                        yield return new(entryId, "equip.forms-invalid", $"装备 {item.EquipDefineId}/{entryId} 的招式 ID 不能为空。");
+                        continue;
+                    }
+
+                    var key = (entryId, defineId);
+                    remaining[key] = remaining.GetValueOrDefault(key) + 1;
+                }
+            }
+
+            foreach (var form in forms)
+            {
+                if (form.ParentEntryId is not int parentId || parentId == form.EntryId ||
+                    !equipment.TryGetValue(parentId, out var parent))
+                {
+                    yield return new(form.EntryId, "form.parent", $"招式 {form.DefineId}/{form.EntryId} 缺少有效的已装备父卡（{form.ParentEntryId}）。");
+                    continue;
+                }
+
+                var key = (parentId, form.DefineId);
+                if (!remaining.TryGetValue(key, out int count))
+                    yield return new(form.EntryId, "form.owner", $"装备 {parent.EquipDefineId}/{parentId} 未提供招式 {form.DefineId}/{form.EntryId}。");
+                else if (!form.HasPosition)
+                    yield return new(form.EntryId, "form.position", $"装备 {parent.EquipDefineId}/{parentId} 的招式 {form.DefineId}/{form.EntryId} 缺少有效的背包坐标。");
+                else if (count == 0)
+                    yield return new(form.EntryId, "form.extra", $"装备 {parent.EquipDefineId}/{parentId} 的招式 {form.DefineId}/{form.EntryId} 超出清单数量。");
+                else
+                    remaining[key] = count - 1;
+            }
+
+            foreach (var (key, count) in remaining)
+                if (count > 0)
+                    yield return new(key.ParentEntryId, "equip.form-missing", $"装备 {equipment[key.ParentEntryId].EquipDefineId}/{key.ParentEntryId} 缺少 {count} 张已放置的招式 {key.DefineId}。");
+        }
+
+        // 完整的战前装配才要求装备招式齐全。编辑时允许逐张摆放。
+        internal static void EnsureEquipmentForms(NpcBackpackData backpack, NpcCardData cards)
+        {
+            var field = cards.Field.ToHashSet();
+            var placed = backpack.PlacedCards.Where(entry => entry.Position is { X: >= 1, Y: >= 1 })
+                .Select(entry => entry.CardId).Where(field.Contains).ToHashSet();
+            var equipped = new Dictionary<int, EquippedForms>();
+            foreach (int id in cards.EquippedFaBao.Distinct())
+            {
+                var equip = EquipMgr.Instance?.GetById(id);
+                if (equip == null || !cards.AllCardIds.Contains(id))
+                    throw new InvalidOperationException($"装备卡 {id} 未持有或没有对应的装备实例。");
+                equipped.Add(id, new(equip.DefineId, equip.FormList));
+            }
+
+            var forms = cards.AllCards.Where(card => field.Contains(card.Id) &&
+                    CardKeywordRoles.RequireMain(card.BaseData.Keywords, card.DefineId) == CardMainKeyword.ZhaoShi)
+                .Select(card => new PlacedForm(card.Id, card.DefineId, card.ParentCardId, placed.Contains(card.Id)));
+            var errors = CheckEquipmentForms(equipped, forms).Select(issue => issue.Message).ToArray();
+            if (errors.Length != 0)
+                throw new InvalidOperationException(string.Join("；", errors));
+        }
+
         private (NpcCardData Cards, NpcBackpackData Layout) BeginEdit(Npc npc)
         {
             var cards = NpcMgr.Instance.CardSystem.GetWorldData(npc);
@@ -187,8 +265,16 @@ namespace UnityWorld.Game.Domain
             var position = BackpackCoordinates.ToPosition(new(x, y));
             PlaceBackpackCard(cardId, position.X, position.Y);
         }
-        /// <summary>校验当前装配，不重新查询或修改主功法配置。</summary>
-        public BackpackLevelDefine ValidateBackpackLayout() => NpcSystemBackpack.Validate(BackpackData, CardData);
+        /// <summary>校验已完成的装配，包含装备自带招式和角色 SP。</summary>
+        public BackpackLevelDefine ValidateBackpackLayout()
+        {
+            NpcSystemBackpack.EnsureEquipmentForms(BackpackData, CardData);
+            var layout = NpcSystemBackpack.Validate(BackpackData, CardData);
+            int occupied = GetFieldSize(), spMax = GetSpMax(), capacity = layout.GetValidCells().Count;
+            if (spMax > capacity || occupied > spMax)
+                throw new InvalidOperationException($"SP 容量错误：上场占格 {occupied}，SP 上限 {spMax}，背包 {capacity}。");
+            return layout;
+        }
 
     }
 }

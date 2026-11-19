@@ -8,11 +8,8 @@ local card = setmetatable({}, { __index = CardBase })
 card.CardData = {
     Size = 1,
     Cooldown = 0,
-    CardType = "Item",
     ManaCost = {},
 }
-
-card.Keywords = { "Passive" }
 
 function card:Apply(ctx)
     AddNpcBuff(ctx, "Self", "Zhan_Resist", 1, -1)

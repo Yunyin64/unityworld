@@ -25,8 +25,10 @@ namespace UnityWorld.Game.Data
         public List<BackpackCell> Shape { get; set; } = [];
         public bool UseCustomShapeForTests { get; set; }
 
-        /// <summary>是否参与扫描激活。开启时 ManaCost 总量必须等于 Size。</summary>
+        /// <summary>兼容旧定义中的扫描标记。发动方式由唯一 Main Keyword 决定。</summary>
         public bool ScanActivatable { get; set; }
+        /// <summary>招式实例每个背包扫描轮的成功发动上限。</summary>
+        public int MaxUsesPerRound { get; set; } = 1;
         public bool? ProducesContest { get; set; }
         public string CompatibilityStatus { get; set; } = "Migrated";
         public string CompatibilityReason { get; set; } = "";

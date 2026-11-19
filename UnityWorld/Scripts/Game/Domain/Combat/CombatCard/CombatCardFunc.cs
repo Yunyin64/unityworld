@@ -13,6 +13,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void InitializeLuaCards()
         {
+            var main = CardKeywordRoles.RequireMain(GetKeywords(), DefineId);
             // 加载 Lua 脚本，获得独立的 card table
             env = LuaMgr.Instance.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
             // 注入 C# 卡牌实例引用，供 Lua 通过  self.m_Self / self.m_Owner 访问
@@ -34,6 +35,9 @@ namespace UnityWorld.Game.Domain.Combat
                 if (!GetKeywords().Contains(kw))
                     GetKeywords().Add(kw);
             }
+            // 装配和战斗共用 Main。普通 Lua 附加词仍可加入，新增第二个主词会明确报错。
+            if (CardKeywordRoles.RequireMain(GetKeywords(), DefineId) != main)
+                throw new InvalidOperationException($"卡牌 {DefineId} 的 Main Keyword 不能在 Lua 中变更。");
         }
 
         /// <summary>
@@ -105,8 +109,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// <param name="contestValue">拼点数值（攻击值/盾值/防值）</param>
         public void TryPushToPendingSlot(ContestType contestType, ElementType element, int contestValue)
         {
-            if (!_usingActiveOpportunity) throw new InvalidOperationException("只能由本次受控主动使用入槽。");
-            if (BaseData.ProducesContest == false) throw new InvalidOperationException($"{DefineId} 声明无拼点却尝试入槽。");
+            // 只有当次已授权的法术或招式 Contest 回调能生成待发数据。
+            if (!_buildingContest || BaseData.MainKeyword is CardMainKeyword.FaBao or CardMainKeyword.Passive)
+                throw new InvalidOperationException($"{DefineId} 只能在获准的拼点回调中入槽。");
             if (Owner.PendingSlot != null) throw new InvalidOperationException("唯一待发槽已占用。");
             // 构造 ContestData 快照
             var contestData = new ContestData

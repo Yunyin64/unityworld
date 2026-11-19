@@ -51,16 +51,17 @@ namespace UnityWorld.Game.Domain
         public ContextBase GetEquipData()
         {
             var ctx = new ContextBase();
-            var parentCard = CardMgr.Instance?.GetById(ParentCardId);
-            var equip = GetEquip();
-            if(equip == null) equip = parentCard.GetEquip();
-            if (equip == null) return ctx;
+            // 招式必须读绑定装备，独立装备卡读自身。
+            var equipmentCard = BaseData.MainKeyword == CardMainKeyword.ZhaoShi
+                ? CardMgr.Instance?.GetById(ParentCardId)
+                : this;
+            if (equipmentCard == null || equipmentCard.GetEquip() is not { } equip) return ctx;
             ctx.Set("Attack", equip.Attack);
             ctx.Set("Defend", equip.Defend);
             ctx.Set("Speed", equip.Speed);
             ctx.Set("Amount", equip.Amount);
             ctx.Set("DisplayName", equip.DisplayName);
-            ctx.Set("Element", parentCard.GetElementType().ToString());
+            ctx.Set("Element", equipmentCard.GetElementType().ToString());
             return ctx;
         }
     }

@@ -53,7 +53,7 @@ namespace UnityWorld.Game.Domain
             var copy = CloneSelection();
             copy.AllCardIds = AllCardIds.Where(selected.Contains).ToList();
             copy.AllCards = AllCards.Where(card => selected.Contains(card.Id)).Select(card => card.CreateDataSnapshot()).ToList();
-            copy.EquippedFaBao = EquippedFaBao.Where(selected.Contains).ToList();
+            // 父装备可以在包外提供已放置的招式，战斗保留装备标记但不复制闲置卡实体。
             return copy;
         }
 

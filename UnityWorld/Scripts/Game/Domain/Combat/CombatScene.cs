@@ -383,7 +383,7 @@ namespace UnityWorld.Game.Domain.Combat
                     .ThenBy(c => npc.Backpack.GetCardPosition(c.Id)?.X ?? int.MaxValue).ThenBy(c => c.Id).ToArray())
                 {
                     // Keyword 可以单独监听；不能要求卡自身同时定义同名 hook。
-                    card.CallLua(hookName,ctx);
+                    card.DispatchCombatEvent(hookName, ctx);
                     ThrowIfEventAborted();
                 }
 

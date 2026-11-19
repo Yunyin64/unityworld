@@ -21,6 +21,18 @@ end
 CardBase = {}
 BuffBase = {}
 
+-- 统一读取卡自身装备或招式绑定的父装备。保留招式脚本的返回顺序。
+function CardBase:GetEquip()
+    local equip = self.m_Self:GetEquipData()
+    local name = equip:GetStringValue("DisplayName", "")
+    local attack = equip:GetValue("Attack", 0)
+    local defend = equip:GetValue("Defend", 0)
+    local speed = equip:GetValue("Speed", 0)
+    local amount = equip:GetValue("Amount", 0)
+    local element = equip:GetStringValue("Element", "Wu")
+    return name, attack, defend, speed, amount, element
+end
+
 -- ── KeywordBase 元表 ─────────────────────────────────────────
 KeywordBase = {}
 function KeywordBase.CheckCondition(card)
