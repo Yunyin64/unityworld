@@ -2,7 +2,7 @@
   {
     "ID": "action_heal",
     "DisplayName": "治疗",
-    "Desc": "恢复{Domain}{HealValue}点HP",
+    "Desc": "恢复{Domain}至多{HealValue}点 HP，受最大 HP 限制",
     "FuncName": "Heal",
     "Tags": ["治疗"],
     "ConflictTags": [],

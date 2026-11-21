@@ -61,6 +61,20 @@ public static class TemplateEditorValidationChecks
         Check(!unavailable.IsValid && unavailable.SpMax == null && unavailable.Issues.Any(i => i.Code == "sp.unavailable"), "SP不可用阻塞");
         Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "bad-cost", Size = 2, Keywords = ["FaBao"], ManaCost = new() { ["Jin"] = 1 } })
             .Any(i => i.Code == "card.mana-size"), "卡库共用主动灵元成本检查");
+        Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "no-main", Keywords = ["Item"] })
+            .Any(i => i.Message.Contains("缺少 Main")), "编辑器报告零 Main");
+        Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "two-main", Keywords = ["FaBao", "Passive"] })
+            .Any(i => i.Message.Contains("Main Keyword 冲突")), "编辑器报告两个 Main");
+        Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "wound", Keywords = ["Passive", "Wound"] }).Count == 0,
+            "常驻空被动和普通伤势词可共存");
+
+        var wu = catalog.GetNpc("test_npc_a")!;
+        var realDefinitions = new TestDefinitions(catalog);
+        var real = TemplateEditorValidator.Validate(wu, realDefinitions);
+        Check(real.IsValid && real.OccupiedSp == 12 && real.SpMax == 12, "正式武修预检与后端装配同为 12/12 SP");
+        wu.InitCardPlacements.RemoveAt(wu.InitCardPlacements.Count - 1);
+        Check(TemplateEditorValidator.Validate(wu, realDefinitions).Issues.Any(i => i.Code == "equip.form-missing" && i.PlacementIndex == 3),
+            "缺少招式时定位长剑装配条目");
         Console.WriteLine($"TEMPLATE_EDITOR_VALIDATION_OK assertions={assertions}");
     }
 

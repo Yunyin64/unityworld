@@ -109,7 +109,7 @@ namespace UnityWorld.Tests
 
             // 跨行卡最后一格才可用；旧关键词/Ready/CD 不能提前发动。
             a = Npc(); b = Npc("bp_main_8x3"); ca = Place(a, "bp_charge", 2, 0);
-            ca.BaseData.Keywords.Add("FaShu"); ca.BaseData.Cooldown = 0;
+            ca.BaseData.Cooldown = 0;
             scene = Scene(a, b); npc = scene.GetCombatants()[a.Id]; var active = Card(scene, a, ca);
             Light(npc, active); active.SetReady(true);
             To(scene, 29); Check(active.UseCount == 0 && npc.PendingSlot == null && active.Ticks["CD"] == 0, "旧CD和Ready无出手机会，等待最后一格");
@@ -212,7 +212,7 @@ namespace UnityWorld.Tests
             foreach (var cell in npc.Backpack.EmptyCells()) npc.Backpack.PlaceMana(cell, ElementType.Jin);
             var before = npc.Backpack.Mana.Count; var wound = npc.AddWound("bp_wound_small"); npc.DealFieldChange();
             Check(npc.Backpack.Mana.Count == before - 1 && npc.GetSp() == 2 && npc.Backpack.Placements[wound.Id].Count == 1, "满背包伤口替代一个灵元计SP");
-            Check(wound.env != null && wound.Ticks.ContainsKey("Main"), "新伤口初始化Lua与Start");
+            Check(wound.env != null && wound.IsPassiveActive && wound.ApplyCount == 0 && wound.Ticks.ContainsKey("Main"), "空被动伤口初始化并占格，无开场Apply");
             Check(npc.Backpack.GetCardPosition(wound.Id) == BackpackCoordinates.ToPosition(npc.Backpack.Placements[wound.Id][0]), "动态伤口位置归本场布局");
             var wide = npc.AddWound("bp_wound_wide"); npc.DealFieldChange(); var cells = npc.Backpack.Placements[wide.Id];
             Check(cells.Count == 2 && cells[0].Y == cells[1].Y && cells[1].X == cells[0].X + 1 && npc.Backpack.Mana.Count == before - 3, "多格伤口保持完整形状");
@@ -230,6 +230,7 @@ namespace UnityWorld.Tests
 
             // 人为构造违反设计保证的碎片化数据：明确拒绝，不能伪装成拆格成功。
             a = Npc();
+            a.Stats.SetBase("ShenShi", 16);
             for (int y = 0; y < 5; y++) for (int x = 0; x < 6; x++)
                 if (x % 2 == 1) Place(a, "bp_focus", x, y);
             var fragmented = new CombatBackpack(a.GetBackpackSnapshot(), a.GetCombatCardSnapshot());

@@ -1,42 +1,107 @@
-﻿[
+[
   {
     "ID": "OnUse",
-    "DisplayName": "使用时",
-    "desc": "使用时触发",
+    "DisplayName": "卡牌发动后",
+    "desc": "末格发动成功并提交灵元与本行额度后",
     "score": 0,
-    "tags": ["主动", "使用"],
+    "Tags": ["主动", "使用"],
     "conflictTags": [],
     "weight": 1
   },
   {
     "ID": "OnAttack",
-    "DisplayName": "攻击时",
-    "desc": "己方攻击拼点赢时触发",
+    "DisplayName": "攻击侧结算时",
+    "desc": "非平局对拼的攻击侧结算时，胜负双方都可触发；攻击直击也触发",
     "score": 0,
-    "tags": ["主动", "攻击"],
+    "Tags": ["主动", "攻击"],
+    "conflictTags": [],
+    "weight": 0
+  },
+  {
+    "ID": "OnDefend",
+    "DisplayName": "防御侧结算时",
+    "desc": "非平局对拼的防御侧结算时，胜负双方都可触发",
+    "score": 0,
+    "Tags": [],
     "conflictTags": [],
     "weight": 0
   },
   {
     "ID": "OnApply",
-    "DisplayName": "生效时",
-    "desc": "卡牌生效时触发",
+    "DisplayName": "卡牌效果结算后",
+    "desc": "卡牌 Apply 与对应词条回调结束后",
     "score": 0,
-    "tags": ["主动", "应用"],
+    "Tags": ["主动", "应用"],
     "conflictTags": [],
     "weight": 1
   },
   {
     "ID": "OnStraight",
-    "DisplayName": "直击触发",
-    "desc": "造成直击时触发",
+    "DisplayName": "轮末待发直击时",
+    "desc": "轮末待发对有效目标执行直击流程时，含防御待发",
     "score": 0,
-    "tags": ["主动", "直击"],
+    "Tags": ["主动", "直击"],
     "conflictTags": [],
     "weight": 1
   },
   {
+    "ID": "OnContestOverflow",
+    "DisplayName": "对拼分出胜负时",
+    "desc": "非平局对拼确定胜负与差值后、卡牌 Apply 前",
+    "score": 0,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 0
+  },
+  {
+    "ID": "OnBaseManaDraw",
+    "DisplayName": "基础补灵前",
+    "desc": "开场及本方轮末，在尝试放置基础灵元之前",
+    "score": -4,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
+    "ID": "OnManaDraw",
+    "DisplayName": "成功补灵后",
+    "desc": "成功放置至少一个灵元并扣除实际 MP 后，含主动抽灵",
+    "score": -4,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
+    "ID": "OnMPChanged",
+    "DisplayName": "MP 变化后",
+    "desc": "角色实际增加或减少 MP 后",
+    "score": 0,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 0
+  },
+  {
+    "ID": "OnDamage",
+    "DisplayName": "扣除 HP 后",
+    "desc": "护盾吸收后实际扣除 HP 时，在 HP 清零处理前",
+    "score": 0,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 0
+  },
+  {
+    "ID": "OnHeal",
+    "DisplayName": "恢复 HP 后",
+    "desc": "实际恢复正数 HP 后，施放者字段为受治疗角色",
+    "score": 0,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 0
+  },
+  {
     "ID": "OnContest",
+    "Status": "Pending",
+    "StatusReason": "战斗尚未派发此全场事件。已有的拼点构造和胜差事件各有独立入口。",
     "DisplayName": "对拼触发",
     "desc": "对拼时触发",
     "score": 0,
@@ -45,34 +110,9 @@
     "weight": 1
   },
   {
-    "ID": "OnUse",
-    "DisplayName": "使用时",
-    "desc": "卡的使用，无论是否生效",
-    "score": -4,
-    "tags": [],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnBaseManaDraw",
-    "DisplayName": "固定抽取灵力时",
-    "desc": "抽取灵力",
-    "score": -4,
-    "tags": [],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnManaDraw",
-    "DisplayName": "抽取灵力时",
-    "desc": "抽取灵力",
-    "score": -4,
-    "tags": [],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
     "ID": "OnTick",
+    "Status": "Pending",
+    "StatusReason": "全场 Tick 触发尚未接入。词条和 Modifier 的局部 Tick 回调已有独立入口。",
     "DisplayName": "每帧时",
     "desc": "每帧",
     "score": -4,
@@ -82,96 +122,8 @@
   },
   {
     "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
-    "DisplayName": "死亡触发",
-    "desc": "敌人死亡时触发",
-    "score": -4,
-    "tags": ["被动", "死亡", "黑暗"],
-    "conflictTags": [],
-    "weight": 1
-  },
-  {
-    "ID": "OnDeath",
+    "Status": "Pending",
+    "StatusReason": "死亡触发尚未接入。当前战斗按伤势和败退规则结算。",
     "DisplayName": "死亡触发",
     "desc": "敌人死亡时触发",
     "score": -4,

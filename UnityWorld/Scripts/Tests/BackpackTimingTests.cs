@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 using UnityWorld.Game.Domain.Combat;
 
@@ -48,7 +49,7 @@ namespace UnityWorld.Tests
             MultipleRows();
             EffectBoundary();
             SimultaneousRoundEnd();
-            DerivedPendingWaitsForNextBoundary();
+            FormRoundLimit();
             DefeatStopsCharge();
             Console.WriteLine($"BACKPACK_TIMING_TESTS_OK assertions={_assertions}");
         }
@@ -148,31 +149,62 @@ namespace UnityWorld.Tests
             scene.Cleanup();
         }
 
-        private static void DerivedPendingWaitsForNextBoundary()
+        private static void FormRoundLimit()
         {
-            var a = NewNpc(); var b = NewNpc();
-            var firstA = BackpackModelTests.Place(a, "bp_attack", 1, 0);
-            var firstB = BackpackModelTests.Place(b, "bp_guard", 1, 0);
-            var nextA = BackpackModelTests.Place(a, "bp_attack", 2, 1);
-            var nextB = BackpackModelTests.Place(b, "bp_guard", 2, 1);
-            foreach (var source in new[] { nextA, nextB })
+            var a = NewNpc();
+            var b = NewNpc();
+            Card PlaceThrust(int row)
             {
-                source.BaseData.ScanActivatable = false;
-                source.BaseData.Keywords.AddRange(["FaBao", "BoundaryRefillTest"]);
+                var weapon = a.GainEquip("card_fabao_jian", "short_sword");
+                a.EquipFaBao(weapon.Id);
+                var form = a.GetAllCards().Single(c => c.ParentCardId == weapon.Id && c.DefineId == "card_form_jian_ci");
+                a.PlaceBackpackCardInternal(form.Id, 1, row);
+                return form;
             }
-            using var lua = new NLua.Lua();
-            var keyword = (NLua.LuaTable)lua.DoString("return {OnApply=function(card,ctx) if ctx.SourceCard ~= card then card:TryUseFromEvent(ctx) end end}")[0];
-            LuaMgr.Instance.RegisterKeyword("BoundaryRefillTest", keyword);
-            var scene = Scene(a, b); var na = scene.GetCombatants()[a.Id]; var nb = scene.GetCombatants()[b.Id];
-            var ca = na.GetField().Single(c => c.Id == nextA.Id); var cb = nb.GetField().Single(c => c.Id == nextB.Id);
-            foreach (var npc in new[] { na, nb }) foreach (var card in npc.GetField().Where(c => c.BaseData.HasActiveAbility)) Light(npc, card);
-            for (int i = 0; i < 10; i++) scene.Tick();
-            Check(ca.UseCount == 1 && cb.UseCount == 1 && ca.ApplyCount == 0 && cb.ApplyCount == 0,
-                "对拼Apply事件产生的双方新待发不在同一行边界再次对拼");
-            Check(na.PendingSlot?.SourceCard == ca && nb.PendingSlot?.SourceCard == cb, "新槽保留至后续行边界");
-            for (int i = 0; i < 10; i++) scene.Tick();
-            Check(ca.ApplyCount == 1 && cb.ApplyCount == 1 && na.PendingSlot == null && nb.PendingSlot == null,
-                "后续行边界恰好结算派生待发一次");
+            var first = PlaceThrust(0);
+            var second = PlaceThrust(3);
+            var block = BackpackModelTests.Place(b, "bp_guard", 1, 1);
+            var scene = Scene(a, b);
+            var owner = scene.GetCombatants()[a.Id];
+            var opponent = scene.GetCombatants()[b.Id];
+            var card = owner.GetField().Single(c => c.Id == first.Id);
+            var other = owner.GetField().Single(c => c.Id == second.Id);
+            void To(int tick)
+            {
+                while (!scene.IsFinished && scene.CurrentTick < tick) scene.Tick();
+            }
+            void PlaceAgainOnRow(int row)
+            {
+                owner.RemoveCombatCard(card);
+                owner.DealFieldChange();
+                // 用不匹配的灵元占住更早的空格，让同一战斗实例在后面的行重新进包。
+                foreach (var cell in owner.Backpack.EmptyCells().Where(c => c.Y < row).ToArray())
+                    owner.Backpack.PlaceMana(cell, ElementType.Huo);
+                owner.AddCombatCard(card);
+                owner.DealFieldChange();
+                Check(owner.Backpack.GetCardCells(card.Id).All(c => c.Y == row), "同一招式实例改到稍后的扫描行");
+                Light(owner, card);
+            }
+
+            Light(owner, card);
+            card.Freeze();
+            To(10);
+            Check(card.UseCount == 0 && card.LitCount == 1 && !card.IsFrozen, "冻结失败后保留本轮次数");
+            PlaceAgainOnRow(1);
+            Light(opponent, opponent.GetField().Single(c => c.Id == block.Id));
+            To(20);
+            Check(card.UseCount == 1 && card.ApplyCount == 1 && owner.PendingSlot == null,
+                "冻结未消耗次数，包外父装备仍可供招式发动及对拼");
+            PlaceAgainOnRow(2);
+            To(30);
+            Check(card.UseCount == 1 && card.LitCount == 1, "同轮移位后重新满灵仍受上限约束");
+            Light(owner, other);
+            To(40);
+            Check(other.UseCount == 1 && owner.PendingSlot?.SourceCard.Id == second.Id &&
+                owner.PendingSlot.ContestValue == 2 && card.ParentCardId != other.ParentCardId,
+                "另一把短剑的同名招式拥有独立次数且取自己的攻击");
+            To(80);
+            Check(owner.Backpack.Round == 2 && card.UseCount == 2, "本方下一轮恢复一次招式次数");
             scene.Cleanup();
         }
     }

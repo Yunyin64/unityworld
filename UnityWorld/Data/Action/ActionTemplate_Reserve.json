@@ -1,6 +1,8 @@
 [
   {
     "ID": "action_deploy",
+    "Status": "Pending",
+    "StatusReason": "候补池与战斗背包之间的操作规则待接入。",
     "DisplayName": "部署",
     "Desc": "将{Domain}一张卡从候补池部署到运转池",
     "FuncName": "Deploy",
@@ -25,6 +27,8 @@
   },
   {
     "ID": "action_recall",
+    "Status": "Pending",
+    "StatusReason": "候补池与战斗背包之间的操作规则待接入。",
     "DisplayName": "召回",
     "Desc": "将{Domain}一张卡从运转池召回候补池",
     "FuncName": "Recall",

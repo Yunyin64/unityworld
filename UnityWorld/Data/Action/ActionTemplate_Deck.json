@@ -2,7 +2,7 @@
   {
     "ID": "action_remove_wound",
     "DisplayName": "移除伤势",
-    "Desc": "移除{Domain}随机一张体量≤{Size}的伤势卡",
+    "Desc": "移除{Domain}场上一张随机伤势卡，Exact 为{Exact}，true 选正好{Size}格，false 选至多{Size}格",
     "FuncName": "RemoveRandomWound",
     "Tags": ["治疗", "卡组"],
     "ConflictTags": [],
@@ -31,6 +31,8 @@
   },
   {
     "ID": "action_displace",
+    "Status": "Pending",
+    "StatusReason": "等待战斗背包内的位移规则和入口。",
     "DisplayName": "位移卡牌",
     "Desc": "将{DoMain}目标卡牌位移至{Position}",
     "FuncName": "Displace",

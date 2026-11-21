@@ -85,6 +85,10 @@ try
     {
         UnityWorld.Tests.EffectMigrationTests.Run();
     }
+    else if (args.Contains("--tca-tests"))
+    {
+        UnityWorld.Tests.TcaAlignmentTests.Run();
+    }
     else if (timingTests)
     {
         UnityWorld.Tests.BackpackTimingTests.Run();

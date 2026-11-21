@@ -14,15 +14,15 @@
 - **THEN** 编译通过且枚举值可正常使用
 
 ### Requirement: CardDefine Keywords 字段
-`CardDefine` SHALL 包含 `List<string> Keywords` 字段，支持 JSON 反序列化（JsonPropertyName "keywords"）。默认值为空列表。
+`CardDefine` SHALL 通过 `Keywords` 列表配置主、普通 Keyword，保留现有 JSON 列表格式。卡牌定义在用于创建 Card 之前 SHALL 满足 `keyword-system` 的唯一 Main 校验。
 
 #### Scenario: JSON 中配置 Keywords
-- **WHEN** CardDefine JSON 包含 `"keywords": ["Passive"]`
-- **THEN** 反序列化后 CardDefine.Keywords 包含 "Passive"
+- **WHEN** CardDefine JSON 的 `Keywords` 包含 `Passive` 与 `Item`
+- **THEN** 判定 `Passive` 为 Main，并保留 `Item` 为普通 Keyword
 
 #### Scenario: JSON 中未配置 Keywords
-- **WHEN** CardDefine JSON 不包含 "keywords" 字段
-- **THEN** CardDefine.Keywords 为空列表
+- **WHEN** CardDefine JSON 缺少 `Keywords` 或其列表为空
+- **THEN** 在使用该定义创建 Card 前报告缺少 Main
 
 ### Requirement: CardBaseData Keywords 字段
 `CardBaseData` SHALL 包含 `List<string> Keywords` 字段。`Clone()` 方法 SHALL 深拷贝该列表。
@@ -31,28 +31,28 @@
 - **WHEN** 对一个含有 Keywords = ["Passive"] 的 CardBaseData 调用 Clone()
 - **THEN** 克隆体的 Keywords 列表内容相同但引用不同（修改克隆体不影响原体）
 
-### Requirement: CombatCard.Tick() 跳过 Passive 卡的 CD 循环
-CombatCard.Tick() SHALL 不通过 Waiting/InCD/Ready 驱动独立 CD。纯被动卡保留 keyword OnTick 与自身 OnPassiveTick；带主动机会的卡也可具有被动效果，其被动效果 SHALL 不被冻结或主动待发状态屏蔽。扫描与条件 Keyword 决定主动机会，Passive 不构成排他卡类型。
+### Requirement: 常驻被动执行在场回调
+以 `Passive` 为 Main 的卡 SHALL 在场期间继续执行适用的周期和事件回调。被动生命周期 SHALL 独立于扫描进度、满灵、主动待发及冻结，卡牌 SHALL 在离场时结束由在场状态提供的常驻被动。
 
 #### Scenario: Passive 卡的 Tick
-- **WHEN** 一张 Phase == Passive 的卡执行 Tick()
-- **THEN** 不调用 CheckMana()、不调用 ResetCD()、不改变 Phase、不增加 CD 计时器，继续调用适用的被动回调
+- **WHEN** 一张常驻被动卡在场并配置有逐 Tick 效果
+- **THEN** 正常执行其被动回调，不进入独立冷却或扫描发动流程
 
-#### Scenario: 主动卡由扫描驱动
-- **WHEN** 一张具有扫描机会且 Phase == Waiting 的主动卡执行 Tick()
-- **THEN** 不自动执行 CheckMana → InCD → ResetCD → Ready；扫描使用仍要求完整扫描、满灵、未冻结和本行机会，附加法宝 Keyword 可另由条件事件尝试使用
+#### Scenario: 被动与扫描额度无关
+- **WHEN** 本行的唯一额度已由法术使用，随后符合常驻被动的触发条件
+- **THEN** 被动照常执行，本行额度保持已用
 
-#### Scenario: 混合卡冻结时被动仍运行
-- **WHEN** 同一卡同时拥有主动机会和被动效果且被冻结
-- **THEN** 被动监听与适用 Tick 回调继续，主动 Use 被阻止，不能借被动回调绕过主动资格检查
+#### Scenario: 被动卡被冻结
+- **WHEN** 在场的常驻被动卡被冻结，随后收到符合条件的监听事件
+- **THEN** 被动效果继续执行，冻结照既有规则等待下一次完整扫描处理
 
-### Requirement: Passive.lua 实现
-Passive Keyword SHALL 提供被动生命周期支持。纯被动卡可处于 Passive 状态；含扫描或条件主动机会的混合卡 SHALL 保留这些机会，不能因 Passive Keyword 的状态设置永久失去主动能力，也不能因禁用旧 CD hooks 而丢失被动效果。
+### Requirement: 被动 Main 入场激活且可为空
+`Passive` SHALL 提供入场即激活的常驻被动生命周期。被动效果本身为可选，空被动 SHALL 是合法的卡牌主机制。
 
 #### Scenario: Passive keyword 生效
-- **WHEN** 一张只有被动能力且 Keywords 包含 Passive 的卡执行 PreStart()
-- **THEN** 该卡处于被动模式，后续 Tick 不走 CD 循环并执行适用的被动回调
+- **WHEN** 以 `Passive` 为 Main 的卡进入战斗背包
+- **THEN** 在场时立即视为已激活，适用的被动效果可执行，不支付蓄灵或行额度
 
-#### Scenario: Passive 与法术法宝共存
-- **WHEN** 一张卡同时有 Passive、法术和法宝 Keyword
-- **THEN** 被动效果、扫描机会、条件机会均可参与对应流程，各自仍遵守资源和状态规则，不按 Keyword 列表先后互相覆盖能力
+#### Scenario: 伤口使用空被动
+- **WHEN** 只用于占格的伤口卡带 `Passive` 和 `Wound`，且没有被动效果脚本
+- **THEN** 该卡满足唯一 Main 的要求，并按 `Wound` 执行伤口占格规则

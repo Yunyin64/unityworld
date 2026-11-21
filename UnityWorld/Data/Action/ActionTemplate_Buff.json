@@ -17,7 +17,7 @@
       {
         "Name": "BuffId",
         "Type": "String",
-        "Value": [""],
+        "Value": ["Ci_Improved"],
         "Score": [0]
       },
       {
@@ -53,7 +53,7 @@
       {
         "Name": "StatId",
         "Type": "String",
-        "Value": [""],
+        "Value": ["QiXue"],
         "Score": [0]
       },
       {
@@ -69,19 +69,19 @@
         "Score": [0, 1]
       }
     ],
-    "LuaTemplate": "AddStatBuff(ctx, \"{Domain}\", \"{StatId}\", {Value}, \"{ModifierType}\")"
+    "LuaTemplate": "AddStatBuff(ctx, \"{Domain}\", \"{StatId}\", {Value}, \"{ModifierType}\", \"\")"
   },
   {
     "ID": "action_add_card_stat_buff",
     "DisplayName": "卡牌属性增益",
-    "Desc": "给{DoMain}目标卡牌{StatId}增加{Value}点",
+    "Desc": "给{Domain}目标卡牌{StatId}增加{Value}点",
     "FuncName": "AddCardStatBuff",
     "Tags": ["Buff", "卡牌属性"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "DoMain",
+        "Name": "Domain",
         "Type": "String",
         "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
         "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
@@ -89,7 +89,7 @@
       {
         "Name": "StatId",
         "Type": "String",
-        "Value": [""],
+        "Value": ["AmountMaxAdd"],
         "Score": [0]
       },
       {
@@ -99,6 +99,6 @@
         "Score": [1, 2, 3, 5]
       }
     ],
-    "LuaTemplate": "AddCardStatBuff(ctx, \"{DoMain}\", \"{StatId}\", {Value})"
+    "LuaTemplate": "AddCardStatBuff(ctx, \"{Domain}\", \"{StatId}\", {Value})"
   }
 ]

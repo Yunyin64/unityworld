@@ -2,7 +2,7 @@
   {
     "ID": "Charge",
     "DisplayName": "充能",
-    "Desc": "对{DoMain}整包增加{ReduceTick}个基准Tick进度，不受倍率影响",
+    "Desc": "对{Domain}整包增加{ReduceTick}个基准Tick进度，不受倍率影响",
     "FuncName": "Charge",
     "Tags": [
       "辅助",
@@ -12,7 +12,7 @@
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "DoMain",
+        "Name": "Domain",
         "Type": "String",
         "Value": [
           "Self",
@@ -40,12 +40,12 @@
         ]
       }
     ],
-    "LuaTemplate": "Charge(ctx, \"{DoMain}\", {ReduceTick})"
+    "LuaTemplate": "Charge(ctx, \"{Domain}\", {ReduceTick})"
   },
   {
     "ID": "action_freeze",
     "DisplayName": "冻结",
-    "Desc": "冻结{DoMain}范围内未冻结卡，下一次完整扫描跳过并解冻，不叠加",
+    "Desc": "冻结{Domain}范围内未冻结卡，下一次完整扫描跳过并解冻，不叠加",
     "FuncName": "Freeze",
     "Tags": [
       "控制",
@@ -55,7 +55,7 @@
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "DoMain",
+        "Name": "Domain",
         "Type": "String",
         "Value": [
           "Self",
@@ -87,12 +87,12 @@
         ]
       }
     ],
-    "LuaTemplate": "Freeze(ctx, \"{DoMain}\", {FreezeTime})"
+    "LuaTemplate": "Freeze(ctx, \"{Domain}\", {FreezeTime})"
   },
   {
     "ID": "action_slow",
     "DisplayName": "减速",
-    "Desc": "对{DoMain}整包施加半速{DurationTicks}个真实Tick，同类只加时",
+    "Desc": "对{Domain}整包施加半速{DurationTicks}个真实Tick，同类只加时",
     "FuncName": "Slow",
     "Tags": [
       "控制",
@@ -102,7 +102,7 @@
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "DoMain",
+        "Name": "Domain",
         "Type": "String",
         "Value": [
           "Self",
@@ -128,12 +128,12 @@
         ]
       }
     ],
-    "LuaTemplate": "Slow(ctx, \"{DoMain}\", {DurationTicks})"
+    "LuaTemplate": "Slow(ctx, \"{Domain}\", {DurationTicks})"
   },
   {
     "ID": "action_haste",
     "DisplayName": "加速",
-    "Desc": "对{DoMain}整包施加双速{DurationTicks}个真实Tick，同类只加时",
+    "Desc": "对{Domain}整包施加双速{DurationTicks}个真实Tick，同类只加时",
     "FuncName": "Haste",
     "Tags": [
       "辅助",
@@ -143,7 +143,7 @@
     "Weight": 1,
     "ParamDefs": [
       {
-        "Name": "DoMain",
+        "Name": "Domain",
         "Type": "String",
         "Value": [
           "Self",
@@ -169,6 +169,6 @@
         ]
       }
     ],
-    "LuaTemplate": "Haste(ctx, \"{DoMain}\", {DurationTicks})"
+    "LuaTemplate": "Haste(ctx, \"{Domain}\", {DurationTicks})"
   }
 ]

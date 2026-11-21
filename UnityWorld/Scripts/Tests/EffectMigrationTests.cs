@@ -188,7 +188,8 @@ namespace UnityWorld.Tests
             Check(all.All(c => c.Size > 0), "所有旧Size0定义已明确改1");
             foreach (var definition in all.Where(c => c.CompatibilityStatus == "Migrated"))
             {
-                if (definition.ID == "card_fabao_jian") continue; // Equipment and real event assertions live in ActivationEventTests.
+                if (definition.ID == "card_fabao_jian") continue; // 真实长剑激活与对拼由 ActivationMigrationTests 覆盖。
+                if (CardKeywordRoles.TryGetMain(definition.Keywords, out var main, out _) && main == CardMainKeyword.ZhaoShi) continue;
                 var a = Npc(); var b = Npc(); var source = BackpackModelTests.Place(a, definition.ID, 1, 0);
                 var scene = Scene(a, b); var npc = scene.GetCombatants()[a.Id];
                 var card = npc.GetField().Single(c => c.Id == source.Id);
@@ -198,10 +199,50 @@ namespace UnityWorld.Tests
                     Light(npc, card); while (scene.CurrentTick < 50 && !scene.IsFinished) scene.Tick();
                     Check(card.UseCount == 1 && card.ApplyCount == 1, definition.ID + "真实定义Lua一次Use/Apply");
                 }
-                else Check(!card.CanAcceptMana(ElementType.Jin) && card.UseCount == 0, definition.ID + "纯被动不被强制收灵");
+                else
+                {
+                    Check(!card.CanAcceptMana(ElementType.Jin) && card.UseCount == 0, definition.ID + "纯被动不被强制收灵");
+                    if (definition.ID == "card_monster_shoupi")
+                        Check(card.ApplyCount == 1 && npc.GetAllModifiers().SingleOrDefault(m => m.DefineId == "Zhan_Resist")?.CurrentStack == 1,
+                            "兽皮保留一次开场斩击抗性");
+                }
                 Console.WriteLine($"MIGRATED_CARD_OK id={definition.ID} size={card.GetSize()} use={card.UseCount} apply={card.ApplyCount}");
                 scene.Cleanup();
             }
+
+            var expected = new (string Form, string Weapon, ContestType Type, int Attack)[]
+            {
+                ("card_form_jian_zhan", "long_sword", ContestType.Zhan, 4),
+                ("card_form_jian_ci", "long_sword", ContestType.Ci, 4),
+                ("card_form_jian_qi", "great_sword", ContestType.SheJi, 8),
+                ("card_form_strike", "monster_claw", ContestType.Ci, 2)
+            };
+            foreach (var (formId, weaponId, type, attack) in expected)
+            {
+                var a = Npc(); var b = Npc();
+                var equipment = a.GainEquip("card_fabao_jian", weaponId);
+                a.EquipFaBao(equipment.Id);
+                var forms = a.GetAllCards().Where(c => c.Id != equipment.Id && c.ParentCardId == equipment.Id).ToArray();
+                var selected = forms.Single(c => c.DefineId == formId);
+                a.PlaceBackpackCardInternal(selected.Id, 1, 0);
+                int column = 0;
+                foreach (var form in forms.Where(c => c.Id != selected.Id)) a.PlaceBackpackCardInternal(form.Id, column++, 1);
+                var scene = Scene(a, b);
+                var owner = scene.GetCombatants()[a.Id];
+                var card = owner.GetField().Single(c => c.Id == selected.Id);
+                Check(card.GetSize() == 1 && card.GetManaCost().Count == 1 && card.GetManaCost()[ElementType.Jin] == 1,
+                    formId + "首批招式一格一金");
+                Light(owner, card);
+                while (scene.CurrentTick < 10 && !scene.IsFinished) scene.Tick();
+                Check(owner.PendingSlot?.SourceCard == card && owner.PendingSlot.ContestValue == attack && owner.PendingSlot.ContestType == type,
+                    formId + "真实脚本使用绑定装备的点数和拼点类型");
+                while (scene.CurrentTick < 50 && !scene.IsFinished) scene.Tick();
+                Check(card.UseCount == 1 && card.ApplyCount == 1, formId + "真实招式进入待发并结算一次");
+                Console.WriteLine($"MIGRATED_FORM_OK id={formId} weapon={weaponId} type={type} attack={attack}");
+                scene.Cleanup();
+            }
+            Check(all.Count(c => c.Keywords.Contains("ZhaoShi") && c.CompatibilityStatus == "Unmigrated") == 11,
+                "其余十一张招式仍维持未迁移");
         }
     }
 }

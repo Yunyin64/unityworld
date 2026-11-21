@@ -37,9 +37,12 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         public void ApplyHeal(int amount)
         {
-            var val = Math.Min(amount, GetHpMax() - Hp);
+            var actual = Math.Min(amount, GetCombatHpMax() - Hp);
+            if (actual <= 0) return;
+
+            // 治疗监听读取结算后的 HP。满血和无效治疗不产生事件。
+            RecoverHP(actual);
             Scene.TriggerCombatEvent("OnHeal", new APIContext { Caster = this, Scene = Scene });
-            RecoverHP(amount);
         }
 
         public void RecoverHP(int amount)

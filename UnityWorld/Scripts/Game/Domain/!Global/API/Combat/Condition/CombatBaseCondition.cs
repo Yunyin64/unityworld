@@ -5,6 +5,16 @@ namespace UnityWorld.Game.Domain
 {
     public  static partial class CombatBaseFunc
     {
+        [APIFunc("SelectCards", APIType.Condition, "按战斗 Domain 选卡", Scope.CombatCard, "Domain:String", "Result:List<CombatCard>")]
+        public static APIContext SelectCards(APIContext ctx)
+        {
+            // Lua 可以修改返回列表。复制列表可保留场上卡牌及其顺序。
+            var cards = APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx).ToList();
+            ctx.Set("Result", cards);
+            ctx.Set("Ret", cards.Count > 0);
+            return ctx;
+        }
+
         private static APIContext Keyword(string keyword,APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -48,4 +58,3 @@ namespace UnityWorld.Game.Domain
         }
     }
 }
-    

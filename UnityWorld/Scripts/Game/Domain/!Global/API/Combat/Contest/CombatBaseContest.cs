@@ -12,8 +12,8 @@ namespace UnityWorld.Game.Domain
     {
         // ── 拼点类 ────────────────────────────────────────────
 
-        /// <summary>造成伤害（攻击拼点）。参数：Element(String), PhysicalType(String), AttackValue(Int)</summary>
-        [APIFunc("Attack", APIType.Contest, "造成伤害（攻击拼点）",Scope.CombatNpc, "Element:String", "PhysicalType:String", "AttackValue:Int")]
+        /// <summary>在卡牌 Contest 回调中创建攻击待发拼点。</summary>
+        [APIFunc("Attack", APIType.Contest, "生成攻击待发拼点",Scope.CombatNpc, "Element:String", "PhysicalType:String", "AttackValue:Int")]
         public static APIContext Attack(APIContext ctx)
         {
             var card = ctx.SourceCard;

@@ -46,7 +46,7 @@
 | 中毒 | AddElementBuff(Self, None, true, n) |
 | 载德 | RemoveElementBuff(Self, None, true, n) |
 | 石化 | ReduceMP(Self, n) |
-| 浩瀚 | RecoverMP(Self, None, n) |
+| 浩瀚 | RecoverMP(Self, n) |
 | 寒意 | Slow(Self, n * 10) |
 | 心火 | Haste(Self, n * 10) |
 | 灼烧 | RemoveElementBuff(Self, None, false, n) |
@@ -63,3 +63,8 @@
 #### Scenario: 载德清除负面
 - **WHEN** 拥有 2 层载德的 NPC 触发 OnBaseManaDraw，身上有出血(3)+寒意(1)
 - **THEN** 调用 RemoveElementBuff 循环 2 次，从 [出血, 寒意] 中随机各减 1 层
+
+#### Scenario: 浩瀚先补 MP 再放置灵元
+
+- **WHEN** 主人有 2 层浩瀚、当前 MP 为 0，且基础补灵允许放置灵元
+- **THEN** 先恢复至多 2 MP，再按可用 MP 与格位扣费放置灵元。其他角色的基础补灵事件不会使主人获得 MP

@@ -295,7 +295,9 @@ namespace UnityWorld.Game.Domain
             sb.AppendLine();
 
             // ── Trigger 部分 ──
-            sb.AppendLine("## Trigger（触发条件）");
+            sb.AppendLine("## Trigger（配置条目）");
+            sb.AppendLine();
+            sb.AppendLine("接入说明见 `Data/TriggerDefines.json`。");
             sb.AppendLine();
             sb.AppendLine("| ID | 描述 | Score | Weight | Tags | ConflictTags |");
             sb.AppendLine("|---|---|---|---|---|---|");
@@ -458,8 +460,8 @@ namespace UnityWorld.Game.Domain
                     string opt = p.IsOptional ? " (optional)" : "";
                     sb.AppendLine($"--- @param {p.Name} {luaType}{opt}");
                 }
-                if (isCondition)
-                    sb.AppendLine("--- @return boolean");
+                if (isCondition && api.ParamsList.FirstOrDefault(p => p.Name.Equals("Result", StringComparison.OrdinalIgnoreCase)) is { } result)
+                    sb.AppendLine($"--- @return {GetLuaTypeAnnotation(result.Type)}");
 
                 sb.AppendLine($"{api.FuncName} = function({signature})");
 

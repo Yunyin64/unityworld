@@ -2,7 +2,7 @@
   {
     "ID": "action_atk",
     "DisplayName": "攻击",
-    "Desc": "造成{Element}{PhysicalType}{AttackValue}点伤害",
+    "Desc": "以{Element}{PhysicalType}生成{AttackValue}点攻击拼点，伤害由对拼或直击结算",
     "FuncName": "Attack",
     "Tags": ["攻击", "伤害", "拼点"],
     "ConflictTags": [],

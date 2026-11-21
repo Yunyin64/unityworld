@@ -6,7 +6,7 @@ using UnityWorld.Game.Domain.Combat;
 
 namespace UnityWorld.Tests
 {
-    /// <summary>K1-K5 / F1-F3：真实场景和 Lua 生命周期、事件身份及冻结回归。</summary>
+    /// <summary>Main Keyword 的末格发动、法宝生命周期与真实对拼回归。</summary>
     public static class ActivationMigrationTests
     {
         private static int _assertions;
@@ -27,6 +27,7 @@ namespace UnityWorld.Tests
         {
             var scene = new CombatScene();
             scene.Init(7119, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 2000);
+            scene.EnablePresentationRecording(true);
             scene.PreStart(); scene.Start();
             return scene;
         }
@@ -46,12 +47,11 @@ namespace UnityWorld.Tests
                 Check(card.Owner.Backpack.TryAssign(cell, card), "主动卡可蓄灵");
             }
         }
-        private static Card EventCard(Npc npc, int x, int y, bool contest = false)
+        private static Card PassiveArtifact(Npc npc, int x, int y)
         {
-            var card = Place(npc, contest ? "bp_attack" : "bp_focus", x, y);
-            card.BaseData.ScanActivatable = false;
+            var card = Place(npc, "bp_focus", x, y);
             card.BaseData.Keywords = ["FaBao"];
-            card.BaseData.ProducesContest = contest;
+            card.BaseData.ProducesContest = false;
             return card;
         }
         private static void Script(CombatCard card, string body)
@@ -61,7 +61,6 @@ namespace UnityWorld.Tests
             card.env["m_Owner"] = card.Owner;
             card.ScanLuaHooks();
         }
-        private static void Keyword(string name, string body) => LuaMgr.Instance.RegisterKeyword(name, (LuaTable)TestLua.DoString("return {" + body + "}")[0]);
         private static void WithEvent(string name, Action<APIContext> callback, Action action)
         {
             var listener = new DelegateEventListener((_, _, args) => callback((APIContext)args));
@@ -74,157 +73,127 @@ namespace UnityWorld.Tests
         public static void Run()
         {
             _assertions = 0;
-            Keyword("ActivationProbe", "OnProbe=function(card,ctx) card:TryUseFromEvent(ctx) end");
-            RealSwordOpportunities();
-            EventEligibility();
-            SharedQuotaAndStableOrder();
-            IdentityDedupAndLifecycle();
+            LongSwordBattle();
+            PassiveWindowAndEventIdentity();
+            SharedRowQuota();
             FrozenScanAndPending();
             EventCyclesAndBudget();
             Console.WriteLine($"ACTIVATION_MIGRATION_TESTS_OK assertions={_assertions}");
         }
 
-        private static void RealSwordOpportunities()
+        private static void LongSwordBattle()
         {
-            var a = NewNpc(); var b = NewNpc();
-            var source = a.GainEquip("card_fabao_jian", "long_sword");
-            a.PlaceBackpackCardInternal(source.Id, 1, 0);
-            var scene = Scene(a, b); var sword = Find(scene, a, source);
-            Check(!sword.BaseData.HasScanOpportunity && sword.BaseData.HasEventOpportunity && sword.BaseData.HasActiveAbility, "真实长剑纯条件机会仍可蓄灵");
-            Check(sword.UseCount == 0 && sword.ApplyCount == 0, "真实法宝没有开场免费使用");
-            Light(sword); To(scene, 10);
-            Check(sword.UseCount == 0 && sword.LitCount == 2, "纯法宝扫描不发动");
-            scene.GetCombatants()[b.Id].DoManaDraw();
-            Check(sword.UseCount == 0, "真实Lua忽略对手抽灵");
+            var a = NewNpc();
+            var b = NewNpc();
+            var equipment = a.GainEquip("card_fabao_jian", "long_sword");
+            a.EquipFaBao(equipment.Id);
+            a.PlaceBackpackCardInternal(equipment.Id, 1, 0);
+            var thrust = a.GetAllCards().Single(c => c.ParentCardId == equipment.Id && c.DefineId == "card_form_jian_ci");
+            var slash = a.GetAllCards().Single(c => c.ParentCardId == equipment.Id && c.DefineId == "card_form_jian_zhan");
+            a.PlaceBackpackCardInternal(thrust.Id, 1, 3);
+            a.PlaceBackpackCardInternal(slash.Id, 1, 4);
+            var slashes = new[] { Place(a, "bp_attack", 1, 1), Place(a, "bp_attack", 1, 2) };
+            var guards = Enumerable.Range(1, 4).Select(row => Place(b, "bp_guard", 1, row)).ToArray();
+            var scene = Scene(a, b);
+            var sword = Find(scene, a, equipment);
+            var thrustCard = Find(scene, a, thrust);
+            var slashCard = Find(scene, a, slash);
+            Check(thrustCard.GetEquipData().GetValue("Attack", 0) == 4 && thrustCard.GetEquipData().GetValue("Defend", 0) == 3,
+                "父法宝未激活时已绑定的招式可读真实攻防");
+            foreach (var card in slashes.Select(c => Find(scene, a, c)).Concat(guards.Select(c => Find(scene, b, c))).Append(sword).Append(thrustCard).Append(slashCard))
+                Light(card);
             sword.Owner.DoManaDraw();
-            Check(sword.UseCount == 1 && sword.Owner.PendingSlot?.SourceCard == sword && sword.Owner.PendingSlot.ContestValue == 4, "主人抽灵使用真实装备Attack=4入槽");
-            Check(sword.ApplyCount == 0, "条件入槽不即时Apply");
-            To(scene, 50); Check(sword.ApplyCount == 1, "真实长剑本方轮末仅Apply一次"); scene.Cleanup();
-
-            source.BaseData.Keywords.Add("FaShu"); source.BaseData.Keywords.Add("Passive");
-            scene = Scene(a, b); sword = Find(scene, a, source);
-            Check(sword.UseCount == 0 && sword.ApplyCount == 0 && sword.BaseData.HasScanOpportunity, "真实混合Keyword保留扫描且无开场Apply");
-            Light(sword); To(scene, 10);
-            Check(sword.UseCount == 1, "真实长剑法术Keyword可扫描发动");
-            sword.Owner.DoManaDraw(); Check(sword.UseCount == 1, "待发及已消耗点亮不能由另一机会复用");
-            To(scene, 50); Light(sword); sword.Owner.DoManaDraw();
-            Check(sword.UseCount == 2 && sword.ApplyCount == 1 && sword.Owner.PendingSlot?.SourceCard == sword, "扫描与事件共用同一实例效果，轮末后事件待发不追补轮末");
-            Check(sword.Ticks["CD"] == 0, "混合卡没有旧CD推进");
-            scene.Cleanup();
-        }
-
-        private static void EventEligibility()
-        {
-            var a = NewNpc(); var b = NewNpc(); var src = EventCard(a, 1, 0);
-            var scene = Scene(a, b); var card = Find(scene, a, src);
-            Script(card, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, Contest=function(self,ctx) self.contested=true end, Apply=function(self,ctx) self.applies=(self.applies or 0)+1 end");
-            APIContext expired = null;
-            WithEvent("OnProbe", ctx => expired = ctx, () => Fire(scene, "OnProbe", card.Owner));
-            Check(card.UseCount == 0, "缺灵事件失败");
-            Light(card); Check(!card.TryUseFromEvent(expired), "已结束的失败事件不能被保存后补发");
-            To(scene, 10); Check(card.UseCount == 0, "迟到满灵不补发旧事件且纯法宝不扫描");
-            Fire(scene, "OnProbe", card.Owner);
-            Check(card.UseCount == 1 && card.ApplyCount == 1 && card.env["contested"] == null, "无拼点声明跳过空/旧Contest，立即Apply一次");
-            card.Apply(); Check(card.ApplyCount == 1, "主动Apply不可重复");
-            Light(card); card.Freeze(); Fire(scene, "OnProbe", card.Owner);
-            Check(card.UseCount == 1 && card.LitCount == 1, "冻结条件失败不清点亮");
-            To(scene, 60); Check(!card.IsFrozen && card.UseCount == 1, "纯法宝冻结也在末格解除且不补发");
-            Fire(scene, "OnProbe", card.Owner); Check(card.UseCount == 2, "解冻后的新独立事件可使用");
-            scene.Cleanup();
-
-            a = NewNpc(); b = NewNpc(); var attack = Place(a, "bp_attack", 1, 0); src = EventCard(a, 2, 1); var blocked = EventCard(a, 4, 1, true);
-            scene = Scene(a, b); card = Find(scene, a, src); var pending = Find(scene, a, attack); var blockedCard = Find(scene, a, blocked);
-            Script(card, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, Contest=function(self,ctx) end, Apply=function(self,ctx) end");
-            // 保留真正的 bp_attack Contest，只加条件入口。
-            blockedCard.BaseData.Keywords.Add("ActivationProbe");
-            Light(pending); Light(card); Light(blockedCard); To(scene, 10); Fire(scene, "OnProbe", pending.Owner);
-            Check(card.UseCount == 1 && card.ApplyCount == 1 && pending.Owner.PendingSlot?.SourceCard == pending, "空Contest无拼点卡不被其他待发阻挡");
-            Check(blockedCard.UseCount == 0 && blockedCard.LitCount == 1, "有拼点事件槽满失败不消耗");
-            scene.Cleanup();
-        }
-
-        private static void SharedQuotaAndStableOrder()
-        {
-            var a = NewNpc(); var b = NewNpc(); var left = Place(a, "bp_focus", 1, 0); var right = EventCard(a, 3, 0);
-            var scene = Scene(a, b); var scan = Find(scene, a, left); var conditional = Find(scene, a, right);
-            Script(conditional, "OnApply=function(self,ctx) if ctx.SourceCard ~= self.m_Self then self.m_Self:TryUseFromEvent(ctx) end end, Apply=function(self,ctx) end");
-            Light(scan); Light(conditional); To(scene, 10);
-            Check(scan.UseCount == 1 && conditional.UseCount == 1 && conditional.ApplyCount == 1, "扫描占用行额度后同一行事件仍能发动");
-            scene.Cleanup();
-
-            a = NewNpc(); b = NewNpc(); right = EventCard(a, 4, 0, true); left = EventCard(a, 1, 0, true);
-            scene = Scene(a, b); var lc = Find(scene, a, left); var rc = Find(scene, a, right);
-            foreach (var c in new[] { lc, rc })
-            {
-                c.BaseData.Keywords.Add("ActivationProbe");
-                Light(c);
-            }
-            lc.Owner.GetField().Reverse(); Fire(scene, "OnProbe", lc.Owner);
-            Check(lc.Owner.PendingSlot?.SourceCard == lc && rc.UseCount == 0, "相同事件位置优先于Field顺序和实例创建顺序");
-            scene.Cleanup();
-
-            // 右卡先由 Lua/Keyword 请求，左卡后经 EventMgr 请求，统一按位置提交。
-            scene = Scene(a, b); lc = Find(scene, a, left); rc = Find(scene, a, right);
-            rc.BaseData.Keywords.Add("ActivationProbe"); Light(lc); Light(rc);
-            WithEvent("OnProbe", ctx => Check(lc.TryUseFromEvent(ctx), "EventMgr左卡机会已收集"), () => Fire(scene, "OnProbe", lc.Owner));
-            Check(lc.Owner.PendingSlot?.SourceCard == lc && rc.UseCount == 0 && rc.LitCount == 1, "跨通道反序请求仍由左卡入槽，右卡失败保留灵元");
+            Check(!sword.IsPassiveActive && sword.UseCount == 0 && sword.LitCount == 2 && sword.Owner.PendingSlot == null,
+                "主人抽灵不能直接发动长剑");
+            To(scene, 10);
+            Check(sword.IsPassiveActive && sword.UseCount == 1 && sword.LitCount == 0 && sword.Owner.PendingSlot == null,
+                "长剑满灵扫到末格开启被动，不产生拼点");
+            Check(thrustCard.GetEquipData().GetValue("Attack", 0) == 4 && thrustCard.GetEquipData().GetValue("Defend", 0) == 3,
+                "长剑激活后绑定招式仍读取同一份装备攻防");
+            To(scene, 30);
+            var hit = new ContestData { SourceCard = thrustCard, ContestType = ContestType.Ci, ContestValue = 4, Element = ElementType.Jin };
+            sword.Owner.Straight(hit);
+            Check(hit.ContestValue == 4, "直击保留装备原点数");
             To(scene, 50);
-            Check(rc.UseCount == 0 && rc.Owner.PendingSlot == null && rc.LitCount == 1, "同事件争槽失败不在槽释放后补发");
-            scene.Cleanup();
-
-            // 两个 C# listener 反序注册也不影响争槽。
-            scene = Scene(a, b); lc = Find(scene, a, left); rc = Find(scene, a, right); Light(lc); Light(rc);
-            WithEvent("OnProbe", ctx => Check(rc.TryUseFromEvent(ctx), "先注册右卡机会已收集"), () =>
-                WithEvent("OnProbe", ctx => Check(lc.TryUseFromEvent(ctx), "后注册左卡机会已收集"), () => Fire(scene, "OnProbe", lc.Owner)));
-            Check(lc.Owner.PendingSlot?.SourceCard == lc && rc.UseCount == 0, "EventMgr反序注册仍按位置统一提交");
+            var values = scene.ReadPresentationEvents().Where(e => e.Contest != null)
+                .Select(e => e.Contest.Left.NpcId == a.Id ? e.Contest.Left.Value : e.Contest.Right.Value).ToArray();
+            Check(values.SequenceEqual(new[] { 6, 6, 5, 4 }), "两次斩击获胜只存一份加值，下一次实际招式对拼使用一次");
+            Check(thrustCard.UseCount == 1 && slashCard.UseCount == 1, "剑刺和剑斩分别发动");
+            var victory = new APIContext { Caster = sword.Owner, SourceCard = slashCard };
+            victory.Set("WinnerTypeName", "Zhan");
+            scene.TriggerCombatEvent("OnContestOverflow", victory);
+            Check(sword.env["nextFormBonus"] is true, "激活期记录新胜利");
+            To(scene, 60);
+            Check(!sword.IsPassiveActive && sword.UseCount == 1 && sword.env["nextFormBonus"] is false, "没能续期时清理加值");
+            scene.TriggerCombatEvent("OnContestOverflow", victory);
+            Check(sword.env["nextFormBonus"] is false, "失活后不领取加值");
             scene.Cleanup();
         }
 
-        private static void IdentityDedupAndLifecycle()
+        private static void PassiveWindowAndEventIdentity()
         {
-            Keyword("ActivationFirst", "OnProbe=function(card,ctx) card.env.first=ctx; card:TryUseFromEvent(ctx) end");
-            Keyword("ActivationSecond", "OnProbe=function(card,ctx) card.env.second=ctx; card:TryUseFromEvent(ctx) end");
-            var a = NewNpc(); var b = NewNpc(); var src = EventCard(a, 1, 0);
-            var scene = Scene(a, b); var card = Find(scene, a, src);
-            card.BaseData.Keywords.AddRange(["ActivationFirst", "ActivationFirst", "ActivationSecond"]);
-            Script(card, "OnProbe=function(self,ctx) self.own=ctx; self.m_Self:TryUseFromEvent(ctx) end, Apply=function(self,ctx) self.effect=ctx; self.refill:Invoke() end");
-            card.env["refill"] = (Action)(() => Light(card));
+            var a = NewNpc();
+            var b = NewNpc();
+            var attack = Place(a, "bp_attack", 1, 0);
+            var artifact = PassiveArtifact(a, 2, 1);
+            var scene = Scene(a, b);
+            var card = Find(scene, a, artifact);
+            var enemy = scene.GetCombatants()[b.Id];
+            Script(card, "OnPassiveActivated=function(self,ctx) self.starts=(self.starts or 0)+1 end," +
+                "OnPassiveDeactivated=function(self,ctx) self.stops=(self.stops or 0)+1 end," +
+                "OnProbe=function(self,ctx) self.seen=ctx end");
+            var enemyCard = enemy.GetField()[0];
+            Fire(scene, "OnProbe", enemy, enemyCard);
+            Check(card.env["seen"] == null, "未激活不监听事件");
+            Light(Find(scene, a, attack));
             Light(card);
+            To(scene, 20);
+            Check(card.IsPassiveActive && card.Owner.PendingSlot?.SourceCard.Id == attack.Id, "满待发槽仍可激活法宝");
             APIContext observed = null;
-            WithEvent("OnProbe", ctx => { observed = ctx; Check(!card.TryUseFromEvent(ctx), "EventMgr同事件不得二次提交"); }, () => Fire(scene, "OnProbe", scene.GetCombatants()[b.Id]));
-            Check(card.UseCount == 1 && card.ApplyCount == 1 && card.LitCount == 1, "同事件多Keyword及双通道仅Use一次，即使Apply重新点满");
-            Check(ReferenceEquals(card.env["own"], observed) && ReferenceEquals(card.env["first"], observed) && ReferenceEquals(card.env["second"], observed), "所有通道保留同一实际事件对象");
-            var effect = (APIContext)card.env["effect"];
-            Check(effect.SourceCard == card && effect.Caster == card.Owner && ReferenceEquals(effect.TriggerEvent, observed) && observed.Caster.Id == b.Id, "效果来源是监听法宝且原始敌方事件另存TriggerEvent");
-            var previousId = observed.EventId;
-            Fire(scene, "OnProbe", card.Owner);
-            Check(card.UseCount == 2 && ((APIContext)card.env["own"]).EventId != previousId, "新独立事件重新点满仍可使用");
-
-            // 受击事件 Caster 是受击者、SourceCard 是攻击卡；Keyword 不得用监听卡改写它们。
-            Script(card, "OnDamage=function(self,ctx) if ctx.Caster == self.m_Owner then self.m_Self:TryUseFromEvent(ctx) end end, Apply=function(self,ctx) self.hit=ctx.TriggerEvent end");
-            Fire(scene, "OnDamage", scene.GetCombatants()[b.Id]); Check(card.UseCount == 2, "敌方受击不误触发主人受击条件");
-            Fire(scene, "OnDamage", card.Owner, scene.GetCombatants()[b.Id].GetField()[0]);
-            Check(card.UseCount == 3 && ((APIContext)card.env["hit"]).SourceCard.Owner.Id == b.Id, "主人受击条件保留敌方原攻击来源");
+            WithEvent("OnProbe", ctx => observed = ctx, () => Fire(scene, "OnProbe", enemy, enemyCard));
+            Check(observed != null && ReferenceEquals(card.env["seen"], observed) && observed.Caster == enemy && observed.SourceCard == enemyCard,
+                "激活期收到实际事件的施放者和来源");
+            Light(card);
+            To(scene, 70);
+            Check(card.IsPassiveActive && card.UseCount == 2 && Convert.ToInt32(card.env["starts"]) == 1 && card.env["stops"] == null,
+                "激活期可蓄灵并连续续期，激活回调只执行一次");
+            Light(card);
+            card.Freeze();
+            card.Owner.Backpack.AddHaste(100);
+            To(scene, 95);
+            Check(!card.IsPassiveActive && !card.IsFrozen && card.UseCount == 2 && card.LitCount == 1 &&
+                Convert.ToInt32(card.env["stops"]) == 1, "加速后的实际末格仍会处理冻结解冻和失败到期");
+            To(scene, 120);
+            Check(card.IsPassiveActive && card.UseCount == 3, "下次完整扫描可重新激活");
+            card.Owner.RemoveCombatCard(card);
+            card.Owner.DealFieldChange();
+            Check(!card.IsPassiveActive && Convert.ToInt32(card.env["stops"]) == 2, "离场结束激活并执行清理");
             scene.Cleanup();
+        }
 
-            Keyword("ActivationLifecycle", "OnStart=function(card,ctx) card.env.starts=(card.env.starts or 0)+1 end, Start=function(card,ctx) card.env.starts=(card.env.starts or 0)+1 end, OnTick=function(card,ctx) card.env.kt=(card.env.kt or 0)+1 end, Tick=function(card,ctx) card.env.kt=(card.env.kt or 0)+1 end");
-            a = NewNpc(); b = NewNpc(); src = EventCard(a, 1, 0); src.BaseData.Keywords.AddRange(["FaShu", "Passive", "ActivationLifecycle"]);
-            scene = new CombatScene(); scene.Init(7119, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 2000); scene.PreStart();
-            card = Find(scene, a, src);
-            Script(card, "Tick=function(self,ctx) self.t=(self.t or 0)+1 end, OnPassiveTick=function(self,ctx) self.pt=(self.pt or 0)+1 end");
-            scene.Start();
-            Check(Convert.ToInt32(card.env["starts"]) == 1 && card.UseCount == 0 && card.ApplyCount == 0, "Start/OnStart二选一且混合Passive无免费Apply");
-            card.Freeze(); Light(card); To(scene, 3);
-            Check(Convert.ToInt32(card.env["kt"]) == 3 && Convert.ToInt32(card.env["t"]) == 3 && Convert.ToInt32(card.env["pt"]) == 3, "混合卡冻结时主动Tick和被动回调各一次");
-            Check(card.IsFrozen && card.UseCount == 0 && card.Ticks["CD"] == 0, "冻结不阻蓄灵/被动，旧CD仍禁用");
-            scene.Cleanup();
-
-            a = NewNpc(); b = NewNpc();
-            // 纯被动明确声明 Passive，不由 Cooldown 推断。
-            var mainId = a.GetCombatCardSnapshot().MainGongFaCardId.Value;
-            a.GetAllCards().Single(c => c.Id == mainId).BaseData.Keywords.Add("Passive");
-            scene = Scene(a, b); card = scene.GetCombatants()[a.Id].GetField().Single(c => c.Id == mainId);
-            Check(card.CheckPhase(CombatCardPhase.Passive) && card.UseCount == 0 && card.ApplyCount == 1, "显式纯Passive保留开场一次Apply");
+        private static void SharedRowQuota()
+        {
+            var a = NewNpc();
+            var b = NewNpc();
+            var spell = Place(a, "bp_focus", 1, 0);
+            var artifact = PassiveArtifact(a, 2, 0);
+            var weapon = a.GainEquip("card_fabao_jian", "short_sword");
+            a.EquipFaBao(weapon.Id);
+            var thrust = a.GetAllCards().Single(c => c.ParentCardId == weapon.Id && c.DefineId == "card_form_jian_ci");
+            a.PlaceBackpackCardInternal(thrust.Id, 3, 0);
+            var scene = Scene(a, b);
+            var fabao = Find(scene, a, artifact);
+            var form = Find(scene, a, thrust);
+            var left = Find(scene, a, spell);
+            Light(fabao);
+            Light(form);
+            To(scene, 10);
+            Check(fabao.UseCount == 1 && form.UseCount == 0 && form.LitCount == 1, "法宝先发动会占用招式的同行额度");
+            Light(fabao);
+            Light(left);
+            To(scene, 60);
+            Check(left.UseCount == 1 && fabao.UseCount == 1 && !fabao.IsPassiveActive && fabao.LitCount == 1 && form.UseCount == 0,
+                "法术先发动时右侧法宝到期但保留灵元，招式也等待");
             scene.Cleanup();
         }
 
@@ -253,29 +222,7 @@ namespace UnityWorld.Tests
 
         private static void EventCyclesAndBudget()
         {
-            var a = NewNpc(); var b = NewNpc(); var src = EventCard(a, 1, 0);
-            var scene = Scene(a, b); var card = Find(scene, a, src);
-            Script(card, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, OnUse=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, Apply=function(self,ctx) self.refill:Invoke() end");
-            card.env["refill"] = (Action)(() => Light(card)); Light(card); Fire(scene, "OnProbe", card.Owner);
-            Check(card.UseCount == 1 && !scene.IsFinished && card.LitCount == 1, "自身Use派生事件拒绝重入且不消耗重新点亮");
-            Fire(scene, "OnProbe", card.Owner); Check(card.UseCount == 2, "拒绝自身派生不吞独立事件"); scene.Cleanup();
-
-            // A→B→缺灵A 是自然终止链；补满A后相同路径才是真正循环。
-            foreach (var refill in new[] { false, true })
-            {
-                a = NewNpc(); b = NewNpc(); var one = EventCard(a, 1, 0); var two = EventCard(a, 3, 0);
-                scene = Scene(a, b); var ca = Find(scene, a, one); var cb = Find(scene, a, two);
-                Script(ca, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end, OnUse=function(self,ctx) if ctx.SourceCard ~= self.m_Self then self.m_Self:TryUseFromEvent(ctx) end end, Apply=function(self,ctx) if self.refill then self.refill:Invoke() end end");
-                Script(cb, "OnUse=function(self,ctx) if ctx.SourceCard ~= self.m_Self then self.m_Self:TryUseFromEvent(ctx) end end, Apply=function(self,ctx) end");
-                if (refill) ca.env["refill"] = (Action)(() => Light(ca));
-                Light(ca); Light(cb); bool rejected = false;
-                try { Fire(scene, "OnProbe", ca.Owner); }
-                catch (InvalidOperationException ex) { rejected = ex.Message.Contains("主动事件循环") && ex.Message.Contains("OnUse"); }
-                Check(refill ? rejected && scene.IsFinished : !rejected && !scene.IsFinished && ca.UseCount == 1 && cb.UseCount == 1, refill ? "有资源的A-B-A异常链明确终止并输出来源" : "缺灵A-B-A链不被误判异常");
-                scene.Cleanup();
-            }
-
-            a = NewNpc(); b = NewNpc(); scene = Scene(a, b); var owner = scene.GetCombatants()[a.Id];
+            var a = NewNpc(); var b = NewNpc(); var scene = Scene(a, b); var owner = scene.GetCombatants()[a.Id];
             var seen = 0;
             WithEvent("OnStress", ctx => { seen++; if (seen < 5000) Fire(scene, "OnStress", owner); }, () => Fire(scene, "OnStress", owner));
             Check(seen == 5000 && scene.LargestEventChain == 5000 && !scene.IsFinished, "5000事件链无递归栈增长或静默丢失");

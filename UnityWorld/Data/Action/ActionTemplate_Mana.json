@@ -67,7 +67,7 @@
   {
     "ID": "action_draw",
     "DisplayName": "汲灵",
-    "Desc": "{Domain}立刻抽取{Amount}点MP为灵元",
+    "Desc": "{Domain}尝试放置至多{Amount}个灵元，按实际放置数扣除 MP",
     "FuncName": "Draw",
     "Tags": [
       "灵元",

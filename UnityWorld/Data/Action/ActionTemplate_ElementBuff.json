@@ -2,7 +2,7 @@
   {
     "ID": "action_add_element_buff",
     "DisplayName": "附灵",
-    "Desc": "给{Domain}循环附加{Count}个{Element}元素{IsDebuff?减益:增益}",
+    "Desc": "给{Domain}单次附加一层{Element}状态，共{Count}次，None 每次随机，IsDebuff={IsDebuff}（true 为减益）",
     "FuncName": "AddElementBuff",
     "Tags": ["灵元", "Buff"],
     "ConflictTags": [],
@@ -18,7 +18,7 @@
   {
     "ID": "action_remove_element_buff",
     "DisplayName": "祛灵",
-    "Desc": "移除{Domain}身上{Count}个{Element}元素{IsDebuff?减益:增益}",
+    "Desc": "从{Domain}单次移除一层匹配的{Element}状态，最多{Count}次，None 匹配任一元素，IsDebuff={IsDebuff}（true 为减益）",
     "FuncName": "RemoveElementBuff",
     "Tags": ["灵元", "驱散"],
     "ConflictTags": [],

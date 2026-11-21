@@ -43,7 +43,7 @@ namespace UnityWorld.Tests
             Check(BackpackCoordinates.ToCell(new(1, 1)) == new BackpackCell(0, 0), "公开(1,1)转换");
             Check(BackpackCoordinates.ToPosition(new(4, 4)) == new BackpackPosition(5, 5), "公开(5,5)转换");
             var npc = NpcMgr.Instance.Assemble(Basic());
-            var horizontal = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "size-three-geometry", Size = 3 });
+            var horizontal = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "size-three-geometry", Size = 3, Keywords = ["Passive"] });
             npc.GainCard(horizontal);
             npc.PlaceBackpackCard(horizontal.Id, 2, 4);
             Check(npc.GetBackpackCardPosition(horizontal.Id) == new BackpackPosition(2, 4), "装配保存公开坐标");
@@ -61,16 +61,18 @@ namespace UnityWorld.Tests
             corrupt.PlacedCards.Single(entry => entry.CardId == horizontal.Id).Position = new(4, 4);
             ExpectInvalid(() => NpcSystemBackpack.Validate(corrupt, npc.GetCombatCardSnapshot()), "非法候选位置");
             Check(npc.GetBackpackCardPosition(horizontal.Id) == new BackpackPosition(2, 4), "布局候选位置独立");
-            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "bad-vertical", Size = 2, Shape = [new(0, 0), new(0, 1)] }), "正式竖条");
-            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "bad-zero", Size = 0 }), "零格不得兜底");
+            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "bad-vertical", Size = 2, Shape = [new(0, 0), new(0, 1)], Keywords = ["Passive"] }), "正式竖条");
+            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "bad-zero", Size = 0, Keywords = ["Passive"] }), "零格不得兜底");
+            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "missing-main", Keywords = ["Item"] }), "创建卡前拒绝零 Main", "missing-main", "缺少 Main");
+            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "two-main", Keywords = ["FaShu", "FaBao"] }), "创建卡前拒绝多 Main", "two-main", "FaShu", "FaBao");
             var passive = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "passive-size-three", Size = 3, Keywords = ["Passive"] });
             NpcSystemCard.ValidateCard(passive);
             Check(!passive.BaseData.HasActiveAbility && passive.GetManaCost().Count == 0, "纯被动不强制主动费用");
             var eventOnly = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "event-fee", Size = 2, Keywords = ["FaBao"], ManaCost = new() { ["Jin"] = 1 } });
             ExpectInvalid(() => NpcSystemCard.ValidateCard(eventOnly), "纯法宝也校验费用等于Size");
-            var legacyKeyword = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "mislabelled-legacy", Keywords = ["ManaAdj_Jin"] });
+            var legacyKeyword = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "mislabelled-legacy", Keywords = ["Passive", "ManaAdj_Jin"] });
             ExpectInvalid(() => NpcSystemCard.ValidateCard(legacyKeyword), "误标Migrated仍拒绝废弃Keyword");
-            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "legacy-cost", ManaCost = new() { ["Min"] = 1 } }), "废弃需求不降级无效元素");
+            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "legacy-cost", Keywords = ["FaShu"], ManaCost = new() { ["Min"] = 1 } }), "废弃需求不降级无效元素", "Deprecated");
         }
 
         private static void InstanceAndSnapshotIsolation()
@@ -103,19 +105,43 @@ namespace UnityWorld.Tests
             definition.InitCardPlacements.Add(new() { Key = "card_fabao_jian", Value = new(1, 4) });
             definition.InitCardPlacements.Add(new() { Key = "card_fabao_jian", Value = new(4, 4) });
             definition.InitEquip = [new() { CardID = "card_fabao_jian", EquipID = "long_sword", PlacementIndex = 4 }, new() { CardID = "card_fabao_jian", EquipID = "great_sword", PlacementIndex = 5 }];
+            definition.InitCardPlacements.AddRange([
+                new() { Key = "card_form_jian_ci", Value = new(2, 2), ParentPlacementIndex = 4 },
+                new() { Key = "card_form_jian_zhan", Value = new(3, 2), ParentPlacementIndex = 4 },
+                new() { Key = "card_form_jian_ci", Value = new(4, 2), ParentPlacementIndex = 5 },
+                new() { Key = "card_form_jian_zhan", Value = new(5, 2), ParentPlacementIndex = 5 },
+                new() { Key = "card_form_jian_qi", Value = new(5, 3), ParentPlacementIndex = 5 }
+            ]);
+            var missing = Copy(definition);
+            missing.InitCardPlacements.RemoveAt(9);
+            ExpectInvalid(() => NpcMgr.Instance.Assemble(missing), "缺少巨剑的剑气", "great_sword", "card_form_jian_qi");
+            var wrongParent = Copy(definition);
+            wrongParent.InitCardPlacements[9].ParentPlacementIndex = 4;
+            ExpectInvalid(() => NpcMgr.Instance.Assemble(wrongParent), "长剑不能提供剑气", "long_sword", "card_form_jian_qi");
+            var overSp = Copy(definition);
+            overSp.InitStat["ShenShi"] = 11;
+            ExpectInvalid(() => NpcMgr.Instance.Assemble(overSp), "计入自带招式后 SP 不足", "SP 容量错误");
             var npc = NpcMgr.Instance.Assemble(definition);
             var cards = npc.GetAllCards();
             Check(cards.Count == definition.InitCardPlacements.Count && cards.Count(c => c.DefineId == "jin_fa") == 1, "仅配置清单造卡，无重复主卡/解锁子卡");
             Check(cards[0].GetGongFa().CurrentPoint == 100, "绑定已有主卡修炼进度");
             Check(cards[3].GetEquip().Attack == 4 && cards[4].GetEquip().Attack == 8 && cards[3].GetEquip().Id != cards[4].GetEquip().Id, "同定义装备绑定不同实例属性");
-            Check(!cards.Any(c => c.DefineId.StartsWith("card_form_")), "装备FormList不自动造招式");
+            var thrusts = cards.Where(c => c.DefineId == "card_form_jian_ci").ToArray();
+            Check(thrusts.Length == 2 && thrusts[0].ParentCardId == cards[3].Id && thrusts[1].ParentCardId == cards[4].Id &&
+                thrusts[0].GetEquipData().GetValue("Attack", 0) == 4 && thrusts[1].GetEquipData().GetValue("Attack", 0) == 8,
+                "同名剑刺分别绑定两把装备并读取各自攻防");
+            var reread = NpcMgr.Instance.Assemble(Copy(definition)).GetAllCards();
+            Check(reread.Count == cards.Count && reread[5].ParentCardId == reread[3].Id && reread[7].ParentCardId == reread[4].Id,
+                "重新装配每个显式条目只生成一次");
             var generated = NpcMgr.Instance.AssembleGenerated(new NpcDefine { ID = "generated-no-template", InitGongFa = [new() { DefineId = "jin_fa", CurrentPoint = 25 }] });
             Check(generated.GetAllCards().Count(c => c.DefineId == "jin_fa") == 1 && generated.GetAllCards().Any(c => c.DefineId == "card_jin_slash"), "非模板功法解锁发牌保留");
             var player = NpcMgr.Instance.AssembleGenerated(new NpcDefine { ID = "player-no-template" }, NpcAssemblySource.Player);
             CultivationMgr.Instance.AddCultivation(player, "jin_fa", 25);
             Check(player.GetAllCards().Any(c => c.DefineId == "card_jin_slash"), "玩家获得功法发牌保留");
             var equipped = generated.GainEquip("card_fabao_jian", "long_sword"); generated.EquipFaBao(equipped.Id); generated.AssignAllToField();
-            Check(generated.GetAllCards().Any(c => c.DefineId == "card_form_jian_ci" && c.ParentCardId == equipped.Id), "非模板既有装备附带卡路径保留");
+            generated.EquipFaBao(equipped.Id);
+            Check(generated.GetAllCards().Count(c => c.Id != equipped.Id && c.ParentCardId == equipped.Id) == 2,
+                "非模板装备重复装配只复用两条自带招式");
         }
 
         private static void RejectAndRollback()
@@ -170,16 +196,23 @@ namespace UnityWorld.Tests
                 Check(npc.GetAllCards().Count == definition.InitCardPlacements.Count && npc.GetReserveIds().Count == 0, definition.ID + "仅显式卡上场");
                 var combat = CombatNpc.CreateCombatNpc(npc); combat.InitDeck();
                 Check(combat.GetField().Count == definition.InitCardPlacements.Count, definition.ID + "无需辅助布置的真实战斗快照");
+                if (definition.ID == "test_npc_a")
+                {
+                    var sword = combat.GetField().Single(c => c.DefineId == "card_fabao_jian");
+                    var forms = combat.GetField().Where(c => c.Id != sword.Id && c.ParentCardId == sword.Id).ToArray();
+                    Check(npc.GetFieldSize() == 12 && npc.GetSpMax() == 12 && combat.GetField().Count == 9 && forms.Length == 2,
+                        "武修全九卡入包，两把招式都归长剑，SP 12/12");
+                }
                 var free = combat.Backpack.EmptyCells().ToHashSet();
                 Check(free.Any(c => free.Contains(new(c.X + 1, c.Y))), definition.ID + "保留完整两格伤口位置");
                 Console.WriteLine($"TEMPLATE_LAYOUT_OK id={definition.ID} cards={npc.GetAllCards().Count} sp={npc.GetFieldSize()}/{npc.GetSpMax()} cells={layout.GetValidCells().Count}");
             }
         }
 
-        private static void ExpectInvalid(Action action, string detail)
+        private static void ExpectInvalid(Action action, string detail, params string[] diagnostic)
         {
             try { action(); }
-            catch (InvalidOperationException) { _assertions++; return; }
+            catch (InvalidOperationException ex) { Check(diagnostic.All(ex.Message.Contains), detail + "，实际错误：" + ex.Message); return; }
             throw new InvalidOperationException("应拒绝：" + detail);
         }
     }

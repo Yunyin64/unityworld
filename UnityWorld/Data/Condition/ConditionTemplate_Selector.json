@@ -6,16 +6,57 @@
     "Tags": [],
     "ConflictTags": [],
     "Weight": 10,
-    "ParamDefs": [
-      {
-        "Name": "None",
-        "Type": "None",
-        "Value": [""]
-      }],
+    "ParamDefs": [],
     "LuaTemplate": ""
   },
   {
+    "ID": "cond_all_cards_in_domain",
+    "DisplayName": "所有卡牌",
+    "Desc": "选取{Domain}范围内的所有场上卡牌",
+    "Tags": ["选取", "全体"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["All", "TargetAll"],
+        "Score": [0, 0]
+      }
+    ],
+    "LuaTemplate": "SelectCards(ctx, \"{Domain}\")"
+  },
+  {
+    "ID": "cond_random_card",
+    "DisplayName": "随机场上卡牌",
+    "Desc": "在{Domain}范围内随机选取至多一张场上卡牌",
+    "Tags": ["选取", "随机"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Random", "TargetRandom"],
+        "Score": [0, 0]
+      }
+    ],
+    "LuaTemplate": "SelectCards(ctx, \"{Domain}\")"
+  },
+  {
+    "ID": "cond_adjacent_in_field_order",
+    "DisplayName": "场上顺序相邻卡牌",
+    "Desc": "按场上顺序选取来源卡前后各一张，边界只取存在的一侧",
+    "Tags": ["选取", "位置"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [],
+    "LuaTemplate": "SelectCards(ctx, \"Adjacent\")"
+  },
+  {
     "ID": "cond_all_card",
+    "Status": "Pending",
+    "StatusReason": "旧模板传字符串，Lua Scope 接收角色实例。通用范围全选已有独立入口。",
     "DisplayName": "所有卡牌",
     "Desc": "获得{Target}所有卡牌",
     "Tags": ["选取", "全体"],
@@ -33,6 +74,8 @@
   },
   {
     "ID": "cond_random_card_in_cd",
+    "Status": "Pending",
+    "StatusReason": "选择依赖旧独立 CD。背包扫描下的等价条件待定义。",
     "DisplayName": "随机CD中卡牌",
     "Desc": "获得{Target}在CD中的随机一张卡牌",
     "Tags": ["选取", "随机", "CD"],
@@ -50,6 +93,8 @@
   },
   {
     "ID": "cond_adjacent_cards",
+    "Status": "Pending",
+    "StatusReason": "旧模板未传参考卡且全方向未接入。按方向的选卡规则待迁移。",
     "DisplayName": "相邻卡牌",
     "Desc": "获得目标卡牌{Direction}方向的相邻卡牌",
     "Tags": ["选取", "位置"],
