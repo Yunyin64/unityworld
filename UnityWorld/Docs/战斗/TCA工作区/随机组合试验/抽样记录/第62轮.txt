@@ -1,0 +1,102 @@
+种子 2026112262 | 共 100 条 | 成卡候选 | T+A 29 | T+C+A 9 | C+A 16 | A 46
+编号 结构 [API 类型] | 触发 | 条件 | 动作 | 中文效果
+001 A     [A-Action] | ∅ | ∅ | action_add_mu_buff(Domain="Self", Count=3) | 给己方附加X层再生(木增益)
+002 T+C+A [T+C-Scope+A-Action] | OnRoundEnd | cond_all_cards_in_domain(Domain="All") | action_slide_card(Domain="Selected", Direction="Left") | 本方轮结束，选取己方所有场上卡，使选中的卡向左滑移
+003 C+A   [C-Scope+A-Action] | ∅ | cond_adjacent_in_field_order | action_change_equipment_stat(Domain="Selected", Stat="Defend", Delta=1, Rounds=3) | 选取此卡场序前后相邻的卡，使选中的卡对应装备的防御提高 X，持续 X 轮
+004 A     [A-Action] | ∅ | ∅ | action_add_shui_debuff(Domain="Target", Count=3) | 给敌方附加X层寒意(水减益)
+005 C+A   [C-Condition+A-Action] | ∅ | cond_has_directional_card(Direction="Down", Keyword="FaBao") | action_add_fortification(Domain="Self", Amount=1) | 若此卡下侧有共边法宝卡，使己方本轮每次受到的伤害减少X
+006 A     [A-Action] | ∅ | ∅ | action_add_artifact_power(Domain="Self", Element="Tu", Amount=4, Rounds=0) | 己方每轮开始随机为法宝补X个土灵元，持续至战斗结束
+007 C+A   [C-Scope+A-Action] | ∅ | cond_all_cards_in_domain(Domain="All") | action_slide_card(Domain="Selected", Direction="Right") | 选取己方所有场上卡，使选中的卡向右滑移
+008 A     [A-Action] | ∅ | ∅ | action_convert(Domain="Self", Element="Huo", MaxAmount=1) | 己方回收格上火灵元为MP（1:1），最多X个并受MP空缺限制，不换元素
+009 T+A   [T+A-Action] | OnCardLeave | ∅ | action_remove_element_buff(Domain="Target", Element="Mu", IsDebuff=false, Count=1) | 己方卡牌离开，清除敌方至多X层木五行增益
+010 T+C+A [T+C-Scope+A-Action] | OnDefend | cond_random_card(Domain="Random") | action_slide_card(Domain="Selected", Direction="Down") | 己方防御侧结算时，随机选取己方一张场上卡，使选中的卡向下滑移
+011 T+A   [T+A-Action] | OnStraight | ∅ | action_add_artifact_power(Domain="Self", Element="None", Amount=3, Rounds=0) | 己方轮末待发直击时，己方每轮开始随机为法宝补X个任意灵元，持续至战斗结束
+012 T+A   [T+A-Action] | OnExhausted | ∅ | action_remove_wound(Domain="Self", Size=1, Exact=false) | 本卡耗尽时，移除己方场上随机一张至多 X 格的伤势卡
+013 A     [A-Action] | ∅ | ∅ | action_slide_card(Domain="GridDown", Direction="Down") | 使下侧共边卡向下滑移
+014 C+A   [C-Scope+A-Action] | ∅ | cond_select_directional_cards(Direction="Left", Keyword="FaBao") | action_slide_card(Domain="Selected", Direction="Left") | 选取与此卡左侧共边的法宝卡，使选中的卡向左滑移
+015 C+A   [C-Condition+A-Action] | ∅ | cond_has_directional_card(Direction="Right", Keyword="FaShu") | Charge(Domain="Self", ReduceTick=20) | 若此卡右侧有共边法术卡，对己方整包增加X个基准Tick进度，不受倍率影响
+016 A     [A-Action] | ∅ | ∅ | action_haste(Domain="Self", DurationTicks=30) | 对己方整包施加双速X个真实Tick，同类只加时
+017 T+C+A [T+C-Scope+A-Action] | OnManaDraw | cond_adjacent_in_field_order | action_slide_card(Domain="Selected", Direction="Up") | 己方成功补灵后，选取此卡场序前后相邻的卡，使选中的卡向上滑移
+018 T+A   [T+A-Action] | OnUse | ∅ | action_self_damage(Domain="Target", DamageValue=1) | 己方卡牌发动后，对敌方造成X点伤害
+019 T+A   [T+A-Action] | OnContestOverflow | ∅ | action_add_mu_buff(Domain="Self", Count=3) | 对拼分出胜负时，给己方附加X层再生(木增益)
+020 T+A   [T+A-Action] | OnStraight | ∅ | action_add_tu_buff(Domain="Self", Count=2) | 己方轮末待发直击时，给己方附加X层载德(土增益)
+021 T+A   [T+A-Action] | OnExhausted | ∅ | action_convert(Domain="Self", Element="Huo", MaxAmount=5) | 本卡耗尽时，己方回收格上火灵元为MP（1:1），最多X个并受MP空缺限制，不换元素
+022 A     [A-Action] | ∅ | ∅ | action_draw(Domain="Self", Amount=3) | 己方尝试放置至多X个灵元，按实际放置数扣除 MP
+023 T+A   [T+A-Action] | OnContest | ∅ | action_add_huo_buff(Domain="Self", Count=3) | 双方拼点时，给己方附加X层心火(火增益)
+024 T+A   [T+A-Action] | OnCardDisplaced | ∅ | action_add_armor(Domain="Self", Amount=2) | 己方卡牌发生位移，使己方获得护甲X，抵消下一次敌方伤害
+025 A     [A-Action] | ∅ | ∅ | action_self_damage(Domain="Target", DamageValue=4) | 对敌方造成X点伤害
+026 A     [A-Action] | ∅ | ∅ | action_add_tu_debuff(Domain="Target", Count=3) | 给敌方附加X层石化(土减益)
+027 A     [A-Action] | ∅ | ∅ | action_add_stat_buff(Domain="Self", StatId="HpMax", Value=3, ModifierType="Flat") | 己方生命上限提高 X 点
+028 T+A   [T+A-Action] | OnStraight | ∅ | action_add_huo_buff(Domain="Self", Count=2) | 己方轮末待发直击时，给己方附加X层心火(火增益)
+029 T+C+A [T+C-Scope+A-Action] | OnExhausted | cond_adjacent_in_field_order | action_slide_card(Domain="Selected", Direction="Right") | 本卡耗尽时，选取此卡场序前后相邻的卡，使选中的卡向右滑移
+030 T+A   [T+A-Action] | OnManaDraw | ∅ | action_add_element_buff(Domain="Target", Element="Tu", IsDebuff=true, Count=2) | 己方成功补灵后，给敌方施加X层土五行减益
+031 A     [A-Action] | ∅ | ∅ | action_remove_wound(Domain="Self", Size=1, Exact=true) | 移除己方场上随机一张恰好 X 格的伤势卡
+032 A     [A-Action] | ∅ | ∅ | action_add_tu_buff(Domain="Self", Count=3) | 给己方附加X层载德(土增益)
+033 T+A   [T+A-Action] | OnUse | ∅ | action_add_mu_debuff(Domain="Target", Count=1) | 己方卡牌发动后，给敌方附加X层中毒(木减益)
+034 A     [A-Action] | ∅ | ∅ | action_reduce_mana(Domain="Target", Element="None", Amount=5) | 从敌方格上移除至多X个任意灵元，不足部分成功，不扣卡上点亮
+035 A     [A-Action] | ∅ | ∅ | action_add_mu_buff(Domain="Self", Count=1) | 给己方附加X层再生(木增益)
+036 A     [A-Action] | ∅ | ∅ | action_add_armor(Domain="Self", Amount=2) | 使己方获得护甲X，抵消下一次敌方伤害
+037 A     [A-Action] | ∅ | ∅ | action_haste(Domain="Self", DurationTicks=30) | 对己方整包施加双速X个真实Tick，同类只加时
+038 C+A   [C-Scope+A-Action] | ∅ | cond_select_directional_cards(Direction="Up", Keyword="Wound") | action_slide_card(Domain="Selected", Direction="Left") | 选取与此卡上侧共边的伤势卡，使选中的卡向左滑移
+039 A     [A-Action] | ∅ | ∅ | action_add_huo_debuff(Domain="Target", Count=2) | 给敌方附加X层灼烧(火减益)
+040 T+A   [T+A-Action] | OnDefend | ∅ | action_slide_card(Domain="GridNeighbor", Direction="Down") | 己方防御侧结算时，使四向共边卡向下滑移
+041 C+A   [C-Scope+A-Action] | ∅ | cond_adjacent_in_field_order | action_change_equipment_stat(Domain="Selected", Stat="Attack", Delta=2, Rounds=1) | 选取此卡场序前后相邻的卡，使选中的卡对应装备的攻击提高 X，持续 X 轮
+042 A     [A-Action] | ∅ | ∅ | action_recover_mp(Domain="Self", Amount=5) | 己方直接回复至多X点 MP，受最大 MP 限制
+043 A     [A-Action] | ∅ | ∅ | action_slide_card(Domain="GridRight", Direction="Down") | 使右侧共边卡向下滑移
+044 A     [A-Action] | ∅ | ∅ | action_add_fortification(Domain="Self", Amount=3) | 使己方本轮每次受到的伤害减少X
+045 A     [A-Action] | ∅ | ∅ | action_add_mu_debuff(Domain="Target", Count=3) | 给敌方附加X层中毒(木减益)
+046 T+A   [T+A-Action] | OnUse | ∅ | action_add_huo_debuff(Domain="Target", Count=3) | 己方卡牌发动后，给敌方附加X层灼烧(火减益)
+047 T+A   [T+A-Action] | OnCardDisplaced | ∅ | action_add_element_buff(Domain="Self", Element="Huo", IsDebuff=false, Count=2) | 己方卡牌发生位移，给己方施加X层火五行增益
+048 C+A   [C-Condition+A-Action] | ∅ | cond_has_directional_card(Direction="Down", Keyword="Wound") | action_recover_mp(Domain="Self", Amount=2) | 若此卡下侧有共边伤势卡，己方直接回复至多X点 MP，受最大 MP 限制
+049 C+A   [C-Scope+A-Action] | ∅ | cond_random_card(Domain="Random") | action_change_equipment_stat(Domain="Selected", Stat="Defend", Delta=2, Rounds=2) | 随机选取己方一张场上卡，使选中的卡对应装备的防御提高 X，持续 X 轮
+050 T+A   [T+A-Action] | OnApply | ∅ | action_reduce_mp(Domain="Target", Amount=2) | 己方卡牌效果结算后，敌方直接减少至多X点 MP，最低降至 0
+051 A     [A-Action] | ∅ | ∅ | action_add_jin_debuff(Domain="Target", Count=3) | 给敌方附加X层出血(金减益)
+052 A     [A-Action] | ∅ | ∅ | action_convert(Domain="Self", Element="None", MaxAmount=1) | 己方回收格上任意灵元为MP（1:1），最多X个并受MP空缺限制，不换元素
+053 T+A   [T+A-Action] | OnStraight | ∅ | action_change_affinity(Domain="Self", Element="Mu", Delta=1, Rounds=2) | 己方轮末待发直击时，己方的木亲和提高 X，持续X轮
+054 A     [A-Action] | ∅ | ∅ | action_self_damage(Domain="Target", DamageValue=3) | 对敌方造成X点伤害
+055 T+A   [T+A-Action] | OnCardLeave | ∅ | action_add_shui_debuff(Domain="Target", Count=1) | 己方卡牌离开，给敌方附加X层寒意(水减益)
+056 A     [A-Action] | ∅ | ∅ | action_self_damage(Domain="Target", DamageValue=3) | 对敌方造成X点伤害
+057 A     [A-Action] | ∅ | ∅ | action_convert(Domain="Self", Element="Mu", MaxAmount=3) | 己方回收格上木灵元为MP（1:1），最多X个并受MP空缺限制，不换元素
+058 T+A   [T+A-Action] | OnContest | ∅ | action_add_huo_buff(Domain="Self", Count=3) | 双方拼点时，给己方附加X层心火(火增益)
+059 T+A   [T+A-Action] | OnExhausted | ∅ | action_schedule_round_action(Domain="Self", RoundDelay=1, ActionName="GainShield", Amount=3) | 本卡耗尽时，在己方之后第 X 个轮首获得灵盾 X 点
+060 A     [A-Action] | ∅ | ∅ | action_schedule_round_action(Domain="Self", RoundDelay=2, ActionName="AddFortification", Amount=3) | 在己方之后第 X 个轮首获得坚甲 X 点
+061 T+A   [T+A-Action] | OnContestOverflow | ∅ | action_armor_break(Domain="Target", BreakValue=3) | 对拼分出胜负时，消除敌方X点护盾
+062 C+A   [C-Scope+A-Action] | ∅ | cond_random_card(Domain="Random") | action_change_equipment_stat(Domain="Selected", Stat="Attack", Delta=2, Rounds=0) | 随机选取己方一张场上卡，使选中的卡对应装备的攻击提高 X，持续至战斗结束
+063 C+A   [C-Condition+A-Action] | ∅ | cond_has_directional_card(Direction="Right", Keyword="Wound") | action_add_artifact_power(Domain="Self", Element="Jin", Amount=1, Rounds=3) | 若此卡右侧有共边伤势卡，己方每轮开始随机为法宝补X个金灵元，持续X轮
+064 A     [A-Action] | ∅ | ∅ | action_add_mu_debuff(Domain="Target", Count=3) | 给敌方附加X层中毒(木减益)
+065 A     [A-Action] | ∅ | ∅ | action_armor_break(Domain="Target", BreakValue=6) | 消除敌方X点护盾
+066 T+A   [T+A-Action] | OnUse | ∅ | action_slow(Domain="Target", DurationTicks=30) | 己方卡牌发动后，对敌方整包施加半速X个真实Tick，同类只加时
+067 A     [A-Action] | ∅ | ∅ | action_remove_element_buff(Domain="Self", Element="Huo", IsDebuff=true, Count=3) | 清除己方至多X层火五行减益
+068 T+A   [T+A-Action] | OnRoundEnd | ∅ | action_reduce_mana(Domain="Target", Element="Shui", Amount=5) | 本方轮结束，从敌方格上移除至多X个水灵元，不足部分成功，不扣卡上点亮
+069 A     [A-Action] | ∅ | ∅ | action_add_tu_buff(Domain="Self", Count=3) | 给己方附加X层载德(土增益)
+070 T+C+A [T+C-Scope+A-Action] | OnManaDraw | cond_adjacent_in_field_order | action_slide_card(Domain="Selected", Direction="Right") | 己方成功补灵后，选取此卡场序前后相邻的卡，使选中的卡向右滑移
+071 C+A   [C-Scope+A-Action] | ∅ | cond_random_card(Domain="TargetRandom") | action_change_equipment_stat(Domain="Selected", Stat="Defend", Delta=-1, Rounds=1) | 随机选取敌方一张场上卡，使选中的卡对应装备的防御降低 X，持续 X 轮
+072 A     [A-Action] | ∅ | ∅ | action_heal(Domain="Self", HealValue=5) | 恢复己方至多X点 HP，受最大 HP 限制
+073 T+A   [T+A-Action] | OnUse | ∅ | action_add_fortification(Domain="Self", Amount=4) | 己方卡牌发动后，使己方本轮每次受到的伤害减少X
+074 A     [A-Action] | ∅ | ∅ | action_remove_element_buff(Domain="Target", Element="Huo", IsDebuff=false, Count=1) | 清除敌方至多X层火五行增益
+075 A     [A-Action] | ∅ | ∅ | action_remove_element_buff(Domain="Target", Element="Huo", IsDebuff=false, Count=99) | 清除敌方至多X层火五行增益
+076 A     [A-Action] | ∅ | ∅ | action_convert(Domain="Self", Element="Huo", MaxAmount=1) | 己方回收格上火灵元为MP（1:1），最多X个并受MP空缺限制，不换元素
+077 A     [A-Action] | ∅ | ∅ | action_armor_break(Domain="Target", BreakValue=2) | 消除敌方X点护盾
+078 T+C+A [T+C-Scope+A-Action] | OnCardDisplaced | cond_adjacent_in_field_order | action_change_equipment_stat(Domain="Selected", Stat="Attack", Delta=2, Rounds=1) | 己方卡牌发生位移，选取此卡场序前后相邻的卡，使选中的卡对应装备的攻击提高 X，持续 X 轮
+079 T+C+A [T+C-Scope+A-Action] | OnCardDisplaced | cond_all_cards_in_domain(Domain="TargetAll") | action_change_equipment_stat(Domain="Selected", Stat="Defend", Delta=-2, Rounds=0) | 己方卡牌发生位移，选取敌方所有场上卡，使选中的卡对应装备的防御降低 X，持续至战斗结束
+080 A     [A-Action] | ∅ | ∅ | action_add_fortification(Domain="Self", Amount=4) | 使己方本轮每次受到的伤害减少X
+081 T+A   [T+A-Action] | OnManaDraw | ∅ | action_add_huo_debuff(Domain="Target", Count=3) | 己方成功补灵后，给敌方附加X层灼烧(火减益)
+082 A     [A-Action] | ∅ | ∅ | action_add_element_buff(Domain="Self", Element="Huo", IsDebuff=false, Count=1) | 给己方施加X层火五行增益
+083 A     [A-Action] | ∅ | ∅ | action_remove_element_buff(Domain="Target", Element="Shui", IsDebuff=false, Count=2) | 清除敌方至多X层水五行增益
+084 T+A   [T+A-Action] | OnExhausted | ∅ | action_convert(Domain="Self", Element="Jin", MaxAmount=3) | 本卡耗尽时，己方回收格上金灵元为MP（1:1），最多X个并受MP空缺限制，不换元素
+085 T+A   [T+A-Action] | OnCardDisplaced | ∅ | action_reduce_mana(Domain="Target", Element="None", Amount=5) | 己方卡牌发生位移，从敌方格上移除至多X个任意灵元，不足部分成功，不扣卡上点亮
+086 T+C+A [T+C-Scope+A-Action] | OnAttack | cond_random_card(Domain="Random") | action_change_equipment_stat(Domain="Selected", Stat="Attack", Delta=1, Rounds=1) | 己方攻击侧结算时，随机选取己方一张场上卡，使选中的卡对应装备的攻击提高 X，持续 X 轮
+087 A     [A-Action] | ∅ | ∅ | action_add_huo_debuff(Domain="Target", Count=2) | 给敌方附加X层灼烧(火减益)
+088 T+A   [T+A-Action] | OnMPChanged | ∅ | action_gain_shield(Domain="Self", Amount=2) | 己方 MP 变化后，使己方获得X灵盾，减伤后的伤害先扣盾
+089 C+A   [C-Condition+A-Action] | ∅ | cond_has_directional_card(Direction="Neighbor", Keyword="FaShu") | action_slow(Domain="Target", DurationTicks=20) | 若此卡四向有共边法术卡，对敌方整包施加半速X个真实Tick，同类只加时
+090 A     [A-Action] | ∅ | ∅ | action_haste(Domain="Self", DurationTicks=20) | 对己方整包施加双速X个真实Tick，同类只加时
+091 C+A   [C-Condition+A-Action] | ∅ | cond_check_consume_count(Comparison="AtMost", Amount=3) | action_self_damage(Domain="Target", DamageValue=3) | 若此卡剩余消耗至多 X 次，对敌方造成X点伤害
+092 T+A   [T+A-Action] | OnStraight | ∅ | action_recover_mp(Domain="Self", Amount=1) | 己方轮末待发直击时，己方直接回复至多X点 MP，受最大 MP 限制
+093 A     [A-Action] | ∅ | ∅ | action_gain_shield(Domain="Self", Amount=1) | 使己方获得X灵盾，减伤后的伤害先扣盾
+094 C+A   [C-Scope+A-Action] | ∅ | cond_adjacent_in_field_order | action_slide_card(Domain="Selected", Direction="Right") | 选取此卡场序前后相邻的卡，使选中的卡向右滑移
+095 A     [A-Action] | ∅ | ∅ | action_slide_card(Domain="TargetRandom", Direction="Up") | 使敌方一张随机可滑移卡向上滑移
+096 A     [A-Action] | ∅ | ∅ | Charge(Domain="Self", ReduceTick=20) | 对己方整包增加X个基准Tick进度，不受倍率影响
+097 C+A   [C-Scope+A-Action] | ∅ | cond_adjacent_in_field_order | action_slide_card(Domain="Selected", Direction="Left") | 选取此卡场序前后相邻的卡，使选中的卡向左滑移
+098 A     [A-Action] | ∅ | ∅ | action_add_huo_buff(Domain="Self", Count=1) | 给己方附加X层心火(火增益)
+099 A     [A-Action] | ∅ | ∅ | action_slide_card(Domain="TargetRandom", Direction="Left") | 使敌方一张随机可滑移卡向左滑移
+100 T+C+A [T+C-Scope+A-Action] | OnBaseManaDraw | cond_adjacent_in_field_order | action_slide_card(Domain="Selected", Direction="Left") | 己方基础补灵前，选取此卡场序前后相邻的卡，使选中的卡向左滑移
