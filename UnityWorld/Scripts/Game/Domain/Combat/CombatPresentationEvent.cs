@@ -8,7 +8,11 @@ public sealed record PresentationManaCost(string Element, int Count);
 public sealed record PresentationManaCell(PresentationCell Cell, string Element);
 public sealed record CombatPresentationCard(int Id, string DefineId, string Name, int Size,
     IReadOnlyList<string> Keywords, IReadOnlyList<PresentationManaCost> ManaCost,
-    IReadOnlyList<string> AssignedElements, IReadOnlyList<PresentationCell> Cells, IReadOnlyList<PresentationCell> Shape);
+    IReadOnlyList<string> AssignedElements, IReadOnlyList<PresentationCell> Cells, IReadOnlyList<PresentationCell> Shape)
+{
+    /// <summary>记录当时的阶段，入场回放可直接显示已激活的被动卡。</summary>
+    public CombatCardPhase Phase { get; init; } = CombatCardPhase.Waiting;
+}
 public sealed record ManaAssignedPresentation(PresentationCell SourceCell, string Element,
     IReadOnlyList<string> Before, IReadOnlyList<string> After);
 public sealed record CardUsedPresentation(IReadOnlyList<string> Before, IReadOnlyList<string> After);

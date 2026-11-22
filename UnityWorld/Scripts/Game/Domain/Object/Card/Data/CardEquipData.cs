@@ -38,7 +38,8 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>装备附属数据（通过 CardMgr.EquipSystem 访问）</summary>
         protected CardEquipData EquipData => CardMgr.Instance.EquipSystem.GetData(Id);
-        public Equip GetEquip() => EquipData.GetEquip();
+        /// <summary>读取该卡自身的装备实例。</summary>
+        public virtual Equip GetEquip() => EquipData.GetEquip();
         /// <summary>是否为装备卡</summary>
         public bool IsEquipCard => EquipMgr.Instance?.GetById(Id) != null;
 
@@ -53,9 +54,9 @@ namespace UnityWorld.Game.Domain
             var ctx = new ContextBase();
             // 招式必须读绑定装备，独立装备卡读自身。
             var equipmentCard = BaseData.MainKeyword == CardMainKeyword.ZhaoShi
-                ? CardMgr.Instance?.GetById(ParentCardId)
+                ? FindEquipmentCard(ParentCardId)
                 : this;
-            if (equipmentCard == null || equipmentCard.GetEquip() is not { } equip) return ctx;
+            if (equipmentCard == null || ReadBoundEquipment(equipmentCard) is not { } equip) return ctx;
             ctx.Set("Attack", equip.Attack);
             ctx.Set("Defend", equip.Defend);
             ctx.Set("Speed", equip.Speed);
@@ -64,5 +65,9 @@ namespace UnityWorld.Game.Domain
             ctx.Set("Element", equipmentCard.GetElementType().ToString());
             return ctx;
         }
+
+        protected virtual Card FindEquipmentCard(int id) => CardMgr.Instance?.GetById(id);
+
+        protected virtual Equip ReadBoundEquipment(Card equipmentCard) => equipmentCard.GetEquip();
     }
 }

@@ -6,6 +6,33 @@ namespace UnityWorld.Game.Domain
 {
     public  static partial class CombatBaseFunc
     {
+        /// <summary>在目标方战斗属性上增减一个五行亲和。</summary>
+        [APIFunc("ChangeAffinity", APIType.Action, "增减战斗中的五行亲和", Scope.CombatNpc,
+            "Domain:String", "Element:String", "Delta:Int", "Rounds:Int")]
+        public static APIContext ChangeAffinity(APIContext ctx)
+        {
+            var element = ctx.GetStringValue("Element");
+            var delta = ctx.GetValue("Delta", 0);
+            var rounds = ctx.GetValue("Rounds", 0);
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.ChangeBattleAffinity(element, delta, rounds);
+            return ctx;
+        }
+
+        /// <summary>登记法宝轮首供能，None 允许任意匹配五行。</summary>
+        [APIFunc("AddArtifactPower", APIType.Action, "获得按轮自动为法宝补充匹配灵元的供能", Scope.CombatNpc,
+            "Domain:String", "Element:String", "Amount:Int", "Rounds:Int")]
+        public static APIContext AddArtifactPower(APIContext ctx)
+        {
+            var element = ctx.GetStringValue("Element", "None");
+            if (element is not ("None" or "Jin" or "Mu" or "Shui" or "Huo" or "Tu")) return ctx;
+            var amount = ctx.GetValue("Amount", 0);
+            var rounds = ctx.GetValue("Rounds", 0);
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.AddArtifactPower(ElementType.GetElementType(element), amount, rounds);
+            return ctx;
+        }
+
         
         private static string FormatManaCells(IReadOnlyList<KeyValuePair<BackpackCell, ElementType>> cells) =>
             string.Join(",", cells.Select(p => $"({p.Key.X + 1},{p.Key.Y + 1}):{p.Value}"));
@@ -27,6 +54,37 @@ namespace UnityWorld.Game.Domain
                 var restored = removed.Count > 0 ? npc.RecoverMP(removed.Count) : 0;
                 npc.Log($"回收灵元 请求={requested} 实际={removed.Count} MP差额=+{restored} 格={FormatManaCells(removed)}");
             }
+            return ctx;
+        }
+
+        /// <summary>从指定卡上移除实际已充入的灵元。</summary>
+        [APIFunc("StripCardMana", APIType.Action, "剥离指定卡的蓄灵", Scope.CombatCard,
+            "Domain:String", "Element:String", "Amount:Int")]
+        public static APIContext StripCardMana(APIContext ctx)
+        {
+            int amount = ctx.GetValue("Amount", 0);
+            string element = ctx.GetStringValue("Element", "None");
+            if (amount <= 0 || element is not ("None" or "Jin" or "Mu" or "Shui" or "Huo" or "Tu")) return ctx;
+
+            var kind = ElementType.GetElementType(element);
+            int removed = 0;
+            foreach (var card in APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx).Distinct())
+                removed += card.StripAssignedMana(amount, kind);
+            ctx.Set("RemovedCount", removed);
+            return ctx;
+        }
+
+        /// <summary>获得抵消指定五行状态施加的次数。</summary>
+        [APIFunc("AddElementImmunity", APIType.Action, "获得指定五行状态免疫", Scope.CombatNpc,
+            "Domain:String", "BuffId:String", "Amount:Int")]
+        public static APIContext AddElementImmunity(APIContext ctx)
+        {
+            string buffId = ctx.GetStringValue("BuffId");
+            int amount = ctx.GetValue("Amount", 0);
+            if (amount <= 0 || !CombatNpc.IsBaseElementStatus(buffId)) return ctx;
+
+            foreach (var npc in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                npc.AddModifier($"ElementImmunity_{buffId}", amount);
             return ctx;
         }
 
@@ -103,9 +161,7 @@ namespace UnityWorld.Game.Domain
                     if (candidates.Count == 0) break;
 
                     var picked = candidates[Scene.Soul.Random(0, candidates.Count)];
-                    var before = picked.CurrentStack;
-                    picked.ReduceStack(1);
-                    if (picked.CurrentStack != before) Scene.MarkPresentationEffect();
+                    npc.ReduceElementModifier(picked);
                 }
             }
             return ctx;

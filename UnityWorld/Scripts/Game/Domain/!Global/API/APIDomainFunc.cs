@@ -22,6 +22,13 @@ namespace UnityWorld.Game.Domain
             _cardFuncs["All"] = GetAllCard;
             _cardFuncs["TargetAll"] = GetTargetAllCard;
             _cardFuncs["TargetRandom"] = GetTargetRandomCard;
+            _cardFuncs["GridUp"] = ctx => GetDirectionalCards(ctx.SourceCard, "Up", "Any");
+            _cardFuncs["GridDown"] = ctx => GetDirectionalCards(ctx.SourceCard, "Down", "Any");
+            _cardFuncs["GridLeft"] = ctx => GetDirectionalCards(ctx.SourceCard, "Left", "Any");
+            _cardFuncs["GridRight"] = ctx => GetDirectionalCards(ctx.SourceCard, "Right", "Any");
+            _cardFuncs["GridNeighbor"] = ctx => GetDirectionalCards(ctx.SourceCard, "Neighbor", "Any");
+            _cardFuncs["Selected"] = ctx => ctx.CardTargets.Where(card => card.Owner != null &&
+                ReferenceEquals(card.Scene, ctx.Scene) && card.Owner.Backpack.Placements.ContainsKey(card.Id)).Distinct().ToList();
 
             // Npc
             _npcFuncs["Self"] = GetSelfNpc;
@@ -29,6 +36,16 @@ namespace UnityWorld.Game.Domain
         }
 
         // ── Card ──────────────────────────────────────────
+        internal static List<CombatCard> GetDirectionalCards(CombatCard source, string direction, string keyword)
+        {
+            var owner = source?.Owner;
+            if (owner == null || !owner.Backpack.Placements.TryGetValue(source.Id, out var reference)) return new();
+            return owner.GetField().Where(card => card != source && (keyword == "Any" || card.HasKeyword(keyword)))
+                .Where(card => CombatBackpack.HasSharedEdge(reference, owner.Backpack.GetCardCells(card.Id), direction))
+                .OrderBy(card => owner.Backpack.GetCardPosition(card.Id)?.Y)
+                .ThenBy(card => owner.Backpack.GetCardPosition(card.Id)?.X).ThenBy(card => card.Id).ToList();
+        }
+
 
         private List<CombatCard> GetSelfCard(APIContext ctx)
         {

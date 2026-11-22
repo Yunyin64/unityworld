@@ -1,9 +1,14 @@
--- Consume Keyword
--- 消耗为普通关键词，次数由卡牌定义和当前实例提供。
+-- 每次成功主动发动使用一份物品。实际扣份及变化事件由卡实例统一提交。
 local Consume = setmetatable({}, { __index = KeywordBase })
 
-function Consume.CheckCondition(card)
-    return card:GetStackMax() > 0
+Consume.ScanCost = {}
+
+function Consume.ScanCost.CanPay(card)
+    return card.HasConsume and card.ConsumeStack > 0
+end
+
+function Consume.ScanCost.Pay(card)
+    card:TryConsume()
 end
 
 LuaMgr:RegisterKeyword("Consume", Consume)

@@ -5,9 +5,13 @@ public partial class CombatScene
 {
     private readonly List<CombatPresentationEvent> _presentationEvents = new();
     private readonly Stack<PresentationScope> _presentationScopes = new();
+    // 玩法事件稍后才派发，借事件 Id 找回产生它的动作。清理表现时可单独释放这些关联。
+    private readonly Dictionary<long, PresentationOrigin> _queuedPresentationOrigins = new();
     private long _presentationSequence;
     private long _presentationIdentity;
     private PresentationOrigin? _presentationOrigin;
+
+    /// <summary>本场是否记录供客户端播放的战斗结果。</summary>
     public bool PresentationRecordingEnabled { get; private set; }
 
     /// <summary>应在 PreStart 前启用；关闭即释放未消费事实，序号不倒退。</summary>
@@ -16,14 +20,20 @@ public partial class CombatScene
         PresentationRecordingEnabled = enabled;
         if (!enabled) ClearPresentationEvents();
     }
+    /// <summary>读取当前表现记录的快照，保留未消费的记录。</summary>
     public IReadOnlyList<CombatPresentationEvent> ReadPresentationEvents() => Array.AsReadOnly(_presentationEvents.ToArray());
+
+    /// <summary>取走自上次消费以来的所有表现记录，供客户端构建本帧。</summary>
     public IReadOnlyList<CombatPresentationEvent> DrainPresentationEvents()
     {
         var copy = ReadPresentationEvents();
         _presentationEvents.Clear();
         return copy;
     }
+
+    /// <summary>丢弃尚未消费的表现记录。</summary>
     public void ClearPresentationEvents() => _presentationEvents.Clear();
+
     internal long? NextPresentationIdentity() => PresentationRecordingEnabled ? ++_presentationIdentity : null;
     internal static IReadOnlyList<T> PresentationCopy<T>(IEnumerable<T> values) => Array.AsReadOnly(values.ToArray());
     internal static CombatPresentationCard PresentationCard(CombatCard card) => new(card.Id, card.DefineId,
@@ -31,9 +41,21 @@ public partial class CombatScene
         PresentationCopy(card.GetManaCost().OrderBy(p => p.Key.ToString()).Select(p => new PresentationManaCost(p.Key.ToString(), p.Value))),
         PresentationCopy(card.AssignedElements.Select(e => e.ToString())),
         PresentationCopy(card.Owner?.Backpack.GetCardCells(card.Id).Select(c => new PresentationCell(c.X, c.Y)) ?? Array.Empty<PresentationCell>()),
-        PresentationCopy(card.BaseData.Shape.Select(c => new PresentationCell(c.X, c.Y))));
+        PresentationCopy(card.BaseData.Shape.Select(c => new PresentationCell(c.X, c.Y)))) { Phase = card.Phase };
     internal PresentationOrigin? CapturePresentationOrigin() => !PresentationRecordingEnabled ? null :
         _presentationScopes.TryPeek(out var scope) ? scope.Origin : _presentationOrigin;
+
+    private void CaptureQueuedPresentationOrigin(long eventId)
+    {
+        var origin = CapturePresentationOrigin();
+        if (origin != null) _queuedPresentationOrigins.Add(eventId, origin);
+    }
+
+    private IDisposable EnterQueuedPresentationOrigin(long eventId)
+    {
+        _queuedPresentationOrigins.Remove(eventId, out var origin);
+        return EnterPresentationOrigin(origin);
+    }
 
     internal IDisposable EnterPresentationOrigin(PresentationOrigin? origin)
     {
@@ -90,7 +112,7 @@ public partial class CombatScene
             _scene._presentationScopes.Pop();
             if (_completed && (Active || Committed))
                 _scene.RecordPresentation(CombatPresentationKind.CardApplied, Card.Owner, Card, Origin,
-                    applied: new CardAppliedPresentation(_label, !Active || !Card.BaseData.HasActiveAbility));
+                    applied: new CardAppliedPresentation(_label, !Active || !Card.HasScanOpportunity));
         }
     }
     private sealed class PresentationRestore(Action restore) : IDisposable { public void Dispose() => restore(); }

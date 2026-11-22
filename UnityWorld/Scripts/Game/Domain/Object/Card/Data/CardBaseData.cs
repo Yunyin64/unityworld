@@ -118,7 +118,7 @@ namespace UnityWorld.Game.Domain
         public int GetSize() => BaseData.Size;
 
         public Dictionary<ElementType, int> GetManaCost() => BaseData.ManaCost;
-        public int GetAmountMax() => BaseData.AmountMax;
+        public virtual int GetAmountMax() => BaseData.AmountMax;
         public int GetStack() => BaseData.Stack;
         public int GetStackMax() => BaseData.StackMax;
         

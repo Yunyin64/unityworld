@@ -94,12 +94,15 @@ internal static class PresentationCoreChecks
         one.Owner.Backpack.PlaceMana(new(5, 0), ElementType.Huo);
         Check(one.Owner.Backpack.AssignManaAt(new(5, 0), one.Owner.GetField()) == null, "不匹配灵元留格");
         Check(scene.ReadPresentationEvents().Count == 0, "未分配不伪造事件");
-        // 通过正式事件机会验证槽满时不产生 Use；不直接调用内部提交入口。
-        two.BaseData.Keywords.Add("FaBao");
-        two.BaseData.ProducesContest = true;
-        Script(two, "OnProbe=function(self,ctx) self.m_Self:TryUseFromEvent(ctx) end");
-        scene.TriggerCombatEvent("OnProbe", new APIContext { Scene = scene, Caster = one.Owner });
-        Check(!scene.ReadPresentationEvents().Any(e => e.Kind == CombatPresentationKind.CardUsed) && two.LitCount == 1, "槽满拒绝且保留点亮");
+        // 移到尚未扫描的末行，用真扫描检查满槽时不会提交第二张法术。
+        var move = new APIContext { Scene = scene, Caster = one.Owner, SourceCard = two };
+        move.Set("Domain", "Self");
+        move.Set("Direction", "Down");
+        APIMgr.Instance.Execute("SlideCard", move);
+        To(scene, 50);
+        Check(one.Owner.Backpack.GetCardPosition(two.Id)?.Y == 5 &&
+            !scene.ReadPresentationEvents().Any(e => e.Kind == CombatPresentationKind.CardUsed && e.Card!.Id == two.Id)
+            && two.LitCount == 1, "满槽时实际末格扫描拒绝发动并保留点亮");
         Check(assigned[0].Card!.AssignedElements.Count == 1 && assigned[0].ManaAssigned!.After.Count == 1, "历史值不会被使用清空");
         scene.Cleanup();
     }
@@ -140,14 +143,13 @@ internal static class PresentationCoreChecks
         }
         {
             var a = NewNpc(); var b = NewNpc(); var ca = Place(a, "bp_attack", 1, 0); var cb = Place(b, "bp_attack", 1, 0);
-            var cr = Place(a, "bp_attack", 1, 1); cr.BaseData.ScanActivatable = false; cr.BaseData.Keywords = ["FaBao"];
+            var cr = Place(a, "bp_attack", 1, 1);
             var scene = Scene(a, b); var one = Card(scene, a, ca); var two = Card(scene, b, cb); var refill = Card(scene, a, cr);
-            Script(refill, "OnApply=function(self,ctx) if ctx.Caster==self.m_Owner then self.m_Self:TryUseFromEvent(ctx) end end, Contest=function(self,ctx) self.m_Self:TryPushToPendingSlot(self.kind,self.element,4) end");
-            refill.env["kind"] = ContestType.Zhan; refill.env["element"] = ElementType.Jin;
-            Light(one); Light(two); Light(refill); To(scene, 10);
+            Light(one); Light(two); Light(refill); To(scene, 20);
             var events = scene.DrainPresentationEvents(); var contest = events.Single(e => e.Contest != null);
             var newEntry = events.Single(e => e.Pending?.Entered == true && e.Card!.Id == refill.Id);
-            Check(one.Owner.PendingSlot?.SourceCard == refill && newEntry.Sequence > contest.Sequence, "同 Tick 对拼后新卡补槽完整保留");
+            Check(one.Owner.PendingSlot?.SourceCard == refill && newEntry.Sequence > contest.Sequence && newEntry.Tick > contest.Tick,
+                "对拼清空槽位后，下一行扫描生成的独立待发完整保留");
             Check(!events.Any(e => e.Applied != null && e.Card!.Id == refill.Id), "补槽卡尚未生效不提前弹名");
             scene.Cleanup();
         }
@@ -204,6 +206,8 @@ internal static class PresentationCoreChecks
         var added = events.Single(e => e.CardAdded != null && e.Card!.Id == card.Id);
         Check(applied.Sequence < added.Sequence && applied.Tick == 1 && added.Tick == 1 && !added.IsInitialization,
             "战中新被动卡 Start 的真实 Apply 事实先于入场流程完成后的 Added");
+        Check(added.Card!.Phase == CombatCardPhase.Active && BattlePresentationState.Copy(added.Card, 0).Phase == "Active",
+            "新增被动卡的入场事实与回放均显示 Active");
         Check(applied.NpcId == owner.Id && added.NpcId == owner.Id && applied.Card!.DefineId == "card_monster_langya" && applied.Applied!.IsPassive,
             "真实新增被动卡的执行身份与入包所属者一致");
         Check(owner.GetAllModifiers().Any(m => m.DefineId == "Ci_Improved") && owner.Backpack.Placements[card.Id].Count == added.Card!.Cells.Count,
@@ -215,6 +219,7 @@ internal static class PresentationCoreChecks
     private static void PassiveOwnership()
     {
         var a = NewNpc(); var b = NewNpc(); var ca = Place(a, "bp_focus", 1, 0); var cb = Place(b, "bp_focus", 1, 0);
+        ca.BaseData.Keywords = ["Passive"];
         var scene = Scene(a, b); var one = Card(scene, a, ca); var two = Card(scene, b, cb);
         Script(one, "Probe=function(self,ctx) local x=self.m_Owner:GetHp() end");
         one.CallLua("Probe"); Check(scene.ReadPresentationEvents().Count == 0, "空条件检查不生效");
@@ -243,7 +248,6 @@ internal static class PresentationCoreChecks
         two.Owner.DealDamage(); two.Owner.DealFieldChange();
         var delayed = scene.DrainPresentationEvents();
         Check(delayed.Single(e => e.Damage != null).EffectId == queued.EffectId && delayed.Single(e => e.CardAdded != null).EffectId == queued.EffectId, "被动延迟伤害及伤口入包保留原生效ID");
-        one.BaseData.ScanActivatable = false; one.BaseData.Keywords = ["Passive"];
         Script(one, "OnPassiveTick=function(self,ctx) self.m_Owner:ChangeShield(1) end");
         To(scene, 1);
         Check(scene.DrainPresentationEvents().Count(e => e.Card!.Id == one.Id && e.Applied?.Origin == "OnPassiveTick") == 1, "真实 Tick 直接被动回调覆盖");

@@ -1,105 +1,14 @@
-using NLua;
 using UnityWorld.Core;
-using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain.Combat
 {
-    public partial class CombatCard 
+    public partial class CombatCard
     {
-        
-        /// <summary>
-        /// 在 Start 阶段检查并初始化 Lua 卡牌：
-        /// 加载 .lua 脚本 → env = return 的 card table → 预扫描 LuaHooks。
-        /// </summary>
-        public void InitializeLuaCards()
-        {
-            var main = CardKeywordRoles.RequireMain(GetKeywords(), DefineId);
-            // 加载 Lua 脚本，获得独立的 card table
-            env = LuaMgr.Instance.LoadCardScript(CardDefineMgr.Instance.Get(DefineId));
-            // 注入 C# 卡牌实例引用，供 Lua 通过  self.m_Self / self.m_Owner 访问
-            if (env != null)
-            {
-                env["m_Self"] = this;
-                env["m_Owner"] = this.Owner;
-            }
-            // 预扫描 Lua 函数缓存
-            LuaHooks = LuaMgr.ScanLuaHooks(env);
+        // ── 拼点与待发槽 ──
 
-            // 从 Lua CardData/Keywords 覆写 BaseData
-            ApplyLuaOverrides();
+        /// <summary>是否通过 Contest 回调创建待发拼点。</summary>
+        public bool ProducesContest => BaseData.ProducesContest ?? this.HasHook("Contest");
 
-            // 遍历所有 Keyword 的 CheckCondition，派生 keyword
-            var derived = LuaMgr.Instance.RunKeywordConditions(this);
-            foreach (var kw in derived)
-            {
-                if (!GetKeywords().Contains(kw))
-                    GetKeywords().Add(kw);
-            }
-            // 装配和战斗共用 Main。普通 Lua 附加词仍可加入，新增第二个主词会明确报错。
-            if (CardKeywordRoles.RequireMain(GetKeywords(), DefineId) != main)
-                throw new InvalidOperationException($"卡牌 {DefineId} 的 Main Keyword 不能在 Lua 中变更。");
-        }
-
-        /// <summary>
-        /// 从 Lua env 中读取 CardData / Keywords，覆写 C# 侧 BaseData。
-        /// 在 InitializeLuaCards 之后、CallLua("OnPreStart") 之前调用。
-        /// </summary>
-        private void ApplyLuaOverrides()
-        {
-            if (env == null) return;
-            var baseData = BaseData;
-            if (baseData == null) return;
-
-            // ── 覆写 CardData，先不处理 TODO────────────────────────────────────
-            /*
-            if (env["CardData"] is LuaTable cardData)
-            {
-                if (cardData["Size"] is long size)
-                    baseData.Size = (int)size;
-
-                if (cardData["Cooldown"] is long cd)
-                    baseData.Cooldown = cd;
-                else if (cardData["Cooldown"] is double cdD)
-                    baseData.Cooldown = (float)cdD;
-
-                if (cardData["ManaCost"] is LuaTable manaTbl)
-                {
-                    baseData.ManaCost.Clear();
-                    foreach (var key in manaTbl.Keys)
-                    {
-                        var elemStr = key.ToString();
-                        if (Enum.TryParse<BaseElementType>(elemStr, out var baseElem))
-                        {
-                            var val = manaTbl[key];
-                            int cost = val is long l ? (int)l : (int)(double)val;
-                            baseData.ManaCost[new ElementType(baseElem)] = cost;
-                        }
-                    }
-                }
-            }
-            
-            */
-            // ── 覆写 Keywords ────────────────────────────────────
-            // nil 或空表不修改，保留 C# 侧已有 Keywords
-            if (env["Keywords"] is LuaTable kwTbl && kwTbl.Values.Count > 0)
-            {
-                foreach (var val in kwTbl.Values)
-                {
-                    var kw = val.ToString();
-                    if (!baseData.Keywords.Contains(kw))
-                        baseData.Keywords.Add(kw);
-                }
-            }
-
-            // CardData 里的 CardType 字段也视为 keyword（兼容旧写法）
-            if (env["CardData"] is LuaTable cd2 && cd2["CardType"] is string cardType)
-            {
-                if (!string.IsNullOrEmpty(cardType) && !baseData.Keywords.Contains(cardType))
-                    baseData.Keywords.Add(cardType);
-            }
-        }
-
-        
         /// <summary>
         /// 尝试将卡推入待发槽。
         /// 构造 ContestData 快照后放入 PendingSlot。
@@ -110,7 +19,7 @@ namespace UnityWorld.Game.Domain.Combat
         public void TryPushToPendingSlot(ContestType contestType, ElementType element, int contestValue)
         {
             // 只有当次已授权的法术或招式 Contest 回调能生成待发数据。
-            if (!_buildingContest || BaseData.MainKeyword is CardMainKeyword.FaBao or CardMainKeyword.Passive)
+            if (Phase != CombatCardPhase.Active || !AwaitingApply || Scene?.IsExecutingActivation(this) != true)
                 throw new InvalidOperationException($"{DefineId} 只能在获准的拼点回调中入槽。");
             if (Owner.PendingSlot != null) throw new InvalidOperationException("唯一待发槽已占用。");
             // 构造 ContestData 快照
@@ -119,38 +28,87 @@ namespace UnityWorld.Game.Domain.Combat
                 ContestType = contestType,
                 Element = element,
                 ContestValue = contestValue,
-                SourceCard = this
+                SourceCard = this,
+                PresentationActionId = PresentationActionId
             };
-            contestData.PresentationActionId = PresentationActionId;
-
-
-            // 入槽即切换阶段，防止下一 Tick 再次被收集
+            // 修正器可以读取卡牌阶段，因此先标记待发，再修正点数并入槽。
             SetPhase(CombatCardPhase.InPending);
 
             Owner.ModifyHook("Contest", CreateCtx("ContestData", contestData));
-            // 待发槽空 → ContestData 入槽
             Owner.AddContestData(contestData);
 
             Log($"  入槽: {contestData}  [{Owner.GetName()}] ");
-
-            // 待发槽满 → 由 CombatNpc.ProcessContest() 统一处理挤出与对拼
         }
+
+        internal void ModifyPairedContest(ContestData contest)
+        {
+            if (!this.HasHook("OnBeforePairedContest") || CallMainKeyword("CanRespond", argument: true) is not true) return;
+            var ctx = new APIContext { Caster = contest.OwnerNpc, Scene = Scene, SourceCard = contest.SourceCard };
+            ctx.Set("ContestData", contest);
+            var previous = contest.ContestValue;
+            using var presentation = Scene.BeginPresentationEffect(this, "OnBeforePairedContest");
+            this.CallLuaHook<bool>("OnBeforePairedContest", env, ctx);
+            Scene.ThrowIfEventAborted();
+            if (contest.ContestValue != previous) Scene.MarkPresentationEffect();
+            presentation?.Complete();
+        }
+
+        // ── 冷却与充能 ──
+
+        /// <summary>保留旧 CD 时钟入口，主动发动由背包扫描驱动。</summary>
+        public void CDTick()
+        {
+        }
+
+        private float GetCDAdd()
+        {
+            var speed = GetStat("CDSpeed");
+            var increment = 1f;
+            if (speed > 0) increment *= 1 + speed / 10;
+            if (speed < 0) increment /= 1 + (-speed) / 10f;
+            return increment <= 0.1f ? 0 : increment;
+        }
+
+        /// <summary>读取含战斗修正的冷却上限。</summary>
+        public float GetCDMax()
+        {
+            return GetCooldown() + GetStat("CDTickAdj");
+        }
+
+        /// <summary>按当前CDSpeed计算还需多少真实Tick才能CD满，返回-1表示无法完成</summary>
+        public int GetCDTickRemaining()
+        {
+            var increment = GetCDAdd();
+            if (increment <= 0.1f) return -1;
+            var remaining = GetCDMax() - Ticks["CD"];
+            if (remaining <= 0) return 0;
+            return (int)Math.Ceiling(remaining / increment);
+        }
+
+        /// <summary>将旧 CD 计时值重置为 1。</summary>
         public void ResetCD()
         {
             Ticks["CD"] = 1;
         }
+
+        /// <summary>输出当前 CD 与上限。</summary>
         public void LogCDInfo()
         {
             Log($" CD: {Ticks["CD"]} | {GetCDMax()}  ");
         }
-        public bool TryPayMana()
-        {
-            throw new NotSupportedException("灵元进入卡牌即点亮，不存在额外支付。");
-        }
+
+        /// <summary>为持有者的背包扫描充能。</summary>
         public void Charge(int Tick)
         {
             Owner.Backpack.Charge(Tick);
             Log($"背包充能基准进度 +{Math.Max(0, Tick)}");
+        }
+
+        /// <summary>向本场战斗写入带卡牌标识的日志。</summary>
+        public void Log(string msg)
+        {
+            if (Owner?.Scene != null) Owner.Scene.Trace(Owner, $"[Card|{DefineId}] {msg}");
+            else CombatScene.Log($"[Card|{DisplayName}] {msg}");
         }
     }
 }

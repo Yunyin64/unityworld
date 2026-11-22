@@ -4,8 +4,7 @@ using UnityWorld.Game.Domain;
 namespace UnityWorld.Game.Domain.Combat
 {
     /// <summary>
-    /// 拼点数据快照：卡牌 CD 就绪时构造，塞入待发槽，拼完即丢。
-    ///  "临时视图"，固定住拼点数值不受后续 buff 影响。
+    /// 卡牌完成扫描后构造的待发拼点，入槽前由持有者的拼点 Buff 修正。
     /// </summary>
     public class ContestData:IDomainDataBase
     {

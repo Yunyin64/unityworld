@@ -17,7 +17,13 @@ namespace UnityWorld.Game.Domain
         public static APIContext Attack(APIContext ctx)
         {
             var card = ctx.SourceCard;
-            if (card == null || card.Owner == null) return ctx;
+            // 轮首和治疗也可能没有来源卡，仍要报出错误的拼点调用。
+            if (!string.IsNullOrEmpty(ctx.EventName) || card?.Owner == null)
+            {
+                LogMgr.Instance?.Warn("[Combat] Attack 已跳过。事件={0}，来源卡={1}。请在卡牌自己的 Contest 回调中生成攻击拼点。",
+                    ctx.EventName, card?.DefineId ?? "无");
+                return ctx;
+            }
 
             string element = ctx.GetValue("Element", "None");
             string physicalType = ctx.GetValue("PhysicalType", "Zhan");
@@ -38,7 +44,12 @@ namespace UnityWorld.Game.Domain
         public static APIContext Defend(APIContext ctx)
         {
             var card = ctx.SourceCard;
-            if (card == null || card.Owner == null) return ctx; 
+            if (!string.IsNullOrEmpty(ctx.EventName) || card?.Owner == null)
+            {
+                LogMgr.Instance?.Warn("[Combat] Defend 已跳过。事件={0}，来源卡={1}。请在卡牌自己的 Contest 回调中生成防御拼点。",
+                    ctx.EventName, card?.DefineId ?? "无");
+                return ctx;
+            }
 
             string defendType = ctx.GetValue("DefendType", "Block");
             int defendValue = ctx.GetValue("DefendValue", 0);
@@ -49,5 +60,5 @@ namespace UnityWorld.Game.Domain
             card.TryPushToPendingSlot(contestType, ElementType.None, defendValue);
             return ctx;
         }
-        }
+    }
 }

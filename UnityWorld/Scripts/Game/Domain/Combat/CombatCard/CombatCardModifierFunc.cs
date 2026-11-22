@@ -26,6 +26,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         private void OnCardBuffTriggerEvent(string eventId, ScopeKey scope, object args)
         {
+            if (args is APIContext ctx && !ReferenceEquals(ctx.Scene, Scene)) return;
             if (CardModifiers.Count == 0) return;
             using var presentation = Scene?.BeginPresentationEffect(this, "CardBuffTrigger:" + eventId);
 
@@ -238,6 +239,29 @@ namespace UnityWorld.Game.Domain.Combat
             if (clampMin.HasValue) result = Math.Max(result, clampMin.Value);
             if (clampMax.HasValue) result = Math.Min(result, clampMax.Value);
             return result;
+        }
+
+        /// <summary>
+        /// 获取属性最终值（含全场 Modifier OnModifierStat hook 贡献）。
+        /// hook 内部读属性应使用 Stats.Get()（裸值）避免递归。
+        /// </summary>
+        public override float GetStat(string statId)
+        {
+            float val = base.GetStat(statId);
+            // 全场 NpcModifier 的 OnModifierStat hook 贡献
+            if (Owner?.Scene != null)
+                val += Owner.Scene.CollectModifierStat(this, statId);
+            // CardModifier 贡献（含 Flat/Percent/ClampMax/ClampMin/Override）
+            val = ApplyCardModifierStat(statId, val);
+            return val;
+        }
+
+        /// <summary>释放本卡的事件监听。</summary>
+        public void Cleanup()
+        {
+            foreach (var trigger in _cardBuffTriggerRefCounts.Keys)
+                EventMgr.Instance?.RemoveEvent(trigger, GetCardScope(), _cardBuffTriggerListener);
+            _cardBuffTriggerRefCounts.Clear();
         }
     }
 }

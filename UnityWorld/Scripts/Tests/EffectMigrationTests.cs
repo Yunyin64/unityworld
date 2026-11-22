@@ -76,10 +76,14 @@ namespace UnityWorld.Tests
             Check(npc.Backpack.ScanProgress == 10m && npc.Backpack.HasteTicks == 40 && npc.Backpack.SlowTicks == 20, "整包充能一次且不扣效果时间");
             Check(scene.GetCombatants()[b.Id].Backpack.ScanProgress == 0, "充能不推进对手");
 
-            foreach (var candidate in npc.GetField().Where(c => c.Id != top.Id)) candidate.Freeze();
+            foreach (var candidate in npc.GetField().Where(c => c.Id != top.Id && c.BaseData.HasActiveAbility))
+                candidate.Freeze();
             ctx = Ctx(npc, "Random", card); CombatBaseFunc.Freeze(ctx);
-            Check(npc.GetField().Single(c => c.Id == top.Id).IsFrozen && ctx.CardTargets.Count == 1, "随机冻结优先范围内唯一未冻结目标");
-            CombatBaseFunc.Freeze(ctx); Check(ctx.CardTargets.Count == 0, "全冻结没有新增效果");
+            Check(npc.GetField().Single(c => c.Id == top.Id).IsFrozen && ctx.CardTargets.Count == 1,
+                "随机冻结命中范围内唯一未冻结的主动卡");
+            CombatBaseFunc.Freeze(ctx);
+            Check(ctx.CardTargets.Count == 0 && npc.GetField().Where(c => !c.BaseData.HasActiveAbility).All(c => !c.IsFrozen),
+                "主动卡全冻结后不会改冻被动卡");
             Check(npc.GetField().All(c => c.Ticks["CD"] == 0), "控制API不推进旧单卡CD");
             scene.Cleanup();
 

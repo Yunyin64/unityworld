@@ -55,6 +55,13 @@ namespace UnityWorld.Game.Domain
             };
         }
 
+        internal Equip Snapshot()
+        {
+            var copy = (Equip)MemberwiseClone();
+            copy.FormList = new(FormList);
+            return copy;
+        }
+
         public override void LogAllInfo()
         {
            

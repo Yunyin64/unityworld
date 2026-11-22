@@ -38,11 +38,33 @@ namespace UnityWorld.Game.Domain
             var random = domain == "Random" || domain == "TargetRandom";
             var range = domain == "Random" ? "All" : domain == "TargetRandom" ? "TargetAll" : domain;
             var cards = APIMgr.Instance.GetTargetCard(range, ctx).DistinctBy(c => c.Id)
-                .Where(c => !c.IsFrozen).OrderBy(c => c.Id).ToList();
+                .Where(c => !c.IsFrozen && c.HasScanOpportunity && (!c.HasConsume || c.ConsumeStack > 0) && !c.IsFreezeImmune())
+                .OrderBy(c => c.Id).ToList();
             if (random && cards.Count > 0) cards = [cards[ctx.Scene.Soul.Random(0, cards.Count)]];
             ctx.CardTargets = cards;
             foreach (var card in cards)
                 if (card.Freeze()) card.Owner.Log($"冻结 {card.DisplayName}#{card.Id}，下次完整扫描跳过并解冻");
+            return ctx;
+        }
+
+        /// <summary>立即解除指定卡牌的冻结。</summary>
+        [APIFunc("ThawCard", APIType.Action, "解除指定卡牌的冻结", Scope.CombatCard, "Domain:String")]
+        public static APIContext ThawCard(APIContext ctx)
+        {
+            foreach (var card in APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx).Distinct())
+                card.Thaw();
+            return ctx;
+        }
+
+        /// <summary>指定卡牌在持有者的若干扫描轮内无法滑移。</summary>
+        [APIFunc("RootCard", APIType.Action, "指定卡牌在若干轮内无法位移", Scope.CombatCard,
+            "Domain:String", "Rounds:Int")]
+        public static APIContext RootCard(APIContext ctx)
+        {
+            int rounds = ctx.GetValue("Rounds", 0);
+            if (rounds <= 0) return ctx;
+            foreach (var card in APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx).Distinct())
+                card.Root(rounds);
             return ctx;
         }
 

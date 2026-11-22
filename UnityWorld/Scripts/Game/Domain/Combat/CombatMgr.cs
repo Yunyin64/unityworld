@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     public class CombatMgr : IGameplayMgrBase,ISoulBase
     {
         public Dictionary<int,CombatScene> combatScenes = new();
+        private readonly object _worldCombatGate = new();
         public string Name => "战斗管理器";
 
         public string Desc => "";
@@ -82,13 +83,18 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public CombatResult RunCombat(IEnumerable<(Npc npc, CombatTeam team)> teamA, IEnumerable<(Npc npc, CombatTeam team)> teamB)
         {
-            var participants = teamA.Concat(teamB).ToArray();
-            var combatScene = new CombatScene();
-            var sceneId = participants[0].npc.Id;
-            combatScenes[sceneId] = combatScene;
+            lock (_worldCombatGate)
+            {
+                var participants = teamA.Concat(teamB).ToArray();
+                var combatScene = new CombatScene();
+                var sceneId = participants[0].npc.Id;
+                combatScenes[sceneId] = combatScene;
 
-            combatScene.Init(12345, participants, 2000);
-            return combatScene.Run();
+                combatScene.Init(12345, participants, 2000);
+                var result = combatScene.Run();
+                result.CommitConsumption(participants);
+                return result;
+            }
         }
     }
 }

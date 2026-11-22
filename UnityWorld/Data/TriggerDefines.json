@@ -201,5 +201,32 @@
     "Tags": [],
     "conflictTags": [],
     "weight": 34
+  },
+  {
+    "ID": "OnAmmoExhausted",
+    "DisplayName": "弹药耗尽时",
+    "desc": "卡的余弹从正数实际扣到零，该次发动仍完整生效",
+    "score": 0,
+    "Tags": ["弹药"],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
+    "ID": "OnConsumed",
+    "DisplayName": "消耗时",
+    "desc": "物品份数实际扣除后触发一次，记录实际扣量与扣后存量",
+    "score": 0,
+    "Tags": ["消耗"],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
+    "ID": "OnFlexible",
+    "DisplayName": "触发灵活时",
+    "desc": "卡因灵活实际离场后触发，此时占格与 SP 已释放",
+    "score": 0,
+    "Tags": ["灵活"],
+    "conflictTags": [],
+    "weight": 1
   }
 ]

@@ -53,10 +53,14 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>完成当前行后调用；返回是否完成了本方一轮。</summary>
         public bool FinishRow()
         {
+            ScannedColumn = -1;
             Row++;
             if (Row < Height) return false;
             Row = 0;
             Round++;
+            // AllCards 保留已经离场的实例；同轮重入不能刷新次数，换轮后才能再用。
+            foreach (var card in _cardData.AllCards.OfType<CombatCard>()) card.FormUsesThisRound = 0;
+            _movedPastScan.Clear();
             return true;
         }
     }

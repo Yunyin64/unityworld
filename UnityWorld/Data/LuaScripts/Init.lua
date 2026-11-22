@@ -40,6 +40,25 @@ function KeywordBase.CheckCondition(card)
 end
 
 
+-- 末格的主词检查与实际支付共用卡上的费用关键词。费用函数独立于战斗事件表。
+local function visitScanCosts(card, operation)
+    local names = card:GetKeywords()
+    for i = 0, names.Count - 1 do
+        local keyword = LuaMgr:GetKeyword(names[i])
+        local cost = keyword and keyword.ScanCost
+        if cost and cost[operation](card) == false then return false end
+    end
+    return true
+end
+
+function KeywordBase.CanPayScanCosts(card)
+    return visitScanCosts(card, "CanPay")
+end
+
+function KeywordBase.PayScanCosts(card)
+    visitScanCosts(card, "Pay")
+end
+
 --- 全局日志快捷函数
 Log = function(msg)
     LogMgr:Dbg("[Lua] {0}", tostring(msg))

@@ -1,9 +1,48 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
+        internal void ChangeBattleAffinity(string element, int delta, int rounds)
+        {
+            if (element is not ("Jin" or "Mu" or "Shui" or "Huo" or "Tu") || delta == 0 || rounds < 0) return;
+            var sign = delta > 0 ? "Up" : "Down";
+            AddRoundModifier($"Affinity_{element}_{sign}", (int)Math.Min(int.MaxValue, Math.Abs((long)delta)), rounds);
+        }
+
+        internal void AddArtifactPower(ElementType element, int amount, int rounds)
+        {
+            AddRoundModifier($"ArtifactPower_{element.Kind}", amount, rounds);
+        }
+
+        private void PowerArtifacts()
+        {
+            var supplies = GetAllModifiers().Where(modifier => modifier.DefineId.StartsWith("ArtifactPower_", StringComparison.Ordinal)).ToArray();
+            if (supplies.Length == 0) return;
+            var artifacts = Field.Where(card => card.BaseData.MainKeyword == CardMainKeyword.FaBao)
+                .OrderBy(card => card.Id).ToArray();
+            foreach (var supply in supplies)
+            {
+                var supplyElement = ElementType.GetElementType(supply.DefineId["ArtifactPower_".Length..]);
+                for (int i = 0; i < supply.CurrentStack; i++)
+                {
+                    // 先随机选择法宝，再从它仍可接收的匹配元素中随机选择一份。
+                    var candidates = artifacts.Select(card => (Card: card, Elements: card.GetManaCost().Keys
+                            .Where(element => (supplyElement.Equals(ElementType.None) || supplyElement.Equals(element))
+                                && card.CanAcceptMana(element)).OrderBy(element => element.ToString(), StringComparer.Ordinal).ToArray()))
+                        .Where(candidate => candidate.Elements.Length > 0).ToArray();
+                    if (candidates.Length == 0) break;
+                    var selected = candidates[Scene.Soul.Random(0, candidates.Length)];
+                    var element = selected.Elements[Scene.Soul.Random(0, selected.Elements.Length)];
+                    if (!selected.Card.TryReceiveMana(element)) continue;
+                    Scene.MarkPresentationEffect();
+                    selected.Card.DispatchManaCharged(element);
+                }
+            }
+        }
+
         /// <summary>开场/本方轮末补灵入口，不再自带独立 CD。</summary>
         public void DoManaDraw(bool noCheck = false)
         {

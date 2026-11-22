@@ -4,13 +4,13 @@
 
 [玩法与接口索引](玩法与接口索引.md) · [发布状态、验证与反馈](变更与反馈.md) · [1122TCA拓展实现](../../1122TCA拓展实现.md)
 
-目录共 **30 个 Ready T、17 个 Ready C、44 个 Ready A 模板**，T 和 C 的计数含空节点。14 条进阶记录可手动选用，抽样权重为 0。另有 **8 个 Pending 条目**，保留原 ID、参数及评分供后续设计。写当前可执行效果时使用 Ready 条目。卡牌和词条 Lua 通过 `[APIFunc]` 调用 C# 结算。
+目录共 **32 个 Ready T、21 个 Ready C、45 个 Ready A 模板**，T 和 C 的计数含空节点。14 条进阶记录可手动选用，抽样权重为 0。另有 **8 个 Pending 条目**，保留原 ID、参数及评分供后续设计。写当前可执行效果时使用 Ready 条目。卡牌和词条 Lua 通过 `[APIFunc]` 调用 C# 结算。
 
 随机组合另用 `trigger_none` 表示无额外触发，并复用 `cond_none` 表示无条件。两者按 JSON 权重抽取。 [抽样规则与组合问题](../随机组合试验/组合规则与问题.md)
 
 ## T · 触发与生命周期
 
-[触发配置](../../../../Data/TriggerDefines.json) · [卡牌 Use、Apply、Tick 和事件接收](../../../../Scripts/Game/Domain/Combat/CombatCard/CombatCard.cs) · [待发、受击和对拼](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) · [补灵和 MP](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcManaFunc.cs) · [战斗事件队列](../../../../Scripts/Game/Domain/Combat/CombatSceneEvents.cs)
+[触发配置](../../../../Data/TriggerDefines.json) · [卡牌 Use、Apply、Tick 和事件接收](../../../../Scripts/Game/Domain/Combat/CombatCard/CombatCard.cs) · [待发、受击和对拼](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) · [补灵和 MP](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcManaFunc.cs) · [战斗事件队列](../../../../Scripts/Game/Domain/Combat/CombatScene/CombatSceneEvents.cs)
 
 事件接收方通过 `ctx.Caster` 与 `ctx.SourceCard` 判断是不是己方或本卡。卡牌发动过程中产生的事件先入队，发动作用域结束后派发。发动计数、效果执行和事件接收是不同阶段。
 
@@ -25,6 +25,9 @@
 | OnRoundStart | 本方首轮或新一轮开始，在供能和基础补灵之前 | Caster、Round |
 | OnRoundEnd | 本方最后一行完成结算，轮状态到期前 | Caster、Round |
 | OnCardDisplaced | 四向滑移成功并写入位置后，可用 WasCardDisplaced 限定被移动者 | Caster、SourceCard、MovedCard、Direction、OldX、OldY、NewX、NewY |
+| OnAmmoExhausted | 本次实扣使余弹由正数变为零 | Caster、SourceCard、Amount（实际扣弹） |
+| OnConsumed | 实际扣除一批物品份数 | Caster、SourceCard、Amount、Stack |
+| OnFlexible | 灵活的请求已使卡实际离场，格子与 SP 可用 | Caster、SourceCard、RemovalReason |
 | OnExhausted | 本次扣除使消耗由正数变为零 | Caster、SourceCard、Amount、Stack |
 | OnCardLeave | 场上或候补实际移除后。被移除卡自身的局部 Hook 为 OnLeave | Caster、SourceCard |
 | OnContestOverflow | 确定对拼结果后、两卡 Apply 前 | 双方角色、卡、类型、最终点数、IsDraw、Overflow。有胜负时附带 Winner、Loser 及各自卡、类型、类型名和点数，Caster、SourceCard 为胜方。平局时 Caster、SourceCard 取配对 A 方 |
@@ -72,6 +75,8 @@
 | cond_was_card_used_on_side | WasCardUsedOnSide 使用成功发动瞬间的占格，以监听卡为参照 |
 | cond_was_card_displaced | WasCardDisplaced 判断本次位移的被移动卡 |
 | cond_check_contest_outcome | CheckContestOutcome 在对拼结算事件中判断指定参战者 Win、Lose 或 Draw |
+| cond_ammo_exhausted / cond_has_consume_stock | 本卡余弹为零 / 本卡至少还有一份消耗库存 |
+| cond_self_has_keyword / cond_source_has_keyword | HasKeyword 检查本卡或事件来源卡当前是否具有指定词 |
 | cond_check_consume_count | CheckConsumeCount 比较指定消耗卡当前次数，支持 Equal、AtLeast、AtMost |
 | cond_check_mana_charged / cond_check_wound_event | 筛选充入的灵元或成功提交的伤势 |
 | cond_check_mana_used / cond_check_element_stack_change | 进阶。筛选实付灵元或具体五行状态的增减层 |
@@ -102,6 +107,7 @@ SelectCards 返回独立的卡牌列表，并登记同一批结果给后续 `Sel
 | `action_change_equipment_stat` / `ChangeEquipmentStat` | 修改指定装备或招式所属装备的攻防 | Domain、Stat、Delta、Rounds | 长剑攻击 4 加 2 后，新生成剑刺用 6 点 | [装备模板](../../../../Data/Action/ActionTemplate_BattleEquipment.json) |
 | `action_change_affinity` / `ChangeAffinity` | 修改目标战斗抽灵权重 | Domain、Element、Delta、Rounds | 当前只有木权重为正时，抽取全部是木灵元 | [亲和与供能模板](../../../../Data/Action/ActionTemplate_BattleAffinity.json) |
 | `action_add_artifact_power` / `AddArtifactPower` | 轮首随机给场上法宝补当前需要的灵元 | Domain、Element、Amount、Rounds | 火供能只补火，None 可以补任一匹配五行 | 同上 |
+| `action_refill_ammo` / `RefillAmmo` | 补充余弹至有效上限 | Domain、Amount | [弹药模板](../../../../Data/Action/ActionTemplate_Ammo.json) | `CombatBaseFunc.RefillAmmo` → `CombatCard.RefillAmount` |
 | `action_slide_card` / `SlideCard` | 沿四向滑到障碍前，灵元可穿越，终点灵元让位 | Domain、Direction | 作用于完整卡形，保持蓄灵与 SP | [位移模板](../../../../Data/Action/ActionTemplate_Spatial.json) |
 | `action_heal` / `Heal` | 治疗至多 HealValue 点，受最大 HP 限制 | Domain、HealValue | [效果模板](../../../../Data/Action/ActionTemplate_Effect.json)；[再生](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Buff_Mu.lua) 用于基础补灵 | [CombatBaseAction.Heal](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatBaseAction.cs) → `ApplyHeal`，实际回复后派发 OnHeal |
 | `action_self_damage` / `SelfDamage` | 给选中的角色排入伤害，经过受伤管线 | Domain、DamageValue | 同上。 [出血](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Debuff_Jin.lua) 基础补灵自伤 | `CombatBaseAction.SelfDamage` → `AddDamage`。默认斩击。对敌用施加者作为来源，使护甲参与结算。自伤沿用无来源伤害 |
@@ -113,7 +119,7 @@ SelectCards 返回独立的卡牌列表，并登记同一批结果给后续 `Sel
 | `action_freeze` / `Freeze` | 冻结未冻结且未耗尽的主动卡，目标下次完整扫描跳过发动并解冻 | 卡牌 Domain、FreezeTime（兼容占位） | 同上；[水系冻结](../../../../Data/Card/Lua/card_shui_freeze.lua) Apply 随机冻敌卡 | `CombatCDAction.Freeze` → `CombatCard.Freeze`，随机前筛掉无效目标 |
 | `action_slow` / `Slow` | 整包半速，同类延时 | Self/Target、DurationTicks | 同上；[土系减速](../../../../Data/Card/Lua/card_tu_slow.lua) Apply | `CombatCDAction.Slow` → `Backpack.AddSlow`；时序、效果子项 |
 | `action_haste` / `Haste` | 整包双速，同类延时 | Self/Target、DurationTicks | 同上；[木系加速](../../../../Data/Card/Lua/card_mu_haste.lua) Apply | `CombatCDAction.Haste` → `Backpack.AddHaste`；时序、效果子项 |
-| `action_remove_wound` / `RemoveRandomWound` | 随机选一张场上伤口排队移除 | Domain、Size、Exact（true 等于，false 至多） | [卡组模板](../../../../Data/Action/ActionTemplate_Deck.json)；Exact=true 选等体量，false 选至多该体量。未查到实卡调用 | `CombatBaseAction.RemoveRandomWound` → `RemoveCombatCard` → `DealFieldChange` |
+| `action_remove_wound` / `RemoveRandomWound` | 随机选一张场上伤口排队移除 | Domain、Size、Exact（true 等于，false 至多） | [卡组模板](../../../../Data/Action/ActionTemplate_Deck.json)；Exact=true 选等体量，false 选至多该体量。未查到实卡调用 | `CombatBaseAction.RemoveRandomWound` → `HealWound` → `DealFieldChange` |
 | `action_convert` / `Convert` | 灵元转化／回收格上灵元为 MP，1 个回 1 点 | Domain、Element（None 任意）、MaxAmount | [灵元模板](../../../../Data/Action/ActionTemplate_Mana.json)；[迁移规格](../../../../openspec/specs/combat-mana-manipulation/spec.md)；本轮通过满 MP、MP 空缺、指定元素、保护已点亮测试 | [CombatManaAction.Convert](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatManaAction.cs) → `RemoveMana`、`RecoverMP` |
 | `action_recover_mp` / `RecoverMP` | 直接回复 MP，受上限限制 | Domain、Amount | [MP 模板](../../../../Data/Action/ActionTemplate_MP.json)；浩瀚在基础补灵前按层回复 | CombatManaAction.RecoverMP → CombatNpc.RecoverMP |
 | `action_reduce_mp` / `ReduceMP` | 直接减少 MP，最低降至零 | Domain、Amount | 同上；石化在基础补灵前按层削减 | CombatManaAction.ReduceMP → CombatNpc.ReduceMP |

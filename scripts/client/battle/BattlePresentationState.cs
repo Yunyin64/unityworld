@@ -92,7 +92,7 @@ internal static class BattlePresentationState
     private static PendingSnapshot Pending(ContestSidePresentation side) => new(side.Card.Id, side.Card.DefineId,
         side.Card.Name, side.ContestType, side.Value, side.Element);
     internal static CardSnapshot Copy(CombatPresentationCard card, int mainId) => new(card.Id, card.DefineId, card.Name,
-        card.Size, "Waiting", false, 0, 0, card.Id == mainId, card.Keywords.Contains("Wound"),
+        card.Size, card.Phase.ToString(), false, 0, 0, card.Id == mainId, card.Keywords.Contains("Wound"),
         Array.AsReadOnly(card.Cells.Select(c => new CellSnapshot(c.X, c.Y)).ToArray()), card.AssignedElements,
         Array.AsReadOnly(card.ManaCost.Select(m => new ElementAmount(m.Element, m.Count)).ToArray()));
 }

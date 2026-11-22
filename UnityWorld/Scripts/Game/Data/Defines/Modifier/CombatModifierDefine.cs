@@ -16,11 +16,14 @@ namespace UnityWorld.Game.Data
         // ── A. 生命周期 ──────────────────────────────────────
 
         /// <summary>
-        /// 持续时间（秒）。
+        /// 持续时间（战斗 Tick）。
         /// -1 = 永久有效；大于 0 = 有限时长，到期后 Modifier 自动移除。
         /// </summary>
         [JsonPropertyName("Duration")]
         public float Duration { get; set; } = -1f;
+
+        /// <summary>默认持续的持有者轮数，含施加当轮。零表示不按轮到期。</summary>
+        public int DurationRounds { get; set; }
 
         /// <summary>最大叠层（0 表示无上限）</summary>
         [JsonPropertyName("MaxStack")]

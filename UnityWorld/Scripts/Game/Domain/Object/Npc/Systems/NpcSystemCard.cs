@@ -55,6 +55,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>验证形状、资源总数；被动卡也必须占用正数格子。</summary>
         public static void ValidateCard(Card card)
         {
+            ValidateConsumeSelection(card);
             var data = card.BaseData;
             // 卡自身的形状、资源和兼容性约束统一由卡牌系统维护。
             var issues = new List<string>();
@@ -76,6 +77,12 @@ namespace UnityWorld.Game.Domain
                 issues.Add("招式每轮成功发动上限必须为正数。");
             if (issues.Count > 0)
                 throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id}：" + string.Join("；", issues));
+        }
+
+        internal static void ValidateConsumeSelection(Card card)
+        {
+            if (card.HasKeyword("Consume") && (card.GetStack() <= 0 || card.GetStack() > card.GetStackMax()))
+                throw new InvalidOperationException($"消耗卡 {card.DefineId}/{card.Id} 剩余 {card.GetStack()}/{card.GetStackMax()}，不能加入备战。");
         }
 
         /// <summary>取得可修改的世界卡数据，战斗子类不能经由此入口修改世界。</summary>
@@ -114,6 +121,7 @@ namespace UnityWorld.Game.Domain
         {
             var data = GetWorldData(npc);
             if (!data.AllCardIds.Contains(cardId)) throw new InvalidOperationException($"未持有卡 {cardId}。");
+            ValidateConsumeSelection(data.AllCards.Single(card => card.Id == cardId));
             if (data.MainGongFaCardId != null && NpcMgr.Instance.BackpackSystem.GetData(npc.Id).GetPosition(cardId) == null)
                 throw new InvalidOperationException("背包卡请通过 PlaceBackpackCard 显式指定位置。");
             data.Reserve.Remove(cardId);
@@ -126,6 +134,7 @@ namespace UnityWorld.Game.Domain
             var data = GetWorldData(npc);
             if (!data.AllCardIds.Contains(cardId)) throw new InvalidOperationException($"未持有卡 {cardId}。");
             GuardMainCard(data, cardId);
+            ValidateConsumeSelection(data.AllCards.Single(card => card.Id == cardId));
             NpcMgr.Instance.BackpackSystem.RemovePlacement(npc, cardId);
             data.Field.Remove(cardId);
             if (!data.Reserve.Contains(cardId)) data.Reserve.Add(cardId);
@@ -331,6 +340,7 @@ namespace UnityWorld.Game.Domain
             EnsureWorldCardOperation();
             if (CardData.MainGongFaCardId != null)
                 throw new InvalidOperationException("背包布局必须逐张显式摆放，不能 AssignAllToField。");
+            foreach (var card in CardData.AllCards) NpcSystemCard.ValidateConsumeSelection(card);
             // 先把已有卡全入 Field
             foreach (var cardId in CardData.AllCardIds)
             {

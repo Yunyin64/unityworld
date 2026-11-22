@@ -5,8 +5,6 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
-        
-        
         public List<CombatCard> GetCards(CombatCardPhase phase)
         {
             return Field.Where(c => c.CheckPhase(phase)).ToList();
@@ -58,8 +56,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (sp > spMax && Status == CombatantStatus.Active)
             {
                 Status = CombatantStatus.Defeated;
-                if (PendingSlot != null) RecordPending(PendingSlot, false, "Defeated");
-                PendingSlot = null;
+                CancelPending("Defeated");
                 Log($"当前SP={sp}/{spMax}，状态：{Status}");
             } 
         }
@@ -105,7 +102,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>只结算本批行边界快照中的槽；结算事件新产生的槽留给后续边界。</summary>
         internal void ProcessContestAtBoundary(ContestData expectedOwn, CombatNpc target, ContestData expectedOther)
         {
-            if (!IsActive || !target.IsActive || expectedOwn == null || expectedOther == null ||
+            if (!Scene.AtContestBoundary || !IsActive || !target.IsActive || expectedOwn == null || expectedOther == null ||
                 !ReferenceEquals(PendingSlot, expectedOwn) || !ReferenceEquals(target.PendingSlot, expectedOther)) return;
             var own = TakePending();
             var other = target.TakePending();
@@ -119,6 +116,20 @@ namespace UnityWorld.Game.Domain.Combat
             if (!IsActive || PendingSlot == null) return;
             Log($"轮末强制 owner={Id} 卡={PendingSlot.SourceCard.DefineId}");
             Straight(TakePending());
+        }
+
+        // 取消只结束待发，不执行 Apply。沿用本卡的 Lua 分派，让关键词处理收尾。
+        private void CancelPending(string reason)
+        {
+            if (PendingSlot == null) return;
+            var pending = PendingSlot;
+            PendingSlot = null;
+            RecordPending(pending, false, reason);
+            var card = pending.SourceCard;
+            if (card.CheckPhase(CombatCardPhase.InPending)) card.SetPhase(card.ChargePhase);
+            var ctx = new APIContext { Scene = Scene, Caster = this, SourceCard = card };
+            ctx.Set("Reason", reason);
+            card.CallLua("OnPendingCancelled", ctx);
         }
 
         private ContestData TakePending()
@@ -184,7 +195,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (dmg.Damage > 0) Scene.MarkPresentationEffect();
         }
         /// <summary>
-        /// 对拼结算：同类非射击攻击胜出取全额，其他攻击胜出取差值。广播 OnContestOverflow。
+        /// 对拼结算：同类非射击攻击胜出取全额，其他攻击胜出取差值。胜负与平局均广播 OnContestOverflow。
         /// </summary>
         public CombatResult ResolveContest(ContestData contestA, ContestData contestB)
         {
@@ -198,93 +209,110 @@ namespace UnityWorld.Game.Domain.Combat
 
             var npcA = contestA.OwnerNpc;
             var npcB = contestB.OwnerNpc;
+            if (!Scene.AtContestBoundary)
+                throw new InvalidOperationException("只能在战斗事件处理结束后的行边界进行配对。");
+
             var contestId = Scene.NextPresentationIdentity();
             contestA.PresentationContestId = contestB.PresentationContestId = contestId;
             contestA.SourceCard.PresentationContestId = contestB.SourceCard.PresentationContestId = contestId;
             using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(null, null, contestId, null));
-            // 下一次实际对拼才消费招式强化。入槽与轮末直击均不调用这个阶段。
-            npcA.ApplyPairedFormBonuses(contestA);
-            npcB.ApplyPairedFormBonuses(contestB);
+            // 双方到达实际配对边界后，先由各自主词处理该拼点，再执行角色修正。
+            contestA.SourceCard.CallMainKeyword("OnBeforePairedContest", argument: contestA);
+            contestB.SourceCard.CallMainKeyword("OnBeforePairedContest", argument: contestB);
+            npcB.ApplyPairedContestModifiers(contestB, contestA);
+            npcA.ApplyPairedContestModifiers(contestA, contestB);
+            contestA.ContestValue = Math.Max(0, contestA.ContestValue);
+            contestB.ContestValue = Math.Max(0, contestB.ContestValue);
+
+            // 对拼事件报告本次配对的参与者、来源卡与类型。
+            var pairedContext = new APIContext { Caster = npcA, SourceCard = contestA.SourceCard, Scene = Scene };
+            pairedContext.Set("ContestA", npcA);
+            pairedContext.Set("ContestB", npcB);
+            pairedContext.Set("ContestCardA", contestA.SourceCard);
+            pairedContext.Set("ContestCardB", contestB.SourceCard);
+            pairedContext.Set("ContestTypeA", contestA.ContestType.ToString());
+            pairedContext.Set("ContestTypeB", contestB.ContestType.ToString());
+            Scene.TriggerCombatEvent("OnContest", pairedContext);
             int valueA = contestA.ContestValue;
             int valueB = contestB.ContestValue;
+
+            // 用最终拼点判定对拼结果，表现和结算共用同一次比较。
+            int comparison = valueA.CompareTo(valueB);
+            bool isDraw = comparison == 0;
+            int overflow = Math.Abs(valueA - valueB);
             if (Scene.PresentationRecordingEnabled)
             {
                 ContestSidePresentation Side(ContestData data) => new(data.OwnerNpc.Id,
                     CombatScene.PresentationCard(data.SourceCard), data.PresentationActionId,
                     data.ContestType.ToString(), data.Element.ToString(), data.ContestValue);
                 Scene.RecordPresentation(CombatPresentationKind.ContestResolved, npcA, contestA.SourceCard,
-                    contest: new ContestPresentation(Side(contestA), Side(contestB), valueA == valueB ? null : valueA > valueB ? npcA.Id : npcB.Id,
-                        Math.Abs(valueA - valueB)));
+                    contest: new ContestPresentation(Side(contestA), Side(contestB),
+                        isDraw ? null : comparison > 0 ? npcA.Id : npcB.Id, overflow));
             }
 
             Log($"  对拼: [{npcA.GetName()}]{contestA} vs [{npcB.GetName()}]{contestB}");
 
-            // 平局
-            if (Math.Abs(valueA - valueB) < 0.001f)
+            pairedContext.Set("IsDraw", isDraw);
+            pairedContext.Set("Overflow", overflow);
+            pairedContext.Set("ContestValueA", valueA);
+            pairedContext.Set("ContestValueB", valueB);
+            if (isDraw)
             {
-                Log($"    平局，差值=0，无伤害");
+                Log("    平局，差值=0，无伤害");
                 ret.Set("IsDraw", true);
-                contestA.SourceCard.Apply();
-                contestB.SourceCard.Apply();
-                return ret;
-            }
-
-            // 判胜负
-            ContestData winnerContest, loserContest;
-            if (valueA > valueB)
-            {
-                winnerContest = contestA;
-                loserContest = contestB;
             }
             else
             {
-                winnerContest = contestB;
-                loserContest = contestA;
+                var winnerContest = comparison > 0 ? contestA : contestB;
+                var loserContest = comparison > 0 ? contestB : contestA;
+                var winner = winnerContest.OwnerNpc;
+                var loser = loserContest.OwnerNpc;
+
+                winner.ContestWin(ret, winnerContest, loserContest, overflow);
+                loser.ContestLose(ret, winnerContest, loserContest, overflow);
+
+                foreach (var contest in new[] { winnerContest, loserContest })
+                {
+                    var eventName = contest.IsAttackType ? "OnAttack" : contest.IsDefenseType ? "OnDefend" : null;
+                    if (eventName != null)
+                        Scene.TriggerCombatEvent(eventName, new APIContext { Caster = contest.OwnerNpc, SourceCard = contest.SourceCard, Scene = Scene });
+                }
+
+                // 有胜负时，事件主体和来源卡取胜方。
+                pairedContext.Caster = winner;
+                pairedContext.SourceCard = winnerContest.SourceCard;
+                pairedContext.Set("Winner", winner);
+                pairedContext.Set("Loser", loser);
+                pairedContext.Set("WinnerType", winnerContest.ContestType);
+                pairedContext.Set("WinnerTypeName", winnerContest.ContestType.ToString());
+                pairedContext.Set("LoserType", loserContest.ContestType);
+                pairedContext.Set("LoserTypeName", loserContest.ContestType.ToString());
+                pairedContext.Set("WinnerValue", winnerContest.ContestValue);
+                pairedContext.Set("LoserValue", loserContest.ContestValue);
+                pairedContext.Set("WinnerCard", winnerContest.SourceCard);
+                pairedContext.Set("LoserCard", loserContest.SourceCard);
             }
 
-            int overflow = Math.Abs(valueA - valueB);
-            var winner = winnerContest.OwnerNpc;
-            var loser = loserContest.OwnerNpc;
-
-            // 赢家处理
-            winner.ContestWin(ret, winnerContest, loserContest, overflow);
-            // 输家处理
-            loser.ContestLose(ret, winnerContest, loserContest, overflow);
-
-            foreach (var contest in new[] { winnerContest, loserContest })
-            {
-                var eventName = contest.IsAttackType ? "OnAttack" : contest.IsDefenseType ? "OnDefend" : null;
-                if (eventName != null)
-                    Scene.TriggerCombatEvent(eventName, new APIContext { Caster = contest.OwnerNpc, SourceCard = contest.SourceCard, Scene = Scene });
-            }
-
-            // 广播 OnContestOverflow
-            var ctx = new APIContext
-            {
-                Caster = winner,
-                SourceCard = winnerContest.SourceCard,
-                Scene = Scene
-            };
-            ctx.Set("Winner", winner);
-            ctx.Set("Loser", loser);
-            ctx.Set("Overflow", overflow);
-            ctx.Set("WinnerType", winnerContest.ContestType);
-            ctx.Set("WinnerTypeName", winnerContest.ContestType.ToString());
-            ctx.Set("LoserType", loserContest.ContestType);
-            ctx.Set("WinnerCard", winnerContest.SourceCard);
-            ctx.Set("LoserCard", loserContest.SourceCard);
-            Scene.TriggerCombatEvent("OnContestOverflow", ctx);
-
+            Scene.TriggerCombatEvent("OnContestOverflow", pairedContext);
             contestA.SourceCard.Apply();
             contestB.SourceCard.Apply();
 
             return ret;
         }
 
-        private void ApplyPairedFormBonuses(ContestData contest)
+        /// <summary>让本方场上卡牌对指定的实际拼点执行配对前修正。</summary>
+        public void ApplyFieldContestModifiers(ContestData contest)
         {
-            if (contest.SourceCard.BaseData.MainKeyword != CardMainKeyword.ZhaoShi) return;
             foreach (var card in Field) card.ModifyPairedContest(contest);
+        }
+
+        private void ApplyPairedContestModifiers(ContestData contest, ContestData opponentContest)
+        {
+            // 持有者的 Buff 在配对结算前可以读取本次实际配对的两份拼点。
+            var ctx = new APIContext { Caster = this, SourceCard = contest.SourceCard, Scene = Scene };
+            ctx.Set("ContestData", contest);
+            ctx.Set("OpponentContestData", opponentContest);
+            ModifyHook("PairedContest", ctx);
         }
 
         private CombatResult ContestWin(CombatResult ctx, ContestData win, ContestData lose, int overflow)

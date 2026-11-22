@@ -36,7 +36,12 @@ namespace UnityWorld.Game.Domain.Combat
 
         public bool IsValid(BackpackCell cell) => _validCells.Contains(cell);
         public int? CardAt(BackpackCell cell) => _cardCells.TryGetValue(cell, out var id) ? id : null;
-        public bool IsCardCompleteAt(int cardId, BackpackCell cell) => _placements[cardId][^1] == cell;
+        public bool IsCardCompleteAt(int cardId, BackpackCell cell) => _placements[cardId][^1] == cell &&
+            (!_movedPastScan.TryGetValue(cardId, out int round) || round != Round);
+
+        // 行边界的事件也必须看到最后访问过的列，到下一行才重置。
+        internal int ScannedColumn { get; set; } = -1;
+        private readonly Dictionary<int, int> _movedPastScan = new();
 
         /// <summary>取得本场布局的独立值副本，不暴露世界配置或内部可修改集合。</summary>
         public NpcBackpackData GetLayoutSnapshot() => _layout.Clone();

@@ -25,6 +25,15 @@ namespace UnityWorld.Game.Domain
         public HashSet<string> HookUse { get ; set ; } = new();
 
         public CombatNpc Owner;    
+        internal int LastRound { get; set; } = int.MaxValue;
+        internal string StatSource { get; set; }
+        // 蓄力属于当场的 Buff 实例。每次记录实际吸收，同轮达标后只兑现一次。
+        internal (int Round, long Absorbed, bool Triggered) ShieldChargeProgress { get; set; }
+
+        /// <summary>剩余的持有者扫描轮数。空值表示这个效果没有轮次数上限。</summary>
+        public int? RemainingRounds => LastRound == int.MaxValue || Owner == null
+            ? null
+            : Math.Max(0, LastRound - Owner.Backpack.Round + 1);
 
         public List<StatModifierEntry> StatModifiers { get ; set ; }
         public int MaxStack { get  ; set  ; }

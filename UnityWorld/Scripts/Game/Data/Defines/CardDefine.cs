@@ -46,7 +46,7 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("cooldown")]
         public float Cooldown { get; set; } = 4;
 
-        /// <summary>最大弹药数，0就是无弹药机制，基本都是0。非0的基本都要加上Amount KeyWord</summary>
+        /// <summary>弹药容量。Amount 关键词要求正数上限，每场战斗从满弹开始。</summary>
         [JsonPropertyName("AmountMax")]
         public int AmountMax  { get; set; } = 0;
 

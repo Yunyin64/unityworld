@@ -40,7 +40,7 @@ internal sealed class BattleSnapshotProjector
                 throw new InvalidOperationException($"战斗卡实例 {card.Id}:{card.DefineId} 缺少背包布局，观察器不能补造位置。");
             // 坐标始终取自本场背包，不从世界卡或卡属性中推导位置。
             var cells = ReadOnly(pack.GetCardCells(card.Id).Select(c => new CellSnapshot(c.X, c.Y)));
-            var phase = Enum.GetValues<CombatCardPhase>().First(card.CheckPhase).ToString();
+            var phase = card.Phase.ToString();
             return new CardSnapshot(card.Id, card.DefineId, card.DisplayName, card.BaseData.Size, phase,
                 card.IsFrozen, card.UseCount, card.ApplyCount, card.Id == pack.MainCardId,
                 card.BaseData.Keywords.Contains("Wound"), cells, ReadOnly(card.AssignedElements.Select(e => e.ToString())),

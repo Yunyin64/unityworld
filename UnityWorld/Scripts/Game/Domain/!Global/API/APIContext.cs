@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain.Combat;
 
 namespace UnityWorld.Game.Domain
@@ -17,17 +18,31 @@ public class APIContext : ContextBase
     public APIContext TriggerEvent { get; internal set; }
     internal HashSet<int> SuccessfulEventCards { get; } = new();
     internal List<int> ActivationPath { get; set; } = new();
+    internal IReadOnlyDictionary<int, IReadOnlyList<BackpackCell>> EventPlacements { get; set; }
 
     internal APIContext CopyForEvent()
     {
         var copy = new APIContext
         {
             Caster = Caster, SourceCard = SourceCard, SourceBuff = SourceBuff, Scene = Scene,
-            TriggerEvent = TriggerEvent, NpcTargets = [.. NpcTargets], CardTargets = [.. CardTargets]
+            TriggerEvent = TriggerEvent, NpcTargets = [.. NpcTargets], CardTargets = [.. CardTargets], EventPlacements = EventPlacements
         };
         foreach (var pair in _causes) copy.Set(pair.Key, pair.Value);
         return copy;
     }
+
+    internal bool HasSameEventPayload(APIContext other)
+    {
+        if (!NpcTargets.SequenceEqual(other.NpcTargets) || !CardTargets.SequenceEqual(other.CardTargets) ||
+            _causes.Count != other._causes.Count ||
+            _causes.Any(pair => !other._causes.TryGetValue(pair.Key, out var value) || !Equals(pair.Value, value)))
+            return false;
+
+        if (ReferenceEquals(EventPlacements, other.EventPlacements)) return true;
+        return EventPlacements != null && other.EventPlacements != null && EventPlacements.Count == other.EventPlacements.Count &&
+            EventPlacements.All(pair => other.EventPlacements.TryGetValue(pair.Key, out var cells) && pair.Value.SequenceEqual(cells));
+    }
+
     /// <summary>
     /// 要通讯的目标
     /// </summary>

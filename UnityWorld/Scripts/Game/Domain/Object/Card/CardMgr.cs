@@ -42,6 +42,11 @@ namespace UnityWorld.Game.Domain
         {
             // 先校验角色再分配实体 ID，避免无效定义留下半注册卡牌。
             var main = CardKeywordRoles.RequireMain(cardDefine.Keywords, cardDefine.ID);
+            var consumes = cardDefine.Keywords.Contains("Consume");
+            if (cardDefine.Keywords.Contains("Amount") && cardDefine.AmountMax <= 0)
+                throw new InvalidOperationException($"弹药卡 {cardDefine.ID} 的弹量上限必须为正数。");
+            if (consumes && cardDefine.StackMax <= 0)
+                throw new InvalidOperationException($"消耗卡 {cardDefine.ID} 的次数上限必须为正数。");
             if (main == CardMainKeyword.ZhaoShi && cardDefine.MaxUsesPerRound < 1)
                 throw new InvalidOperationException($"招式 {cardDefine.ID} 的每轮发动上限必须为正数。");
             if (cardDefine.ManaCost.Keys.Any(k => k is "Min" or "Max"))
@@ -68,6 +73,7 @@ namespace UnityWorld.Game.Domain
                     Cooldown = cardDefine.Cooldown,
                     AmountMax = cardDefine.AmountMax,
                     StackMax = cardDefine.StackMax,
+                    Stack = consumes ? cardDefine.StackMax : 0,
                     ManaCost = ElementType.ToDic(cardDefine.ManaCost),
                     Keywords = [.. cardDefine.Keywords],
                     Tags = [.. cardDefine.Tags],

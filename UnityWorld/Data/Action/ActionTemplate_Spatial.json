@@ -10,7 +10,7 @@
     "Weight": 3,
     "ParamDefs": [
       { "Name": "Domain", "Type": "String", "Value": ["Self", "GridUp", "GridDown", "GridLeft", "GridRight", "GridNeighbor", "Selected", "TargetRandom"], "Score": [0, 0, 0, 0, 0, 0, 0, 0] },
-      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right"], "Score": [0, 0, 0, 0] }
+      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right", "Random"], "Score": [0, 0, 0, 0, 0] }
     ],
     "LuaTemplate": "SlideCard(ctx, \"{Domain}\", \"{Direction}\")"
   }

@@ -76,6 +76,8 @@ namespace UnityWorld.Game.Domain
             foreach (var trigger in triggers)
             {
                 var id = trigger.ID;
+                // 空触发只表示效果放在卡牌自身的结算入口。
+                if (id == "trigger_none") continue;
                 var funcname = id.Replace("trigger_", "");
                 HookToEventId.Add(funcname, id);
             }
@@ -151,7 +153,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 反射扫描当前程序集所有 public enum，注册为 Lua 全局 table。
-        /// 如 CombatCardPhase.Ready、DamageType.Ci 等，Lua 侧直接用。
+        /// 如 CombatCardPhase.Active、DamageType.Ci 等，Lua 侧直接用。
         /// </summary>
         private void RegisterEnumTables()
         {
@@ -237,7 +239,7 @@ namespace UnityWorld.Game.Domain
                 return;
             }
 
-            var files = Directory.GetFiles(_luaKeywordsDir, "*.lua");
+            var files = Directory.GetFiles(_luaKeywordsDir, "*.lua", new EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive });
             foreach (var filePath in files)
             {
                 try
@@ -275,6 +277,9 @@ namespace UnityWorld.Game.Domain
             if (table["Main"] is bool declaredMain && declaredMain != isMain)
                 throw new InvalidOperationException($"Keyword '{name}' 的 Main 标记与卡牌角色定义不符。");
             table["Main"] = isMain;
+            // Mod 重新注册同名关键词时，单独覆盖事件回调仍沿用已有的主词生命周期。
+            if (isMain && table["Lifecycle"] == null && _keywordRegistry.TryGetValue(name, out var previous))
+                table["Lifecycle"] = previous["Lifecycle"];
             _keywordRegistry[name] = table;
         }
 

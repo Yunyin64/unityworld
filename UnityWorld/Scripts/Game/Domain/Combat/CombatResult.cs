@@ -1,5 +1,11 @@
 namespace UnityWorld.Game.Domain.Combat
 {
+    /// <summary>记录原卡本次开战、耗用后和正式战斗结算后的次数。</summary>
+    /// <param name="CardId">所属世界卡实例 ID。</param>
+    /// <param name="InitialCount">开战时的次数。</param>
+    /// <param name="RemainingCount">本场实际耗用后剩余的次数。</param>
+    /// <param name="FinalCount">计入准备后的世界回写次数。</param>
+    public sealed record CombatConsumptionResult(int CardId, int InitialCount, int RemainingCount, int FinalCount);
 
     /// <summary>
     /// 单个参战者的战斗结算数据（用于回写大世界）
@@ -23,6 +29,9 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>本场战斗内共行动的回合数</summary>
         public int TurnsActed { get; set; }
+
+        /// <summary>参战消耗卡的次数结算，含已离场卡。</summary>
+        public IReadOnlyList<CombatConsumptionResult> Consumption { get; init; } = Array.Empty<CombatConsumptionResult>();
     }
 
     /// <summary>
@@ -31,6 +40,38 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public class CombatResult : ContextBase
     {
+        private readonly object _commitLock = new();
+        private bool _consumptionCommitted;
+
+        internal void CommitConsumption(IReadOnlyList<(Npc npc, CombatTeam team)> participants)
+        {
+            lock (_commitLock)
+            {
+                if (_consumptionCommitted) return;
+                var changes = new List<(Npc Npc, Card Card, CombatConsumptionResult Entry)>();
+                foreach (var outcome in Get<List<CombatantResult>>("Combatants"))
+                {
+                    if (outcome.Consumption.Count == 0) continue;
+                    var npc = participants.Single(item => item.npc.Id == outcome.NpcId).npc;
+                    var held = npc.GetAllCards().ToDictionary(card => card.Id);
+                    foreach (var entry in outcome.Consumption)
+                    {
+                        if (!held.TryGetValue(entry.CardId, out var card) || !card.HasKeyword("Consume") ||
+                            card.GetStack() != entry.InitialCount || entry.FinalCount < 0 || entry.FinalCount > card.GetStackMax())
+                            throw new InvalidOperationException($"卡 {entry.CardId} 的世界消耗数据在战斗期间发生变化。");
+                        changes.Add((npc, card, entry));
+                    }
+                }
+
+                // 先核对全部实例，再提交次数；零次只清备战位置和选中标记，保留持有。
+                foreach (var (npc, card, entry) in changes)
+                {
+                    if (entry.FinalCount == 0) npc.UnassignCard(card.Id);
+                    card.BaseData.Stack = entry.FinalCount;
+                }
+                _consumptionCommitted = true;
+            }
+        }
         // ── 战斗场景结算 ────────────────────────────────────────
 
         /// <summary>整场战斗结算结果（CombatScene.End() 生成，抛回大世界）</summary>

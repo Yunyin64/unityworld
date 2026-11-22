@@ -58,7 +58,7 @@ internal sealed class BattleRecordCollector : IDisposable
                 fields["sourceName"] = ctx.SourceCard.DisplayName;
             }
             // Copy only payloads the core actually supplied. No formula, inferred damage, or guessed pairing.
-            foreach (var key in new[] { "Winner", "Loser", "Overflow", "WinnerType", "LoserType", "WinnerCard", "LoserCard" })
+            foreach (var key in new[] { "Winner", "Loser", "IsDraw", "Overflow", "WinnerType", "LoserType", "WinnerCard", "LoserCard" })
             {
                 var value = ctx.GetObject(key);
                 var copied = value switch
@@ -66,6 +66,7 @@ internal sealed class BattleRecordCollector : IDisposable
                     CombatNpc npc => npc.Id.ToString(CultureInfo.InvariantCulture),
                     CombatCard card => card.Id.ToString(CultureInfo.InvariantCulture),
                     Enum e => e.ToString(),
+                    bool flag => flag ? "true" : "false",
                     int n => n.ToString(CultureInfo.InvariantCulture),
                     float n => n.ToString(CultureInfo.InvariantCulture),
                     double n => n.ToString(CultureInfo.InvariantCulture),

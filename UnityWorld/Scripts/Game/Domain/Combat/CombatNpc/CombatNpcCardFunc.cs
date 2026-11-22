@@ -10,7 +10,8 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>候补池：静默，不Tick、不占SP</summary>
         protected List<CombatCard> Reserve { get; set; } = new();
 
-        private Queue<(CombatFieldChangeType,CombatCard,CombatCardDisplaceType,PresentationOrigin)> _changes = new();
+        private readonly Queue<(CombatFieldChangeType Type, CombatCard Card,
+            PresentationOrigin Origin, string RemovalReason)> _changes = new();
 
         public List<CombatCard> GetField()
         {
@@ -23,6 +24,13 @@ namespace UnityWorld.Game.Domain.Combat
             return Reserve;
         }
 
+        internal IReadOnlyList<CombatConsumptionResult> GetConsumptionResults()
+        {
+            return Array.AsReadOnly(CardData.AllCards.OfType<CombatCard>().Where(card => card.InitialConsumeStack >= 0)
+                .OrderBy(card => card.Id)
+                .Select(card => new CombatConsumptionResult(card.Id, card.InitialConsumeStack, card.GetStack(), card.GetStack())).ToArray());
+        }
+
         public CombatCard GetCardByIndex(int index)
         {
             return Field[index];
@@ -33,15 +41,21 @@ namespace UnityWorld.Game.Domain.Combat
             return Field.IndexOf(card);
         }
 
-        public void RemoveCombatCard(CombatCard card)
+        /// <summary>将旧调用视为普通效果移除。相同卡的重复请求只会实际离场一次。</summary>
+        public void RemoveCombatCard(CombatCard card) => QueueCardRemoval(card, "Effect");
+
+        /// <summary>请求治愈场上的伤势，实际离场后才通知监听者。</summary>
+        internal void HealWound(CombatCard card) => QueueCardRemoval(card, "WoundHealed");
+
+        internal void QueueCardRemoval(CombatCard card, string reason)
         {
-            _changes.Enqueue((CombatFieldChangeType.Remove, card, CombatCardDisplaceType.None, Scene.CapturePresentationOrigin()));
+            _changes.Enqueue((CombatFieldChangeType.Remove, card, Scene.CapturePresentationOrigin(), reason));
             if (Field.Contains(card)) Scene.MarkPresentationEffect();
         }
 
         public void AddCombatCard(CombatCard card)
         {
-            _changes.Enqueue((CombatFieldChangeType.Add, card, CombatCardDisplaceType.None, Scene.CapturePresentationOrigin()));
+            _changes.Enqueue((CombatFieldChangeType.Add, card, Scene.CapturePresentationOrigin(), ""));
             if (Scene.PresentationRecordingEnabled && CanObserveAdd(card)) Scene.MarkPresentationEffect();
         }
         // 只做无副作用的请求有效性检查；验证失败仍由原 DealFieldChange 路径负责抛出。
@@ -51,10 +65,9 @@ namespace UnityWorld.Game.Domain.Combat
             catch { return false; }
         }
         
-        public void DisplaceCombatCard(CombatCard card, CombatCardDisplaceType toPlace)
-        {
-            throw new NotSupportedException("旧线性位移卡需按背包位置重新设计。");
-        }
+        /// <summary>立即滑动本角色背包中的卡牌，成功移动才返回 true。外部效果可指定发起者和来源卡。</summary>
+        public bool SlideCombatCard(CombatCard card, CombatCardSlideType direction, CombatNpc mover = null, CombatCard sourceCard = null)
+            => Backpack.TrySlide(card, direction, mover, sourceCard);
 
         /// <summary>部署：将卡从 Reserve 移入 Field（延迟执行）</summary>
         public void Deploy(CombatCard card)
@@ -75,10 +88,10 @@ namespace UnityWorld.Game.Domain.Combat
             return Field.Where(c => c.HasKeyword("ZhaoShi")).ToList();
         }
 
-        // 招式认该实例的已装备父来源，父卡的摆放与被动开关不参与判断。
-        internal bool HasCombatFormSource(CombatCard card) => card.ParentCardId != card.Id &&
+        /// <summary>检查招式实例的已装备父来源，父卡的摆放与激活状态不参与判断。</summary>
+        public bool HasCombatFormSource(CombatCard card) => card.ParentCardId != card.Id &&
             CardData.EquippedFaBao.Contains(card.ParentCardId) &&
-            EquipMgr.Instance?.GetById(card.ParentCardId)?.FormList.Contains(card.DefineId) == true;
+            _battleEquipment.TryGetValue(card.ParentCardId, out var equip) && equip.FormList.Contains(card.DefineId);
 
         public int GetCurrentZhaoShiCardId()
         {
@@ -104,7 +117,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             while (_changes.Count > 0)
             {
-                var (changeType, card, displaceType, origin) = _changes.Dequeue();
+                var (changeType, card, origin, removalReason) = _changes.Dequeue();
                 using var presentationOrigin = Scene.EnterPresentationOrigin(origin);
                 switch (changeType)
                 {
@@ -123,37 +136,34 @@ namespace UnityWorld.Game.Domain.Combat
                                     new PresentationManaCell(new PresentationCell(c.X, c.Y), manaBefore[c].ToString())))));
                         foreach (var cell in replaced) Log($"伤口替代灵元 卡={card.DefineId} 格({cell.X + 1},{cell.Y + 1})");
                         Log($"[Field+] {card.DisplayName}，当前SP={GetSp()}");
+                        if (card.HasKeyword("Wound"))
+                        {
+                            var gained = new APIContext { Caster = this, SourceCard = card, Scene = Scene };
+                            gained.Set("WoundSize", card.GetSize());
+                            Scene.TriggerCombatEvent("OnWoundGained", gained);
+                        }
                         break;
 
                     case CombatFieldChangeType.Remove:
-                        Backpack.RemoveCard(card.Id);
-                        // 离场同步释放卡上资源，保留原先删除背包蓄灵记录的语义。
-                        card.ClearAssignedMana();
-                        if (Field.Remove(card)) card.End();
-                        Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
-                        break;
-
-                    case CombatFieldChangeType.Displace:
+                        if (!Field.Contains(card) && !Reserve.Contains(card)) break;
+                        var healed = removalReason == "WoundHealed" && Field.Contains(card) && card.HasKeyword("Wound");
+                        if (Field.Contains(card)) Backpack.RemoveCard(card.Id);
                         Field.Remove(card);
-                        switch (displaceType)
+                        Reserve.Remove(card);
+                        CardData.Reserve.Remove(card.Id);
+                        card.ClearAssignedMana();
+                        var left = new APIContext { Caster = this, SourceCard = card, Scene = Scene };
+                        // 只有实际生效的请求能说明离场原因。此时占格和在场 SP 已经释放。
+                        left.Set("RemovalReason", removalReason);
+                        card.CallLua("OnLeave", left);
+                        card.End();
+                        Scene.TriggerCombatEvent("OnCardLeave", left);
+                        if (healed)
                         {
-                            case CombatCardDisplaceType.First:
-                                Field.Insert(0, card);
-                                break;
-                            case CombatCardDisplaceType.Last:
-                                Field.Add(card);
-                                break;
-                            case CombatCardDisplaceType.Random:
-                                var idx = Field.Count > 0
-                                    ? Scene.Soul.Random(0, Field.Count + 1)
-                                    : 0;
-                                Field.Insert(idx, card);
-                                break;
-                            default:
-                                Field.Add(card);
-                                break;
+                            left.Set("WoundSize", card.GetSize());
+                            Scene.TriggerCombatEvent("OnWoundHealed", left);
                         }
-                        Log($"[Displace] {card.DisplayName} -> {displaceType}");
+                        Log($"[Field-] {card.DisplayName}，当前SP={GetSp()}");
                         break;
 
                     case CombatFieldChangeType.Deploy:

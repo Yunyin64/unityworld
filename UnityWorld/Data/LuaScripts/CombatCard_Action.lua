@@ -116,3 +116,17 @@ StripCardMana = function(ctx, Domain, Element, Amount)
     ctx:Set("Amount", tonumber(Amount))
     API:Execute("StripCardMana", ctx)
 end
+
+--- 请求目标卡离场。原因跟随该请求，出队并腾出格子后交给 OnLeave。
+RemoveCard = function(ctx, Domain, Reason)
+    ctx:Set("Domain", Domain)
+    ctx:Set("Reason", Reason or "Effect")
+    API:Execute("RemoveCard", ctx)
+end
+
+--- 补弹只恢复余弹；后续发动仍需满足末格条件。
+RefillAmmo = function(ctx, Domain, Amount)
+    ctx:Set("Domain", Domain)
+    ctx:Set("Amount", tonumber(Amount))
+    API:Execute("RefillAmmo", ctx)
+end

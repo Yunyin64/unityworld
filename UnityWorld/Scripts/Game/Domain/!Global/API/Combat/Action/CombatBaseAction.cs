@@ -10,6 +10,138 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public  static partial class CombatBaseFunc
     {
+        /// <summary>补充指定卡的弹药，返回实际补充的总发数。</summary>
+        [APIFunc("RefillAmmo", APIType.Action, "补充目标卡的弹药", Scope.CombatCard,
+            "Domain:String", "Amount:Int")]
+        public static APIContext RefillAmmo(APIContext ctx)
+        {
+            var count = ctx.GetValue("Amount", 0);
+            long restored = 0;
+            foreach (var card in APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx).Distinct())
+                restored += card.RefillAmount(count);
+            ctx.Set("RestoredAmmo", restored);
+            ctx.Set("Ret", restored > 0);
+            return ctx;
+        }
+
+        /// <summary>请求指定卡离场。实际执行时，场地将本次原因交给 OnLeave。</summary>
+        [APIFunc("RemoveCard", APIType.Action, "使指定战斗卡离场", Scope.CombatCard,
+            "Domain:String", "Reason:String")]
+        public static APIContext RemoveCard(APIContext ctx)
+        {
+            var reason = ctx.GetStringValue("Reason", "Effect");
+            foreach (var card in APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx).Distinct())
+            {
+                var owner = card.Owner;
+                if (owner != null && card.Id != owner.Backpack.MainCardId &&
+                    (owner.GetField().Contains(card) || owner.GetReserve().Contains(card)))
+                    owner.QueueCardRemoval(card, reason);
+            }
+            return ctx;
+        }
+
+        /// <summary>选择目标并尝试沿指定方向滑移，统计成功移动的卡牌。</summary>
+        [APIFunc("SlideCard", APIType.Action, "将目标卡沿四向滑动至阻碍前", Scope.CombatCard,
+            "Domain:String", "Direction:String")]
+        public static APIContext SlideCard(APIContext ctx)
+        {
+            var direction = CombatBackpack.ReadSlideDirection(ctx.GetObject("Direction"));
+            var domain = ctx.GetStringValue("Domain");
+            var randomTarget = domain == "TargetRandom";
+            var candidates = APIMgr.Instance.GetTargetCard(randomTarget ? "TargetAll" : domain, ctx)
+                .Distinct().ToArray();
+            int movedCount = 0;
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                if (randomTarget)
+                {
+                    // 随机遍历候选，直到一张卡确实可以在该方向滑移。
+                    var index = ctx.Caster.Scene.Soul.Random(i, candidates.Length);
+                    (candidates[i], candidates[index]) = (candidates[index], candidates[i]);
+                }
+                var card = candidates[i];
+                if (card.Owner == null || !card.Owner.SlideCombatCard(card, direction, ctx.Caster, ctx.SourceCard)) continue;
+                movedCount++;
+                if (randomTarget) break;
+            }
+            ctx.Set("MovedCount", movedCount);
+            ctx.Set("Ret", movedCount > 0);
+            return ctx;
+        }
+
+        /// <summary>修改目标装备或目标招式所属装备的攻、防、速。</summary>
+        [APIFunc("ChangeEquipmentStat", APIType.Action, "修改目标装备的攻防速", Scope.CombatCard,
+            "Domain:String", "Stat:String", "Delta:Float", "Rounds:Int")]
+        public static APIContext ChangeEquipmentStat(APIContext ctx)
+        {
+            var stat = ctx.GetStringValue("Stat");
+            var delta = ctx.GetValue("Delta", 0f);
+            var rounds = ctx.GetValue("Rounds", 0);
+            var ids = new HashSet<(int OwnerId, int EquipmentId)>();
+            foreach (var target in APIMgr.Instance.GetTargetCard(ctx.GetStringValue("Domain"), ctx))
+            {
+                if (target.Owner == null) continue;
+                var id = target.BaseData.MainKeyword == CardMainKeyword.ZhaoShi ? target.ParentCardId : target.Id;
+                if (ids.Add((target.Owner.Id, id))) target.Owner.ChangeEquipmentStat(target, stat, delta, rounds);
+            }
+            return ctx;
+        }
+
+        /// <summary>给予额外灵盾，减伤后的伤害优先扣盾。</summary>
+        [APIFunc("GainShield", APIType.Action, "获得灵盾", Scope.CombatNpc, "Domain:String", "Amount:Int")]
+        public static APIContext GainShield(APIContext ctx)
+        {
+            var amount = ctx.GetValue("Amount", 0);
+            if (amount <= 0) return ctx;
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.ChangeShield(amount);
+            return ctx;
+        }
+
+        /// <summary>获得按实际灵盾吸收量累计的蓄力效果。</summary>
+        [APIFunc("AddShieldCharge", APIType.Action, "以盾蓄力，按指定五行累计吸收", Scope.CombatNpc,
+            "Domain:String", "Element:String", "Amount:Int")]
+        public static APIContext AddShieldCharge(APIContext ctx)
+        {
+            string element = ctx.GetStringValue("Element", "None");
+            int amount = ctx.GetValue("Amount", 0);
+            if (amount <= 0 || element is not ("None" or "Jin" or "Mu" or "Shui" or "Huo" or "Tu")) return ctx;
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.AddShieldCharge(element, amount);
+            return ctx;
+        }
+
+        /// <summary>给予一次性护甲，仅下一次来自敌方的正向伤害消耗。</summary>
+        [APIFunc("AddArmor", APIType.Action, "获得护甲，减免下一次敌方伤害", Scope.CombatNpc, "Domain:String", "Amount:Int")]
+        public static APIContext AddArmor(APIContext ctx)
+        {
+            var amount = ctx.GetValue("Amount", 0);
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.AddArmor(amount);
+            return ctx;
+        }
+
+        /// <summary>给予持续到持有者本轮结束的固定减伤。</summary>
+        [APIFunc("AddFortification", APIType.Action, "获得坚甲，减免本轮受到的每次伤害", Scope.CombatNpc, "Domain:String", "Amount:Int")]
+        public static APIContext AddFortification(APIContext ctx)
+        {
+            var amount = ctx.GetValue("Amount", 0);
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.AddFortification(amount);
+            return ctx;
+        }
+
+        /// <summary>施加卸力 Buff，由 Buff 在下次敌方攻击配对时结算。</summary>
+        [APIFunc("AddDeflection", APIType.Action, "获得卸力，减少下次配对时的敌方攻击点数", Scope.CombatNpc, "Domain:String", "Amount:Int")]
+        public static APIContext AddDeflection(APIContext ctx)
+        {
+            var amount = ctx.GetValue("Amount", 0);
+            if (amount <= 0) return ctx;
+            foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
+                target.AddModifier("Deflection", amount);
+            return ctx;
+        }
+
 
         // ── 效果类 ────────────────────────────────────────────
 
@@ -29,8 +161,8 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
-        /// <summary>自伤。参数：Domain(String), DamageValue(Int)</summary>
-        [APIFunc("SelfDamage", APIType.Action, "自伤", Scope.CombatNpc, "Domain:String", "DamageValue:Int")]
+        /// <summary>排入直接伤害。对敌方造成伤害时记录来源角色及来源卡。</summary>
+        [APIFunc("SelfDamage", APIType.Action, "造成直接伤害", Scope.CombatNpc, "Domain:String", "DamageValue:Int")]
         public static APIContext SelfDamage(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -40,8 +172,13 @@ namespace UnityWorld.Game.Domain
             int damageValue = ctx.GetValue("DamageValue", 0);
             foreach (var npc in ctx.NpcTargets)
             {
-                var dmg = new DamageInfo();
-                dmg.Damage = damageValue;
+                var dmg = new DamageInfo { Damage = damageValue, TargetNpc = npc };
+                // 敌方护甲依赖来源阵营。自伤仍沿用无来源的伤害路径。
+                if (npc.Team != caster.Team)
+                {
+                    dmg.SourceNpc = caster;
+                    if (ReferenceEquals(ctx.SourceCard?.Owner, caster)) dmg.SourceCard = ctx.SourceCard;
+                }
                 npc.AddDamage(dmg);
             }
             return ctx;
@@ -64,7 +201,7 @@ namespace UnityWorld.Game.Domain
             {
                 int actual = Math.Min(npc.ShieldValue, breakValue);
                 if (actual > 0)
-                    npc.ChangeShield(-actual);
+                    npc.ChangeShield(-actual, ctx.Caster, ctx.SourceCard);
             }
             return ctx;
         }
@@ -142,7 +279,7 @@ namespace UnityWorld.Game.Domain
                 if (wounds.Count == 0) continue;
 
                 var picked = wounds[npc.Scene.Soul.Random(0, wounds.Count)];
-                npc.RemoveCombatCard(picked);
+                npc.HealWound(picked);
                 LogMgr.Instance.Dbg("[RemoveRandomWound] {0} 移除伤势卡: {1} (Size:{2})", npc.GetName(), picked.DisplayName, picked.GetSize());
             }
 

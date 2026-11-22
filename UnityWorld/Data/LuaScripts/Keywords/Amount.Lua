@@ -1,20 +1,14 @@
--- Amount Keyword
--- 弹药类型通用机制：
-local Amount = {}
+-- 弹药限制本次扫描发动。法宝用最后一发买下的整个激活期仍可响应卡面效果。
+local Amount = setmetatable({}, { __index = KeywordBase })
 
---function Amount.PreStart(card, ctx)
---end
+Amount.ScanCost = {}
 
---function Amount.Start(card, ctx)
---end
-
-function Amount.Tick(card, ctx)
+function Amount.ScanCost.CanPay(card)
+    return card.HasAmount
 end
 
---function Amount.Contest(card, ctx)
---end
-
---function Amount.Apply(card, ctx)
---end
+function Amount.ScanCost.Pay(card)
+    card:ConsumeAmount()
+end
 
 LuaMgr:RegisterKeyword("Amount", Amount)

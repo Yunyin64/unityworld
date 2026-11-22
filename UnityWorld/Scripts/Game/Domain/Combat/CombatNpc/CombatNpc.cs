@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain.Combat
 {
@@ -40,6 +41,8 @@ namespace UnityWorld.Game.Domain.Combat
             combatNpc.Owner = npc;
             combatNpc.Backpack = new CombatBackpack(npc.GetBackpackSnapshot(), npc.GetCombatCardSnapshot());
             combatNpc.Backpack.PresentationOwner = combatNpc;
+            // 先从世界卡快照取装备底值，随后所有招式读本场装备。
+            combatNpc.SnapshotEquipment(npc);
             combatNpc.CardData.AllCards = combatNpc.CardData.AllCards
                 .Select(c => (Card)CombatCard.CreateFromData(c)).ToList();
             if (combatNpc.GetSpMax() > combatNpc.Backpack.Capacity)
@@ -124,17 +127,19 @@ namespace UnityWorld.Game.Domain.Combat
 
             var hpBefore = Hp;
             var shieldBefore = ShieldValue;
-            var finalval = info.Damage;
-            finalval = ApplyShieldAbsorb(info);
-            if(finalval > 0)
-            {
-                Hp -= finalval;
-            }
-            // 必须先保存本次扣血事实，OnDamage 和伤口恢复随后可能再次改变 HP。
+            var finalval = ApplyShieldAbsorb(ApplyFixedDamageReduction(info));
+            if (finalval > 0) Hp -= finalval;
+            int shieldAfter = ShieldValue;
+            int absorbed = shieldBefore - shieldAfter;
+            var charged = AccumulateShieldCharge(info, absorbed);
+            // 先保存真实扣盾和扣血，再派发可能改变两者的玩法事件。
             Scene.RecordPresentation(CombatPresentationKind.DamageResolved, this, info.SourceCard, info.PresentationOrigin,
                 damage: new DamagePresentation(info.SourceNpc?.Id, info.SourceCard == null ? null : CombatScene.PresentationCard(info.SourceCard),
-                    Id, hpBefore, Hp, Math.Max(0, hpBefore - Hp), Math.Max(0, shieldBefore - ShieldValue), info.damageType.ToString(), info.ElementType.ToString()));
-            if(finalval > 0)
+                    Id, hpBefore, Hp, Math.Max(0, hpBefore - Hp), absorbed, info.damageType.ToString(), info.ElementType.ToString()));
+            DispatchShieldExhausted(shieldBefore, shieldAfter, "Damage", info.SourceNpc, info.SourceCard);
+            if (charged != null)
+                foreach (var charge in charged) Scene.TriggerCombatEvent("OnShieldChargeReady", charge);
+            if (finalval > 0)
             {
                 Scene.TriggerCombatEvent("OnDamage" , new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene });
             }
@@ -150,15 +155,33 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>
         /// Shield 吸收：先扣盾再返回剩余伤害。
         /// </summary>
-        private int ApplyShieldAbsorb(DamageInfo info)
+        private int ApplyShieldAbsorb(int damage)
         {
-            var damage = info.Damage;
             if (ShieldValue <= 0 || damage <= 0) return damage;
 
             int absorbed = Math.Min(ShieldValue, damage);
-            ChangeShield(-absorbed);
-            int remaining = damage - absorbed;
-            return remaining;
+            ApplyShieldChange(-absorbed);
+            return damage - absorbed;
+        }
+
+        /// <summary>只在行时钟到点后调用；一行按列即时处理，成功使用才占额度。</summary>
+        internal void ScanRow()
+        {
+            if (!IsActive) return;
+            var rowActivationUsed = false;
+            for (int x = 0; x < Backpack.Width; x++)
+            {
+                Backpack.ScannedColumn = x;
+                var cell = new BackpackCell(x, Backpack.Row);
+                if (Backpack.Mana.ContainsKey(cell))
+                {
+                    // 选卡与转移统一由背包负责，候选卡仍由本次扫描传入。
+                    var selected = Backpack.AssignManaAt(cell, Field);
+                   // Log(selected == null ? $"格({x + 1},{cell.Y + 1}) 灵元留格" : $"格({x + 1},{cell.Y + 1}) 灵元进入 {selected.DefineId} 点亮={selected.LitCount}/{selected.GetSize()}");
+                }
+                if (Backpack.CardAt(cell) is not int id || !Backpack.IsCardCompleteAt(id, cell)) continue;
+                Field.Single(c => c.Id == id).ResolveScanEnd(ref rowActivationUsed);
+            }
         }
 
 
@@ -194,11 +217,18 @@ namespace UnityWorld.Game.Domain.Combat
 
         public void End()
         {
-             
+            CancelPending("CombatEnded");
+            // 战斗可能在两个末格之间结束。让仍在场的持续效果也能完成本场收尾。
+            foreach (var card in Field.ToArray()) card.CallLua("OnCombatEnd");
+            DealFieldChange();
         }
+        /// <summary>清理本场角色和所属卡牌的独立监听。</summary>
         public void Cleanup()
         {
-             
+            foreach (var trigger in _triggerRefCounts.Keys)
+                EventMgr.Instance?.RemoveEvent(trigger, GetModifierScope(), _modifierTriggerListener);
+            _triggerRefCounts.Clear();
+            foreach (var card in CardData.AllCards.OfType<CombatCard>()) card.Cleanup();
         }
 
         public void Log(string msg)

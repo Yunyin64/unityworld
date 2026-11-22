@@ -1,0 +1,27 @@
+[
+  {
+    "ID": "action_refill_ammo",
+    "APIType": "Action",
+    "DisplayName": "补充弹药",
+    "Desc": "给{Domain}补充{Amount}发弹药，至多到本场上限",
+    "Tags": ["弹药"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": ["Self", "Other", "GridNeighbor", "Selected", "All", "TargetRandom"],
+        "Score": [0, 0, 0, 0, 0, 0]
+      },
+      {
+        "Name": "Amount",
+        "Type": "Int",
+        "Value": [1, 2, 3],
+        "Score": [0, 0, 0]
+      }
+    ],
+    "LuaTemplate": "RefillAmmo(ctx, \"{Domain}\", {Amount})",
+    "FuncName": "RefillAmmo"
+  }
+]

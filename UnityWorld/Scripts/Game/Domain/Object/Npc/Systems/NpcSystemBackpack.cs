@@ -49,6 +49,8 @@ namespace UnityWorld.Game.Domain
             var byId = allCards.ToDictionary(card => card.Id);
             if (cards.MainGongFaCardId is not int mainId || !byId.ContainsKey(mainId))
                 throw new InvalidOperationException("背包必须显式选择一张已持有的主功法卡。");
+            if (byId[mainId].HasKeyword("Consume"))
+                throw new InvalidOperationException("固定主功法不能使用消耗次数。");
             var definition = GetDefinition(data, cards);
             var valid = definition.GetValidCells();
             var field = cards.Field;
@@ -56,6 +58,8 @@ namespace UnityWorld.Game.Domain
                 field.Intersect(cards.Reserve).Any() || field.Concat(cards.Reserve).Any(id => !byId.ContainsKey(id)))
                 throw new InvalidOperationException("Field/Reserve 卡牌重复、交叉或未持有。");
             if (!field.Contains(mainId)) throw new InvalidOperationException("主功法必须在 Field 内。");
+            foreach (var cardId in field.Concat(cards.Reserve))
+                NpcSystemCard.ValidateConsumeSelection(byId[cardId]);
             if (data.PlacedCards.Select(entry => entry.CardId).Distinct().Count() != data.PlacedCards.Count ||
                 data.PlacedCards.Any(entry => !field.Contains(entry.CardId)))
                 throw new InvalidOperationException("摆放条目重复或不在 Field 内。");

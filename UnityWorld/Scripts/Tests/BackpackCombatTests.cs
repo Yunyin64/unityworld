@@ -71,7 +71,7 @@ namespace UnityWorld.Tests
             card.BaseData.Keywords.Add("BackpackPassiveTest");
             To(scene, 3);
             Check(Convert.ToInt32(card.env["ticks"]) == 3 && Convert.ToInt32(card.env["keywordTicks"]) == 3, "被动卡仅执行自身OnPassiveTick和关键词OnTick");
-            Check(card.env["legacy"] == null && card.CheckPhase(CombatCardPhase.Passive) && card.Ticks["CD"] == 0 && card.UseCount == 0, "被动卡不走旧Tick和主动出手流程");
+            Check(card.env["legacy"] == null && card.CheckPhase(CombatCardPhase.Active) && card.Ticks["CD"] == 0 && card.UseCount == 0, "被动卡不走旧Tick和主动出手流程");
             scene.Cleanup();
         }
 
@@ -212,7 +212,7 @@ namespace UnityWorld.Tests
             foreach (var cell in npc.Backpack.EmptyCells()) npc.Backpack.PlaceMana(cell, ElementType.Jin);
             var before = npc.Backpack.Mana.Count; var wound = npc.AddWound("bp_wound_small"); npc.DealFieldChange();
             Check(npc.Backpack.Mana.Count == before - 1 && npc.GetSp() == 2 && npc.Backpack.Placements[wound.Id].Count == 1, "满背包伤口替代一个灵元计SP");
-            Check(wound.env != null && wound.IsPassiveActive && wound.ApplyCount == 0 && wound.Ticks.ContainsKey("Main"), "空被动伤口初始化并占格，无开场Apply");
+            Check(wound.env != null && wound.Phase == CombatCardPhase.Active && wound.ApplyCount == 0 && wound.Ticks.ContainsKey("Main"), "空被动伤口初始化并占格，无开场Apply");
             Check(npc.Backpack.GetCardPosition(wound.Id) == BackpackCoordinates.ToPosition(npc.Backpack.Placements[wound.Id][0]), "动态伤口位置归本场布局");
             var wide = npc.AddWound("bp_wound_wide"); npc.DealFieldChange(); var cells = npc.Backpack.Placements[wide.Id];
             Check(cells.Count == 2 && cells[0].Y == cells[1].Y && cells[1].X == cells[0].X + 1 && npc.Backpack.Mana.Count == before - 3, "多格伤口保持完整形状");

@@ -12,5 +12,63 @@
       { "Name": "Amount", "Type": "Int", "Value": [0, 1, 2, 3, 4, 5], "Score": [0, 0, 0, 0, 0, 0] }
     ],
     "LuaTemplate": "CheckConsumeCount(ctx, self.m_Self, \"{Comparison}\", {Amount})"
+  },
+  {
+    "ID": "cond_ammo_exhausted",
+    "APIType": "Condition",
+    "DisplayName": "弹药已耗尽",
+    "Desc": "本卡有弹药且当前余弹为零",
+    "Tags": ["弹药"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [],
+    "LuaTemplate": "CheckAmmoExhausted(ctx, self.m_Self)"
+  },
+  {
+    "ID": "cond_has_consume_stock",
+    "APIType": "Condition",
+    "DisplayName": "还有消耗存量",
+    "Desc": "本卡至少还有一份可用物品",
+    "Tags": ["消耗"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [],
+    "LuaTemplate": "CheckConsumeCount(ctx, self.m_Self, \"AtLeast\", 1)"
+  },
+  {
+    "ID": "cond_self_has_keyword",
+    "APIType": "Condition",
+    "DisplayName": "本卡有关键词",
+    "Desc": "本卡有{Keyword}关键词",
+    "Tags": ["关键词"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Keyword",
+        "Type": "String",
+        "Value": ["FaBao", "FaShu", "ZhaoShi", "Passive", "Amount", "Consume", "Flexible", "GongFa", "Item", "Wound", "Armor", "Shield", "Shoes"],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      }
+    ],
+    "LuaTemplate": "HasKeyword(ctx, self.m_Self, \"{Keyword}\")"
+  },
+  {
+    "ID": "cond_source_has_keyword",
+    "APIType": "Condition",
+    "DisplayName": "事件来源卡有关键词",
+    "Desc": "事件来源卡有{Keyword}关键词",
+    "Tags": ["关键词"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Keyword",
+        "Type": "String",
+        "Value": ["FaBao", "FaShu", "ZhaoShi", "Passive", "Amount", "Consume", "Flexible", "GongFa", "Item", "Wound", "Armor", "Shield", "Shoes"],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      }
+    ],
+    "LuaTemplate": "HasKeyword(ctx, ctx.SourceCard, \"{Keyword}\")"
   }
 ]

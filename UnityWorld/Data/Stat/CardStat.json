@@ -1,5 +1,14 @@
 [
   {
+    "ID": "AmountMaxAdd",
+    "DisplayName": "弹药上限修正",
+    "Type": "Card",
+    "DefaultValue": 0,
+    "DisplayFormat": "Integer",
+    "Category": "战斗",
+    "Description": "加到弹药卡的定义容量上，实际容量最低为零。"
+  },
+  {
     "ID": "CDTickAdj",
     "DisplayName": "CD修正",
     "Type": "Card",

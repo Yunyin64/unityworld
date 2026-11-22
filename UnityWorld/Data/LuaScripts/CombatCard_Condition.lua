@@ -232,3 +232,18 @@ WasCardMovedIntoSide = function(ctx, Reference, Direction, Keyword)
     API:Execute("WasCardMovedIntoSide", ctx)
     return ctx:GetObject("Result")
 end
+
+--- 普通卡没有弹药机制，余量检查返回 false。
+CheckAmmoExhausted = function(ctx, Reference)
+    ctx:Set("Reference", Reference)
+    API:Execute("CheckAmmoExhausted", ctx)
+    return ctx:GetObject("Result")
+end
+
+--- Reference 由调用者明确指定，可以是本卡或触发事件的来源卡。
+HasKeyword = function(ctx, Reference, Keyword)
+    ctx:Set("Reference", Reference)
+    ctx:Set("Keyword", Keyword)
+    API:Execute("HasKeyword", ctx)
+    return ctx:GetObject("Result")
+end

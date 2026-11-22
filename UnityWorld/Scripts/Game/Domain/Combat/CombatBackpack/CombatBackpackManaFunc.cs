@@ -58,6 +58,7 @@ namespace UnityWorld.Game.Domain.Combat
                 scene.RecordPresentation(CombatPresentationKind.ManaAssigned, card.Owner, card,
                     mana: new ManaAssignedPresentation(new PresentationCell(cell.X, cell.Y), element.ToString(), before,
                         CombatScene.PresentationCopy(card.AssignedElements.Select(e => e.ToString()))));
+            card.DispatchManaCharged(element);
             return true;
         }
 
