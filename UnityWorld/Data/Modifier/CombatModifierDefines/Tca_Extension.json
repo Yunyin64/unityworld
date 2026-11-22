@@ -1,0 +1,18 @@
+[
+  {"ID":"ElementImmunity_Element_Buff_Jin","DisplayName":"锐意免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Debuff_Jin","DisplayName":"出血免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Buff_Mu","DisplayName":"再生免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Debuff_Mu","DisplayName":"中毒免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Buff_Shui","DisplayName":"浩瀚免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Debuff_Shui","DisplayName":"寒意免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Buff_Huo","DisplayName":"心火免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Debuff_Huo","DisplayName":"灼烧免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Buff_Tu","DisplayName":"载德免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ElementImmunity_Element_Debuff_Tu","DisplayName":"石化免疫","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ShieldCharge_None","DisplayName":"以盾蓄力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ShieldCharge_Jin","DisplayName":"金系以盾蓄力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ShieldCharge_Mu","DisplayName":"木系以盾蓄力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ShieldCharge_Shui","DisplayName":"水系以盾蓄力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ShieldCharge_Huo","DisplayName":"火系以盾蓄力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ShieldCharge_Tu","DisplayName":"土系以盾蓄力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"}
+]

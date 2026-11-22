@@ -1,0 +1,21 @@
+[
+  {"ID":"Deflection","DisplayName":"卸力","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"Armor","DisplayName":"护甲","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"Fortification","DisplayName":"坚甲","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","DurationRounds":1},
+  {"ID":"ArtifactPower_None","DisplayName":"法宝供能","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ArtifactPower_Jin","DisplayName":"金系法宝供能","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ArtifactPower_Mu","DisplayName":"木系法宝供能","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ArtifactPower_Shui","DisplayName":"水系法宝供能","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ArtifactPower_Huo","DisplayName":"火系法宝供能","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"ArtifactPower_Tu","DisplayName":"土系法宝供能","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased"},
+  {"ID":"Affinity_Jin_Up","DisplayName":"金亲和提升","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityJin","Type":"Flat","Value":1}]},
+  {"ID":"Affinity_Jin_Down","DisplayName":"金亲和降低","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityJin","Type":"Flat","Value":-1}]},
+  {"ID":"Affinity_Mu_Up","DisplayName":"木亲和提升","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityMu","Type":"Flat","Value":1}]},
+  {"ID":"Affinity_Mu_Down","DisplayName":"木亲和降低","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityMu","Type":"Flat","Value":-1}]},
+  {"ID":"Affinity_Shui_Up","DisplayName":"水亲和提升","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityShui","Type":"Flat","Value":1}]},
+  {"ID":"Affinity_Shui_Down","DisplayName":"水亲和降低","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityShui","Type":"Flat","Value":-1}]},
+  {"ID":"Affinity_Huo_Up","DisplayName":"火亲和提升","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityHuo","Type":"Flat","Value":1}]},
+  {"ID":"Affinity_Huo_Down","DisplayName":"火亲和降低","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityHuo","Type":"Flat","Value":-1}]},
+  {"ID":"Affinity_Tu_Up","DisplayName":"土亲和提升","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityTu","Type":"Flat","Value":1}]},
+  {"ID":"Affinity_Tu_Down","DisplayName":"土亲和降低","Duration":-1,"MaxStack":0,"RefreshOnStack":false,"ExpirePolicy":"StackBased","StatModifiers":[{"StatId":"AffinityTu","Type":"Flat","Value":-1}]}
+]

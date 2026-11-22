@@ -1,173 +1,61 @@
 [
   {
     "ID": "Charge",
+    "APIType": "Action",
     "DisplayName": "充能",
     "Desc": "对{Domain}整包增加{ReduceTick}个基准Tick进度，不受倍率影响",
     "FuncName": "Charge",
-    "Tags": [
-      "辅助",
-      "充能"
-    ],
+    "Tags": ["辅助", "充能"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          1,
-          1
-        ]
-      },
-      {
-        "Name": "ReduceTick",
-        "Type": "Int",
-        "Value": [
-          5,
-          10,
-          15,
-          20
-        ],
-        "Score": [
-          1,
-          2,
-          3,
-          4
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [1, 1] },
+      { "Name": "ReduceTick", "Type": "Int", "Value": [5, 10, 15, 20], "Score": [1, 2, 3, 4] }
     ],
     "LuaTemplate": "Charge(ctx, \"{Domain}\", {ReduceTick})"
   },
   {
     "ID": "action_freeze",
+    "APIType": "Action",
     "DisplayName": "冻结",
-    "Desc": "冻结{Domain}范围内未冻结卡，下一次完整扫描跳过并解冻，不叠加",
+    "Desc": "冻结{Domain}范围内未冻结且未耗尽的主动卡",
     "FuncName": "Freeze",
-    "Tags": [
-      "控制",
-      "冻结"
-    ],
+    "Tags": ["控制", "冻结"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Random",
-          "Other",
-          "AboveAll",
-          "All",
-          "TargetAll",
-          "TargetRandom"
-        ],
-        "Score": [
-          1,
-          2,
-          2,
-          3,
-          4,
-          5,
-          4
-        ]
-      },
-      {
-        "Name": "FreezeTime",
-        "Type": "Int",
-        "Value": [
-          0
-        ],
-        "Score": [
-          1
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Random", "Other", "AboveAll", "All", "TargetAll", "TargetRandom"], "Score": [1, 2, 2, 3, 4, 5, 4] },
+      { "Name": "FreezeTime", "Type": "Int", "Value": [0], "Score": [1] }
     ],
     "LuaTemplate": "Freeze(ctx, \"{Domain}\", {FreezeTime})"
   },
   {
     "ID": "action_slow",
+    "APIType": "Action",
     "DisplayName": "减速",
     "Desc": "对{Domain}整包施加半速{DurationTicks}个真实Tick，同类只加时",
     "FuncName": "Slow",
-    "Tags": [
-      "控制",
-      "减速"
-    ],
+    "Tags": ["控制", "减速"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          1,
-          1
-        ]
-      },
-      {
-        "Name": "DurationTicks",
-        "Type": "Int",
-        "Value": [
-          10,
-          20,
-          30
-        ],
-        "Score": [
-          1,
-          2,
-          3
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [1, 1] },
+      { "Name": "DurationTicks", "Type": "Int", "Value": [10, 20, 30], "Score": [1, 2, 3] }
     ],
     "LuaTemplate": "Slow(ctx, \"{Domain}\", {DurationTicks})"
   },
   {
     "ID": "action_haste",
+    "APIType": "Action",
     "DisplayName": "加速",
     "Desc": "对{Domain}整包施加双速{DurationTicks}个真实Tick，同类只加时",
     "FuncName": "Haste",
-    "Tags": [
-      "辅助",
-      "加速"
-    ],
+    "Tags": ["辅助", "加速"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          1,
-          1
-        ]
-      },
-      {
-        "Name": "DurationTicks",
-        "Type": "Int",
-        "Value": [
-          10,
-          20,
-          30
-        ],
-        "Score": [
-          1,
-          2,
-          3
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [1, 1] },
+      { "Name": "DurationTicks", "Type": "Int", "Value": [10, 20, 30], "Score": [1, 2, 3] }
     ],
     "LuaTemplate": "Haste(ctx, \"{Domain}\", {DurationTicks})"
   }

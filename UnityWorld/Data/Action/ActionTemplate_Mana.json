@@ -1,174 +1,48 @@
 [
   {
     "ID": "action_convert",
+    "APIType": "Action",
     "DisplayName": "灵元转化",
     "Desc": "{Domain}回收格上{Element}灵元为MP（1:1），最多{MaxAmount}个并受MP空缺限制，不换元素",
     "FuncName": "Convert",
-    "Tags": [
-      "灵元",
-      "回蓝"
-    ],
+    "Tags": ["灵元", "回蓝"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 2,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "Element",
-        "Type": "String",
-        "Value": [
-          "None",
-          "Jin",
-          "Mu",
-          "Shui",
-          "Huo",
-          "Tu"
-        ],
-        "Score": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "MaxAmount",
-        "Type": "Int",
-        "Value": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "Score": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Element", "Type": "String", "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0, 0] },
+      { "Name": "MaxAmount", "Type": "Int", "Value": [1, 2, 3, 4, 5], "Score": [1, 2, 3, 4, 5] }
     ],
     "LuaTemplate": "Convert(ctx, \"{Domain}\", \"{Element}\", {MaxAmount})"
   },
   {
     "ID": "action_draw",
+    "APIType": "Action",
     "DisplayName": "汲灵",
     "Desc": "{Domain}尝试放置至多{Amount}个灵元，按实际放置数扣除 MP",
     "FuncName": "Draw",
-    "Tags": [
-      "灵元",
-      "抽取"
-    ],
+    "Tags": ["灵元", "抽取"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "Amount",
-        "Type": "Int",
-        "Value": [
-          1,
-          2,
-          3,
-          4
-        ],
-        "Score": [
-          1,
-          2,
-          3,
-          4
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4], "Score": [1, 2, 3, 4] }
     ],
     "LuaTemplate": "Draw(ctx, \"{Domain}\", {Amount})"
   },
   {
     "ID": "action_reduce_mana",
+    "APIType": "Action",
     "DisplayName": "灵元消耗",
     "Desc": "从{Domain}格上移除至多{Amount}个{Element}灵元，不足部分成功，不扣卡上点亮",
     "FuncName": "ReduceMana",
-    "Tags": [
-      "灵元",
-      "代价"
-    ],
+    "Tags": ["灵元", "代价"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 2,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "Element",
-        "Type": "String",
-        "Value": [
-          "None",
-          "Jin",
-          "Mu",
-          "Shui",
-          "Huo",
-          "Tu"
-        ],
-        "Score": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "Amount",
-        "Type": "Int",
-        "Value": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "Score": [
-          -1,
-          -2,
-          -3,
-          -4,
-          -5
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Element", "Type": "String", "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4, 5], "Score": [-1, -2, -3, -4, -5] }
     ],
     "LuaTemplate": "ReduceMana(ctx, \"{Domain}\", \"{Element}\", {Amount})"
   }

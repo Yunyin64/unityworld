@@ -1,0 +1,62 @@
+[
+  {
+    "ID": "action_gain_shield",
+    "APIType": "Action",
+    "DisplayName": "获得灵盾",
+    "Desc": "使{Domain}获得{Amount}灵盾，减伤后的伤害先扣盾",
+    "FuncName": "GainShield",
+    "Tags": ["防御"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4, 5, 6], "Score": [1, 2, 3, 4, 5, 6] }
+    ],
+    "LuaTemplate": "GainShield(ctx, \"{Domain}\", {Amount})"
+  },
+  {
+    "ID": "action_add_armor",
+    "APIType": "Action",
+    "DisplayName": "获得护甲",
+    "Desc": "使{Domain}获得护甲{Amount}，抵消下一次敌方伤害",
+    "FuncName": "AddArmor",
+    "Tags": ["防御"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4, 5, 6], "Score": [1, 2, 3, 4, 5, 6] }
+    ],
+    "LuaTemplate": "AddArmor(ctx, \"{Domain}\", {Amount})"
+  },
+  {
+    "ID": "action_add_fortification",
+    "APIType": "Action",
+    "DisplayName": "获得坚甲",
+    "Desc": "使{Domain}本轮每次受到的伤害减少{Amount}",
+    "FuncName": "AddFortification",
+    "Tags": ["防御"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4, 5, 6], "Score": [1, 2, 3, 4, 5, 6] }
+    ],
+    "LuaTemplate": "AddFortification(ctx, \"{Domain}\", {Amount})"
+  },
+  {
+    "ID": "action_add_deflection",
+    "APIType": "Action",
+    "DisplayName": "获得卸力",
+    "Desc": "使{Domain}获得{Amount}点卸力，下次与敌方攻击拼点配对时减去等量点数并消耗",
+    "FuncName": "AddDeflection",
+    "Tags": ["防御", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4], "Score": [1, 2, 3, 4] }
+    ],
+    "LuaTemplate": "AddDeflection(ctx, \"{Domain}\", {Amount})"
+  }
+]

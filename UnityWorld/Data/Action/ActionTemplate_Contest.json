@@ -1,55 +1,32 @@
 [
   {
     "ID": "action_atk",
+    "APIType": "Contest",
     "DisplayName": "攻击",
     "Desc": "以{Element}{PhysicalType}生成{AttackValue}点攻击拼点，伤害由对拼或直击结算",
     "FuncName": "Attack",
     "Tags": ["攻击", "伤害", "拼点"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 2,
     "ParamDefs": [
-      {
-        "Name": "Element",
-        "Type": "String",
-        "Value": ["Jin", "Mu", "Shui", "Huo", "Tu"],
-        "Score": [0, 0, 0, 0, 0]
-      },
-      {
-        "Name": "PhysicalType",
-        "Type": "String",
-        "Value": ["Zhan", "Ci", "Da", "SheJi"],
-        "Score": [0, 0, 0, 1]
-      },
-      {
-        "Name": "AttackValue",
-        "Type": "Int",
-        "Value": [1, 2, 3, 4, 5, 6,7,8,9,10],
-        "Score": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-      }
+      { "Name": "Element", "Type": "String", "Value": ["Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "PhysicalType", "Type": "String", "Value": ["Zhan", "Ci", "Da", "SheJi"], "Score": [0, 0, 0, 1] },
+      { "Name": "AttackValue", "Type": "Int", "Value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "Score": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
     ],
     "LuaTemplate": "Attack(ctx, \"{Element}\", \"{PhysicalType}\", {AttackValue})"
   },
   {
     "ID": "action_defend",
+    "APIType": "Contest",
     "DisplayName": "防御",
     "Desc": "防御拼点，以{DefendValue}点{DefendType}进行防御",
     "FuncName": "Defend",
     "Tags": ["防御", "拼点"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 2,
     "ParamDefs": [
-      {
-        "Name": "DefendType",
-        "Type": "String",
-        "Value": ["Shield", "Block", "Dodge"],
-        "Score": [0, 0, 0]
-      },
-      {
-        "Name": "DefendValue",
-        "Type": "Int",
-        "Value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        "Score": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-      }
+      { "Name": "DefendType", "Type": "String", "Value": ["Shield", "Block", "Dodge"], "Score": [0, 0, 0] },
+      { "Name": "DefendValue", "Type": "Int", "Value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "Score": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
     ],
     "LuaTemplate": "Defend(ctx, \"{DefendType}\", {DefendValue})"
   }

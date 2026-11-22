@@ -1,0 +1,16 @@
+[
+  {
+    "ID": "cond_check_consume_count",
+    "APIType": "Condition",
+    "DisplayName": "消耗次数条件",
+    "Desc": "本卡剩余消耗次数满足{Comparison}{Amount}",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 2,
+    "ParamDefs": [
+      { "Name": "Comparison", "Type": "String", "Value": ["Equal", "AtLeast", "AtMost"], "Score": [0, 0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [0, 1, 2, 3, 4, 5], "Score": [0, 0, 0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "CheckConsumeCount(ctx, self.m_Self, \"{Comparison}\", {Amount})"
+  }
+]

@@ -1,4 +1,14 @@
 [
+  {"ID":"OnArtifactActivated","DisplayName":"法宝激活时","desc":"法宝在战斗中从未激活变为激活时","score":0,"Tags":["法宝"],"conflictTags":[],"weight":2},
+  {"ID":"OnArtifactRenewed","DisplayName":"法宝续期时","desc":"已激活的法宝成功再次发动并续期时","score":0,"Tags":["法宝"],"conflictTags":[],"weight":2},
+  {"ID":"OnArtifactDeactivated","DisplayName":"法宝失活时","desc":"法宝在战斗中从激活变为未激活时","score":0,"Tags":["法宝"],"conflictTags":[],"weight":2},
+  {"ID":"OnManaCharged","DisplayName":"灵元充入时","desc":"每枚灵元实际充入卡牌时，可检查接收卡、五行和充满状态","score":0,"Tags":["灵元"],"conflictTags":[],"weight":2},
+  {"ID":"OnWoundGained","DisplayName":"获得伤势时","desc":"新伤势卡实际放入背包后","score":0,"Tags":["伤势"],"conflictTags":[],"weight":2},
+  {"ID":"OnWoundHealed","DisplayName":"治愈伤势时","desc":"治疗效果实际移除场上伤势卡后","score":0,"Tags":["伤势"],"conflictTags":[],"weight":2},
+  {"ID":"OnManaUsed","DisplayName":"灵元使用时","desc":"一次发动成功支付灵元后，记录实付五行数量。进阶内容，有调整可能","score":0,"Tags":["进阶"],"conflictTags":[],"weight":0},
+  {"ID":"OnElementStackChanged","DisplayName":"五行状态层数变化时","desc":"指定五行正负状态的层数发生实际变化后。进阶内容，有调整可能","score":0,"Tags":["进阶"],"conflictTags":[],"weight":0},
+  {"ID":"OnShieldExhausted","DisplayName":"灵盾耗尽时","desc":"额外灵盾从正数降到零后，区分伤害与效果。进阶内容，有调整可能","score":0,"Tags":["进阶"],"conflictTags":[],"weight":0},
+  {"ID":"OnShieldChargeReady","DisplayName":"以盾蓄力达标时","desc":"本方扫描轮内灵盾实际吸收达到蓄力门槛时。进阶内容，有调整可能","score":0,"Tags":["进阶"],"conflictTags":[],"weight":0},
   {
     "ID": "OnUse",
     "DisplayName": "卡牌发动后",
@@ -6,7 +16,7 @@
     "score": 0,
     "Tags": ["主动", "使用"],
     "conflictTags": [],
-    "weight": 1
+    "weight": 2
   },
   {
     "ID": "OnAttack",
@@ -15,7 +25,7 @@
     "score": 0,
     "Tags": ["主动", "攻击"],
     "conflictTags": [],
-    "weight": 0
+    "weight": 1
   },
   {
     "ID": "OnDefend",
@@ -24,7 +34,7 @@
     "score": 0,
     "Tags": [],
     "conflictTags": [],
-    "weight": 0
+    "weight": 1
   },
   {
     "ID": "OnApply",
@@ -42,16 +52,16 @@
     "score": 0,
     "Tags": ["主动", "直击"],
     "conflictTags": [],
-    "weight": 1
+    "weight": 2
   },
   {
     "ID": "OnContestOverflow",
-    "DisplayName": "对拼分出胜负时",
-    "desc": "非平局对拼确定胜负与差值后、卡牌 Apply 前",
+    "DisplayName": "对拼结算后",
+    "desc": "实际对拼确定最终结果后、两张卡 Apply 前。平局时 IsDraw 为 true，Overflow 为 0",
     "score": 0,
     "Tags": [],
     "conflictTags": [],
-    "weight": 0
+    "weight": 2
   },
   {
     "ID": "OnBaseManaDraw",
@@ -78,7 +88,7 @@
     "score": 0,
     "Tags": [],
     "conflictTags": [],
-    "weight": 0
+    "weight": 1
   },
   {
     "ID": "OnDamage",
@@ -87,7 +97,7 @@
     "score": 0,
     "Tags": [],
     "conflictTags": [],
-    "weight": 0
+    "weight": 1
   },
   {
     "ID": "OnHeal",
@@ -96,18 +106,70 @@
     "score": 0,
     "Tags": [],
     "conflictTags": [],
-    "weight": 0
+    "weight": 1
   },
   {
     "ID": "OnContest",
-    "Status": "Pending",
-    "StatusReason": "战斗尚未派发此全场事件。已有的拼点构造和胜差事件各有独立入口。",
-    "DisplayName": "对拼触发",
-    "desc": "对拼时触发",
+    "DisplayName": "双方拼点时",
+    "desc": "双方正式配对后、读取最终点数前。每次配对一次，包含平局",
     "score": 0,
     "tags": ["主动", "对拼"],
     "conflictTags": [],
+    "weight": 2
+  },
+  {
+    "ID": "OnRoundStart",
+    "DisplayName": "本方轮开始",
+    "desc": "目标方首轮或新一轮开始，供能和基础补灵之前",
+    "score": 0,
+    "Tags": ["回合"],
+    "conflictTags": [],
     "weight": 1
+  },
+  {
+    "ID": "OnRoundEnd",
+    "DisplayName": "本方轮结束",
+    "desc": "本方最后一行的拼点、直击与伤害完成后，轮状态到期之前",
+    "score": 0,
+    "Tags": ["回合"],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
+    "ID": "OnCardDisplaced",
+    "DisplayName": "卡牌被位移时",
+    "desc": "卡牌四向位移实际提交后触发，事件主语是被移动牌的主人",
+    "score": 0,
+    "Tags": ["位移", "位置"],
+    "conflictTags": [],
+    "weight": 2
+  },
+  {
+    "ID": "OnDisplaceOtherCard",
+    "DisplayName": "移动他人卡牌时",
+    "desc": "成功移动其他角色的卡牌后触发，事件主语是发起位移的角色",
+    "score": 0,
+    "Tags": ["位移", "位置"],
+    "conflictTags": [],
+    "weight": 1
+  },
+  {
+    "ID": "OnExhausted",
+    "DisplayName": "消耗耗尽",
+    "desc": "消耗卡的剩余次数从正数扣到零，该次已提交的效果继续完成",
+    "score": 0,
+    "Tags": ["消耗"],
+    "conflictTags": [],
+    "weight": 2
+  },
+  {
+    "ID": "OnCardLeave",
+    "DisplayName": "卡牌离开",
+    "desc": "卡实际离开战斗场上或候补后，包含灵活耗尽离开",
+    "score": 0,
+    "Tags": ["离开"],
+    "conflictTags": [],
+    "weight": 2
   },
   {
     "ID": "OnTick",
@@ -130,5 +192,14 @@
     "tags": ["被动", "死亡", "黑暗"],
     "conflictTags": [],
     "weight": 1
+  },
+  {
+    "ID": "trigger_none",
+    "DisplayName": "无额外触发",
+    "desc": "效果使用成卡指定的主结算入口",
+    "score": 0,
+    "Tags": [],
+    "conflictTags": [],
+    "weight": 34
   }
 ]

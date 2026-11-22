@@ -1,42 +1,44 @@
 [
   {
     "ID": "action_add_npc_buff",
+    "APIType": "Action",
     "DisplayName": "施加Buff",
-    "Desc": "给{Domain}施加{BuffId}，{Stacks}层",
+    "Desc": "给{Domain}施加{Stacks}层{BuffId}，首次施加期限为{Duration}",
     "FuncName": "AddNpcBuff",
     "Tags": ["Buff", "控制"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
       {
         "Name": "BuffId",
         "Type": "String",
-        "Value": ["Ci_Improved"],
-        "Score": [0]
+        "Value": [
+          "Ci_Improved", "Ci_Improved_Once",
+          "Zhan_Improved", "Zhan_Improved_Once",
+          "Da_Improved", "Da_Improved_Once",
+          "SheJi_Improved", "SheJi_Improved_Once",
+          "Block_Improved", "Block_Improved_Once",
+          "Doge_Improved", "Doge_Improved_Once",
+          "Shield_Improved", "Shield_Improved_Once",
+          "Jin_Improved", "Jin_Improved_Once",
+          "Huo_Improved", "Huo_Improved_Once",
+          "Mu_Improved", "Mu_Improved_Once",
+          "Shui_Improved", "Shui_Improved_Once",
+          "Tu_Improved", "Tu_Improved_Once",
+          "Attack_Improved", "Attack_Improved_Once",
+          "Defend_Improved", "Defend_Improved_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       },
-      {
-        "Name": "Stacks",
-        "Type": "Int",
-        "Value": [1, 2, 3],
-        "Score": [1, 2, 3]
-      },
-      {
-        "Name": "Duration",
-        "Type": "Float",
-        "Value": [-1, 30, 60, 90],
-        "Score": [3, 1, 2, 3]
-      }
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
     ],
     "LuaTemplate": "AddNpcBuff(ctx, \"{Domain}\", \"{BuffId}\", {Stacks}, {Duration})"
   },
   {
     "ID": "action_add_stat_buff",
+    "APIType": "Action",
     "DisplayName": "属性增益",
     "Desc": "给{Domain}{StatId}增加{Value}点",
     "FuncName": "AddStatBuff",
@@ -44,35 +46,16 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "StatId",
-        "Type": "String",
-        "Value": ["QiXue"],
-        "Score": [0]
-      },
-      {
-        "Name": "Value",
-        "Type": "Float",
-        "Value": [1, 2, 3, 5],
-        "Score": [1, 2, 3, 5]
-      },
-      {
-        "Name": "ModifierType",
-        "Type": "String",
-        "Value": ["Flat", "Percent"],
-        "Score": [0, 1]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "StatId", "Type": "String", "Value": ["HpMax"], "Score": [0] },
+      { "Name": "Value", "Type": "Float", "Value": [1, 2, 3, 5], "Score": [1, 2, 3, 5] },
+      { "Name": "ModifierType", "Type": "String", "Value": ["Flat"], "Score": [0] }
     ],
     "LuaTemplate": "AddStatBuff(ctx, \"{Domain}\", \"{StatId}\", {Value}, \"{ModifierType}\", \"\")"
   },
   {
     "ID": "action_add_card_stat_buff",
+    "APIType": "Action",
     "DisplayName": "卡牌属性增益",
     "Desc": "给{Domain}目标卡牌{StatId}增加{Value}点",
     "FuncName": "AddCardStatBuff",
@@ -80,24 +63,9 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
-        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
-      },
-      {
-        "Name": "StatId",
-        "Type": "String",
-        "Value": ["AmountMaxAdd"],
-        "Score": [0]
-      },
-      {
-        "Name": "Value",
-        "Type": "Float",
-        "Value": [1, 2, 3, 5],
-        "Score": [1, 2, 3, 5]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"], "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4] },
+      { "Name": "StatId", "Type": "String", "Value": ["AmountMaxAdd"], "Score": [0] },
+      { "Name": "Value", "Type": "Float", "Value": [1, 2, 3, 5], "Score": [1, 2, 3, 5] }
     ],
     "LuaTemplate": "AddCardStatBuff(ctx, \"{Domain}\", \"{StatId}\", {Value})"
   }

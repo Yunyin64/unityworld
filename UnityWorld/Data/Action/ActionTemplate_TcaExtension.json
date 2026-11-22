@@ -1,0 +1,350 @@
+[
+  {
+    "ID": "action_strip_card_mana",
+    "FuncName": "StripCardMana",
+    "DisplayName": "灵元剥离",
+    "Desc": "从{Domain}剥离至多{Amount}枚{Element}灵元。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "EffectTypes": [],
+    "APIType": "Action",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": [
+          "Self",
+          "All",
+          "Selected",
+          "GridNeighbor",
+          "Random",
+          "TargetRandom",
+          "TargetAll"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Element",
+        "Type": "String",
+        "Value": [
+          "None",
+          "Jin",
+          "Mu",
+          "Shui",
+          "Huo",
+          "Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Amount",
+        "Type": "Int",
+        "Value": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "StripCardMana(ctx, \"{Domain}\", \"{Element}\", {Amount})"
+  },
+  {
+    "ID": "action_add_element_immunity",
+    "FuncName": "AddElementImmunity",
+    "DisplayName": "五行状态免疫",
+    "Desc": "使{Domain}免疫接下来{Amount}次{BuffId}施加。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "EffectTypes": [],
+    "APIType": "Action",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Element_Buff_Jin",
+          "Element_Debuff_Jin",
+          "Element_Buff_Mu",
+          "Element_Debuff_Mu",
+          "Element_Buff_Shui",
+          "Element_Debuff_Shui",
+          "Element_Buff_Huo",
+          "Element_Debuff_Huo",
+          "Element_Buff_Tu",
+          "Element_Debuff_Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Amount",
+        "Type": "Int",
+        "Value": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "AddElementImmunity(ctx, \"{Domain}\", \"{BuffId}\", {Amount})"
+  },
+  {
+    "ID": "action_thaw_card",
+    "FuncName": "ThawCard",
+    "DisplayName": "解冻",
+    "Desc": "解除{Domain}的冻结。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "EffectTypes": [],
+    "APIType": "Action",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": [
+          "Self",
+          "All",
+          "Selected",
+          "GridNeighbor",
+          "Random",
+          "TargetRandom",
+          "TargetAll"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "ThawCard(ctx, \"{Domain}\")"
+  },
+  {
+    "ID": "action_freeze_immunity_aura",
+    "FuncName": "GrantFreezeImmunityAura",
+    "DisplayName": "冻结免疫光环",
+    "Desc": "激活时使{Direction}范围内的{Keyword}卡免疫冻结。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "EffectTypes": [],
+    "APIType": "Aura",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Direction",
+        "Type": "String",
+        "Value": [
+          "All",
+          "Up",
+          "Down",
+          "Left",
+          "Right",
+          "Neighbor"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Keyword",
+        "Type": "String",
+        "Value": [
+          "Any",
+          "FaBao",
+          "FaShu",
+          "ZhaoShi",
+          "Passive"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "GrantFreezeImmunityAura(ctx, \"{Direction}\", \"{Keyword}\")"
+  },
+  {
+    "ID": "action_root_card",
+    "FuncName": "RootCard",
+    "DisplayName": "定身",
+    "Desc": "使{Domain}在{Rounds}轮内无法位移。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "EffectTypes": [],
+    "APIType": "Action",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": [
+          "Self",
+          "All",
+          "Selected",
+          "GridNeighbor",
+          "Random",
+          "TargetRandom",
+          "TargetAll"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Rounds",
+        "Type": "Int",
+        "Value": [
+          1,
+          2,
+          3
+        ],
+        "Score": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "RootCard(ctx, \"{Domain}\", {Rounds})"
+  },
+  {
+    "ID": "action_add_shield_charge",
+    "FuncName": "AddShieldCharge",
+    "DisplayName": "以盾蓄力",
+    "Desc": "使{Domain}每轮累计吸收{Amount}点{Element}伤害时触发蓄力达标。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "EffectTypes": [],
+    "APIType": "Action",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Domain",
+        "Type": "String",
+        "Value": [
+          "Self",
+          "Target"
+        ],
+        "Score": [
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Element",
+        "Type": "String",
+        "Value": [
+          "None",
+          "Jin",
+          "Mu",
+          "Shui",
+          "Huo",
+          "Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Amount",
+        "Type": "Int",
+        "Value": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "AddShieldCharge(ctx, \"{Domain}\", \"{Element}\", {Amount})"
+  }
+]

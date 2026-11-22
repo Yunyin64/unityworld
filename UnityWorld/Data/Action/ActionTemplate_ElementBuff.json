@@ -1,6 +1,7 @@
 [
   {
     "ID": "action_add_element_buff",
+    "APIType": "Action",
     "DisplayName": "附灵",
     "Desc": "给{Domain}单次附加一层{Element}状态，共{Count}次，None 每次随机，IsDebuff={IsDebuff}（true 为减益）",
     "FuncName": "AddElementBuff",
@@ -17,6 +18,7 @@
   },
   {
     "ID": "action_remove_element_buff",
+    "APIType": "Action",
     "DisplayName": "祛灵",
     "Desc": "从{Domain}单次移除一层匹配的{Element}状态，最多{Count}次，None 匹配任一元素，IsDebuff={IsDebuff}（true 为减益）",
     "FuncName": "RemoveElementBuff",
@@ -33,6 +35,7 @@
   },
   {
     "ID": "action_add_jin_buff",
+    "APIType": "Action",
     "DisplayName": "锐意",
     "Desc": "给{Domain}附加{Count}层锐意(金增益)",
     "FuncName": "AddElementBuff",
@@ -47,6 +50,7 @@
   },
   {
     "ID": "action_add_jin_debuff",
+    "APIType": "Action",
     "DisplayName": "出血",
     "Desc": "给{Domain}附加{Count}层出血(金减益)",
     "FuncName": "AddElementBuff",
@@ -61,6 +65,7 @@
   },
   {
     "ID": "action_add_mu_buff",
+    "APIType": "Action",
     "DisplayName": "再生",
     "Desc": "给{Domain}附加{Count}层再生(木增益)",
     "FuncName": "AddElementBuff",
@@ -75,6 +80,7 @@
   },
   {
     "ID": "action_add_mu_debuff",
+    "APIType": "Action",
     "DisplayName": "中毒",
     "Desc": "给{Domain}附加{Count}层中毒(木减益)",
     "FuncName": "AddElementBuff",
@@ -89,6 +95,7 @@
   },
   {
     "ID": "action_add_shui_buff",
+    "APIType": "Action",
     "DisplayName": "浩瀚",
     "Desc": "给{Domain}附加{Count}层浩瀚(水增益)",
     "FuncName": "AddElementBuff",
@@ -103,6 +110,7 @@
   },
   {
     "ID": "action_add_shui_debuff",
+    "APIType": "Action",
     "DisplayName": "寒意",
     "Desc": "给{Domain}附加{Count}层寒意(水减益)",
     "FuncName": "AddElementBuff",
@@ -117,6 +125,7 @@
   },
   {
     "ID": "action_add_huo_buff",
+    "APIType": "Action",
     "DisplayName": "心火",
     "Desc": "给{Domain}附加{Count}层心火(火增益)",
     "FuncName": "AddElementBuff",
@@ -131,6 +140,7 @@
   },
   {
     "ID": "action_add_huo_debuff",
+    "APIType": "Action",
     "DisplayName": "灼烧",
     "Desc": "给{Domain}附加{Count}层灼烧(火减益)",
     "FuncName": "AddElementBuff",
@@ -145,6 +155,7 @@
   },
   {
     "ID": "action_add_tu_buff",
+    "APIType": "Action",
     "DisplayName": "载德",
     "Desc": "给{Domain}附加{Count}层载德(土增益)",
     "FuncName": "AddElementBuff",
@@ -159,6 +170,7 @@
   },
   {
     "ID": "action_add_tu_debuff",
+    "APIType": "Action",
     "DisplayName": "石化",
     "Desc": "给{Domain}附加{Count}层石化(土减益)",
     "FuncName": "AddElementBuff",

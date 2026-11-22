@@ -1,6 +1,7 @@
 [
   {
     "ID": "action_deploy",
+    "APIType": "Action",
     "Status": "Pending",
     "StatusReason": "候补池与战斗背包之间的操作规则待接入。",
     "DisplayName": "部署",
@@ -10,23 +11,14 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "CardId",
-        "Type": "Int",
-        "Value": [0],
-        "Score": [0]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "CardId", "Type": "Int", "Value": [0], "Score": [0] }
     ],
     "LuaTemplate": "Deploy(ctx, \"{Domain}\", {CardId})"
   },
   {
     "ID": "action_recall",
+    "APIType": "Action",
     "Status": "Pending",
     "StatusReason": "候补池与战斗背包之间的操作规则待接入。",
     "DisplayName": "召回",
@@ -36,18 +28,8 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "CardId",
-        "Type": "Int",
-        "Value": [0],
-        "Score": [0]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "CardId", "Type": "Int", "Value": [0], "Score": [0] }
     ],
     "LuaTemplate": "Recall(ctx, \"{Domain}\", {CardId})"
   }

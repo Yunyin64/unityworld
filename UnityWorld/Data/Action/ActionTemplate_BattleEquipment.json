@@ -1,0 +1,19 @@
+[
+  {
+    "ID": "action_change_equipment_stat",
+    "APIType": "Action",
+    "DisplayName": "改变装备数值",
+    "Desc": "使{Domain}对应装备的{Stat}改变{Delta}，持续{Rounds}轮，0轮表示本场",
+    "FuncName": "ChangeEquipmentStat",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "All", "TargetAll", "Adjacent", "Selected"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "Stat", "Type": "String", "Value": ["Attack", "Defend"], "Score": [0, 0] },
+      { "Name": "Delta", "Type": "Float", "Value": [-2, -1, 1, 2], "Score": [0, 0, 0, 0] },
+      { "Name": "Rounds", "Type": "Int", "Value": [0, 1, 2, 3], "Score": [0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "ChangeEquipmentStat(ctx, \"{Domain}\", \"{Stat}\", {Delta}, {Rounds})"
+  }
+]

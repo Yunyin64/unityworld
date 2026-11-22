@@ -1,89 +1,31 @@
 [
   {
     "ID": "action_recover_mp",
+    "APIType": "Action",
     "DisplayName": "回复 MP",
     "Desc": "{Domain}直接回复至多{Amount}点 MP，受最大 MP 限制",
     "FuncName": "RecoverMP",
-    "Tags": [
-      "MP"
-    ],
+    "Tags": ["MP"],
     "ConflictTags": [],
-    "Weight": 0,
+    "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "Amount",
-        "Type": "Int",
-        "Value": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "Score": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4, 5], "Score": [1, 2, 3, 4, 5] }
     ],
     "LuaTemplate": "RecoverMP(ctx, \"{Domain}\", {Amount})"
   },
   {
     "ID": "action_reduce_mp",
+    "APIType": "Action",
     "DisplayName": "削减 MP",
     "Desc": "{Domain}直接减少至多{Amount}点 MP，最低降至 0",
     "FuncName": "ReduceMP",
-    "Tags": [
-      "MP"
-    ],
+    "Tags": ["MP"],
     "ConflictTags": [],
-    "Weight": 0,
+    "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": [
-          "Self",
-          "Target"
-        ],
-        "Score": [
-          0,
-          0
-        ]
-      },
-      {
-        "Name": "Amount",
-        "Type": "Int",
-        "Value": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "Score": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4, 5], "Score": [1, 2, 3, 4, 5] }
     ],
     "LuaTemplate": "ReduceMP(ctx, \"{Domain}\", {Amount})"
   }

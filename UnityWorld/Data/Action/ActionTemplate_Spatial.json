@@ -1,0 +1,17 @@
+[
+  {
+    "ID": "action_slide_card",
+    "APIType": "Action",
+    "DisplayName": "四向位移",
+    "Desc": "使{Domain}向{Direction}滑移",
+    "FuncName": "SlideCard",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 3,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "GridUp", "GridDown", "GridLeft", "GridRight", "GridNeighbor", "Selected", "TargetRandom"], "Score": [0, 0, 0, 0, 0, 0, 0, 0] },
+      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right"], "Score": [0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "SlideCard(ctx, \"{Domain}\", \"{Direction}\")"
+  }
+]

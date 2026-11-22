@@ -1,5 +1,5 @@
 -- Consume Keyword
--- 可消耗类型：StackMax > 0 时自动激活
+-- 消耗为普通关键词，次数由卡牌定义和当前实例提供。
 local Consume = setmetatable({}, { __index = KeywordBase })
 
 function Consume.CheckCondition(card)

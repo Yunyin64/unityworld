@@ -1,36 +1,23 @@
 [
   {
     "ID": "action_remove_wound",
+    "APIType": "Action",
     "DisplayName": "移除伤势",
     "Desc": "移除{Domain}场上一张随机伤势卡，Exact 为{Exact}，true 选正好{Size}格，false 选至多{Size}格",
     "FuncName": "RemoveRandomWound",
     "Tags": ["治疗", "卡组"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 2,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "Size",
-        "Type": "Int",
-        "Value": [1, 2, 3],
-        "Score": [2, 4, 6]
-      },
-      {
-        "Name": "Exact",
-        "Type": "Bool",
-        "Value": [true, false],
-        "Score": [0, 1]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Size", "Type": "Int", "Value": [1, 2, 3], "Score": [2, 4, 6] },
+      { "Name": "Exact", "Type": "Bool", "Value": [true, false], "Score": [0, 1] }
     ],
     "LuaTemplate": "RemoveRandomWound(ctx, \"{Domain}\", {Size}, {Exact})"
   },
   {
     "ID": "action_displace",
+    "APIType": "Action",
     "Status": "Pending",
     "StatusReason": "等待战斗背包内的位移规则和入口。",
     "DisplayName": "位移卡牌",
@@ -40,18 +27,8 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "DoMain",
-        "Type": "String",
-        "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"],
-        "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4]
-      },
-      {
-        "Name": "Position",
-        "Type": "String",
-        "Value": ["First", "Last", "Random"],
-        "Score": [1, 1, 0]
-      }
+      { "Name": "DoMain", "Type": "String", "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"], "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4] },
+      { "Name": "Position", "Type": "String", "Value": ["First", "Last", "Random"], "Score": [1, 1, 0] }
     ],
     "LuaTemplate": "Displace(ctx, \"{DoMain}\", \"{Position}\")"
   }

@@ -1,0 +1,280 @@
+[
+  {
+    "ID": "cond_check_mana_charged",
+    "DisplayName": "灵元充入筛选",
+    "Desc": "筛选充入五行、卡种及是否只在充满时匹配",
+    "Tags": [],
+    "APIType": "Condition",
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "WantedElement",
+        "Type": "String",
+        "Value": [
+          "Any",
+          "Jin",
+          "Mu",
+          "Shui",
+          "Huo",
+          "Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Keyword",
+        "Type": "String",
+        "Value": [
+          "Any",
+          "FaBao",
+          "FaShu",
+          "ZhaoShi",
+          "Passive"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "OnlyFull",
+        "Type": "Bool",
+        "Value": [
+          false,
+          true
+        ],
+        "Score": [
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "CheckManaCharged(ctx, \"{WantedElement}\", \"{Keyword}\", {OnlyFull})"
+  },
+  {
+    "ID": "cond_check_wound_event",
+    "DisplayName": "伤势筛选",
+    "Desc": "筛选伤势所属阵营与最小体量",
+    "Tags": [],
+    "APIType": "Condition",
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "Side",
+        "Type": "String",
+        "Value": [
+          "Ally",
+          "Enemy",
+          "Any"
+        ],
+        "Score": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "AtLeastSize",
+        "Type": "Int",
+        "Value": [
+          1,
+          2
+        ],
+        "Score": [
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "CheckWoundEvent(ctx, self.m_Owner, \"{Side}\", {AtLeastSize})"
+  },
+  {
+    "ID": "cond_check_mana_used",
+    "DisplayName": "实付灵元比较",
+    "Desc": "实际使用的{Measure}至少为{AtLeast}。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "APIType": "Condition",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Measure",
+        "Type": "String",
+        "Value": [
+          "Total",
+          "Kinds",
+          "Jin",
+          "Mu",
+          "Shui",
+          "Huo",
+          "Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "AtLeast",
+        "Type": "Int",
+        "Value": [
+          1,
+          2,
+          3
+        ],
+        "Score": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "CheckManaUsed(ctx, \"{Measure}\", {AtLeast})"
+  },
+  {
+    "ID": "cond_check_element_stack_change",
+    "DisplayName": "五行层数筛选",
+    "Desc": "{StatusId}的层数发生指定的{Change}变化。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "APIType": "Condition",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "StatusId",
+        "Type": "String",
+        "Value": [
+          "Element_Buff_Jin",
+          "Element_Debuff_Jin",
+          "Element_Buff_Mu",
+          "Element_Debuff_Mu",
+          "Element_Buff_Shui",
+          "Element_Debuff_Shui",
+          "Element_Buff_Huo",
+          "Element_Debuff_Huo",
+          "Element_Buff_Tu",
+          "Element_Debuff_Tu"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Change",
+        "Type": "String",
+        "Value": [
+          "Any",
+          "Increase",
+          "Decrease"
+        ],
+        "Score": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "CheckElementStackChange(ctx, \"{StatusId}\", \"{Change}\")"
+  },
+  {
+    "ID": "cond_card_moved_into_side",
+    "DisplayName": "入阵时",
+    "Desc": "{Keyword}卡因滑移新进入本卡的{Direction}侧。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "APIType": "Condition",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Direction",
+        "Type": "String",
+        "Value": [
+          "Up",
+          "Down",
+          "Left",
+          "Right",
+          "Neighbor"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "Name": "Keyword",
+        "Type": "String",
+        "Value": [
+          "Any",
+          "FaBao",
+          "FaShu",
+          "ZhaoShi",
+          "Passive"
+        ],
+        "Score": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "WasCardMovedIntoSide(ctx, self.m_Self, \"{Direction}\", \"{Keyword}\")"
+  },
+  {
+    "ID": "cond_check_shield_exhaustion",
+    "DisplayName": "灵盾耗尽原因",
+    "Desc": "灵盾以{Cause}方式耗尽。进阶内容，有调整可能",
+    "Tags": [
+      "进阶"
+    ],
+    "APIType": "Condition",
+    "Weight": 0,
+    "ParamDefs": [
+      {
+        "Name": "Cause",
+        "Type": "String",
+        "Value": [
+          "Any",
+          "Damage",
+          "Effect"
+        ],
+        "Score": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "LuaTemplate": "CheckShieldExhaustion(ctx, \"{Cause}\")"
+  }
+]

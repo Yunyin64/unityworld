@@ -5,56 +5,50 @@
     "Desc": "无条件，始终生效",
     "Tags": [],
     "ConflictTags": [],
-    "Weight": 10,
+    "Weight": 36,
     "ParamDefs": [],
     "LuaTemplate": ""
   },
   {
     "ID": "cond_all_cards_in_domain",
+    "APIType": "Scope",
     "DisplayName": "所有卡牌",
-    "Desc": "选取{Domain}范围内的所有场上卡牌",
+    "Desc": "选取{Domain}所有场上卡",
     "Tags": ["选取", "全体"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["All", "TargetAll"],
-        "Score": [0, 0]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["All", "TargetAll"], "Score": [0, 0] }
     ],
     "LuaTemplate": "SelectCards(ctx, \"{Domain}\")"
   },
   {
     "ID": "cond_random_card",
+    "APIType": "Scope",
     "DisplayName": "随机场上卡牌",
-    "Desc": "在{Domain}范围内随机选取至多一张场上卡牌",
+    "Desc": "随机选取{Domain}一张场上卡",
     "Tags": ["选取", "随机"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Random", "TargetRandom"],
-        "Score": [0, 0]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Random", "TargetRandom"], "Score": [0, 0] }
     ],
     "LuaTemplate": "SelectCards(ctx, \"{Domain}\")"
   },
   {
     "ID": "cond_adjacent_in_field_order",
+    "APIType": "Scope",
     "DisplayName": "场上顺序相邻卡牌",
-    "Desc": "按场上顺序选取来源卡前后各一张，边界只取存在的一侧",
+    "Desc": "选取来源卡场序前后相邻的卡",
     "Tags": ["选取", "位置"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 2,
     "ParamDefs": [],
     "LuaTemplate": "SelectCards(ctx, \"Adjacent\")"
   },
   {
     "ID": "cond_all_card",
+    "APIType": "Scope",
     "Status": "Pending",
     "StatusReason": "旧模板传字符串，Lua Scope 接收角色实例。通用范围全选已有独立入口。",
     "DisplayName": "所有卡牌",
@@ -63,17 +57,13 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Target",
-        "Type": "CombatNpc",
-        "Value": [""],
-        "Score": [0]
-      }
+      { "Name": "Target", "Type": "CombatNpc", "Value": [""], "Score": [0] }
     ],
     "LuaTemplate": "AllCard(ctx, \"{Target}\")"
   },
   {
     "ID": "cond_random_card_in_cd",
+    "APIType": "Scope",
     "Status": "Pending",
     "StatusReason": "选择依赖旧独立 CD。背包扫描下的等价条件待定义。",
     "DisplayName": "随机CD中卡牌",
@@ -82,17 +72,13 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Target",
-        "Type": "CombatNpc",
-        "Value": [""],
-        "Score": [0]
-      }
+      { "Name": "Target", "Type": "CombatNpc", "Value": [""], "Score": [0] }
     ],
     "LuaTemplate": "RandomCardInCD(ctx, \"{Target}\")"
   },
   {
     "ID": "cond_adjacent_cards",
+    "APIType": "Scope",
     "Status": "Pending",
     "StatusReason": "旧模板未传参考卡且全方向未接入。按方向的选卡规则待迁移。",
     "DisplayName": "相邻卡牌",
@@ -101,13 +87,7 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Direction",
-        "Type": "String",
-        "Value": ["Above", "Below","All"],
-        "Score": [0, 0,0],
-        "Multiplier": [1, 1,2]
-      }
+      { "Name": "Direction", "Type": "String", "Value": ["Above", "Below", "All"], "Score": [0, 0, 0], "Multiplier": [1, 1, 2] }
     ],
     "LuaTemplate": "AdjacentCards(ctx, \"{Direction}\")"
   }

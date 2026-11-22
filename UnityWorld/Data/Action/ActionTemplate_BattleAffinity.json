@@ -1,0 +1,36 @@
+[
+  {
+    "ID": "action_change_affinity",
+    "APIType": "Action",
+    "DisplayName": "改变五行亲和",
+    "Desc": "{Domain}的{Element}亲和改变{Delta}，持续{Rounds}轮，0轮表示本场",
+    "FuncName": "ChangeAffinity",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Element", "Type": "String", "Value": ["Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "Delta", "Type": "Int", "Value": [-5, -3, -1, 1, 3, 5], "Score": [0, 0, 0, 0, 0, 0] },
+      { "Name": "Rounds", "Type": "Int", "Value": [0, 1, 2, 3], "Score": [0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "ChangeAffinity(ctx, \"{Domain}\", \"{Element}\", {Delta}, {Rounds})"
+  },
+  {
+    "ID": "action_add_artifact_power",
+    "APIType": "Action",
+    "DisplayName": "法宝供能",
+    "Desc": "{Domain}每轮开始随机为法宝补{Amount}个{Element}灵元，持续{Rounds}轮，0轮表示本场",
+    "FuncName": "AddArtifactPower",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 2,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "Element", "Type": "String", "Value": ["None", "Jin", "Mu", "Shui", "Huo", "Tu"], "Score": [0, 0, 0, 0, 0, 0] },
+      { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4], "Score": [0, 0, 0, 0] },
+      { "Name": "Rounds", "Type": "Int", "Value": [0, 1, 2, 3], "Score": [0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "AddArtifactPower(ctx, \"{Domain}\", \"{Element}\", {Amount}, {Rounds})"
+  }
+]

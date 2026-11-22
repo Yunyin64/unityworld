@@ -1,0 +1,69 @@
+[
+  {
+    "ID": "cond_select_directional_cards",
+    "APIType": "Scope",
+    "DisplayName": "选取方位匹配卡",
+    "Desc": "选取来源卡{Direction}方位共边且关键词匹配{Keyword}的卡",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 2,
+    "ParamDefs": [
+      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right", "Neighbor"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "Keyword", "Type": "String", "Value": ["Any", "FaShu", "FaBao", "ZhaoShi", "Passive", "Wound", "GongFa"], "Score": [0, 0, 0, 0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "SelectDirectionalCards(ctx, \"{Direction}\", \"{Keyword}\")"
+  },
+  {
+    "ID": "cond_has_directional_card",
+    "APIType": "Condition",
+    "DisplayName": "某方位有匹配卡",
+    "Desc": "来源卡{Direction}方位有共边且关键词匹配{Keyword}的卡",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 3,
+    "ParamDefs": [
+      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right", "Neighbor"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "Keyword", "Type": "String", "Value": ["Any", "FaShu", "FaBao", "ZhaoShi", "Passive", "Wound", "GongFa"], "Score": [0, 0, 0, 0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "HasDirectionalCard(ctx, \"{Direction}\", \"{Keyword}\")"
+  },
+  {
+    "ID": "cond_count_directional_cards",
+    "APIType": "Scale",
+    "DisplayName": "计算方位匹配卡数",
+    "Desc": "计算来源卡{Direction}方位共边且关键词匹配{Keyword}的卡数",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right", "Neighbor"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "Keyword", "Type": "String", "Value": ["Any", "FaShu", "FaBao", "ZhaoShi", "Passive", "Wound", "GongFa"], "Score": [0, 0, 0, 0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "CountDirectionalCards(ctx, \"{Direction}\", \"{Keyword}\")"
+  },
+  {
+    "ID": "cond_was_card_used_on_side",
+    "APIType": "Condition",
+    "DisplayName": "某方位匹配卡发动时",
+    "Desc": "使用事件的来源在本卡{Direction}方位且关键词匹配{Keyword}",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 2,
+    "ParamDefs": [
+      { "Name": "Direction", "Type": "String", "Value": ["Up", "Down", "Left", "Right", "Neighbor"], "Score": [0, 0, 0, 0, 0] },
+      { "Name": "Keyword", "Type": "String", "Value": ["Any", "FaShu", "FaBao", "ZhaoShi", "Passive", "Wound", "GongFa"], "Score": [0, 0, 0, 0, 0, 0, 0] }
+    ],
+    "LuaTemplate": "WasCardUsedOnSide(ctx, self.m_Self, \"{Direction}\", \"{Keyword}\")"
+  },
+  {
+    "ID": "cond_was_card_displaced",
+    "APIType": "Condition",
+    "DisplayName": "本卡被位移时",
+    "Desc": "位移事件中被移动的卡是本卡",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 2,
+    "ParamDefs": [],
+    "LuaTemplate": "WasCardDisplaced(ctx, self.m_Self)"
+  }
+]

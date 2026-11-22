@@ -1,6 +1,7 @@
 [
   {
     "ID": "action_heal",
+    "APIType": "Action",
     "DisplayName": "治疗",
     "Desc": "恢复{Domain}至多{HealValue}点 HP，受最大 HP 限制",
     "FuncName": "Heal",
@@ -8,47 +9,29 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "HealValue",
-        "Type": "Int",
-        "Value": [1, 2, 3, 5],
-        "Score": [1, 2, 3, 5]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "HealValue", "Type": "Int", "Value": [1, 2, 3, 5], "Score": [1, 2, 3, 5] }
     ],
     "LuaTemplate": "Heal(ctx, \"{Domain}\", {HealValue})"
   },
   {
     "ID": "action_self_damage",
-    "DisplayName": "自伤",
+    "APIType": "Action",
+    "DisplayName": "直接伤害",
     "Desc": "对{Domain}造成{DamageValue}点伤害",
     "FuncName": "SelfDamage",
-    "Tags": ["自伤", "代价"],
+    "Tags": ["伤害"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "DamageValue",
-        "Type": "Int",
-        "Value": [1, 2, 3, 4, 5],
-        "Score": [-1, -2, -3, -4, -5]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "DamageValue", "Type": "Int", "Value": [1, 2, 3, 4, 5], "Score": [-1, -2, -3, -4, -5] }
     ],
     "LuaTemplate": "SelfDamage(ctx, \"{Domain}\", {DamageValue})"
   },
   {
     "ID": "action_armor_break",
+    "APIType": "Action",
     "DisplayName": "破甲",
     "Desc": "消除{Domain}{BreakValue}点护盾",
     "FuncName": "ArmorBreak",
@@ -56,18 +39,8 @@
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      {
-        "Name": "Domain",
-        "Type": "String",
-        "Value": ["Self", "Target"],
-        "Score": [0, 0]
-      },
-      {
-        "Name": "BreakValue",
-        "Type": "Int",
-        "Value": [1, 2, 3, 4, 5, 6],
-        "Score": [1, 2, 3, 4, 5, 6]
-      }
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
+      { "Name": "BreakValue", "Type": "Int", "Value": [1, 2, 3, 4, 5, 6], "Score": [1, 2, 3, 4, 5, 6] }
     ],
     "LuaTemplate": "ArmorBreak(ctx, \"{Domain}\", {BreakValue})"
   }

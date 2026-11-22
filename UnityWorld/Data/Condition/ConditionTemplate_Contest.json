@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "cond_check_contest_outcome",
+    "APIType": "Condition",
+    "DisplayName": "本方对拼结果",
+    "Desc": "本方在实际对拼中的结果为{Outcome}",
+    "Tags": [],
+    "ConflictTags": [],
+    "Weight": 2,
+    "ParamDefs": [
+      { "Name": "Outcome", "Type": "String", "Value": ["Win", "Lose", "Draw"], "Score": [0, 0, 0] }
+    ],
+    "LuaTemplate": "CheckContestOutcome(ctx, self.m_Owner, \"{Outcome}\")"
+  }
+]
