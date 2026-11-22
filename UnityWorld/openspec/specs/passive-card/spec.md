@@ -6,12 +6,12 @@
 
 ## Requirements
 
-### Requirement: CombatCardPhase.Passive 枚举值
-`CombatCardPhase` 枚举 SHALL 包含 `Passive` 值，表示卡牌处于被动模式，不参与 CD 循环。
+### Requirement: 背包战斗卡阶段
+`CombatCardPhase` SHALL 只包含 `Waiting`、`Fulling`、`Active`、`InPending`、`Applying`、`Finished`。常驻被动入场、法宝激活后均进入 `Active`。执行 Apply 回调期间进入 `Applying`，常驻被动完成开场效果后回到 `Active`。
 
-#### Scenario: Passive 枚举值存在
-- **WHEN** 代码引用 `CombatCardPhase.Passive`
-- **THEN** 编译通过且枚举值可正常使用
+#### Scenario: 法宝续期
+- **WHEN** 已激活法宝重新蓄满灵元并成功续期
+- **THEN** 该法宝保持 `Active`，只广播一次续期。续期失败时按实际蓄灵回到 `Waiting` 或 `Fulling`。
 
 ### Requirement: CardDefine Keywords 字段
 `CardDefine` SHALL 通过 `Keywords` 列表配置主、普通 Keyword，保留现有 JSON 列表格式。卡牌定义在用于创建 Card 之前 SHALL 满足 `keyword-system` 的唯一 Main 校验。

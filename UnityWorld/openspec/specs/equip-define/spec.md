@@ -1,4 +1,10 @@
-## ADDED Requirements
+# equip-define Specification
+
+## Purpose
+
+规定装备静态定义、配置加载入口与装备实例的有效数值。世界角色装配使用装备实例，绑定的招式通过装备实例读取攻防、速度及其他基础信息。
+
+## Requirements
 
 ### Requirement: EquipDefine 数据结构
 系统 SHALL 提供 `EquipDefine` 类（继承 `DefineBase`），定义装备基本形态的静态配置数据。
@@ -55,7 +61,10 @@
 系统 SHALL 提供 `Equip` 类（实现 `IFormDefine<EquipDefine>`），位于 `Scripts/Game/Domain/Object/Equip/Equip.cs`。
 `Equip` 是 `EquipDefine` 的实例化载体——Define 是模板（Base 值），Equip 是最终生效的运行时对象。
 
-`Equip` SHALL 包含以下字段：
+#### Scenario: 从 Define 创建实例
+
+- **WHEN** 调用 `Equip.FromDefine(EquipDefine define)`
+- **THEN** Equip 实例的字段 SHALL 按下表从装备定义初始化
 
 | 字段 | 类型 | 初始值来源 | 说明 |
 |---|---|---|---|
@@ -68,10 +77,15 @@
 | Amount | int | EquipDefine.AmountBase | 数量/耐久（最终生效值） |
 | FormList | List\<string\> | EquipDefine.FormListBase | 招式卡列表（最终生效值） |
 
-#### Scenario: 从 Define 创建实例
-- **WHEN** 调用 `Equip.FromDefine(EquipDefine define)`
-- **THEN** Equip 实例的 `Attack` SHALL 等于 `define.AttackBase`，`Defend` 等于 `define.DefendBase`，`Speed` 等于 `define.SpeedBase`，`Amount` 等于 `define.AmountBase`，`FormList` SHALL 为 `define.FormListBase` 的副本，`Size` 等于 `define.Size`，`DefineId` 等于 `define.ID`，`DisplayName` 等于 `define.DisplayName`
-
 #### Scenario: FormList 独立副本
 - **WHEN** 从 Define 创建 Equip 实例后修改 `Equip.FormList`
 - **THEN** 原始 `EquipDefine.FormListBase` SHALL 不受影响（深拷贝）
+
+### Requirement: 单个装备的战斗攻防速可修正
+
+战斗效果 SHALL 能对指定装备实例的攻击、防御、速度施加数值变化，支持本轮、N 轮和本场。装备及绑定招式 SHALL 读取同一生效数值，最低为零。战斗内修正 SHALL 不影响同名其他实例、其他场战斗或世界装备。
+
+#### Scenario: 两把同名长剑
+
+- **WHEN** 两把攻击 4 的长剑各绑定一张招式，第一把本轮攻击加 2、防御减 1、速度加 0.5
+- **THEN** 第一把的招式读到攻击 6 与当轮修改后的防御、速度，第二把仍读其原值。已经构造的待发点数原样等待

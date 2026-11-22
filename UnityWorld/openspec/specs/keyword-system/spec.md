@@ -88,8 +88,8 @@ CombatCard 在 `PreStart`、`Start`、`Tick`、`End` 方法中 SHALL 遍历自�
 CombatCard SHALL 提供 `SetPhase(string phaseName)` 方法。该方法 SHALL 将字符串解析为 `CombatCardPhase` 枚举值并设置 `Phase` 字段。解析失败时 SHALL 输出错误日志且不改变当前 Phase。
 
 #### Scenario: 有效的 phase 名称
-- **WHEN** Lua 调用 `card:SetPhase("Passive")`
-- **THEN** CombatCard.Phase 设为 CombatCardPhase.Passive
+- **WHEN** Lua 调用 `card:SetPhase("Active")`
+- **THEN** CombatCard.Phase 设为 CombatCardPhase.Active
 
 #### Scenario: 无效的 phase 名称
 - **WHEN** Lua 调用 `card:SetPhase("InvalidPhase")`
