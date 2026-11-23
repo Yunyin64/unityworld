@@ -5,12 +5,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "HealOut",
-      "Range": "All",
-      "Once": false
-    }
+    "StatModifiers": []
   },
   {
     "ID": "All_HealOut_Changed_Once",
@@ -18,12 +13,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "HealOut",
-      "Range": "All",
-      "Once": true
-    }
+    "StatModifiers": []
   },
   {
     "ID": "All_HealIn_Changed",
@@ -31,12 +21,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "HealIn",
-      "Range": "All",
-      "Once": false
-    }
+    "StatModifiers": []
   },
   {
     "ID": "All_HealIn_Changed_Once",
@@ -44,11 +29,6 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "HealIn",
-      "Range": "All",
-      "Once": true
-    }
+    "StatModifiers": []
   }
 ]

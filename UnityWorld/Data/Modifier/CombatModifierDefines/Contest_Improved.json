@@ -5,13 +5,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Ci",
-      "Once": false,
-      "LegacyId": "Ci_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Ci_Changed_Once",
@@ -19,13 +13,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Ci",
-      "Once": true,
-      "LegacyId": "Ci_Improved_Once"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Zhan_Changed",
@@ -33,13 +21,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Zhan",
-      "Once": false,
-      "LegacyId": "Zhan_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Da_Changed",
@@ -47,13 +29,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Da",
-      "Once": false,
-      "LegacyId": "Da_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "SheJi_Changed",
@@ -61,13 +37,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "SheJi",
-      "Once": false,
-      "LegacyId": "SheJi_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Block_Changed",
@@ -75,13 +45,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Block",
-      "Once": false,
-      "LegacyId": "Block_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Dodge_Changed",
@@ -89,13 +53,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Dodge",
-      "Once": false,
-      "LegacyId": "Doge_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Shield_Changed",
@@ -103,13 +61,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Shield",
-      "Once": false,
-      "LegacyId": "Shield_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Jin_Changed",
@@ -117,13 +69,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Jin",
-      "Once": false,
-      "LegacyId": "Jin_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Huo_Changed",
@@ -131,13 +77,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Huo",
-      "Once": false,
-      "LegacyId": "Huo_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Mu_Changed",
@@ -145,13 +85,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Mu",
-      "Once": false,
-      "LegacyId": "Mu_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Shui_Changed",
@@ -159,13 +93,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Shui",
-      "Once": false,
-      "LegacyId": "Shui_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Tu_Changed",
@@ -173,13 +101,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Tu",
-      "Once": false,
-      "LegacyId": "Tu_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Attack_Changed",
@@ -187,13 +109,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Attack",
-      "Once": false,
-      "LegacyId": "Attack_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Defend_Changed",
@@ -201,181 +117,97 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Defend",
-      "Once": false,
-      "LegacyId": "Defend_Improved"
-    }
+    "StatModifiers": []
   },
   {
     "ID": "Zhan_Changed_Once",
     "DisplayName": "单次斩击强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Zhan",
-      "Once": true,
-      "LegacyId": "Zhan_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Da_Changed_Once",
     "DisplayName": "单次钝击强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Da",
-      "Once": true,
-      "LegacyId": "Da_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "SheJi_Changed_Once",
     "DisplayName": "单次射击强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "SheJi",
-      "Once": true,
-      "LegacyId": "SheJi_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Block_Changed_Once",
     "DisplayName": "单次格挡强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Block",
-      "Once": true,
-      "LegacyId": "Block_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Dodge_Changed_Once",
     "DisplayName": "单次闪避强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Dodge",
-      "Once": true,
-      "LegacyId": "Doge_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Shield_Changed_Once",
     "DisplayName": "单次护盾强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Shield",
-      "Once": true,
-      "LegacyId": "Shield_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Jin_Changed_Once",
     "DisplayName": "单次金系强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Jin",
-      "Once": true,
-      "LegacyId": "Jin_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Huo_Changed_Once",
     "DisplayName": "单次火系强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Huo",
-      "Once": true,
-      "LegacyId": "Huo_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Mu_Changed_Once",
     "DisplayName": "单次木系强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Mu",
-      "Once": true,
-      "LegacyId": "Mu_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Shui_Changed_Once",
     "DisplayName": "单次水系强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Shui",
-      "Once": true,
-      "LegacyId": "Shui_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Tu_Changed_Once",
     "DisplayName": "单次土系强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Tu",
-      "Once": true,
-      "LegacyId": "Tu_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Attack_Changed_Once",
     "DisplayName": "单次全攻击强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Attack",
-      "Once": true,
-      "LegacyId": "Attack_Improved_Once"
-    }
+    "RefreshOnStack": false
   },
   {
     "ID": "Defend_Changed_Once",
     "DisplayName": "单次全防御强化",
     "Duration": -1,
     "MaxStack": 99,
-    "RefreshOnStack": false,
-    "ValueChange": {
-      "Stage": "Contest",
-      "Range": "Defend",
-      "Once": true,
-      "LegacyId": "Defend_Improved_Once"
-    }
+    "RefreshOnStack": false
   }
 ]

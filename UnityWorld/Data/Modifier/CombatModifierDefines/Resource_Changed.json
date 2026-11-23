@@ -5,12 +5,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "ShieldGain",
-      "Range": "All",
-      "Once": false
-    }
+    "StatModifiers": []
   },
   {
     "ID": "All_ShieldGain_Changed_Once",
@@ -18,12 +13,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "ShieldGain",
-      "Range": "All",
-      "Once": true
-    }
+    "StatModifiers": []
   },
   {
     "ID": "All_MpRecovery_Changed",
@@ -31,12 +21,7 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "MpRecovery",
-      "Range": "All",
-      "Once": false
-    }
+    "StatModifiers": []
   },
   {
     "ID": "All_MpRecovery_Changed_Once",
@@ -44,11 +29,6 @@
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": [],
-    "ValueChange": {
-      "Stage": "MpRecovery",
-      "Range": "All",
-      "Once": true
-    }
+    "StatModifiers": []
   }
 ]
