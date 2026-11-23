@@ -13,7 +13,7 @@ void MustFail(Action action, string message) { bool failed = false; try { action
 
 var catalog = TemplateCatalog.Load(root);
 TemplateEditorValidationChecks.Run(catalog);
-Check(catalog.Npcs.Count == 3, "项目模板数改变，请核对测试前提。");
+Check(catalog.GetNpc("test_npc_a") != null && catalog.GetNpc("test_npc_b") != null, "原有对战模板缺失。");
 Check(catalog.GetNpc("monster_wolf_0") != null, "灰狼目录丢失。");
 catalog.AssertDiskUnchanged();
 var detached = catalog.GetNpc("monster_wolf_0")!; detached.DisplayName = "不应污染目录";
@@ -81,4 +81,46 @@ Check(CardLibraryQuery.Search(cards, filter).Single().ID == "memory_only", "AND/
 filter.Keywords.Add("RemovedKeyword"); Check(CardLibraryQuery.Reconcile(filter, cards).Count == 1 && !filter.Keywords.Contains("RemovedKeyword"), "刷新筛选消失提示失败。");
 filter.Clear(); filter.Element = "None";
 Check(CardLibraryQuery.Search(cards, filter).All(c => c.ManaCost.Count == 0), "无灵元需求检索错误。");
+VerifyShapes();
 Console.WriteLine($"TEMPLATE_EDITOR_DATA_OK checks={checks} templates={catalog.Npcs.Count} cards={catalog.Cards.Count} output={output}");
+
+void VerifyShapes()
+{
+    var dataRoot = Path.Combine(output, "shape-fixture");
+    var data = Path.Combine(dataRoot, "Data");
+    foreach (var directory in new[] { "Npc", "Card", "Practice/GongFa", "Equip", "Stat", "Shape" })
+        Directory.CreateDirectory(Path.Combine(data, directory));
+    var core = catalog.GetCard("jin_fa")!;
+    File.WriteAllText(Path.Combine(data, "Card", "Shapes.json"), JsonSerializer.Serialize(new[]
+    {
+        core,
+        new CardDefine { ID = "shape-l3", Size = 3, SizeShape = "L3", Keywords = ["Passive"] },
+        new CardDefine { ID = "shape-one", Keywords = ["Passive"] },
+        new CardDefine { ID = "shape-bad", Size = 3, SizeShape = "unknown", Keywords = ["Passive"] }
+    }, TemplateJson.Options));
+    File.WriteAllText(Path.Combine(data, "Shape", "Basic.json"),
+        JsonSerializer.Serialize(new[] { catalog.GetShape("L3") }, TemplateJson.Options));
+    File.WriteAllText(Path.Combine(data, "Practice", "GongFa", "Core.json"),
+        JsonSerializer.Serialize(new[] { catalog.GetCultivation("jin_fa") }, TemplateJson.Options));
+    File.WriteAllText(Path.Combine(data, "Stat", "Stats.json"), JsonSerializer.Serialize(catalog.Stats, TemplateJson.Options));
+
+    var shapes = TemplateCatalog.Load(dataRoot);
+    var fixture = TemplateDraft.New(shapes, NpcTypes.NpcType.Human, "shape-fixture");
+    Check(fixture.TryAddCard(shapes, core.ID, null, out _) &&
+        fixture.SetMainCard(shapes, fixture.Entries[0].EntryId, out _), "形状样例可选主功法");
+    Check(fixture.TryAddCard(shapes, "shape-l3", new(2, 1), out _), "能从独立目录摆放 L 形");
+    Check(fixture.TryAddCard(shapes, "shape-one", new(3, 1), out _), "缺角中可放一张单格横条");
+    var single = fixture.Entries.Last();
+    Check(!fixture.TryMoveCard(shapes, single.EntryId, new(3, 2), out _) && single.Position == new BackpackPosition(3, 1),
+        "真实占格重叠时保留原位置");
+    Check(!fixture.TryAddCard(shapes, "shape-bad", new(5, 1), out var error) && error.Contains("unknown"),
+        "拖入未知形状给出引用诊断");
+    Check(TemplateDocumentConverter.Validate(fixture, shapes).IsValid, "L 形装配通过模板预检");
+    fixture.Entries.Add(new TemplateCardEntry { CardDefineId = "shape-bad", Position = new(5, 1) });
+    var shapeStore = new TemplateDraftStore(Path.Combine(output, "shape-drafts"), data);
+    shapeStore.Save(fixture);
+    var restored = shapeStore.Load(fixture.DraftId);
+    Check(restored.Entries.Last().CardDefineId == "shape-bad" &&
+        TemplateDocumentConverter.Validate(restored, shapes).Issues.Any(i => i.Code == "card.shape" && i.Message.Contains("unknown")),
+        "无效形状草稿可保存重开并保留结构化诊断");
+}

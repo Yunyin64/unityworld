@@ -128,7 +128,7 @@ public partial class TemplateBackpackView : Control
         var card = cardId == null ? null : _catalog.GetCard(cardId);
         if (card != null)
         {
-            try { _previewCells = card.GetShape().Select(c => new BackpackCell(position.X - 1 + c.X, position.Y - 1 + c.Y)).ToList(); }
+            try { _previewCells = BackpackCoordinates.GetCells(position, card.GetShape(_catalog.GetShape)); }
             catch (Exception exception) { _previewReason = exception.Message; }
         }
         if (position.X < 1 || position.Y < 1 || position.X > _layout.Width || position.Y > _layout.Height)
@@ -210,7 +210,7 @@ public partial class TemplateBackpackView : Control
         string? element = card?.ManaCost.Keys.FirstOrDefault();
         Color color = element == null ? new Color("85816B") : ObserverArtCatalog.ElementColor(element).Lerp(new Color("4F5E5C"), 0.68f);
         foreach (var rect in regions) DrawRect(rect, color);
-        // Formal cards are contiguous horizontal bars: cover internal grid seams with one surface.
+        // 矩形卡可以一块画完，带缺角的卡只绘制真实占格。
         bool rectangle = cells.Length == (cells.Max(c => c.X) - cells.Min(c => c.X) + 1) * (cells.Max(c => c.Y) - cells.Min(c => c.Y) + 1);
         if (rectangle) DrawRect(bounds, color);
         var texture = card == null ? null : _art?.Card(card.ID);
@@ -245,8 +245,8 @@ public partial class TemplateBackpackView : Control
         _cards.TryGetValue(entry.CardDefineId, out var card);
         try
         {
-            var shape = card?.GetShape() ?? new List<BackpackCell> { new(0, 0) };
-            return shape.Select(c => new BackpackCell(position.X - 1 + c.X, position.Y - 1 + c.Y)).ToArray();
+            var shape = card != null && _catalog != null ? card.GetShape(_catalog.GetShape) : [new(0, 0)];
+            return BackpackCoordinates.GetCells(position, shape);
         }
         catch { return new[] { new BackpackCell(position.X - 1, position.Y - 1) }; }
     }

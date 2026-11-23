@@ -10,18 +10,9 @@ public static partial class TcaAlignmentTests
 {
     private static void VerifySpatialEffects(Lua lua)
     {
-        var definition = CultivationDefineMgr.Instance.Get("bp_main_6x5").BackpackLevels[0];
-        var originalCells = definition.ValidCells;
-        Npc a;
-        try
-        {
-            definition.ValidCells = definition.GetValidCells().Where(cell => cell != new BackpackCell(0, 4)).ToList();
-            a = BackpackModelTests.CreateNpc();
-        }
-        finally
-        {
-            definition.ValidCells = originalCells;
-        }
+        var a = BackpackModelTests.CreateNpc();
+        // 专用几何回归直接在实例上构造缺口，正式功法始终给完整矩形。
+        NpcMgr.Instance.BackpackSystem.GetData(a.Id).ValidCells.Remove(new(0, 4));
         var b = BackpackModelTests.CreateNpc();
         a.Stats.AddModifier("ManaDrawCost", StatModifier.Override(0, "tca-test"));
         b.Stats.AddModifier("ManaDrawCost", StatModifier.Override(0, "tca-test"));

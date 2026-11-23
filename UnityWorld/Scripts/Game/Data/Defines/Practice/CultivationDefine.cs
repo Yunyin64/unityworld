@@ -23,19 +23,36 @@ namespace UnityWorld.Game.Data
     {
         public int BackpackWidth { get; set; } = 5;
         public int BackpackHeight { get; set; } = 5;
-        /// <summary>显式等级/几何测试布局优先；正式默认单格主功法固定公开 (3,3)。</summary>
+        /// <summary>显式等级布局优先；缺省主功法固定在公开坐标 (3,3)。</summary>
         public List<BackpackLevelDefine> BackpackLevels { get; set; } = [];
 
+        /// <summary>取得指定等级的完整矩形布局和固定主功法格。</summary>
         public BackpackLevelDefine GetBackpackDefinition(int level)
         {
+            BackpackLevelDefine layout;
             if (BackpackLevels.Count > 0)
             {
                 var matching = BackpackLevels.Where(d => d.Level == level).ToList();
                 if (matching.Count != 1) throw new InvalidOperationException($"功法 {ID} 等级 {level} 必须有唯一背包布局。");
-                return matching[0].Clone();
+                layout = matching[0];
             }
-            if (level != 1) throw new InvalidOperationException($"功法 {ID} 没有等级 {level} 的背包布局。");
-            return new BackpackLevelDefine { Width = BackpackWidth, Height = BackpackHeight, MainCardCells = [BackpackCoordinates.ToCell(new(3, 3))] };
+            else
+            {
+                if (level != 1) throw new InvalidOperationException($"功法 {ID} 没有等级 {level} 的背包布局。");
+                layout = new BackpackLevelDefine { Width = BackpackWidth, Height = BackpackHeight, MainCardCells = [BackpackCoordinates.ToCell(new(3, 3))] };
+            }
+
+            try
+            {
+                if (layout.ValidCells.Count > 0 && layout.ValidCells.Count != (long)layout.Width * layout.Height)
+                    throw new InvalidOperationException("有效格必须覆盖整个矩形。");
+                layout.GetValidCells();
+            }
+            catch (InvalidOperationException exception)
+            {
+                throw new InvalidOperationException($"功法 {ID} 等级 {level} 的背包配置无效：{exception.Message}", exception);
+            }
+            return layout.Clone();
         }
 
         /// <summary>功法描述</summary>

@@ -84,6 +84,7 @@ public static class TemplateEditorValidationChecks
         public Dictionary<string, StatDefine> Stats { get; } = catalog.Stats
             .ToDictionary(d => d.ID, StringComparer.Ordinal);
         public CardDefine? GetCard(string id) => catalog.GetCard(id);
+        public ShapeDefine? GetShape(string id) => catalog.GetShape(id);
         public CultivationDefine? GetCultivation(string id) => catalog.GetCultivation(id);
         public EquipDefine? GetEquip(string id) => catalog.GetEquip(id);
         public StatDefine? GetStat(string id) => Stats.GetValueOrDefault(id);

@@ -55,6 +55,7 @@ public static partial class TcaAlignmentTests
             scene.Cleanup();
         }
         VerifyNextStabOnScan(lua);
+        VerifyContestKeywords(lua);
         VerifyDamageValueBuffs(lua);
         VerifyResourceValueBuffs(lua);
         VerifyRoundEffects(lua);

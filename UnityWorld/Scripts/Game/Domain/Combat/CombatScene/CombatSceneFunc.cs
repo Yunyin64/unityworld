@@ -21,7 +21,7 @@ namespace UnityWorld.Game.Domain.Combat
                 foreach (var npc in due)
                 {
                     npc.Backpack.TryTakeRow(TicksPerRow);
-                    Trace(npc, $"扫描行 余量={npc.Backpack.ScanProgress}");
+                    //Trace(npc, $"扫描行 余量={npc.Backpack.ScanProgress}");
                     npc.ScanRow();
                 }
                 ResolveBoundaryContests(due);

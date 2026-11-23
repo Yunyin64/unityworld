@@ -17,12 +17,16 @@ namespace UnityWorld.Game.Data
         [JsonPropertyName("rarity")]
         public int Rarity { get; set; } = 0;
 
-        /// <summary>卡牌占用手牌格数</summary>
+        /// <summary>卡牌占用格数。策划配表显式填写，缺省为单格。</summary>
         [JsonPropertyName("size")]
         public int Size { get; set; } = 1;
 
-        /// <summary>仅专用几何测试可自定义；正式内容从 Size 自动派生横条。</summary>
+        /// <summary>形状定义 ID，留空时按 Size 生成横条。</summary>
+        public string SizeShape { get; set; } = "";
+
+        /// <summary>仅供专用几何测试直接指定。</summary>
         public List<BackpackCell> Shape { get; set; } = [];
+        /// <summary>使用专用测试的显式几何。</summary>
         public bool UseCustomShapeForTests { get; set; }
 
         /// <summary>兼容旧定义中的扫描标记。发动方式由唯一 Main Keyword 决定。</summary>
@@ -34,12 +38,30 @@ namespace UnityWorld.Game.Data
         public string CompatibilityStatus { get; set; } = "Migrated";
         public string CompatibilityReason { get; set; } = "";
 
-        public List<BackpackCell> GetShape()
+        /// <summary>从运行时目录解析形状，返回独立坐标列表。</summary>
+        public List<BackpackCell> GetShape() => GetShape(id => ShapeDefineMgr.Instance?.Get(id));
+
+        /// <summary>从调用方的数据目录解析形状，编辑器和战斗共用此校验。</summary>
+        public List<BackpackCell> GetShape(Func<string, ShapeDefine?> findShape)
         {
-            var horizontal = BackpackCoordinates.HorizontalShape(Size);
+            if (Size < 1) throw new InvalidOperationException($"卡 {ID} 的 Size 必须为正整数。");
+            if (SizeShape == null) throw new InvalidOperationException($"卡 {ID} 的 SizeShape 必须为字符串。");
+            if (SizeShape.Length > 0)
+            {
+                var definition = findShape(SizeShape)
+                    ?? throw new InvalidOperationException($"卡 {ID} 引用了不存在的形状 {SizeShape}。");
+                var cells = definition.Cells;
+                if (cells == null || cells.Count != Size || cells.Distinct().Count() != Size ||
+                    cells.Any(cell => cell.X < 0 || cell.Y < 0) ||
+                    cells.Min(cell => cell.X) != 0 || cells.Min(cell => cell.Y) != 0)
+                    throw new InvalidOperationException($"卡 {ID} 的形状 {SizeShape} 必须从外接框左上角归零、无重复且格数等于 Size {Size}。");
+                return [.. cells];
+            }
+
             if (UseCustomShapeForTests) return [.. Shape];
+            var horizontal = BackpackCoordinates.HorizontalShape(Size);
             if (Shape.Count != 0 && !Shape.SequenceEqual(horizontal))
-                throw new InvalidOperationException($"卡 {ID} 正式形状必须由 Size 自动生成横条。");
+                throw new InvalidOperationException($"卡 {ID} 的异形需要通过 SizeShape 引用。");
             return horizontal;
         }
 

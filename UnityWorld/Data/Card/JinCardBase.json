@@ -7,7 +7,8 @@
     "Size": 1,
     "Cooldown": 20,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Zhan"
     ],
     "ManaCost": {
       "Jin": 1
@@ -49,7 +50,8 @@
     "Size": 2,
     "Cooldown": 40,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Zhan"
     ],
     "ManaCost": {
       "Jin": 2

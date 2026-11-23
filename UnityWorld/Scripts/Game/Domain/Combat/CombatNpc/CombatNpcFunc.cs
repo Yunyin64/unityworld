@@ -212,7 +212,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (dmg.Damage > 0) Scene.MarkPresentationEffect();
         }
         /// <summary>
-        /// 对拼结算：同类非射击攻击胜出取全额，其他攻击胜出取差值。胜负与平局均广播 OnContestOverflow。
+        /// 对拼结算：按差值生成基础伤害，由双方来源卡的关键词修正后提交。
         /// </summary>
         public CombatResult ResolveContest(ContestData contestA, ContestData contestB)
         {
@@ -285,16 +285,6 @@ namespace UnityWorld.Game.Domain.Combat
                 var winner = winnerContest.OwnerNpc;
                 var loser = loserContest.OwnerNpc;
 
-                winner.ContestWin(ret, winnerContest, loserContest, overflow);
-                loser.ContestLose(ret, winnerContest, loserContest, overflow);
-
-                foreach (var contest in new[] { winnerContest, loserContest })
-                {
-                    var eventName = contest.IsAttackType ? "OnAttack" : contest.IsDefenseType ? "OnDefend" : null;
-                    if (eventName != null)
-                        Scene.TriggerCombatEvent(eventName, new APIContext { Caster = contest.OwnerNpc, SourceCard = contest.SourceCard, Scene = Scene });
-                }
-
                 // 有胜负时，事件主体和来源卡取胜方。
                 pairedContext.Caster = winner;
                 pairedContext.SourceCard = winnerContest.SourceCard;
@@ -304,10 +294,18 @@ namespace UnityWorld.Game.Domain.Combat
                 pairedContext.Set("WinnerTypeName", winnerContest.ContestType.ToString());
                 pairedContext.Set("LoserType", loserContest.ContestType);
                 pairedContext.Set("LoserTypeName", loserContest.ContestType.ToString());
-                pairedContext.Set("WinnerValue", winnerContest.FinalValue);
-                pairedContext.Set("LoserValue", loserContest.FinalValue);
+                pairedContext.Set("WinnerValue", Math.Max(valueA, valueB));
+                pairedContext.Set("LoserValue", Math.Min(valueA, valueB));
                 pairedContext.Set("WinnerCard", winnerContest.SourceCard);
                 pairedContext.Set("LoserCard", loserContest.SourceCard);
+                ResolveContestKeywords(pairedContext, winnerContest, loserContest, overflow);
+
+                foreach (var contest in new[] { winnerContest, loserContest })
+                {
+                    var eventName = contest.IsAttackType ? "OnAttack" : contest.IsDefenseType ? "OnDefend" : null;
+                    if (eventName != null)
+                        Scene.TriggerCombatEvent(eventName, new APIContext { Caster = contest.OwnerNpc, SourceCard = contest.SourceCard, Scene = Scene });
+                }
             }
 
             Scene.TriggerCombatEvent("OnContestOverflow", pairedContext);
@@ -332,28 +330,29 @@ namespace UnityWorld.Game.Domain.Combat
             ModifyHook("PairedContest", ctx);
         }
 
-        private CombatResult ContestWin(CombatResult ctx, ContestData win, ContestData lose, int overflow)
+        private void ResolveContestKeywords(APIContext pairedContext, ContestData winner, ContestData loser, int overflow)
         {
-            if (win.IsAttackType)
+            var damage = winner.IsAttackType ? new DamageInfo(winner) { TargetNpc = loser.OwnerNpc } : null;
+            long baseDamage = damage == null ? 0 : overflow;
+            // 只同步交给本次的两张来源卡。双方分别获得自己的 Self 上下文，只传递伤害结果。
+            foreach (var side in new[] { winner, loser })
             {
-                var dmg = new DamageInfo(win);
-                dmg.TargetNpc = lose.OwnerNpc;
-                // 同类型通吃：赢家全额伤害；异类型：差值伤害
-                if (win.ContestType == lose.ContestType && lose.ContestType != ContestType.SheJi)
-                    dmg.Damage = win.ContestValue;
-                else
-                    dmg.Damage = overflow;
-                dmg.TargetNpc.AddDamage(dmg);
-                Log($"  攻击胜，伤害={dmg.Damage:F0} → [{dmg.TargetNpc.GetName()}]");
+                var ctx = pairedContext.CopyForEvent();
+                ctx.Caster = side.OwnerNpc;
+                ctx.SourceCard = side.SourceCard;
+                ctx.Set("IsWinner", ReferenceEquals(side, winner));
+                ctx.Set("WinnerIsAttack", winner.IsAttackType);
+                ctx.Set("LoserIsAttack", loser.IsAttackType);
+                ctx.Set("IsEnemy", winner.OwnerNpc.Team != loser.OwnerNpc.Team);
+                ctx.Set("BaseDamage", baseDamage);
+                side.SourceCard.RunKeywordHooks("OnResolveContest", ctx);
+                baseDamage = ctx.GetValue("BaseDamage", baseDamage);
             }
-            // 防御赢：基础层无事，交给 OnContestOverflow 事件
-            return ctx;
-        }
 
-        private CombatResult ContestLose(CombatResult ctx, ContestData win, ContestData lose, float overflow)
-        {
-            // 基础层：输了无额外惩罚，交给 OnContestOverflow 事件处理
-            return ctx;
+            if (damage == null) return;
+            damage.Damage = Math.Max(0, baseDamage);
+            damage.TargetNpc.AddDamage(damage);
+            Log($"  攻击胜，伤害={damage.Damage:F0} → [{damage.TargetNpc.GetName()}]");
         }
 
         /// <summary>

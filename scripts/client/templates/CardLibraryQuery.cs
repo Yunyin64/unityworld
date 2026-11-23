@@ -36,14 +36,15 @@ public static class CardLibraryQuery
         .Select(k => { var label = labels?.GetValueOrDefault(k); return new KeywordOption(k, string.IsNullOrWhiteSpace(label?.DisplayName) ? k : label!.DisplayName, label?.SortOrder ?? int.MaxValue); })
         .OrderBy(k => k.SortOrder).ThenBy(k => k.Id, StringComparer.Ordinal).ToArray();
 
-    public static IReadOnlyList<CardDefine> Search(IEnumerable<CardDefine> cards, CardLibraryFilter filter)
+    public static IReadOnlyList<CardDefine> Search(IEnumerable<CardDefine> cards, CardLibraryFilter filter,
+        Func<string, ShapeDefine?>? findShape = null)
     {
         string text = filter.Text.Trim();
         return cards.Where(c =>
             (text.Length == 0 || c.ID.Contains(text, StringComparison.OrdinalIgnoreCase) || c.DisplayName.Contains(text, StringComparison.OrdinalIgnoreCase) || c.Desc.Contains(text, StringComparison.OrdinalIgnoreCase)) &&
             filter.Keywords.All(k => c.Keywords.Contains(k, StringComparer.Ordinal)) &&
             (filter.Element.Length == 0 || (filter.Element == "None" ? c.ManaCost.Count == 0 : c.ManaCost.ContainsKey(filter.Element))) &&
-            (!filter.Size.HasValue || c.Size == filter.Size) && (!filter.OnlyAvailable || UnavailableReason(c) == null))
+            (!filter.Size.HasValue || c.Size == filter.Size) && (!filter.OnlyAvailable || UnavailableReason(c, findShape) == null))
             .OrderBy(c => c.DisplayName, StringComparer.Ordinal).ThenBy(c => c.ID, StringComparer.Ordinal).ToArray();
     }
 
@@ -59,9 +60,9 @@ public static class CardLibraryQuery
     }
 
     /// <summary>Per-card content availability. Missing artwork is deliberately never consulted.</summary>
-    public static string? UnavailableReason(CardDefine card)
+    public static string? UnavailableReason(CardDefine card, Func<string, ShapeDefine?>? findShape = null)
     {
-        var errors = TemplateEditorValidator.ValidateCard(card).Where(i => i.Severity == TemplateIssueSeverity.Error).Select(i => i.Message).ToArray();
+        var errors = TemplateEditorValidator.ValidateCard(card, findShape).Where(i => i.Severity == TemplateIssueSeverity.Error).Select(i => i.Message).ToArray();
         return errors.Length == 0 ? null : string.Join("；", errors);
     }
 }

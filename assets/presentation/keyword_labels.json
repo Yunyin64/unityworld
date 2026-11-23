@@ -9,5 +9,10 @@
   "Armor": { "DisplayName": "护甲", "SortOrder": 70 },
   "Wound": { "DisplayName": "伤势", "SortOrder": 80 },
   "Amount": { "DisplayName": "弹药", "SortOrder": 90 },
-  "Consume": { "DisplayName": "消耗", "SortOrder": 100 }
+  "Consume": { "DisplayName": "消耗", "SortOrder": 100 },
+  "Zhan": { "DisplayName": "斩", "SortOrder": 110 },
+  "Ci": { "DisplayName": "刺", "SortOrder": 120 },
+  "Da": { "DisplayName": "打", "SortOrder": 130 },
+  "Block": { "DisplayName": "格", "SortOrder": 140 },
+  "Dodge": { "DisplayName": "闪", "SortOrder": 150 }
 }

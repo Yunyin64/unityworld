@@ -17,6 +17,7 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
 {
     private readonly Dictionary<string, NpcDefine> _npcs = new(StringComparer.Ordinal);
     private readonly Dictionary<string, CardDefine> _cards = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, ShapeDefine> _shapes = new(StringComparer.Ordinal);
     private readonly Dictionary<string, CultivationDefine> _cultivations = new(StringComparer.Ordinal);
     private readonly Dictionary<string, EquipDefine> _equips = new(StringComparer.Ordinal);
     private readonly Dictionary<string, StatDefine> _stats = new(StringComparer.Ordinal);
@@ -33,6 +34,8 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
     private static T? Copy<T>(Dictionary<string, T> items, string id) where T : class => items.TryGetValue(id, out var item) ? TemplateJson.Clone(item) : null;
     public NpcDefine? GetNpc(string id) => Copy(_npcs, id);
     public CardDefine? GetCard(string id) => Copy(_cards, id);
+    /// <summary>从本代目录读取独立的形状定义。</summary>
+    public ShapeDefine? GetShape(string id) => Copy(_shapes, id);
     public CultivationDefine? GetCultivation(string id) => Copy(_cultivations, id);
     public EquipDefine? GetEquip(string id) => Copy(_equips, id);
     public StatDefine? GetStat(string id) => Copy(_stats, id);
@@ -44,6 +47,7 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
         var catalog = new TemplateCatalog(dataRoot);
         string before = Fingerprint(catalog.DataRoot);
         catalog.Read("Npc", catalog._npcs);
+        catalog.Read("Shape", catalog._shapes, optional: true);
         catalog.Read("Card", catalog._cards);
         catalog.Read("Practice/GongFa", catalog._cultivations);
         catalog.Read("Equip", catalog._equips);
@@ -54,10 +58,14 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
         return catalog;
     }
 
-    private void Read<T>(string directory, Dictionary<string, T> target) where T : DefineBase
+    private void Read<T>(string directory, Dictionary<string, T> target, bool optional = false) where T : DefineBase
     {
         string root = Path.Combine(DataRoot, "Data", directory.Replace('/', Path.DirectorySeparatorChar));
-        if (!Directory.Exists(root)) throw new DirectoryNotFoundException($"缺少定义目录：{root}");
+        if (!Directory.Exists(root))
+        {
+            if (optional) return;
+            throw new DirectoryNotFoundException($"缺少定义目录：{root}");
+        }
         foreach (string file in Directory.EnumerateFiles(root, "*.json", SearchOption.TopDirectoryOnly).OrderBy(p => p, StringComparer.Ordinal))
         {
             string json = File.ReadAllText(file);

@@ -59,7 +59,7 @@ public sealed class TemplateDraft
     {
         var card = catalog.GetCard(cardId);
         if (card == null) { error = "卡牌定义不存在。"; return false; }
-        error = CardLibraryQuery.UnavailableReason(card) ?? "";
+        error = CardLibraryQuery.UnavailableReason(card, catalog.GetShape) ?? "";
         if (error.Length != 0) return false;
         var entry = new TemplateCardEntry { CardDefineId = cardId, Position = position };
         if (position != null && !CanPlace(catalog, entry, position.Value, out error)) return false;
@@ -91,14 +91,14 @@ public sealed class TemplateDraft
         var cultivation = entry == null ? null : catalog.GetCultivation(entry.CardDefineId);
         var card = entry == null ? null : catalog.GetCard(entry.CardDefineId);
         if (entry == null || cultivation == null || card == null) { error = "主功法必须同时有卡牌与功法定义。"; return false; }
-        error = CardLibraryQuery.UnavailableReason(card) ?? "";
+        error = CardLibraryQuery.UnavailableReason(card, catalog.GetShape) ?? "";
         if (error.Length != 0) return false;
         BackpackLevelDefine layout;
         try { layout = cultivation.GetBackpackDefinition(1); layout.GetValidCells(); }
         catch (Exception ex) { error = ex.Message; return false; }
         if (layout.MainCardCells.Count == 0) { error = "功法缺少固定占格。"; return false; }
         var origin = new BackpackCell(layout.MainCardCells.Min(c => c.X), layout.MainCardCells.Min(c => c.Y));
-        var shape = card.GetShape().Select(c => new BackpackCell(origin.X + c.X, origin.Y + c.Y)).ToHashSet();
+        var shape = Cells(catalog, card, BackpackCoordinates.ToPosition(origin)).ToHashSet();
         if (!shape.SetEquals(layout.MainCardCells)) { error = "主功法形状与固定占格不符。"; return false; }
         var previous = Entries.FirstOrDefault(e => e.EntryId == MainEntryId);
         if (previous != null && previous != entry) previous.Position = null;
@@ -125,12 +125,12 @@ public sealed class TemplateDraft
             var layout = GetLayout(catalog);
             if (layout == null) { error = "请先选择主功法。"; return false; }
             var card = catalog.GetCard(entry.CardDefineId) ?? throw new InvalidOperationException("卡牌定义不存在。");
-            var cells = Cells(card, position).ToHashSet();
+            var cells = Cells(catalog, card, position).ToHashSet();
             if (cells.Any(c => !layout.GetValidCells().Contains(c))) { error = "卡牌超出背包有效范围。"; return false; }
             foreach (var other in Entries.Where(e => e.EntryId != entry.EntryId && e.Position != null))
             {
                 var definition = catalog.GetCard(other.CardDefineId);
-                if (definition != null && Cells(definition, other.Position!.Value).Any(cells.Contains))
+                if (definition != null && Cells(catalog, definition, other.Position!.Value).Any(cells.Contains))
                 { error = "卡牌位置与已有条目重叠。"; return false; }
             }
             // Only increasing placed occupancy is capacity-gated; existing invalid drafts remain repairable.
@@ -146,9 +146,6 @@ public sealed class TemplateDraft
         }
         catch (Exception ex) { error = ex.Message; return false; }
     }
-    private static IEnumerable<BackpackCell> Cells(CardDefine card, BackpackPosition position)
-    {
-        var start = BackpackCoordinates.ToCell(position);
-        return card.GetShape().Select(c => new BackpackCell(start.X + c.X, start.Y + c.Y));
-    }
+    private static IEnumerable<BackpackCell> Cells(TemplateCatalog catalog, CardDefine card, BackpackPosition position)
+        => BackpackCoordinates.GetCells(position, card.GetShape(catalog.GetShape));
 }

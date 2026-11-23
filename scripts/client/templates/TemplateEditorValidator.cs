@@ -11,6 +11,7 @@ namespace Xianxia.Client.Templates;
 public interface ITemplateEditorDefinitions
 {
     CardDefine? GetCard(string id);
+    ShapeDefine? GetShape(string id);
     CultivationDefine? GetCultivation(string id);
     EquipDefine? GetEquip(string id);
     StatDefine? GetStat(string id);
@@ -87,13 +88,18 @@ public static class TemplateEditorValidator
             cards[i] = card;
             if (card == null) { completeSizes = false; Error("card.missing", $"卡牌定义不存在：{entry.Key}。", field + ".Key", index); continue; }
             if (card.Size > 0) occupied += card.Size; else completeSizes = false;
-            issues.AddRange(ValidateCard(card).Select(issue => issue with { FieldPath = field + ".Key", PlacementIndex = index }));
+            issues.AddRange(ValidateCard(card, definitions.GetShape).Select(issue => issue with { FieldPath = field + ".Key", PlacementIndex = index }));
             List<BackpackCell> shape;
-            try { shape = card.GetShape(); }
+            try { shape = card.GetShape(definitions.GetShape); }
             catch (Exception) { continue; } // ValidateCard 已给出形状原因；不猜测未知占格。
             if (!validPosition || entry.Value is not BackpackPosition position) continue;
-            var origin = BackpackCoordinates.ToCell(position);
-            var cells = shape.Select(offset => new BackpackCell(origin.X + offset.X, origin.Y + offset.Y)).ToList();
+            List<BackpackCell> cells;
+            try { cells = BackpackCoordinates.GetCells(position, shape); }
+            catch (OverflowException)
+            {
+                Error("placement.outside", $"卡 {entry.Key} 越出背包有效空间。", field + ".Value", index, [position]);
+                continue;
+            }
             cellsByEntry[i] = cells;
             if (validCells != null)
             {
@@ -198,12 +204,12 @@ public static class TemplateEditorValidator
     }
 
     /// <summary>供目录兼容提示与模板预检使用；不读取 Lua、不需要运行实体。</summary>
-    public static IReadOnlyList<TemplateIssue> ValidateCard(CardDefine? card)
+    public static IReadOnlyList<TemplateIssue> ValidateCard(CardDefine? card, Func<string, ShapeDefine?>? findShape = null)
     {
         if (card == null) return [new("card.missing", TemplateIssueSeverity.Error, "卡牌定义不存在。", "")];
         List<BackpackCell> shape;
-        try { shape = card.GetShape(); }
-        catch (Exception exception) { return [new("card.shape", TemplateIssueSeverity.Error, exception.Message, "Shape")]; }
+        try { shape = card.GetShape(findShape ?? (_ => null)); }
+        catch (Exception exception) { return [new("card.shape", TemplateIssueSeverity.Error, exception.Message, "SizeShape")]; }
         return ValidateCardProperties(card.ID, card.Size, shape, card.Keywords, card.ManaCost, card.MaxUsesPerRound,
             card.CompatibilityStatus, card.CompatibilityReason);
     }

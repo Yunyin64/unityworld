@@ -24,10 +24,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>由背包的锚点和卡的形状生成占格，卡实例不再保存位置。</summary>
         public static List<BackpackCell> CellsFromPosition(Card card, BackpackPosition position)
-        {
-            var origin = BackpackCoordinates.ToCell(position);
-            return card.BaseData.Shape.Select(c => new BackpackCell(origin.X + c.X, origin.Y + c.Y)).ToList();
-        }
+            => BackpackCoordinates.GetCells(position, card.BaseData.Shape);
 
         /// <summary>每次派生独立占格索引，摆放条目是位置的唯一来源。</summary>
         public static Dictionary<int, List<BackpackCell>> GetPlacements(NpcBackpackData data, NpcCardData cards)

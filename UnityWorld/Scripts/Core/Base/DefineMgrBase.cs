@@ -18,6 +18,9 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
     /// <summary>日志前缀，默认取子类类名</summary>
     protected virtual string MgrName => GetType().Name;
 
+    /// <summary>需要完整索引的定义可在加载错误或重复 ID 时终止加载。</summary>
+    protected virtual bool RejectInvalidDefinitions => false;
+
     /// <summary>
     /// 构造函数，接收数据路径（支持 .json 文件或文件夹）
     /// </summary>
@@ -83,6 +86,8 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
         try
         {
             var list = JsonSerializer.Deserialize<List<TDefine>>(text, _jsonOpts);
+            if (list == null && RejectInvalidDefinitions)
+                throw new InvalidOperationException("定义根节点必须是数组。");
             if (list == null || list.Count == 0) return;
 
             foreach (var define in list)
@@ -92,6 +97,8 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
         }
         catch (Exception ex)
         {
+            if (RejectInvalidDefinitions)
+                throw new InvalidOperationException($"[{MgrName}] {Path.GetFileName(filePath)}：{ex.Message}", ex);
             LogMgr.Instance.Err("[{0}] 加载失败：{1}\n{2}", MgrName, Path.GetFileName(filePath), ex.Message);
         }
     }
@@ -113,10 +120,14 @@ public abstract class DefineMgrBase<TDefine> : IDataMgrBase<TDefine> where TDefi
 
     private void AddDefine(TDefine define, string sourceFile)
     {
+        if (RejectInvalidDefinitions && string.IsNullOrWhiteSpace(define?.ID))
+            throw new InvalidOperationException("定义缺少 ID。");
         if (string.IsNullOrEmpty(define.ID)) return;
 
         if (_dict.ContainsKey(define.ID))
         {
+            if (RejectInvalidDefinitions)
+                throw new InvalidOperationException($"重复 ID：{define.ID}。");
             LogMgr.Instance.Warn("[{0}] 重复 ID '{1}'（文件 {2}），已跳过", MgrName, define.ID, sourceFile);
             return;
         }

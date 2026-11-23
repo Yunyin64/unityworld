@@ -95,19 +95,20 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public Npc Assemble(NpcDefine define)
         {
-            // 后端也校验显式位置和装备绑定，导入文件可绕过客户端进入这里。
-            var ctx = NpcDefineMgr.ToBirthContext(define);
-            ctx.AssemblySource = NpcAssemblySource.Template;
-            var npc = ctx.MainNpc = new Npc(Soul.NewId());
+            Npc npc = null;
             try
             {
+                ValidateTemplateGeometry(define);
+                var ctx = NpcDefineMgr.ToBirthContext(define);
+                ctx.AssemblySource = NpcAssemblySource.Template;
+                npc = ctx.MainNpc = new Npc(Soul.NewId());
                 InitializeSystems(ctx);
                 AssembleTemplateBackpack(npc, define);
                 return npc;
             }
             catch (Exception ex)
             {
-                CleanupFailedAssembly(npc);
+                if (npc != null) CleanupFailedAssembly(npc);
                 throw new InvalidOperationException($"NPC 模板 {define.ID} 装配失败：{ex.Message}", ex);
             }
         }
@@ -140,19 +141,41 @@ namespace UnityWorld.Game.Domain
             BehaviorSystem.OnEntityBorn(ctx);
         }
 
-        private void AssembleTemplateBackpack(Npc npc, NpcDefine define)
+        // 在分配实体 ID 之前，用与卡实例和编辑器一致的解析检查模板几何。
+        private static void ValidateTemplateGeometry(NpcDefine define)
         {
             if (define.InitCardDeck.Length != 0)
                 throw new InvalidOperationException("模板不得混用 InitCardDeck 与 InitCardPlacements；每个上场实例必须有明确位置。");
             if (string.IsNullOrWhiteSpace(define.MainGongFaId)) throw new InvalidOperationException("缺少 MainGongFaId。");
-            var data = CardSystem.GetData(npc.Id);
-            var backpack = BackpackSystem.GetData(npc.Id);
+            if (define.InitCardPlacements.Count(entry => entry?.Key == define.MainGongFaId) != 1)
+                throw new InvalidOperationException($"主功法 {define.MainGongFaId} 必须唯一对应位置列表实例。");
+            var cultivation = CultivationDefineMgr.Instance.Get(define.MainGongFaId)
+                ?? throw new InvalidOperationException($"不存在功法 {define.MainGongFaId}。");
+            var layout = cultivation.GetBackpackDefinition(1);
+            var valid = layout.GetValidCells();
+            var occupied = new HashSet<BackpackCell>();
             foreach (var (entry, index) in define.InitCardPlacements.Select((entry, index) => (entry, index)))
             {
-                if (entry.Value == null) throw new InvalidOperationException($"位置条目 {index + 1} ({entry.Key}) 缺少坐标。");
-                BackpackCoordinates.ToCell(entry.Value.Value);
-                if (CardDefineMgr.Instance.Get(entry.Key) == null)
-                    throw new InvalidOperationException($"位置条目 {index + 1} 引用不存在的卡 {entry.Key}。");
+                if (entry?.Value is not BackpackPosition position)
+                    throw new InvalidOperationException($"位置条目 {index + 1} ({entry?.Key}) 缺少坐标。");
+                var card = CardDefineMgr.Instance.Get(entry.Key)
+                    ?? throw new InvalidOperationException($"位置条目 {index + 1} 引用不存在的卡 {entry.Key}。");
+                var cells = BackpackCoordinates.GetCells(position, card.GetShape());
+                if (entry.Key == define.MainGongFaId && !layout.MainCardCells.ToHashSet().SetEquals(cells))
+                    throw new InvalidOperationException($"主功法 {entry.Key} 位置 {position} 与固定格冲突。");
+                if (cells.Any(cell => !valid.Contains(cell)))
+                    throw new InvalidOperationException($"卡 {entry.Key} 位置 {position} 越出背包有效空间。");
+                if (cells.Any(cell => !occupied.Add(cell)))
+                    throw new InvalidOperationException($"卡 {entry.Key} 位置 {position} 与其他卡重叠。");
+            }
+        }
+
+        private void AssembleTemplateBackpack(Npc npc, NpcDefine define)
+        {
+            var data = CardSystem.GetData(npc.Id);
+            var backpack = BackpackSystem.GetData(npc.Id);
+            foreach (var entry in define.InitCardPlacements)
+            {
                 var card = npc.GainCard(entry.Key);
                 // JSON 仍按原格式读取，坐标写入装配，卡实例只保存自身属性。
                 backpack.PlacedCards.Add(new() { CardId = card.Id, Position = entry.Value });

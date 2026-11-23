@@ -18,6 +18,14 @@ namespace UnityWorld.Game.Data
             return new(position.X - 1, position.Y - 1);
         }
         public static BackpackPosition ToPosition(BackpackCell cell) => new(cell.X + 1, cell.Y + 1);
+
+        /// <summary>按公开锚点将相对形状转换为实际占格。</summary>
+        public static List<BackpackCell> GetCells(BackpackPosition position, IEnumerable<BackpackCell> shape)
+        {
+            var origin = ToCell(position);
+            return shape.Select(cell => new BackpackCell(checked(origin.X + cell.X), checked(origin.Y + cell.Y))).ToList();
+        }
+
         public static List<BackpackCell> HorizontalShape(int size)
         {
             if (size < 1) throw new InvalidOperationException("卡牌 Size 必须为正数，旧零格定义需要明确迁移。");

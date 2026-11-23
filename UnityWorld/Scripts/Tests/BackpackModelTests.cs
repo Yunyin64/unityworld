@@ -309,6 +309,7 @@ namespace UnityWorld.Tests
                 var a = scene.GetCombatants().Values.First();
                 var b = scene.GetCombatants().Values.Last();
                 var hpA = a.GetHp(); var hpB = b.GetHp();
+                a.GetField()[0].GetKeywords().Add("Zhan");
                 a.ResolveContest(new ContestData { SourceCard = a.GetField()[0], ContestType = sample.Item1, ContestValue = sample.Item2 },
                     new ContestData { SourceCard = b.GetField()[0], ContestType = sample.Item3, ContestValue = sample.Item4 });
                 a.DealDamage(); b.DealDamage();

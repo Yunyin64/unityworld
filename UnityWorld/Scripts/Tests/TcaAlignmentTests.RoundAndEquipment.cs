@@ -184,10 +184,45 @@ public static partial class TcaAlignmentTests
             Check(parentOffField.GetField().All(card => card.Id != swords[0].Id) &&
                 parentOffField.GetField().Single(card => card.Id == thrust.Id).GetEquipData().GetValue("Attack", 0) == 4,
                 "仍装备但未上场的父卡为招式提供同场快照");
+            VerifyBoundDefenseContest(lua, a, b, swords);
         }
         finally
         {
             scene.Cleanup();
+        }
+    }
+
+    private static void VerifyBoundDefenseContest(Lua lua, Npc a, Npc b, Card[] swords)
+    {
+        swords[0].GetEquip().Defend = 2;
+        swords[1].GetEquip().Defend = 3;
+        foreach (var sword in swords)
+        {
+            var scene = new CombatScene();
+            scene.Init(7452, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 100);
+            try
+            {
+                scene.PreStart();
+                scene.Start();
+                var owner = scene.GetCombatants()[a.Id];
+                var form = owner.GetField().Single(c => c.ParentCardId == sword.Id && c.DefineId == "card_form_jian_ci");
+                var script = (LuaTable)lua.DoString("""
+                    return { Contest = function(self, ctx)
+                        Defend(ctx, "Block", self.m_Self:GetEquipData():GetObject("Defend"))
+                    end }
+                    """)[0];
+                form.env = script;
+                form.env["m_Self"] = form;
+                form.LuaHooks = LuaMgr.ScanLuaHooks(script);
+                owner.Backpack.RemoveMana(int.MaxValue, null, scene.Soul);
+                var cell = owner.Backpack.EmptyCells()[0];
+                owner.Backpack.PlaceMana(cell, ElementType.Jin);
+                Check(owner.Backpack.TryAssign(cell, form), "为独立防御样例点亮绑定招式");
+                for (int i = 0; i < 10; i++) scene.Tick();
+                Check(owner.PendingSlot?.SourceCard == form && owner.PendingSlot.ContestType == ContestType.Block
+                    && owner.PendingSlot.FinalValue == sword.GetEquip().Defend, "同一格招式读取各自装备的防御点数");
+            }
+            finally { scene.Cleanup(); }
         }
     }
 

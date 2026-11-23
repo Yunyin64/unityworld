@@ -14,6 +14,7 @@ public partial class TemplateCardLibraryPanel : Panel
     private readonly CardLibraryFilter _filter = new();
     private readonly List<string> _elements = new();
     private IReadOnlyList<CardDefine> _definitions = Array.Empty<CardDefine>();
+    private TemplateCatalog? _catalog;
     private IReadOnlyDictionary<string, KeywordLabel> _keywordLabels = new Dictionary<string, KeywordLabel>();
     private ObserverArtCatalog? _art;
     private bool _canDrag, _keywordsExpanded;
@@ -80,10 +81,11 @@ public partial class TemplateCardLibraryPanel : Panel
     }
 
     /// <summary>一次绑定使用同一代目录数据；切换草稿或重载目录时保留当前筛选。</summary>
-    public void Bind(IReadOnlyList<CardDefine> cards, IReadOnlyDictionary<string, KeywordLabel> keywordLabels,
+    public void Bind(TemplateCatalog catalog, IReadOnlyDictionary<string, KeywordLabel> keywordLabels,
         ObserverArtCatalog art, bool canDrag)
     {
-        _definitions = cards;
+        _catalog = catalog;
+        _definitions = catalog.Cards;
         _keywordLabels = keywordLabels;
         _art = art;
         _canDrag = canDrag;
@@ -171,16 +173,16 @@ public partial class TemplateCardLibraryPanel : Panel
     private void RefreshResults()
     {
         SetProcess(false);
-        if (_art == null) return;
+        if (_art == null || _catalog == null) return;
         Clear(_cards);
-        var matches = CardLibraryQuery.Search(_definitions, _filter);
+        var matches = CardLibraryQuery.Search(_definitions, _filter, _catalog.GetShape);
         _count.Text = $"{matches.Count} 张";
         foreach (var card in matches)
         {
             var tile = new TemplateCardTile { CustomMinimumSize = new(132, 102) };
             _cards.AddChild(tile);
             tile.Configure(card, _art.Card(card.ID), _art.CardTranspose(card.ID), _canDrag,
-                CardLibraryQuery.UnavailableReason(card));
+                CardLibraryQuery.UnavailableReason(card, _catalog.GetShape));
             tile.Selected += id => CardSelected?.Invoke(id);
         }
         if (matches.Count == 0)

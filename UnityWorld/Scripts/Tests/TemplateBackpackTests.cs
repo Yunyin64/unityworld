@@ -31,11 +31,113 @@ namespace UnityWorld.Tests
             _assertions = 0;
             // 配置诊断与属性预览在 tools/template-editor 中验证，此处只覆盖后端装配。
             CoordinatesAndShapes();
+            ConfiguredShapes();
+            ConfiguredShapeBattle();
             InstanceAndSnapshotIsolation();
             BindingAndSourceIsolation();
             RejectAndRollback();
             FormalTemplates();
             Console.WriteLine($"TEMPLATE_BACKPACK_TESTS_OK assertions={_assertions}");
+        }
+
+        private static void ConfiguredShapes()
+        {
+            var defaultLayout = new CultivationDefine { ID = "default-layout" }.GetBackpackDefinition(1);
+            Check(defaultLayout.GetValidCells().Count == 25 && defaultLayout.MainCardCells.SequenceEqual([new(2, 2)]), "功法默认 5×5");
+            var second = new BackpackLevelDefine { Level = 2, Width = 6, Height = 4, MainCardCells = [new(1, 1)] };
+            var cultivation = new CultivationDefine { ID = "rectangle-layout", BackpackLevels = [defaultLayout, second] };
+            var layout = cultivation.GetBackpackDefinition(2);
+            Check(layout.GetValidCells().Count == 24 && layout.MainCardCells.SequenceEqual([new(1, 1)]), "指定等级提供矩形与固定格");
+            second.ValidCells = second.GetValidCells().Where(cell => cell != new BackpackCell(0, 0)).ToList();
+            ExpectInvalid(() => cultivation.GetBackpackDefinition(2), "正式矩形拒绝缺口", "rectangle-layout", "2");
+
+            foreach (var (id, size) in new[] { ("L3", 3), ("Square4", 4), ("L5", 5) })
+            {
+                var card = JsonSerializer.Deserialize<CardDefine>($$"""
+                    { "ID": "shape-{{id}}", "size": {{size}}, "SizeShape": "{{id}}", "keywords": ["Passive"] }
+                    """, JsonOptions)!;
+                var instance = CardMgr.Instance.InstantiateFromDefine(card);
+                Check(instance.GetSize() == size && instance.BaseData.Shape.SequenceEqual(ShapeDefineMgr.Instance.Get(id).Cells),
+                    $"正式 {id} 配置解析为独立占格并计入 Size");
+                instance.BaseData.Shape.Clear();
+                Check(card.GetShape().Count == size, "修改卡实例占格不污染定义");
+            }
+
+            var fallback = JsonSerializer.Deserialize<CardDefine>("""{"ID":"default-one"}""", JsonOptions)!;
+            Check(fallback.Size == 1 && fallback.GetShape().SequenceEqual([new(0, 0)]), "Size 和 SizeShape 缺省为单格");
+            fallback.Size = 3;
+            fallback.SizeShape = "";
+            Check(fallback.GetShape().SequenceEqual([new(0, 0), new(1, 0), new(2, 0)]), "空 SizeShape 使用横条");
+            fallback.SizeShape = "missing-shape";
+            ExpectInvalid(() => fallback.GetShape(), "未知形状被拒绝", "default-one", "missing-shape");
+            ExpectInvalid(() => fallback.GetShape(id => new ShapeDefine { ID = id, Cells = [new(0, 0), new(0, 0), new(1, 0)] }),
+                "重复格子被拒绝", "missing-shape");
+            ExpectInvalid(() => fallback.GetShape(id => new ShapeDefine { ID = id, Cells = [new(0, 0)] }),
+                "格数不符被拒绝", "Size 3");
+
+            var file = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllText(file, """[{"ID":"duplicate"},{"ID":"duplicate"}]""");
+                ExpectInvalid(() => ShapeDefineMgr.Instance.Load(file), "重复形状 ID 被拒绝", "duplicate");
+            }
+            finally
+            {
+                File.Delete(file);
+                ShapeDefineMgr.Instance.Load();
+            }
+        }
+
+        private static void ConfiguredShapeBattle()
+        {
+            var card = CardDefineMgr.Instance.Get("card_jin_slash");
+            var old = (card.Size, card.SizeShape, card.ManaCost);
+            var template = Basic();
+            template.InitCardPlacements = [new() { Key = "jin_fa", Value = new(3, 3) }, new() { Key = card.ID, Value = new(2, 1) }];
+            try
+            {
+                card.Size = 3;
+                card.ManaCost = new() { ["Jin"] = 3 };
+                card.SizeShape = "bad-reference";
+                ExpectInvalid(() => NpcMgr.Instance.Assemble(template), "模板预检拒绝形状引用", card.ID, "bad-reference");
+                card.SizeShape = "L3";
+                template.InitCardPlacements[1].Value = new(5, 1);
+                ExpectInvalid(() => NpcMgr.Instance.Assemble(template), "模板预检拒绝异形越界", card.ID);
+                template.InitCardPlacements[1].Value = new(3, 2);
+                ExpectInvalid(() => NpcMgr.Instance.Assemble(template), "形状实际占格覆盖主功法", card.ID);
+                template.InitCardPlacements[1].Value = new(2, 1);
+                var npc = NpcMgr.Instance.Assemble(template);
+                var opponent = BackpackModelTests.CreateNpc();
+                var scene = new CombatScene();
+                scene.Init(7481, [(npc, CombatTeam.TeamA), (opponent, CombatTeam.TeamB)], 100);
+                try
+                {
+                    scene.PreStart();
+                    scene.Start();
+                    var owner = scene.GetCombatants()[npc.Id];
+                    var attack = owner.GetField().Single(c => c.DefineId == card.ID);
+                    Check(npc.GetFieldSize() == 4 && owner.Backpack.GetCardCells(attack.Id).SequenceEqual([new(1, 0), new(1, 1), new(2, 1)]),
+                        "模板真实装配与战斗使用相同异形占格");
+                    owner.Backpack.RemoveMana(int.MaxValue, null, scene.Soul);
+                    var notch = new BackpackCell(2, 0);
+                    owner.Backpack.PlaceMana(notch, ElementType.Jin);
+                    Check(owner.Backpack.TryAssign(notch, attack), "异形缺角可容纳灵元");
+                    for (int i = 0; i < 2; i++)
+                    {
+                        owner.Backpack.PlaceMana(notch, ElementType.Jin);
+                        Check(owner.Backpack.TryAssign(notch, attack), "3格卡蓄满三枚灵元");
+                    }
+                    Check(owner.SlideCombatCard(attack, CombatCardSlideType.Right)
+                        && owner.Backpack.GetCardCells(attack.Id).SequenceEqual([new(3, 0), new(3, 1), new(4, 1)]),
+                        "整张 L 形按实际占格滑到矩形边缘");
+                    for (int i = 0; i < 10; i++) scene.Tick();
+                    Check(owner.PendingSlot == null, "跨行卡第一行不会发动");
+                    for (int i = 0; i < 10; i++) scene.Tick();
+                    Check(owner.PendingSlot?.SourceCard == attack, "跨行卡扫到第二行最后一格才发动");
+                }
+                finally { scene.Cleanup(); }
+            }
+            finally { (card.Size, card.SizeShape, card.ManaCost) = old; }
         }
 
         private static void CoordinatesAndShapes()

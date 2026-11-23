@@ -43,6 +43,9 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new TriggerDefineMgr(Path.Combine(dataDir, "TriggerDefines.json")));
         _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "Condition")));
         _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
+        var shapePath = Path.Combine(dataDir, "Shape");
+        var shapes = new ShapeDefineMgr(shapePath);
+        if (Directory.Exists(shapePath)) _datamgrs.Add(shapes);
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "Card")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
         _datamgrs.Add(new EventDefineMgr(Path.Combine(dataDir, "EventDefines.json")));

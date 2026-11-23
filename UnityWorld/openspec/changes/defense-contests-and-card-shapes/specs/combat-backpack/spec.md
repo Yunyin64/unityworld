@@ -47,16 +47,20 @@
 ## ADDED Requirements
 
 ### Requirement: 卡牌以 SizeShape 引用形状定义
-正式卡牌 JSON SHALL 显式提供正整数 `Size`，它决定卡牌的 SP 占用。`SizeShape` SHALL 为可选字符串，默认 `""` 并使用等格数横条。非空 ID 引用独立的 `ShapeDefine`。定义 SHALL 使用无重复的非负相对坐标，坐标以外接矩形左上角归零。实际格数必须等于卡牌的 `Size`。
+策划配表中 SHALL 明确填写正整数 `Size`，它决定卡牌的 SP 占用。运行时对缺省 `Size` 仍 SHALL 取 1。`SizeShape` SHALL 为可选字符串，默认 `""` 并使用等格数横条。非空 ID 引用独立的 `ShapeDefine`。定义 SHALL 使用无重复的非负相对坐标，坐标以外接矩形左上角归零。实际格数必须等于卡牌的 `Size`。
 
 #### Scenario: 不填 SizeShape 或填写空字符串
 - **WHEN** `Size` 为 3 且 `SizeShape` 省略或为 `""`
 - **THEN** 使用 (0,0)、(1,0)、(2,0)，计入 3 SP
+
+#### Scenario: 兼容缺省 Size 的配置
+- **WHEN** 卡牌配置省略 `Size` 及 `SizeShape`
+- **THEN** 运行时仍生成单格卡，计入 1 SP
 
 #### Scenario: 三格异形引用
 - **WHEN** `Size` 为 3 且 `SizeShape` 引用定义为 (0,0)、(0,1)、(1,1) 的 `L3`
 - **THEN** 卡牌按定义占三格，计入 3 SP。适用的主动卡点亮数量仍按 `Size` 计算
 
 #### Scenario: 形状数据错误
-- **WHEN** 卡牌缺少 `Size`，或者引用了未知形状、重复 ID、非法坐标、重复格或格数不符的形状
+- **WHEN** 卡牌的 `Size` 非正数，或者引用了未知形状、重复 ID、非法坐标、重复格或格数不符的形状
 - **THEN** 数据校验指出对应的卡牌或形状及原因，该配置无法用于正式装配

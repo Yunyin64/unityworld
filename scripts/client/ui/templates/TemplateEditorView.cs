@@ -130,7 +130,7 @@ public partial class TemplateEditorView : Control
         Revalidate();
         _library.SetTemplates(Catalog.Npcs, _personal, _draft, _readOnly);
         _loadout.SetMainChoices(Catalog, _draft, _readOnly);
-        _cardLibrary.Bind(Catalog.Cards, _keywordLabels, _art, !_readOnly && _draft != null);
+        _cardLibrary.Bind(Catalog, _keywordLabels, _art, !_readOnly && _draft != null);
         RefreshOpponents();
         RefreshSelection();
     }
