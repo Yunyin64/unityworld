@@ -61,6 +61,6 @@ ContestData 的观察 Action/Contest ID 与 DamageInfo 的观察来源仅作元�
 
 `dotnet run --project tools/client-observer/ClientObserver.csproj -- --root=<外层仓库> --check-presentation-core`
 
-`PresentationCoreChecks` 使用正式世界管理器、真实 Lua 调用和内存测试案例，不改数据文件：67 个断言覆盖真实源格/同名实例/同 Tick 吸收使用/槽满、平局胜负/直击/同 Tick 补槽、双方生效、减伤/全半护盾/溢出扣血后恢复、通用三格入包/失败/移除/伤口覆盖灵元、空检查/零动作/多动作/嵌套/关键词/真实被动 Tick/卡直接事件回调、延迟伤害及伤口的 EffectId、复制/重复读/drain/禁用/清理。另在 Tick 1 新增真实 `card_monster_langya`，验证 Start 提交 Ci_Improved，真实 CardApplied 在 CardAdded 之前且双方身份与实际占格正确；播放器须先完成入包展示再显示同批该卡的名称。
+`PresentationCoreChecks` 使用正式世界管理器、真实 Lua 调用和内存测试案例，不改数据文件：67 个断言覆盖真实源格/同名实例/同 Tick 吸收使用/槽满、平局胜负/直击/同 Tick 补槽、双方生效、减伤/全半护盾/溢出扣血后恢复、通用三格入包/失败/移除/伤口覆盖灵元、空检查/零动作/多动作/嵌套/关键词/真实被动 Tick/卡直接事件回调、延迟伤害及伤口的 EffectId、复制/重复读/drain/禁用/清理。另在 Tick 1 新增真实 `card_monster_langya`，验证 Start 提交 Ci_Changed，真实 CardApplied 在 CardAdded 之前且双方身份与实际占格正确；播放器须先完成入包展示再显示同批该卡的名称。
 
 共享入口验证日志：`.local-verification/enhance-battle-presentation/core-checks-integrated.log`，`PRESENTATION_CORE_OK assertions=67`。最终新进程逐 Tick 旧投影/Trace 对照由总体验收统一运行，不能用本组单元案例代替全战斗与 Godot 连续帧验收。

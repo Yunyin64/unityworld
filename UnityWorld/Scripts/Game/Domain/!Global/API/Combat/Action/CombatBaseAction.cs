@@ -94,7 +94,7 @@ namespace UnityWorld.Game.Domain
             var amount = ctx.GetValue("Amount", 0);
             if (amount <= 0) return ctx;
             foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
-                target.ChangeShield(amount);
+                target.ChangeShield(amount, ctx.Caster, ctx.SourceCard);
             return ctx;
         }
 
@@ -145,7 +145,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 效果类 ────────────────────────────────────────────
 
-        /// <summary>恢复战斗中HP。参数：Domain(String), HealValue(Int)</summary>
+        /// <summary>对 Domain 指定的角色施加 HealValue 点治疗，逐个结算施术者和目标的治疗修正。</summary>
         [APIFunc("Heal", APIType.Action, "恢复战斗中HP", Scope.CombatNpc, "Domain:String", "HealValue:Int")]
         public static APIContext Heal(APIContext ctx)
         {
@@ -156,7 +156,7 @@ namespace UnityWorld.Game.Domain
             int healValue = ctx.GetValue("HealValue", 0);
             foreach (var npc in ctx.NpcTargets)
             {
-                npc.ApplyHeal(healValue);
+                npc.ApplyHeal(healValue, caster);
             }
             return ctx;
         }

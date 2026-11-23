@@ -123,7 +123,8 @@ namespace UnityWorld.Game.Domain.Combat
             // 守方减伤管线
             var ctx = new APIContext { Caster = this, SourceCard = info.SourceCard, Scene = Scene };
             ctx.Set("DamageInfo", info);
-            this.ModifyHook("DamageIn", ctx);
+            if (info.Damage > 0) ModifyHook("DamageIn", ctx);
+            info.Damage = Math.Clamp(info.Damage, 0, int.MaxValue);
 
             var hpBefore = Hp;
             var shieldBefore = ShieldValue;

@@ -17,7 +17,8 @@ namespace UnityWorld.Game.Domain.Combat
         // ── 伤害数值 ──────────────────────────────────────
 
         /// <summary>基础伤害值（结算前的原始值）</summary>
-        public int Damage { get; set; } = 0;
+        // Lua 在同一阶段连续改值，暂存相加的中间结果，阶段结束才限制到战斗点数范围。
+        public long Damage { get; set; }
         public DamageType damageType { get; set; } = DamageType.Zhan;
 
         /// <summary>元素类型：无 / 火 / 冰 / 雷 / 毒 / 暗 / 光</summary>

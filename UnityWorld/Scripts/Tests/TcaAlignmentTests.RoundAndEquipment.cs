@@ -27,7 +27,7 @@ public static partial class TcaAlignmentTests
             card.ScanLuaHooks();
             using var add = lua.GetFunction("AddNpcBuff");
             var ctx = new APIContext { Caster = owner, SourceCard = card, Scene = scene };
-            add.Call(ctx, "Self", "Ci_Improved_Once", 2, -1);
+            add.Call(ctx, "Self", "Ci_Changed_Once", 2, -1);
             var cell = owner.Backpack.EmptyCells()[0];
             owner.Backpack.PlaceMana(cell, ElementType.Jin);
             Check(owner.Backpack.TryAssign(cell, card), "一次性刺击验收卡实际点亮");

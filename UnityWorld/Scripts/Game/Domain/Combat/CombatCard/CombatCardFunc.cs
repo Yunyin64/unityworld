@@ -35,6 +35,7 @@ namespace UnityWorld.Game.Domain.Combat
             SetPhase(CombatCardPhase.InPending);
 
             Owner.ModifyHook("Contest", CreateCtx("ContestData", contestData));
+            contestData.ContestValue = contestData.FinalValue;
             Owner.AddContestData(contestData);
 
             Log($"  入槽: {contestData}  [{Owner.GetName()}] ");

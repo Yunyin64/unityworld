@@ -14,7 +14,7 @@ namespace UnityWorld.Game.Data
             Instance = this;
         }
 
-        /// <summary>按 ID 查询，不存在时记录警告并返回 null</summary>
+        /// <summary>按定义 ID 查询，不存在时记录警告并返回 null。</summary>
         public new CombatNpcModifierDefine Get(string id)
         {
             var result = base.Get(id);

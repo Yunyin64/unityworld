@@ -164,11 +164,11 @@ internal static class PresentationCoreChecks
         Check(initial.Length == 2 && initial[0].Damage!.HpDamage == 0 && initial[0].Damage!.ShieldAbsorbed == 4, "全盾吸收独立事实");
         Check(initial[1].Damage!.HpDamage == 2 && initial[1].Damage!.ShieldAbsorbed == 3, "半盾吸收与实际扣血");
         Check(initial.All(e => e.Damage!.SourceNpcId == null && e.Damage.SourceCard == null), "无来源伤害合法");
-        target.AddModifier("Zhan_Resist", 2);
+        target.AddModifier("Zhan_DamageIn_Changed", -2);
         target.ApplyDamage(new DamageInfo { Damage = 5, damageType = DamageType.Zhan });
         var reduced = scene.DrainPresentationEvents().Single(e => e.Damage != null);
         Check(reduced.Damage!.HpDamage == 3, "DamageIn 减伤后的金额");
-        target.RemoveModifier("Zhan_Resist");
+        target.RemoveModifier("Zhan_DamageIn_Changed");
         var oldHp = target.GetHp(); target.ApplyDamage(new DamageInfo { Damage = oldHp + 5 });
         var lethal = scene.ReadPresentationEvents().Single(e => e.Damage != null);
         Check(lethal.Damage!.HpBefore == oldHp && lethal.Damage.HpAfter == -5 && lethal.Damage.HpDamage == oldHp + 5, "超额扣血事实在恢复前保存");
@@ -210,7 +210,7 @@ internal static class PresentationCoreChecks
             "新增被动卡的入场事实与回放均显示 Active");
         Check(applied.NpcId == owner.Id && added.NpcId == owner.Id && applied.Card!.DefineId == "card_monster_langya" && applied.Applied!.IsPassive,
             "真实新增被动卡的执行身份与入包所属者一致");
-        Check(owner.GetAllModifiers().Any(m => m.DefineId == "Ci_Improved") && owner.Backpack.Placements[card.Id].Count == added.Card!.Cells.Count,
+        Check(owner.GetAllModifiers().Any(m => m.DefineId == "Ci_Changed") && owner.Backpack.Placements[card.Id].Count == added.Card!.Cells.Count,
             "真实 Passive.Start 已提交强化，入包记录包含实际成功占格");
         Check(events.Count(e => e.CardAdded != null) == 1 && events.Count(e => e.Applied != null && e.Card!.Id == card.Id) == 1,
             "新被动卡一次生效与一次入包，关键词外层不重复提示");

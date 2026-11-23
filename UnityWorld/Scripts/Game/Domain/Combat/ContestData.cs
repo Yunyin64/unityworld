@@ -14,7 +14,10 @@ namespace UnityWorld.Game.Domain.Combat
         public ContestType ContestType { get; set; } = ContestType.Zhan;
 
         /// <summary>拼点数值（攻击值/盾值/防值）</summary>
-        public int ContestValue { get; set; } = 0;
+        public long ContestValue { get; set; }
+
+        /// <summary>拼点阶段结束后使用的点数。Lua 回调之间允许出现负数和超出 int 的中间结果。</summary>
+        public int FinalValue => (int)Math.Clamp(ContestValue, 0, int.MaxValue);
 
         /// <summary>元素类型（仅攻击类 Zhan/Ci/Da/SheJi 有效）</summary>
         public ElementType Element { get; set; } = ElementType.None;

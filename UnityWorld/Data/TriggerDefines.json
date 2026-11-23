@@ -102,7 +102,7 @@
   {
     "ID": "OnHeal",
     "DisplayName": "恢复 HP 后",
-    "desc": "实际恢复正数 HP 后，施放者字段为受治疗角色",
+    "desc": "实际恢复正数 HP 后触发。Caster 为受疗者，Amount 为实际回复量，SourceNpc 为施术者（可为空）",
     "score": 0,
     "Tags": [],
     "conflictTags": [],

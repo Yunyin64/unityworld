@@ -31,16 +31,32 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         /// <summary>
-        /// 应用治疗，不超过初始HP上限。
+        /// 应用无指定施术者的治疗，只结算目标的受疗修正，实际回复量受最大 HP 限制。
         /// </summary>
-        public void ApplyHeal(int amount)
+        public void ApplyHeal(int amount) => ApplyHeal(amount, null);
+
+        /// <summary>先结算施术者的治疗量，再结算目标的受疗量，最后按目标缺失的 HP 截断。</summary>
+        internal void ApplyHeal(int amount, CombatNpc source)
         {
+            // 目标满血或基础治疗量非正时，保留双方的单次状态。
+            if (amount <= 0 || Hp >= GetCombatHpMax()) return;
+
+            var ctx = new APIContext { Caster = source, Scene = Scene, NpcTargets = [this] };
+            if (source != null)
+                amount = source.ModifyAmount("HealOut", amount, ctx);
+            // 出手治疗量归零时，保留目标的单次受疗状态。
+            if (amount <= 0) return;
+
+            amount = ModifyAmount("HealIn", amount, ctx);
             var actual = Math.Min(amount, GetCombatHpMax() - Hp);
             if (actual <= 0) return;
 
             // 治疗监听读取结算后的 HP。满血和无效治疗不产生事件。
             RecoverHP(actual);
-            Scene.TriggerCombatEvent("OnHeal", new APIContext { Caster = this, Scene = Scene });
+            var healed = new APIContext { Caster = this, Scene = Scene };
+            healed.Set("Amount", actual);
+            healed.Set("SourceNpc", source);
+            Scene.TriggerCombatEvent("OnHeal", healed);
         }
 
         public void RecoverHP(int amount)
@@ -142,7 +158,7 @@ namespace UnityWorld.Game.Domain.Combat
         private void RecordPending(ContestData data, bool entered, string reason) =>
             Scene.RecordPresentation(CombatPresentationKind.PendingChanged, this, data.SourceCard,
                 new PresentationOrigin(data.PresentationActionId, null, data.PresentationContestId, null),
-                pending: new PendingPresentation(entered, reason, data.ContestType.ToString(), data.Element.ToString(), data.ContestValue));
+                pending: new PendingPresentation(entered, reason, data.ContestType.ToString(), data.Element.ToString(), data.FinalValue));
         /// <summary>
         /// 直击处理：攻击直击=全额伤害，防御直击=无事发生。
         /// </summary>
@@ -160,7 +176,7 @@ namespace UnityWorld.Game.Domain.Combat
                 Log($"  直击: {contestData} → [{target.GetName()}]");
                 Scene.TriggerCombatEvent("OnAttack", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene });
                 var ctx = new DamageInfo(contestData);
-                ctx.Damage = contestData.ContestValue;
+                ctx.Damage = contestData.FinalValue;
                 ctx.TargetNpc.AddDamage(ctx);
             }
             else
@@ -185,12 +201,13 @@ namespace UnityWorld.Game.Domain.Combat
         public void AddDamage(DamageInfo dmg)
         {
             dmg.PresentationOrigin ??= Scene.CapturePresentationOrigin();
-            if (dmg.SourceNpc != null)
+            if (dmg.SourceNpc != null && dmg.Damage > 0)
             {
                 var ctx = new APIContext { Caster = dmg.SourceNpc, SourceCard = dmg.SourceCard, Scene = Scene };
                 ctx.Set("DamageInfo", dmg);
                 dmg.SourceNpc.ModifyHook("DamageOut", ctx);
             }
+            dmg.Damage = Math.Clamp(dmg.Damage, 0, int.MaxValue);
             damageInfos.Enqueue(dmg);
             if (dmg.Damage > 0) Scene.MarkPresentationEffect();
         }
@@ -221,8 +238,8 @@ namespace UnityWorld.Game.Domain.Combat
             contestB.SourceCard.CallMainKeyword("OnBeforePairedContest", argument: contestB);
             npcB.ApplyPairedContestModifiers(contestB, contestA);
             npcA.ApplyPairedContestModifiers(contestA, contestB);
-            contestA.ContestValue = Math.Max(0, contestA.ContestValue);
-            contestB.ContestValue = Math.Max(0, contestB.ContestValue);
+            contestA.ContestValue = contestA.FinalValue;
+            contestB.ContestValue = contestB.FinalValue;
 
             // 对拼事件报告本次配对的参与者、来源卡与类型。
             var pairedContext = new APIContext { Caster = npcA, SourceCard = contestA.SourceCard, Scene = Scene };
@@ -233,8 +250,8 @@ namespace UnityWorld.Game.Domain.Combat
             pairedContext.Set("ContestTypeA", contestA.ContestType.ToString());
             pairedContext.Set("ContestTypeB", contestB.ContestType.ToString());
             Scene.TriggerCombatEvent("OnContest", pairedContext);
-            int valueA = contestA.ContestValue;
-            int valueB = contestB.ContestValue;
+            int valueA = contestA.FinalValue;
+            int valueB = contestB.FinalValue;
 
             // 用最终拼点判定对拼结果，表现和结算共用同一次比较。
             int comparison = valueA.CompareTo(valueB);
@@ -244,7 +261,7 @@ namespace UnityWorld.Game.Domain.Combat
             {
                 ContestSidePresentation Side(ContestData data) => new(data.OwnerNpc.Id,
                     CombatScene.PresentationCard(data.SourceCard), data.PresentationActionId,
-                    data.ContestType.ToString(), data.Element.ToString(), data.ContestValue);
+                    data.ContestType.ToString(), data.Element.ToString(), data.FinalValue);
                 Scene.RecordPresentation(CombatPresentationKind.ContestResolved, npcA, contestA.SourceCard,
                     contest: new ContestPresentation(Side(contestA), Side(contestB),
                         isDraw ? null : comparison > 0 ? npcA.Id : npcB.Id, overflow));
@@ -287,8 +304,8 @@ namespace UnityWorld.Game.Domain.Combat
                 pairedContext.Set("WinnerTypeName", winnerContest.ContestType.ToString());
                 pairedContext.Set("LoserType", loserContest.ContestType);
                 pairedContext.Set("LoserTypeName", loserContest.ContestType.ToString());
-                pairedContext.Set("WinnerValue", winnerContest.ContestValue);
-                pairedContext.Set("LoserValue", loserContest.ContestValue);
+                pairedContext.Set("WinnerValue", winnerContest.FinalValue);
+                pairedContext.Set("LoserValue", loserContest.FinalValue);
                 pairedContext.Set("WinnerCard", winnerContest.SourceCard);
                 pairedContext.Set("LoserCard", loserContest.SourceCard);
             }

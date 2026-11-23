@@ -337,25 +337,19 @@ namespace UnityWorld.Game.Domain
                 return null;
             }
 
-            var filePath = Path.Combine(CombatNpcModifierDefineMgr.Instance.DataDir, "Lua", $"{defineId}.lua");
-            if (!File.Exists(filePath))
-            {
-                return null;
-            }
+            var definitions = CombatNpcModifierDefineMgr.Instance;
+            var define = definitions.Get(defineId);
+            if (define == null) return null;
+
+            var filePath = Path.Combine(definitions.DataDir, "Lua", $"{define.ID}.lua");
+            if (!File.Exists(filePath)) return null;
 
             try
             {
-                var results = DoFileUtf8(filePath);
-
-                if (results != null && results.Length > 0 && results[0] is LuaTable modTable)
-                {
-                    return modTable;
-                }
-                else
-                {
+                var buff = DoFileUtf8(filePath)?.FirstOrDefault() as LuaTable;
+                if (buff == null)
                     LogMgr.Instance.Warn("[LuaMgr] LoadModifierScript '{0}': 脚本未 return table", defineId);
-                    return null;
-                }
+                return buff;
             }
             catch (Exception ex)
             {

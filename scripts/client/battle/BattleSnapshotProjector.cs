@@ -55,7 +55,7 @@ internal sealed class BattleSnapshotProjector
         var snapshot = new NpcSnapshot(npc.Id, npc.GetName(), npc.Team.ToString(), npc.Status.ToString(), npc.GetHp(), npc.GetMp(),
             npc.GetSp(), npc.ShieldValue, reference.Hp, reference.Mp, reference.Sp, backpack, cards, buffs,
             pending == null ? null : new(pending.SourceCard.Id, pending.SourceCard.DefineId,
-                pending.SourceCard.DisplayName, pending.ContestType.ToString(), pending.ContestValue, pending.Element.ToString()));
+                pending.SourceCard.DisplayName, pending.ContestType.ToString(), pending.FinalValue, pending.Element.ToString()));
         try
         {
             return snapshot with

@@ -28,6 +28,7 @@ namespace UnityWorld.Game.Data
         /// <summary>兼容旧定义中的扫描标记。发动方式由唯一 Main Keyword 决定。</summary>
         public bool ScanActivatable { get; set; }
         /// <summary>招式实例每个背包扫描轮的成功发动上限。</summary>
+        /// <remarks>因强度调整次数前，先核对单次收益、灵元费用和实际发动频率。单独限次应有明确的玩法含义。</remarks>
         public int MaxUsesPerRound { get; set; } = 1;
         public bool? ProducesContest { get; set; }
         public string CompatibilityStatus { get; set; } = "Migrated";

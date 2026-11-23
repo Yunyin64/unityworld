@@ -29,11 +29,18 @@ namespace UnityWorld.Game.Domain.Combat
             return  sp;}
         public int GetCombatSpMax(){return GetSpMax();}
 
-        /// <summary>调整额外灵盾，盾值最低为零。</summary>
+        /// <summary>调整额外灵盾。正值受灵盾获得量修正，盾值最低为零。</summary>
         public void ChangeShield(int val) => ChangeShield(val, null, null);
 
         internal void ChangeShield(int val, CombatNpc source, CombatCard sourceCard)
         {
+            // 获盾修正只作用于仍能增加的盾值。扣盾和盾值已达上限时保留单次状态。
+            if (val > 0 && ShieldValue < int.MaxValue)
+            {
+                var ctx = new APIContext { Caster = source, SourceCard = sourceCard, Scene = Scene, NpcTargets = [this] };
+                val = ModifyAmount("ShieldGain", val, ctx);
+            }
+
             int before = ShieldValue;
             ApplyShieldChange(val);
             DispatchShieldExhausted(before, ShieldValue, "Effect", source, sourceCard);

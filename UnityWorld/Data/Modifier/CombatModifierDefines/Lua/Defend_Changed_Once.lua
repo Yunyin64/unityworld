@@ -1,2 +1,12 @@
 -- 单次全防御强化
-return require("ContestImprovement").ForDefense(true)
+local buff = setmetatable({ SignedStacks = true }, { __index = BuffBase })
+
+function buff:ModifyContest(ctx)
+    local contest = ctx:GetObject("ContestData")
+    if not contest.IsDefenseType then return end
+
+    contest.ContestValue = contest.ContestValue + self.m_Self.CurrentStack
+    self.m_Self:Consume()
+end
+
+return buff

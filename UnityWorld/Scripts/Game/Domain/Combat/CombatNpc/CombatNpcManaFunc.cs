@@ -99,7 +99,20 @@ namespace UnityWorld.Game.Domain.Combat
         public int GetManaCount(ElementType element) => Backpack.Mana.Values.Count(e => e.Equals(element));
         public IEnumerable<ElementType> GetUnassignedElements() => Backpack.Mana.Values.Distinct().ToArray();
 
+        /// <summary>直接回复 MP，结算回复量修正后返回实际回复点数。</summary>
         public int RecoverMP(int amount)
+        {
+            if (amount > 0 && Mp < GetCombatMpMax())
+            {
+                var ctx = new APIContext { Caster = this, Scene = Scene, NpcTargets = [this] };
+                amount = ModifyAmount("MpRecovery", amount, ctx);
+            }
+
+            return RestoreMP(amount);
+        }
+
+        /// <summary>按给定点数增加 MP，受缺失量限制。灵元回收通过此入口按固定比例结算。</summary>
+        internal int RestoreMP(int amount)
         {
             int final = Math.Min(Math.Max(0, amount), Math.Max(0, GetCombatMpMax() - Mp));
             Log($"回复{final}MP ");

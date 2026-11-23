@@ -78,7 +78,11 @@ namespace UnityWorld.Game.Domain.Combat
                     // 其他策略：减层，然后检查是否过期
                     bool isElementStatus = IsBaseElementStatus(mod.DefineId);
                     long before = isElementStatus ? ReadElementStacks(mod.DefineId) : 0;
-                    mod.ReduceStack(1);
+                    // 正负数值层数都向 0 衰减一层。
+                    if (mod.SignedStacks)
+                        mod.CurrentStack -= Math.Sign(mod.CurrentStack);
+                    else
+                        mod.ReduceStack();
                     if (isElementStatus)
                     {
                         long after = ReadElementStacks(mod.DefineId);
@@ -108,10 +112,11 @@ namespace UnityWorld.Game.Domain.Combat
         // ══════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 添加战斗 Modifier。同 DefineId 已存在时执行叠层逻辑。
+        /// 添加战斗 Modifier。使用正式 ID 和最后生效轮查找可叠层的实例。
         /// </summary>
-        /// <param name="defineId">CombatNpcModifierDefine ID</param>
-        /// <param name="stacks">叠加层数（默认 1）</param>
+        /// <param name="defineId">战斗状态定义的 ID。</param>
+        /// <param name="stacks">叠加层数（默认 1）。数值状态接受有符号层数。</param>
+        /// <param name="duration">持续的战斗 Tick 数。正值启用计时。</param>
         public void AddModifier(string defineId, int stacks = 1,float duration = -1)
             => AddModifierCore(defineId, stacks, duration, null);
 
@@ -124,14 +129,16 @@ namespace UnityWorld.Game.Domain.Combat
         {
             var define = CombatNpcModifierDefineMgr.Instance.Get(defineId);
             if (define == null) return;
+
             bool isElementStatus = IsBaseElementStatus(defineId);
             long before = isElementStatus ? ReadElementStacks(defineId) : 0;
             if (isElementStatus && stacks > 0 && TryConsumeElementImmunity(defineId)) return;
             var lastRound = GetLastEffectRound(Math.Max(0, rounds ?? define.DurationRounds));
-            var existing = Modifiers.FirstOrDefault(m => m.DefineId == defineId && m.LastRound == lastRound);
+            var existing = Modifiers.FirstOrDefault(m => m.DefineId == defineId && m.LastRound == lastRound
+                && !m.Consumed && (!m.SignedStacks || !m.IsExpired()));
             if (existing != null)
             {
-                // 叠层逻辑
+                if (existing.SignedStacks && stacks == 0) return;
                 StackModifier(existing, stacks);
                 if (isElementStatus) DispatchElementStackChange(defineId, before);
                 return;
@@ -140,12 +147,14 @@ namespace UnityWorld.Game.Domain.Combat
             // 首次添加：从 Define 创建实例
             var modifier = CombatNpcModifier.CreateModifier(define);
             modifier.Owner = this;
-            modifier.CurrentStack = isElementStatus && define.MaxStack > 0
-                ? Math.Min(stacks, define.MaxStack) : stacks;
+            modifier.InitializeLuaModifier();
+            if (modifier.SignedStacks && stacks == 0) return;
+            modifier.CurrentStack = modifier.SignedStacks
+                ? modifier.LimitSignedStacks(stacks)
+                : isElementStatus && define.MaxStack > 0 ? Math.Min(stacks, define.MaxStack) : stacks;
             modifier.Duration = duration;
             modifier.LastRound = lastRound;
             if (modifier.StatModifiers.Count > 0) modifier.StatSource = $"battle-modifier:{++_modifierStatSource}";
-            modifier.InitializeLuaModifier();
             
             modifier.CallLuaHook<bool>("Apply", modifier.env, CreateModifierCtx(modifier));
             Modifiers.Add(modifier);
@@ -198,22 +207,31 @@ namespace UnityWorld.Game.Domain.Combat
             return true;
         }
 
-        /// <summary>
-        /// 叠层逻辑：使用统一的 AddStack 扩展方法，含 MaxStack 限制和 RefreshOnStack。
-        /// </summary>
+        /// <summary>按实例的层数规则合并，再统一处理移除、刷新和 Lua 通知。</summary>
         private void StackModifier(CombatNpcModifier modifier, int stacks)
         {
             var before = (modifier.CurrentStack, modifier.RemainingTime);
-            // 大层数仍在定义允许范围内，避免 int 相加回绕。
-            if (stacks > 0)
+            if (modifier.SignedStacks)
+            {
+                modifier.CurrentStack = modifier.LimitSignedStacks((long)modifier.CurrentStack + stacks);
+                if (modifier.CurrentStack == 0)
+                {
+                    DoRemoveModifier(modifier);
+                    return;
+                }
+                if (modifier.RefreshOnStack && modifier.Duration > 0)
+                    modifier.RemainingTime = modifier.Duration;
+            }
+            else
+            {
+                // 普通状态继续使用原有叠层规则，正向叠加前留足整数空间。
                 stacks = Math.Min(stacks, int.MaxValue - Math.Max(0, modifier.CurrentStack));
-            modifier.AddStack(stacks);
-            if (before != (modifier.CurrentStack, modifier.RemainingTime)) Scene?.MarkPresentationEffect();
+                modifier.AddStack(stacks);
+            }
 
-            // 调用 OnStack hook
+            if (before != (modifier.CurrentStack, modifier.RemainingTime)) Scene?.MarkPresentationEffect();
             modifier.CallLuaHook<bool>("OnStack", modifier.env, CreateModifierCtx(modifier));
             RefreshModifierStats(modifier);
-
             Log($"[Modifier] 叠层: {modifier.DefineId} (Stack={modifier.CurrentStack})");
         }
 
@@ -241,23 +259,32 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // ══════════════════════════════════════════════════════════
-        //  拼点修正管线
+        //  战斗数值修正管线
         // ══════════════════════════════════════════════════════════
 
-        /// <summary>
-        /// 通用数值修正管线：遍历所有 Modifier，调用 "Modify{HookName}" hook。
-        /// hook 签名（Lua）：function mod:ModifyXxx(ctx) — self 为 C# Modifier 实例，ctx 为 APIContext。
-        /// 需要修正的数据通过 ctx.Set 存入，Lua 侧 ctx:GetObject 取出。
-        /// </summary>
+        /// <summary>逐个调用有效 Buff 的 Lua 回调。脚本直接修改本次事件，并可消费自己的实例。</summary>
         public void ModifyHook(string hookName, APIContext ctx)
         {
             if (Modifiers.Count == 0) return;
-
-            foreach (var mod in GetAllModifiers())
+            var active = GetAllModifiers();
+            var hook = "Modify" + hookName;
+            foreach (var mod in active)
             {
+                if (mod.Consumed) continue;
                 ctx.Set("Modifier", mod);
-                mod.CallLuaHook<bool>("Modify" + hookName, mod.env, ctx);
+                mod.CallLuaHook<object>(hook, mod.env, ctx);
             }
+            // 全部命中的单次实例已失效，OnRemove 触发的新结算不会再次兑现它们。
+            foreach (var mod in active)
+                if (mod.Consumed) DoRemoveModifier(mod);
+        }
+
+        /// <summary>治疗、获盾和直接回蓝共用 Amount 参数，脚本可以读取本次基础点数。</summary>
+        private int ModifyAmount(string hook, int amount, APIContext ctx)
+        {
+            ctx.Set("Amount", amount);
+            ModifyHook(hook, ctx);
+            return (int)Math.Clamp(ctx.GetValue("Amount", (long)amount), 0, int.MaxValue);
         }
 
         // ══════════════════════════════════════════════════════════
@@ -265,7 +292,7 @@ namespace UnityWorld.Game.Domain.Combat
         // ══════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 主动移除指定 DefineId 的 Modifier，调用 OnRemove hook。未找到时静默跳过。
+        /// 主动移除指定定义 ID 的所有实例，并对每个实例调用 Lua OnRemove。
         /// </summary>
         public void RemoveModifier(string defineId)
         {
@@ -295,16 +322,20 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         /// <summary>
-        /// 内部统一移除逻辑：调用 OnRemove hook → 注销触发器监听 → 从列表移除。
+        /// 移除状态时执行 Lua OnRemove、注销触发器监听并撤销属性修正。
         /// </summary>
         private void DoRemoveModifier(CombatNpcModifier modifier)
         {
+            // 有符号状态先离开集合，避免移除回调重入时消费旧实例或吞掉同 ID 的新状态。
+            bool detachFirst = modifier.SignedStacks || modifier.Consumed;
             bool isElementStatus = IsBaseElementStatus(modifier.DefineId);
             long before = isElementStatus ? ReadElementStacks(modifier.DefineId) : 0;
+            if (detachFirst && !Modifiers.Remove(modifier)) return;
+
             modifier.CallLuaHook<bool>("OnRemove", modifier.env, CreateModifierCtx(modifier));
             UnregisterTriggerEvent(modifier);
             if (modifier.StatSource != null) Stats.RemoveModifiersBySource(modifier.StatSource);
-            Modifiers.Remove(modifier);
+            if (!detachFirst) Modifiers.Remove(modifier);
             Scene?.MarkPresentationEffect();
             if (isElementStatus) DispatchElementStackChange(modifier.DefineId, before);
         }

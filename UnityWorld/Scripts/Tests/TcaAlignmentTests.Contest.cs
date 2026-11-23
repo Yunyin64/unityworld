@@ -15,7 +15,13 @@ public static partial class TcaAlignmentTests
         var maxHp = owner.GetHp();
         owner.ApplyDamage(new DamageInfo(opponent, null, owner, 2));
         var healedHp = new List<int>();
-        var listener = new DelegateEventListener((_, _, args) => healedHp.Add(((APIContext)args).Caster.GetHp()));
+        var listener = new DelegateEventListener((_, _, args) =>
+        {
+            var healed = (APIContext)args;
+            healedHp.Add(healed.Caster.GetHp());
+            Check(healed.GetValue("Amount", 0) == 2 && ReferenceEquals(healed.GetObject("SourceNpc"), owner),
+                "受到治疗时的主体为目标，载荷记录实际回复量和施术者");
+        });
         EventMgr.Instance.RegisterEvent("tca-heal", "OnHeal", ScopeKey.Global, listener);
         try
         {
@@ -128,12 +134,61 @@ public static partial class TcaAlignmentTests
             var owner = scene.GetCombatants()[a.Id];
             var opponent = scene.GetCombatants()[b.Id];
             var ctx = new APIContext { Caster = owner, Scene = scene };
+            VerifyScriptedModifierHooks(lua, owner);
             VerifyShieldGainBuffs(lua, ctx, owner, opponent);
             VerifyMpRecoveryBuffs(lua, ctx, owner, opponent);
         }
         finally
         {
             scene.Cleanup();
+        }
+    }
+
+    // 两个普通状态直接定义获盾 Hook，验证 Lua 改值、消费与移除回调重入。
+    private static void VerifyScriptedModifierHooks(Lua lua, CombatNpc owner)
+    {
+        void Attach(string id, string script)
+        {
+            owner.AddModifier(id);
+            var buff = owner.GetAllModifiers().Single(mod => mod.DefineId == id);
+            buff.env = (LuaTable)lua.DoString(script)[0];
+            buff.env["owner"] = owner;
+            buff.env["m_Self"] = buff;
+            buff.ScanLuaHooks();
+        }
+
+        var before = owner.ShieldValue;
+        try
+        {
+            Attach("Armor", """
+                return {
+                    ModifyShieldGain = function(self, ctx)
+                        ctx:Set("Amount", ctx:GetObject("Amount") + 3)
+                        self.m_Self:Consume()
+                    end,
+                    OnRemove = function(self, ctx) self.owner:ChangeShield(1) end
+                }
+                """);
+            Attach("Fortification", """
+                return {
+                    ModifyShieldGain = function(self, ctx)
+                        ctx:Set("Amount", ctx:GetObject("Amount") + 4)
+                        self.m_Self:Consume()
+                    end
+                }
+                """);
+            owner.ChangeShield(2);
+            Check(owner.ShieldValue == before + 10 && owner.GetAllModifiers().All(m => m.DefineId != "Fortification" && m.DefineId != "Armor"),
+                "基础 2 与两份单次 3、4 合计 9，移除触发的新获盾只获得 1");
+            Attach("Armor", "return { ModifyShieldGain = function(self, ctx) ctx:Set('Amount', 5) return 123 end }");
+            owner.ChangeShield(1);
+            Check(owner.ShieldValue == before + 15, "脚本可直接修改 Amount，旧回调的单个整数返回值不计入增量");
+        }
+        finally
+        {
+            owner.RemoveModifier("Armor");
+            owner.RemoveModifier("Fortification");
+            owner.ChangeShield(before - owner.ShieldValue);
         }
     }
 
@@ -394,20 +449,49 @@ public static partial class TcaAlignmentTests
                 "首次匹配的出伤降至零时消费出伤 Buff，保留入伤 Buff");
             target.RemoveModifier(nextFireHit);
 
-            target.AddModifier("Zhan_Resist", 1);
+            target.AddModifier("Zhan_DamageIn_Changed", -1);
             var unsourced = new DamageInfo { Damage = 3, TargetNpc = target };
             target.ApplyDamage(unsourced);
-            Check(unsourced.Damage == 2, "旧斩击抗性对无来源斩伤仍每层减免一点");
+            Check(unsourced.Damage == 2, "无来源斩伤也受斩击入伤修正");
             target.AddModifier("Zhan_DamageIn_Changed", -2);
             Check(target.GetAllModifiers().Single(mod => mod.DefineId == "Zhan_DamageIn_Changed").CurrentStack == -3,
-                "旧抗性的正层与新抗性的负层叠入同一规范状态");
-            target.RemoveModifier("Zhan_Resist");
-            Check(!Has("Zhan_DamageIn_Changed"), "旧伤害抗性 ID 可移除对应状态");
-            source.AddModifier("Ci_Damage_Add", 2);
+                "斩击入伤修正的 -1 层与 -2 层合并为 -3 层");
+            target.RemoveModifier("Zhan_DamageIn_Changed");
+            Check(!Has("Zhan_DamageIn_Changed"), "持有者可移除斩击入伤修正");
+            source.AddModifier("Ci_DamageOut_Changed", 2);
             var stab = new DamageInfo(source, null, target, 1, DamageType.Ci, ElementType.None);
             target.AddDamage(stab);
-            Check(stab.Damage == 3, "旧物理增伤 ID 保留原正向加成");
+            Check(stab.Damage == 3, "刺击出伤修正每层增加一点伤害");
             target.DealDamage();
+            source.RemoveModifier("Ci_DamageOut_Changed");
+
+            // 从真实入队入口观察同一个 DamageInfo。大数用整数初始化，避免 float 构造参数舍入。
+            long Outgoing(int damage)
+            {
+                var hit = new DamageInfo { SourceNpc = source, TargetNpc = target, Damage = damage, damageType = DamageType.Ci };
+                target.AddDamage(hit);
+                return hit.Damage;
+            }
+
+            const string all = "All_DamageOut_Changed";
+            const string stabOnce = "Ci_DamageOut_Changed_Once";
+            source.AddModifier(all, 2);
+            Check(Outgoing(10) == 12 && Outgoing(10) == 12, "全出伤 Lua 直接改值，持续状态可以重复生效");
+            source.RemoveModifier(all);
+            foreach (bool weakenFirst in new[] { true, false })
+            {
+                if (weakenFirst) source.AddModifier(all, -5);
+                source.AddModifier(stabOnce, 4);
+                if (!weakenFirst) source.AddModifier(all, -5);
+                Check(Outgoing(2) == 1 && source.GetAllModifiers().All(m => m.DefineId != stabOnce),
+                    "两项出伤修正按任意施加顺序均为 2 - 5 + 4，单次只兑现一次");
+                source.RemoveModifier(all);
+            }
+            source.AddModifier(all, 99);
+            source.AddModifier(stabOnce, -99);
+            Check(Outgoing(int.MaxValue - 1) == int.MaxValue - 1, "同阶段中间值越过 int 上限后仍能完整抵消");
+            Check(Outgoing(int.MaxValue) == int.MaxValue, "出伤提交时钳制到 int 上限");
+            source.RemoveModifier(all);
         }
         finally
         {
@@ -481,16 +565,13 @@ public static partial class TcaAlignmentTests
             var contest = new ContestData { ContestType = type, Element = element, ContestValue = 4 };
             ctx.Set("ContestData", contest);
             owner.ModifyHook("Contest", ctx);
-            return contest.ContestValue;
+            return contest.FinalValue;
         }
 
         foreach (var (id, match, element, other, otherElement) in cases)
         {
             var always = id + "_Changed";
             var once = always + "_Once";
-            Check(CombatNpcModifierDefineMgr.Instance.Get(always)?.ValueChange is { Once: false }
-                && CombatNpcModifierDefineMgr.Instance.Get(once)?.ValueChange is { Once: true },
-                id + " 的持续和下次定义均已加载");
             add.Call(ctx, "Self", always, 1, -1);
             add.Call(ctx, "Self", once, 2, -1);
             Check(Modify(other, otherElement) == 4 && owner.GetAllModifiers().Any(mod => mod.DefineId == once),
@@ -515,11 +596,6 @@ public static partial class TcaAlignmentTests
             "金系刺击汇总全攻击、刺击、金系改变后限幅，仅移除两项下次状态");
         Check(Modify(ContestType.Block, ElementType.Jin) == 4, "五行拼点变化仅匹配攻击");
         owner.RemoveModifier("Jin_Changed");
-
-        add.Call(ctx, "Self", "Doge_Improved", 2, -1);
-        Check(Modify(ContestType.Dodge, ElementType.None) == 6, "旧闪避拼法映射到规范定义");
-        owner.RemoveModifier("Doge_Improved");
-        Check(Modify(ContestType.Dodge, ElementType.None) == 4, "旧 ID 可移除对应规范状态");
     }
 
     private static void VerifyValueBuffStacks(CombatNpc owner)

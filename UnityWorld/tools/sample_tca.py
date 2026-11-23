@@ -31,7 +31,7 @@ VALUE_NAMES = {
     "Equal": "等于", "AtLeast": "至少", "AtMost": "至多", "Win": "胜", "Lose": "负",
     "GainShield": "获得灵盾", "AddArmor": "获得护甲", "AddFortification": "获得坚甲",
     "RecoverMP": "回复 MP", "ReduceMP": "减少 MP", "QiXue": "气血", "HpMax": "生命上限",
-    "AmountMaxAdd": "数量上限", "Ci_Improved": "刺击强化", "Zhan_Resist": "斩击抗性",
+    "AmountMaxAdd": "数量上限", "Ci_Changed": "刺击强化", "Zhan_DamageIn_Changed": "斩击抗性",
     "Deflection": "卸力", "Armor": "护甲",
 }
 CONDITION_EVENTS = {

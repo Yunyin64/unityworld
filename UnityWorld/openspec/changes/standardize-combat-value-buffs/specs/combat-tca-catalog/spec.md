@@ -51,11 +51,11 @@
 - **WHEN** 策划在「给自己单次伤害抗性」中选火、强度 2
 - **THEN** 生成的调用对 `Self` 施加火入伤单次版 -2 层。出伤和持续版均不在候选中
 
-### Requirement: 现有内置状态 ID 可兼容施加
+### Requirement: 按定义 ID 施加状态
 
-既有内置拼点强化、物理增伤和抗性的 ID SHALL 兼容至对应的新定义，保留原有正向强化、增伤或抗性的调用含义。兼容 ID 不计入新定义和新动作的候选。脚本使用原有 `AddNpcBuff` 参数签名时，SHALL 能继续施加现有状态。
+脚本和卡牌配置 SHALL 使用状态定义中的 ID。施加与移除都按该 ID 精确匹配。
 
-#### Scenario: 旧脚本施加下次刺击强化
+#### Scenario: 脚本施加单次刺击强化
 
-- **WHEN** 旧 Lua 用 `Ci_Improved_Once` 施加 +2 层
-- **THEN** 角色获得 `Ci_Changed_Once` 的 +2 层，按下次匹配拼点规则生效
+- **WHEN** Lua 通过 `AddNpcBuff` 施加 `Ci_Changed_Once` 的 +2 层
+- **THEN** 角色的下一次刺击拼点增加 2 点，随后消费该实例

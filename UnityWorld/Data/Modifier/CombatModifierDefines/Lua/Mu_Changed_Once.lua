@@ -1,2 +1,12 @@
 -- 单次木系强化
-return require("ContestImprovement").ForElement(BaseElementType.Mu, true)
+local buff = setmetatable({ SignedStacks = true }, { __index = BuffBase })
+
+function buff:ModifyContest(ctx)
+    local contest = ctx:GetObject("ContestData")
+    if not contest.IsAttackType or contest.Element.Kind ~= BaseElementType.Mu then return end
+
+    contest.ContestValue = contest.ContestValue + self.m_Self.CurrentStack
+    self.m_Self:Consume()
+end
+
+return buff

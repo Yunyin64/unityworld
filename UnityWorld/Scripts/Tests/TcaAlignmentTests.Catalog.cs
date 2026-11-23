@@ -69,22 +69,22 @@ public static partial class TcaAlignmentTests
         string[] attacks = ["Attack", "Zhan", "Ci", "Da", "SheJi", "Jin", "Mu", "Shui", "Huo", "Tu"];
         string[] defenses = ["Defend", "Shield", "Block", "Dodge"];
         string[] damage = ["All", .. attacks.Skip(1)];
-        var cases = new (string Prefix, CombatNpc Target, int Sign, CombatValueStage Stage, string[] Ranges)[]
+        var cases = new (string Prefix, CombatNpc Target, int Sign, string Stage, string[] Ranges)[]
         {
-            ("action_self_attack_contest_boost", owner, 1, CombatValueStage.Contest, attacks),
-            ("action_target_attack_contest_weaken", opponent, -1, CombatValueStage.Contest, attacks),
-            ("action_self_defense_contest_boost", owner, 1, CombatValueStage.Contest, defenses),
-            ("action_target_defense_contest_weaken", opponent, -1, CombatValueStage.Contest, defenses),
-            ("action_self_damage_boost", owner, 1, CombatValueStage.DamageOut, damage),
-            ("action_target_damage_weaken", opponent, -1, CombatValueStage.DamageOut, damage),
-            ("action_self_damage_resist", owner, -1, CombatValueStage.DamageIn, damage),
-            ("action_target_damage_vulnerability", opponent, 1, CombatValueStage.DamageIn, damage),
-            ("action_self_heal_boost", owner, 1, CombatValueStage.HealOut, ["All"]),
-            ("action_target_heal_received_weaken", opponent, -1, CombatValueStage.HealIn, ["All"]),
-            ("action_self_shield_gain_boost", owner, 1, CombatValueStage.ShieldGain, ["All"]),
-            ("action_target_shield_gain_weaken", opponent, -1, CombatValueStage.ShieldGain, ["All"]),
-            ("action_self_mp_recovery_boost", owner, 1, CombatValueStage.MpRecovery, ["All"]),
-            ("action_target_mp_recovery_weaken", opponent, -1, CombatValueStage.MpRecovery, ["All"])
+            ("action_self_attack_contest_boost", owner, 1, "Contest", attacks),
+            ("action_target_attack_contest_weaken", opponent, -1, "Contest", attacks),
+            ("action_self_defense_contest_boost", owner, 1, "Contest", defenses),
+            ("action_target_defense_contest_weaken", opponent, -1, "Contest", defenses),
+            ("action_self_damage_boost", owner, 1, "DamageOut", damage),
+            ("action_target_damage_weaken", opponent, -1, "DamageOut", damage),
+            ("action_self_damage_resist", owner, -1, "DamageIn", damage),
+            ("action_target_damage_vulnerability", opponent, 1, "DamageIn", damage),
+            ("action_self_heal_boost", owner, 1, "HealOut", ["All"]),
+            ("action_target_heal_received_weaken", opponent, -1, "HealIn", ["All"]),
+            ("action_self_shield_gain_boost", owner, 1, "ShieldGain", ["All"]),
+            ("action_target_shield_gain_weaken", opponent, -1, "ShieldGain", ["All"]),
+            ("action_self_mp_recovery_boost", owner, 1, "MpRecovery", ["All"]),
+            ("action_target_mp_recovery_weaken", opponent, -1, "MpRecovery", ["All"])
         };
 
         foreach (var (prefix, target, sign, stage, ranges) in cases)
@@ -95,7 +95,7 @@ public static partial class TcaAlignmentTests
             Check(action?.FuncName == "AddNpcBuff", prefix + suffix + " 使用通用施加接口");
             Check(action!.DisplayName.Contains("单次") == once && !action.DisplayName.Contains("下次"),
                 prefix + suffix + " 的时机显示为持续或单次");
-            var axes = stage == CombatValueStage.Contest ? "" : "_" + stage;
+            var axes = stage == "Contest" ? "" : "_" + stage;
             var expectedIds = ranges.Select(range => range + axes + "_Changed" + (once ? "_Once" : "")).ToArray();
             var idParam = action.ParamDefs.SingleOrDefault(param => param.Name == "BuffId");
             if (expectedIds.Length == 1)
@@ -110,13 +110,13 @@ public static partial class TcaAlignmentTests
                     action.ID + " 只提供对应阶段、范围及期限的完整候选");
             }
 
-            for (int i = 0; i < expectedIds.Length; i++)
+            foreach (string id in expectedIds)
             {
-                var define = defines.Get(expectedIds[i]);
-                var change = define?.ValueChange;
-                Check(change != null && change.Range == ranges[i] && change.Stage == stage && change.Once == once
-                    && define!.DisplayName.StartsWith("单次", StringComparison.Ordinal) == once,
-                    action.ID + " 候选定义有效 " + expectedIds[i]);
+                var define = defines.Get(id);
+                using var script = LuaMgr.Instance.LoadModifierScript(id);
+                using var hook = script?["Modify" + stage] as LuaFunction;
+                Check(hook != null && define.DisplayName.StartsWith("单次", StringComparison.Ordinal) == once,
+                    action.ID + " 候选状态有对应 Lua 回调 " + id);
             }
 
             string selected = expectedIds[^1];
@@ -125,7 +125,8 @@ public static partial class TcaAlignmentTests
             lua.DoString("local ctx = sampleContext\n" + template);
             var modifier = target.GetAllModifiers().SingleOrDefault(mod => mod.DefineId == selected);
             var other = target == owner ? opponent : owner;
-            Check(modifier?.CurrentStack == 2 * sign && modifier.Duration == (once ? -1 : 30)
+            Check(modifier?.CurrentStack == 2 * sign && modifier.HasHook("Modify" + stage)
+                && modifier.Duration == (once ? -1 : 30)
                 && other.GetAllModifiers().All(mod => mod.DefineId != selected),
                 action.ID + " 生成 Lua 的挂载目标、层数和时限正确");
             target.RemoveModifier(selected);

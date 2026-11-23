@@ -51,7 +51,8 @@ namespace UnityWorld.Game.Domain
             {
                 var amount = Math.Min(requested, Math.Max(0, npc.GetCombatMpMax() - npc.GetMp()));
                 var removed = npc.Backpack.RemoveMana(amount, element.Kind == BaseElementType.None ? null : element, ctx.Scene.Soul);
-                var restored = removed.Count > 0 ? npc.RecoverMP(removed.Count) : 0;
+                // 回收按一格灵元换一点 MP，直接回蓝的 Buff 在回收时不生效也不消耗。
+                var restored = removed.Count > 0 ? npc.RestoreMP(removed.Count) : 0;
                 npc.Log($"回收灵元 请求={requested} 实际={removed.Count} MP差额=+{restored} 格={FormatManaCells(removed)}");
             }
             return ctx;

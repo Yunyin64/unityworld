@@ -27,6 +27,12 @@ namespace UnityWorld.Game.Domain
         public CombatNpc Owner;    
         internal int LastRound { get; set; } = int.MaxValue;
         internal string StatSource { get; set; }
+        internal bool SignedStacks { get; private set; }
+        // 同一笔结算命中的单次实例一起标记，OnRemove 重入时不能再次兑现。
+        internal bool Consumed { get; private set; }
+
+        /// <summary>Lua 在匹配的 Modify 回调里消费自身。实例立即失效，本轮回调结束后执行 OnRemove。</summary>
+        public void Consume() => Consumed = true;
         // 蓄力属于当场的 Buff 实例。每次记录实际吸收，同轮达标后只兑现一次。
         internal (int Round, long Absorbed, bool Triggered) ShieldChargeProgress { get; set; }
 
@@ -68,6 +74,17 @@ namespace UnityWorld.Game.Domain
             return buff;
         }
 
+        /// <summary>数值状态在层数归零或计时结束时过期，轮数由持有者另行判断。</summary>
+        internal bool IsExpired() => Consumed || (SignedStacks
+            ? CurrentStack == 0 || (Duration > 0 && RemainingTime <= 0)
+            : IModifierBaseExt.IsExpired(this));
+
+        internal int LimitSignedStacks(long stacks)
+        {
+            long limit = MaxStack > 0 ? MaxStack : int.MaxValue;
+            return (int)Math.Clamp(stacks, -limit, limit);
+        }
+
         /// <summary>
         /// 加载 Lua 脚本并注入 C# 引用（与 CombatCard.InitializeLuaCards 对齐）。
         /// </summary>
@@ -79,6 +96,8 @@ namespace UnityWorld.Game.Domain
             env = luaMgr.LoadModifierScript(DefineId);
             if (env != null)
             {
+                // 层数规则随同名脚本声明；普通状态继续使用原有过期策略。
+                SignedStacks = env["SignedStacks"] is true;
                 env["m_Self"] = this;
                 env["m_Owner"] = Owner;
             }
