@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "roster_rivet_stock",
+    "DisplayName": "挑铆弩架",
+    "Size": 2,
+    "AttackBase": 4,
+    "DefendBase": 3,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_yue_zhao_bolt",
+      "roster_yue_zhao_guard"
+    ]
+  }
+]

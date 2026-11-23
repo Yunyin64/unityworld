@@ -1,0 +1,106 @@
+[
+  {
+    "ID": "roster_wen_li",
+    "DisplayName": "闻砺",
+    "Surname": "闻",
+    "GivenName": "砺",
+    "DaoTitle": "",
+    "Gender": "Male",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitStat": {
+      "QiXue": 8,
+      "TiPo": 10,
+      "QiGan": 30,
+      "LingJi": 10,
+      "ShenShi": 11,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "MainGongFaId": "roster_wen_li_deflection",
+    "InitCardPlacements": [
+      {
+        "Key": "roster_wen_li_deflection",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_wen_li_anvil",
+        "Value": {
+          "X": 1,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_wen_li_hammer",
+        "Value": {
+          "X": 2,
+          "Y": 1
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_wen_li_guard",
+        "Value": {
+          "X": 2,
+          "Y": 4
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_wen_li_ring",
+        "Value": {
+          "X": 4,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_wen_li_rag",
+        "Value": {
+          "X": 4,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_wen_li_crumble",
+        "Value": {
+          "X": 5,
+          "Y": 4
+        }
+      },
+      {
+        "Key": "roster_water_dart",
+        "Value": {
+          "X": 3,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_mana_sand",
+        "Value": {
+          "X": 1,
+          "Y": 5
+        }
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "roster_wen_li_deflection",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 2,
+        "CardID": "roster_wen_li_anvil",
+        "EquipID": "roster_wen_li_hammer_frame"
+      }
+    ]
+  }
+]

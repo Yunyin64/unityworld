@@ -1,0 +1,4 @@
+interface:
+  display_name: "战斗模拟"
+  short_description: "用 UnityWorld 后端试打 NPC、换边轮赛并复现战报中的长局。"
+  default_prompt: "用 $combat-simulation 跑曲泽和段萤的对战，三个种子各换边一次，汇总胜负、触顶局和原始战报。"

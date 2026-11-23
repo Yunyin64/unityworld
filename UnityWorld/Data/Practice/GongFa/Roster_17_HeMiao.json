@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_he_miao_channels",
+    "DisplayName": "分铢诀",
+    "Desc": "每个己方扫描轮内，累计有三种不同元素实际充入己方牌时，立即额外抽取至多 2 枚灵元，照常扣 MP。每轮一次。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Ling",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_he_miao_pin"
+      }
+    ]
+  }
+]

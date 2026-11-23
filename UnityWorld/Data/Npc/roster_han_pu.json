@@ -1,0 +1,106 @@
+[
+  {
+    "ID": "roster_han_pu",
+    "DisplayName": "韩浦",
+    "Surname": "韩",
+    "GivenName": "浦",
+    "DaoTitle": "",
+    "Gender": "Male",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitStat": {
+      "QiXue": 8,
+      "TiPo": 10,
+      "QiGan": 30,
+      "LingJi": 10,
+      "ShenShi": 11,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "MainGongFaId": "roster_winter_path",
+    "InitCardPlacements": [
+      {
+        "Key": "roster_winter_path",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_frost_mirror",
+        "Value": {
+          "X": 1,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_han_pu_staff",
+        "Value": {
+          "X": 1,
+          "Y": 1
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_ice_wrap",
+        "Value": {
+          "X": 4,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_han_pu_frost_pin",
+        "Value": {
+          "X": 4,
+          "Y": 4
+        }
+      },
+      {
+        "Key": "roster_han_pu_guard",
+        "Value": {
+          "X": 1,
+          "Y": 3
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_stone_pebble",
+        "Value": {
+          "X": 4,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_han_pu_clip",
+        "Value": {
+          "X": 1,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_mana_sand",
+        "Value": {
+          "X": 5,
+          "Y": 2
+        }
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "roster_winter_path",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 2,
+        "CardID": "roster_frost_mirror",
+        "EquipID": "roster_mirror_handle"
+      }
+    ]
+  }
+]

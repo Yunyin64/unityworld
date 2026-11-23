@@ -1,0 +1,102 @@
+[
+  {
+    "ID": "roster_ji_wei_bell",
+    "DisplayName": "缚足铃",
+    "Desc": "激活期间，每当己方实际推走敌牌，将那张牌定身到它的下一轮结束。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 1,
+      "Tu": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_ji_wei_plant",
+    "DisplayName": "钉步击",
+    "Desc": "以铃槌攻击值生成木系斩击。若自己本轮已经成功推走敌牌，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ji_wei_gate",
+    "DisplayName": "跨槛架",
+    "Desc": "以铃架防御值生成格挡。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ji_wei_branch",
+    "DisplayName": "横槐枝",
+    "Desc": "生成 4 点木系打击。效果结算时将对手随机一张能向左滑动的卡推到阻挡物前。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ji_wei_latch",
+    "DisplayName": "拴石扣",
+    "Desc": "本场首次有敌牌实际被己方推走时，回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_ji_wei_stake_shot",
+    "DisplayName": "寻隙石钉",
+    "Desc": "生成 4 点土系射击。己方每当实际推走一张敌牌，下一次本卡射击拼点 +1。至多储存一次。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ji_wei_sap",
+    "DisplayName": "压根阵",
+    "Desc": "己方每轮首次实际移动异方卡时，从那张卡上剥离至多一枚已点亮灵元。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  }
+]

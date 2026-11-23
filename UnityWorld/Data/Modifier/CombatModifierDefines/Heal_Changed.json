@@ -1,0 +1,54 @@
+[
+  {
+    "ID": "All_HealOut_Changed",
+    "DisplayName": "治疗提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "HealOut",
+      "Range": "All",
+      "Once": false
+    }
+  },
+  {
+    "ID": "All_HealOut_Changed_Once",
+    "DisplayName": "单次治疗提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "HealOut",
+      "Range": "All",
+      "Once": true
+    }
+  },
+  {
+    "ID": "All_HealIn_Changed",
+    "DisplayName": "受疗降低",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "HealIn",
+      "Range": "All",
+      "Once": false
+    }
+  },
+  {
+    "ID": "All_HealIn_Changed_Once",
+    "DisplayName": "单次受疗降低",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "HealIn",
+      "Range": "All",
+      "Once": true
+    }
+  }
+]

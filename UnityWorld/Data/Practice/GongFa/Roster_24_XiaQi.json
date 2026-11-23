@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_xia_qi_opening",
+    "DisplayName": "探空诀",
+    "Desc": "每个己方轮第一次由带「攻击」标记的招式走直击流程时，回 2 MP。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Wu",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_xia_qi_sweep"
+      }
+    ]
+  }
+]

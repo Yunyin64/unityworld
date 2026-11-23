@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_crossing_cure",
+    "DisplayName": "续津功",
+    "Desc": "己方每轮第一次移除伤势时，若灵盾不足 3，获得 2 灵盾。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Ling",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_dressing"
+      }
+    ]
+  }
+]

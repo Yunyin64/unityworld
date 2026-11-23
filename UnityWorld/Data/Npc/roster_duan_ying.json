@@ -1,0 +1,106 @@
+[
+  {
+    "ID": "roster_duan_ying",
+    "DisplayName": "段萤",
+    "Surname": "段",
+    "GivenName": "萤",
+    "DaoTitle": "",
+    "Gender": "Female",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitStat": {
+      "QiXue": 8,
+      "TiPo": 10,
+      "QiGan": 30,
+      "LingJi": 10,
+      "ShenShi": 11,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "MainGongFaId": "roster_banked_ember",
+    "InitCardPlacements": [
+      {
+        "Key": "roster_banked_ember",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_duan_ying_lamp",
+        "Value": {
+          "X": 2,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_duan_ying_shot",
+        "Value": {
+          "X": 2,
+          "Y": 1
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "card_huo_shot",
+        "Value": {
+          "X": 4,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_duan_ying_dodge",
+        "Value": {
+          "X": 1,
+          "Y": 3
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_flint_slash",
+        "Value": {
+          "X": 3,
+          "Y": 4
+        }
+      },
+      {
+        "Key": "roster_stone_pebble",
+        "Value": {
+          "X": 5,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_mana_sand",
+        "Value": {
+          "X": 1,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_duan_ying_wick",
+        "Value": {
+          "X": 5,
+          "Y": 4
+        }
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "roster_banked_ember",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 2,
+        "CardID": "roster_duan_ying_lamp",
+        "EquipID": "roster_lantern_frame"
+      }
+    ]
+  }
+]

@@ -91,7 +91,7 @@
     "MaxValue": 999,
     "DisplayFormat": "Integer",
     "Category": "基础",
-    "Description": "基础属性八维"
+    "Description": "人物数值基准为 10，每点对应 2 HP 上限。校准伤害与防御时，以 20 HP 为起点。"
   },
   {
     "ID": "TiPo",
@@ -115,7 +115,7 @@
     "MaxValue": 999,
     "DisplayFormat": "Integer",
     "Category": "基础",
-    "Description": "基础属性八维"
+    "Description": "人物数值基准为 10，每点对应 3 MP 上限。评估供灵总量和卡牌费用时，以 30 MP 为起点。"
   },
   {
     "ID": "LingJi",
@@ -139,7 +139,7 @@
     "MaxValue": 999,
     "DisplayFormat": "Integer",
     "Category": "基础",
-    "Description": "基础属性八维"
+    "Description": "人物数值基准为 10，每点对应 1 SP 上限。配卡时按 10 SP 起算，并核对伤口占格的余量。"
   },
   {
     "ID": "WuXing",

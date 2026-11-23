@@ -1,0 +1,90 @@
+[
+  {
+    "ID": "roster_water_staff",
+    "DisplayName": "津渡杖",
+    "Desc": "激活期间，每当己方以闪避赢得真实配对，若灵盾不足 2，获得 1 灵盾。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_slip_pendant",
+    "DisplayName": "回身坠",
+    "Desc": "激活期间，每当己方真正受到 HP 伤害，若没有护甲，获得 1 护甲。每轮至多一次，激活与续期合计至多两次。最后一发覆盖的激活期结束后离场。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaBao",
+      "Amount",
+      "Flexible",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": false,
+    "AmountMax": 2
+  },
+  {
+    "ID": "roster_meng_yuan_return",
+    "DisplayName": "借腕打",
+    "Desc": "以杖身攻击值生成水系打击。持有护甲时点数 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_meng_yuan_skip",
+    "DisplayName": "抹步镖",
+    "Desc": "生成 5 点水系射击。对手已有待发防御时改为 5 点刺击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_turning_staff",
+    "DisplayName": "绕险杖法",
+    "Desc": "己方以闪避赢得真实配对时，积存下次打击拼点 +2。已有一份时不叠加。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_staff_dodge",
+    "DisplayName": "曳杖闪",
+    "Desc": "以杖身的防御值生成闪避。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  }
+]

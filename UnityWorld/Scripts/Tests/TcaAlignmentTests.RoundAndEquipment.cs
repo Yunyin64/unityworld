@@ -33,12 +33,12 @@ public static partial class TcaAlignmentTests
             Check(owner.Backpack.TryAssign(cell, card), "一次性刺击验收卡实际点亮");
             for (int tick = 0; tick < 10; tick++) scene.Tick();
             Check(owner.PendingSlot?.SourceCard == card && owner.PendingSlot.ContestValue == 6 &&
-                owner.GetAllModifiers().All(mod => mod.DefineId != "Ci_Improved_Once"),
+                owner.GetAllModifiers().All(mod => mod.DefineId != "Ci_Changed_Once"),
                 "刺击 4 在末格生成时变成 6 入槽，首次配对前一次性强化已经移除");
 
-            add.Call(ctx, "Self", "Ci_Improved_Once", 1, -1);
-            Check(owner.PendingSlot.ContestValue == 6 && owner.GetAllModifiers().Any(mod => mod.DefineId == "Ci_Improved_Once"),
-                "入槽后挂的一次性强化等待下一次生成匹配拼点");
+            add.Call(ctx, "Self", "Ci_Changed_Once", -3, -1);
+            Check(owner.PendingSlot.ContestValue == 6 && owner.GetAllModifiers().Any(mod => mod.DefineId == "Ci_Changed_Once"),
+                "入槽后挂的一次性弱化等待下一次生成匹配拼点");
         }
         finally
         {

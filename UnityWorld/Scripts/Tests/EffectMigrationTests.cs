@@ -1,3 +1,4 @@
+using System.Text.Json;
 using UnityWorld.Core;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
@@ -190,7 +191,21 @@ namespace UnityWorld.Tests
         {
             var all = CardDefineMgr.Instance.GetAll().Where(c => !c.ID.StartsWith("bp_")).ToArray();
             Check(all.All(c => c.Size > 0), "所有旧Size0定义已明确改1");
-            foreach (var definition in all.Where(c => c.CompatibilityStatus == "Migrated"))
+            // 未声明迁移状态的新卡可加载，但不进入旧卡的一次 Use/Apply 验收。
+            var migratedIds = new HashSet<string>(StringComparer.Ordinal);
+            var options = new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip };
+            foreach (var path in Directory.EnumerateFiles(CardDefineMgr.Instance.DataDir, "*.json"))
+            {
+                using var json = JsonDocument.Parse(File.ReadAllText(path), options);
+                if (json.RootElement.ValueKind != JsonValueKind.Array) continue;
+                foreach (var entry in json.RootElement.EnumerateArray())
+                {
+                    if (entry.TryGetProperty("CompatibilityStatus", out var status) && status.GetString() == "Migrated")
+                        migratedIds.Add(entry.GetProperty("ID").GetString());
+                }
+            }
+
+            foreach (var definition in all.Where(c => migratedIds.Contains(c.ID) && c.CompatibilityStatus == "Migrated"))
             {
                 if (definition.ID == "card_fabao_jian") continue; // 真实长剑激活与对拼由 ActivationMigrationTests 覆盖。
                 if (CardKeywordRoles.TryGetMain(definition.Keywords, out var main, out _) && main == CardMainKeyword.ZhaoShi) continue;
@@ -206,8 +221,11 @@ namespace UnityWorld.Tests
                 else
                 {
                     Check(!card.CanAcceptMana(ElementType.Jin) && card.UseCount == 0, definition.ID + "纯被动不被强制收灵");
+                    if (definition.ID == "card_monster_langya")
+                        Check(card.ApplyCount == 1 && npc.GetAllModifiers().SingleOrDefault(m => m.DefineId == "Ci_Changed")?.CurrentStack == 1,
+                            "狼牙保留一次开场持续刺击强化");
                     if (definition.ID == "card_monster_shoupi")
-                        Check(card.ApplyCount == 1 && npc.GetAllModifiers().SingleOrDefault(m => m.DefineId == "Zhan_Resist")?.CurrentStack == 1,
+                        Check(card.ApplyCount == 1 && npc.GetAllModifiers().SingleOrDefault(m => m.DefineId == "Zhan_DamageIn_Changed")?.CurrentStack == -1,
                             "兽皮保留一次开场斩击抗性");
                 }
                 Console.WriteLine($"MIGRATED_CARD_OK id={definition.ID} size={card.GetSize()} use={card.UseCount} apply={card.ApplyCount}");

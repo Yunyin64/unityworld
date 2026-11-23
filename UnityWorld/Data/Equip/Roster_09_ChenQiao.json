@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "roster_sand_flail",
+    "DisplayName": "砂纹链锤",
+    "Size": 2,
+    "AttackBase": 6,
+    "DefendBase": 3,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_flail_hit",
+      "roster_flail_guard"
+    ]
+  }
+]

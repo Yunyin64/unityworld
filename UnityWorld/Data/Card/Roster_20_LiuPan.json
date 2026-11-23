@@ -1,0 +1,86 @@
+[
+  {
+    "ID": "roster_liu_pan_gauge",
+    "DisplayName": "滴水刻尺",
+    "Desc": "激活期间，每当己方 MP 实际回升，推进己方 4 基准 Tick。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 1,
+      "Tu": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_liu_pan_tap",
+    "DisplayName": "拨漏锤",
+    "Desc": "以刻尺攻击值生成水系打击。效果结算时若己方 MP 不足 18，回复 1 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_liu_pan_guard",
+    "DisplayName": "归尺",
+    "Desc": "以刻尺防御值生成格挡。已有至少 2 灵盾时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_liu_pan_clean",
+    "DisplayName": "洗格水矢",
+    "Desc": "生成 4 点水系射击。效果结算时，至多回收两枚己方格上未分配灵元，按实际数量回 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_liu_pan_chime",
+    "DisplayName": "旧时磬",
+    "Desc": "己方第一张伤势实际占格时，回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_liu_pan_clock",
+    "DisplayName": "度漏诀",
+    "Desc": "己方第 4 和第 8 轮基础补灵前，各回收至多两枚格上闲置灵元。此后，有 MP、背包满格且场上卡既未蓄满又用不了任何闲置灵元时，舍去一枚闲置灵元再补灵。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  }
+]

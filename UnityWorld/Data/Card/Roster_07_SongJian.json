@@ -1,0 +1,89 @@
+[
+  {
+    "ID": "roster_tally",
+    "DisplayName": "回纹签",
+    "Desc": "本场首次己方真正回复 HP 时，额外回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_song_jian_bridge",
+    "DisplayName": "苇桥杖",
+    "Desc": "激活期间，每当己方招式成功发动且气血至多一半，若灵盾不足 2，获得 1 灵盾。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_song_jian_vine",
+    "DisplayName": "扑苇刺",
+    "Desc": "以苇杖攻击值生成木系刺击。若己方场上仍有伤势，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_song_jian_step",
+    "DisplayName": "浮桥侧步",
+    "Desc": "以苇杖防御值生成闪避，使用水灵元点亮。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_reed_stride",
+    "DisplayName": "青苇行功",
+    "Desc": "每个己方轮第一次有右侧共边法术发动时，自身背包双速 7 Tick。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_spring_leaf",
+    "DisplayName": "醒春叶",
+    "Desc": "发动扣 1 份，回复 3 HP，清除至多 2 格的一张伤势。耗尽后离场。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "Item",
+      "Consume",
+      "Flexible"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": false,
+    "StackMax": 1
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "ID": "roster_he_miao_scale",
+    "DisplayName": "青白小秤",
+    "Desc": "激活期间，每当己方法术实际支付金灵元，回收格上至多 1 火、1 土，各转为 1 MP。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 1,
+      "Shui": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_he_miao_channels",
+    "DisplayName": "分铢诀",
+    "Desc": "每个己方扫描轮内，累计有三种不同元素实际充入己方牌时，立即额外抽取至多 2 枚灵元，照常扣 MP。每轮一次。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_he_miao_rod",
+    "DisplayName": "秤杆回打",
+    "Desc": "以秤杆攻击值生成木系打击。效果结算时，若己方 MP 不足 20，回复 1 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_he_miao_pan",
+    "DisplayName": "翻秤盘",
+    "Desc": "以秤盘防御值生成格挡。己方 MP 不足 20 时再加 1 点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_he_miao_pin",
+    "DisplayName": "铢针",
+    "Desc": "生成 4 点金系刺击。生成拼点时，若自己没有灵盾，刺击提高至 5 点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_he_miao_tassel",
+    "DisplayName": "三缕穗",
+    "Desc": "每场首次有己方任一法宝充满时，获得 2 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_he_miao_balance_dart",
+    "DisplayName": "校衡水签",
+    "Desc": "生成 3 点水系刺击。本轮己方已有三种不同元素实际充入牌时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  }
+]

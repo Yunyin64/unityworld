@@ -1,0 +1,101 @@
+[
+  {
+    "ID": "roster_ruan_chi_band",
+    "DisplayName": "炉口铜箍",
+    "Desc": "激活期间，上邻共边法术免疫冻结，且它每轮首次实际发动后，己方回复 1 MP。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_ruan_chi_sweep",
+    "DisplayName": "炉壁横扫",
+    "Desc": "以炉骨攻击值生成火系射击。己方气血至多一半时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ruan_chi_step",
+    "DisplayName": "扣箍侧步",
+    "Desc": "以炉骨防御值生成闪避。本轮己方法术实际支付过两枚火时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ruan_chi_ash",
+    "DisplayName": "余烬索",
+    "Desc": "己方本轮已有实付两火的法术时，首次实际扣 HP 后回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_press_furnace",
+    "DisplayName": "压炉法",
+    "Desc": "开场得 2 灵盾。每个己方轮首次主动发动实际支付两枚火灵元时，若灵盾不足 2，获得 1 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_furnace_blast",
+    "DisplayName": "炉口喷火",
+    "Desc": "生成 8 点火系射击。效果结算时自己受 2 点伤害，拼输也有代价。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ruan_chi_hearth_stone",
+    "DisplayName": "收炉石",
+    "Desc": "生成 4 点土系射击。己方法术实际支付两枚火灵元后，至下一轮结束，首次使用本卡的拼点 +2。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  }
+]

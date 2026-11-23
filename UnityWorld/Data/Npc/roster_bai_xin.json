@@ -1,0 +1,113 @@
+[
+  {
+    "ID": "roster_bai_xin",
+    "DisplayName": "白辛",
+    "Surname": "白",
+    "GivenName": "辛",
+    "DaoTitle": "",
+    "Gender": "Male",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitStat": {
+      "QiXue": 8,
+      "TiPo": 10,
+      "QiGan": 30,
+      "LingJi": 10,
+      "ShenShi": 11,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "MainGongFaId": "roster_score_gap",
+    "InitCardPlacements": [
+      {
+        "Key": "roster_score_gap",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_awl_charm",
+        "Value": {
+          "X": 1,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_bai_xin_return",
+        "Value": {
+          "X": 2,
+          "Y": 1
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_needle",
+        "Value": {
+          "X": 3,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_cold_pierce",
+        "Value": {
+          "X": 3,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_prick_guard",
+        "Value": {
+          "X": 2,
+          "Y": 4
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_bai_xin_clamp",
+        "Value": {
+          "X": 4,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_wash",
+        "Value": {
+          "X": 5,
+          "Y": 4
+        }
+      },
+      {
+        "Key": "roster_mana_sand",
+        "Value": {
+          "X": 1,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_white_ash",
+        "Value": {
+          "X": 5,
+          "Y": 3
+        }
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "roster_score_gap",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 2,
+        "CardID": "roster_awl_charm",
+        "EquipID": "roster_engraving_awl"
+      }
+    ]
+  }
+]

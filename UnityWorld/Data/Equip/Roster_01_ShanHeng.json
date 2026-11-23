@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "roster_shan_heng_frame",
+    "DisplayName": "横津长剑",
+    "Size": 2,
+    "AttackBase": 4,
+    "DefendBase": 3,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_shan_heng_cut",
+      "roster_shan_heng_thrust"
+    ]
+  }
+]

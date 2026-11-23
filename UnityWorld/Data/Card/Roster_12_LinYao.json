@@ -1,0 +1,87 @@
+[
+  {
+    "ID": "roster_coil_gourd",
+    "DisplayName": "两仪壶",
+    "Desc": "激活期间，每当己方法术实际支付至少两种灵元，清除己方一层随机五行减益，再回复 1 MP。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 1,
+      "Tu": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_coil_rattle",
+    "DisplayName": "摇壶",
+    "Desc": "以壶柄攻击值生成木系打击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lin_yao_vine",
+    "DisplayName": "抽藤锋",
+    "Desc": "生成 4 点木系斩击。效果结算时，从敌方随机一卡剥离至多一枚已点亮的木灵元。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lin_yao_felt",
+    "DisplayName": "藤囊芯",
+    "Desc": "本场己方首次实际支付至少两种灵元时，获得 2 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_seed_trap",
+    "DisplayName": "寄阵法",
+    "Desc": "己方每轮第一次实际支付至少两种灵元时，从敌方随机一张卡剥离至多 1 枚已点亮灵元。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_silt_trap",
+    "DisplayName": "沙藤钩",
+    "Desc": "双灵元攻势，生成 6 点土系刺击。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1,
+      "Tu": 1
+    },
+    "ProducesContest": true
+  }
+]

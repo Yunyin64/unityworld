@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_ji_wei_sap",
+    "DisplayName": "压根阵",
+    "Desc": "己方每轮首次实际移动异方卡时，从那张卡上剥离至多一枚已点亮灵元。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Hun",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_ji_wei_branch"
+      }
+    ]
+  }
+]

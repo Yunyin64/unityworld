@@ -1,0 +1,100 @@
+[
+  {
+    "ID": "roster_frost_mirror",
+    "DisplayName": "映霜镜",
+    "Desc": "激活期间，每当一枚水灵元使己方法术充满，冻结敌方随机一张可冻结卡。每轮至多一次，激活与续期合计至多两次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "Amount",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 2
+    },
+    "ProducesContest": false,
+    "AmountMax": 2
+  },
+  {
+    "ID": "roster_han_pu_staff",
+    "DisplayName": "镜背横击",
+    "Desc": "以镜柄攻击值生成水系打击。生成时敌方至少有一张被冻结的卡则 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_han_pu_guard",
+    "DisplayName": "照面架",
+    "Desc": "以镜柄防御值生成格挡。父法宝当前激活时，加 1 点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_han_pu_clip",
+    "DisplayName": "镜灰扣",
+    "Desc": "本场第一次己方法宝弹药耗尽时，回复 1 MP。若当时没有灵盾，再获得 1 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_han_pu_frost_pin",
+    "DisplayName": "挂霜针",
+    "Desc": "生成 4 点水系刺击。敌方有冻牌或已损失至少 4 HP 时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_winter_path",
+    "DisplayName": "避霜诀",
+    "Desc": "己方首次开轮时，给己方场上匹配法宝充 1 水。之后每六个己方轮补一次。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_ice_wrap",
+    "DisplayName": "续温绳",
+    "Desc": "下方共边的法术免疫冻结。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  }
+]

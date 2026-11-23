@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_winter_path",
+    "DisplayName": "避霜诀",
+    "Desc": "己方首次开轮时，给己方场上匹配法宝充 1 水。之后每六个己方轮补一次。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Hun",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_han_pu_frost_pin"
+      }
+    ]
+  }
+]

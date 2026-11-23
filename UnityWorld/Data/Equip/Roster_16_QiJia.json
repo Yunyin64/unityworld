@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "roster_grafted_cane",
+    "DisplayName": "接枝藤杖",
+    "Size": 2,
+    "AttackBase": 3,
+    "DefendBase": 3,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_qi_jia_prick",
+      "roster_qi_jia_brace"
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "roster_copper_frame",
+    "DisplayName": "铜箍炉骨",
+    "Size": 2,
+    "AttackBase": 4,
+    "DefendBase": 3,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_ruan_chi_sweep",
+      "roster_ruan_chi_step"
+    ]
+  }
+]

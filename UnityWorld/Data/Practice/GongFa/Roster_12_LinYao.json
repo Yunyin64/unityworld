@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_seed_trap",
+    "DisplayName": "寄阵法",
+    "Desc": "己方每轮第一次实际支付至少两种灵元时，从敌方随机一张卡剥离至多 1 枚已点亮灵元。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Hun",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_silt_trap"
+      }
+    ]
+  }
+]

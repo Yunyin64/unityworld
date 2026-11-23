@@ -1,0 +1,104 @@
+[
+  {
+    "ID": "roster_zhu_xia_fan_shot",
+    "DisplayName": "接焰扇",
+    "Desc": "以扇骨攻击值生成火系射击。若本轮已有己方法术实际支付火灵元，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_zhu_xia_fan_step",
+    "DisplayName": "护手撤步",
+    "Desc": "以扇骨防御值生成闪避。己方没有灵盾时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_ember_gather",
+    "DisplayName": "拾火经",
+    "Desc": "首次开轮给法宝充 1 火。每个己方轮末回复 1 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_ember_fan",
+    "DisplayName": "种火扇",
+    "Desc": "激活期间，每轮首次有共边的己方法术发动时，自身背包加速 5 Tick。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_cinder_pellet",
+    "DisplayName": "破灰丸",
+    "Desc": "消耗 1 份。先破 3 灵盾，再将自身背包推进 5 基准 Tick。耗尽后离场。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "Item",
+      "Consume",
+      "Flexible"
+    ],
+    "ManaCost": {
+      "Huo": 1
+    },
+    "ProducesContest": false,
+    "StackMax": 2
+  },
+  {
+    "ID": "roster_trail_ration",
+    "DisplayName": "松脂索",
+    "Desc": "己方每轮第一次有灵活卡离场时，回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_zhu_xia_kiln_thorn",
+    "DisplayName": "赶窑刺",
+    "Desc": "生成 4 点木系刺击。本卡直击或对拼获胜时，自身背包推进 4 基准 Tick。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  }
+]

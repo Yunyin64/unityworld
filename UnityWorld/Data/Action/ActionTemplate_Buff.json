@@ -1,40 +1,589 @@
 [
   {
-    "ID": "action_add_npc_buff",
+    "ID": "action_self_attack_contest_boost",
     "APIType": "Action",
-    "DisplayName": "施加Buff",
-    "Desc": "给{Domain}施加{Stacks}层{BuffId}，首次施加期限为{Duration}",
+    "DisplayName": "给自己持续攻击强化",
+    "Desc": "给自己施加{BuffId}，每次匹配的攻击拼点增加{Stacks}点，首次施加期限为{Duration}",
     "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "控制"],
+    "Tags": ["Buff", "拼点"],
     "ConflictTags": [],
     "Weight": 1,
     "ParamDefs": [
-      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [0, 0] },
       {
         "Name": "BuffId",
         "Type": "String",
         "Value": [
-          "Ci_Improved", "Ci_Improved_Once",
-          "Zhan_Improved", "Zhan_Improved_Once",
-          "Da_Improved", "Da_Improved_Once",
-          "SheJi_Improved", "SheJi_Improved_Once",
-          "Block_Improved", "Block_Improved_Once",
-          "Doge_Improved", "Doge_Improved_Once",
-          "Shield_Improved", "Shield_Improved_Once",
-          "Jin_Improved", "Jin_Improved_Once",
-          "Huo_Improved", "Huo_Improved_Once",
-          "Mu_Improved", "Mu_Improved_Once",
-          "Shui_Improved", "Shui_Improved_Once",
-          "Tu_Improved", "Tu_Improved_Once",
-          "Attack_Improved", "Attack_Improved_Once",
-          "Defend_Improved", "Defend_Improved_Once"
+          "Attack_Changed", "Zhan_Changed",
+          "Ci_Changed", "Da_Changed",
+          "SheJi_Changed", "Jin_Changed",
+          "Mu_Changed", "Shui_Changed",
+          "Huo_Changed", "Tu_Changed"
         ],
-        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       },
       { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
       { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
     ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"{Domain}\", \"{BuffId}\", {Stacks}, {Duration})"
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_attack_contest_boost_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次攻击强化",
+    "Desc": "给自己施加{BuffId}，首次匹配的攻击拼点增加{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Attack_Changed_Once", "Zhan_Changed_Once",
+          "Ci_Changed_Once", "Da_Changed_Once",
+          "SheJi_Changed_Once", "Jin_Changed_Once",
+          "Mu_Changed_Once", "Shui_Changed_Once",
+          "Huo_Changed_Once", "Tu_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_attack_contest_weaken",
+    "APIType": "Action",
+    "DisplayName": "给对手持续攻击弱化",
+    "Desc": "给对手施加{BuffId}，每次匹配的攻击拼点减少{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Attack_Changed", "Zhan_Changed",
+          "Ci_Changed", "Da_Changed",
+          "SheJi_Changed", "Jin_Changed",
+          "Mu_Changed", "Shui_Changed",
+          "Huo_Changed", "Tu_Changed"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_attack_contest_weaken_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次攻击弱化",
+    "Desc": "给对手施加{BuffId}，首次匹配的攻击拼点减少{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Attack_Changed_Once", "Zhan_Changed_Once",
+          "Ci_Changed_Once", "Da_Changed_Once",
+          "SheJi_Changed_Once", "Jin_Changed_Once",
+          "Mu_Changed_Once", "Shui_Changed_Once",
+          "Huo_Changed_Once", "Tu_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", -{Stacks}, -1)"
+  },
+  {
+    "ID": "action_self_defense_contest_boost",
+    "APIType": "Action",
+    "DisplayName": "给自己持续防御强化",
+    "Desc": "给自己施加{BuffId}，每次匹配的防御拼点增加{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Defend_Changed", "Shield_Changed",
+          "Block_Changed", "Dodge_Changed"
+        ],
+        "Score": [0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_defense_contest_boost_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次防御强化",
+    "Desc": "给自己施加{BuffId}，首次匹配的防御拼点增加{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Defend_Changed_Once", "Shield_Changed_Once",
+          "Block_Changed_Once", "Dodge_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_defense_contest_weaken",
+    "APIType": "Action",
+    "DisplayName": "给对手持续防御弱化",
+    "Desc": "给对手施加{BuffId}，每次匹配的防御拼点减少{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Defend_Changed", "Shield_Changed",
+          "Block_Changed", "Dodge_Changed"
+        ],
+        "Score": [0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_defense_contest_weaken_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次防御弱化",
+    "Desc": "给对手施加{BuffId}，首次匹配的防御拼点减少{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "拼点"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "Defend_Changed_Once", "Shield_Changed_Once",
+          "Block_Changed_Once", "Dodge_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", -{Stacks}, -1)"
+  },
+  {
+    "ID": "action_self_damage_boost",
+    "APIType": "Action",
+    "DisplayName": "给自己持续伤害提高",
+    "Desc": "给自己施加{BuffId}，每次匹配的造成的伤害增加{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageOut_Changed", "Zhan_DamageOut_Changed",
+          "Ci_DamageOut_Changed", "Da_DamageOut_Changed",
+          "SheJi_DamageOut_Changed", "Jin_DamageOut_Changed",
+          "Mu_DamageOut_Changed", "Shui_DamageOut_Changed",
+          "Huo_DamageOut_Changed", "Tu_DamageOut_Changed"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_damage_boost_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次伤害提高",
+    "Desc": "给自己施加{BuffId}，首次匹配的造成的伤害增加{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageOut_Changed_Once", "Zhan_DamageOut_Changed_Once",
+          "Ci_DamageOut_Changed_Once", "Da_DamageOut_Changed_Once",
+          "SheJi_DamageOut_Changed_Once", "Jin_DamageOut_Changed_Once",
+          "Mu_DamageOut_Changed_Once", "Shui_DamageOut_Changed_Once",
+          "Huo_DamageOut_Changed_Once", "Tu_DamageOut_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_damage_weaken",
+    "APIType": "Action",
+    "DisplayName": "给对手持续出伤弱化",
+    "Desc": "给对手施加{BuffId}，每次匹配的造成的伤害减少{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageOut_Changed", "Zhan_DamageOut_Changed",
+          "Ci_DamageOut_Changed", "Da_DamageOut_Changed",
+          "SheJi_DamageOut_Changed", "Jin_DamageOut_Changed",
+          "Mu_DamageOut_Changed", "Shui_DamageOut_Changed",
+          "Huo_DamageOut_Changed", "Tu_DamageOut_Changed"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_damage_weaken_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次出伤弱化",
+    "Desc": "给对手施加{BuffId}，首次匹配的造成的伤害减少{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageOut_Changed_Once", "Zhan_DamageOut_Changed_Once",
+          "Ci_DamageOut_Changed_Once", "Da_DamageOut_Changed_Once",
+          "SheJi_DamageOut_Changed_Once", "Jin_DamageOut_Changed_Once",
+          "Mu_DamageOut_Changed_Once", "Shui_DamageOut_Changed_Once",
+          "Huo_DamageOut_Changed_Once", "Tu_DamageOut_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", -{Stacks}, -1)"
+  },
+  {
+    "ID": "action_self_damage_resist",
+    "APIType": "Action",
+    "DisplayName": "给自己持续伤害抗性",
+    "Desc": "给自己施加{BuffId}，每次匹配的受到的伤害减少{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageIn_Changed", "Zhan_DamageIn_Changed",
+          "Ci_DamageIn_Changed", "Da_DamageIn_Changed",
+          "SheJi_DamageIn_Changed", "Jin_DamageIn_Changed",
+          "Mu_DamageIn_Changed", "Shui_DamageIn_Changed",
+          "Huo_DamageIn_Changed", "Tu_DamageIn_Changed"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_damage_resist_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次伤害抗性",
+    "Desc": "给自己施加{BuffId}，首次匹配的受到的伤害减少{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageIn_Changed_Once", "Zhan_DamageIn_Changed_Once",
+          "Ci_DamageIn_Changed_Once", "Da_DamageIn_Changed_Once",
+          "SheJi_DamageIn_Changed_Once", "Jin_DamageIn_Changed_Once",
+          "Mu_DamageIn_Changed_Once", "Shui_DamageIn_Changed_Once",
+          "Huo_DamageIn_Changed_Once", "Tu_DamageIn_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"{BuffId}\", -{Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_damage_vulnerability",
+    "APIType": "Action",
+    "DisplayName": "给对手持续易伤",
+    "Desc": "给对手施加{BuffId}，每次匹配的受到的伤害增加{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageIn_Changed", "Zhan_DamageIn_Changed",
+          "Ci_DamageIn_Changed", "Da_DamageIn_Changed",
+          "SheJi_DamageIn_Changed", "Jin_DamageIn_Changed",
+          "Mu_DamageIn_Changed", "Shui_DamageIn_Changed",
+          "Huo_DamageIn_Changed", "Tu_DamageIn_Changed"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_damage_vulnerability_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次易伤",
+    "Desc": "给对手施加{BuffId}，首次匹配的受到的伤害增加{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "伤害"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      {
+        "Name": "BuffId",
+        "Type": "String",
+        "Value": [
+          "All_DamageIn_Changed_Once", "Zhan_DamageIn_Changed_Once",
+          "Ci_DamageIn_Changed_Once", "Da_DamageIn_Changed_Once",
+          "SheJi_DamageIn_Changed_Once", "Jin_DamageIn_Changed_Once",
+          "Mu_DamageIn_Changed_Once", "Shui_DamageIn_Changed_Once",
+          "Huo_DamageIn_Changed_Once", "Tu_DamageIn_Changed_Once"
+        ],
+        "Score": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_self_heal_boost",
+    "APIType": "Action",
+    "DisplayName": "给自己持续治疗提高",
+    "Desc": "自己每次施加的治疗量提高{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "治疗"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_HealOut_Changed\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_heal_boost_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次治疗提高",
+    "Desc": "自己首次施加的治疗量提高{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "治疗"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_HealOut_Changed_Once\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_heal_received_weaken",
+    "APIType": "Action",
+    "DisplayName": "给对手持续受疗降低",
+    "Desc": "对手每次接受的治疗量降低{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "治疗"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_HealIn_Changed\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_heal_received_weaken_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次受疗降低",
+    "Desc": "对手首次接受的治疗量降低{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "治疗"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_HealIn_Changed_Once\", -{Stacks}, -1)"
+  },
+  {
+    "ID": "action_self_shield_gain_boost",
+    "APIType": "Action",
+    "DisplayName": "给自己持续灵盾获得量提高",
+    "Desc": "自己每次灵盾获得量提高{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "灵盾"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_ShieldGain_Changed\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_shield_gain_boost_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次灵盾获得量提高",
+    "Desc": "自己首次灵盾获得量提高{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "灵盾"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_ShieldGain_Changed_Once\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_shield_gain_weaken",
+    "APIType": "Action",
+    "DisplayName": "给对手持续灵盾获得量降低",
+    "Desc": "对手每次灵盾获得量降低{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "灵盾"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_ShieldGain_Changed\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_shield_gain_weaken_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次灵盾获得量降低",
+    "Desc": "对手首次灵盾获得量降低{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "灵盾"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_ShieldGain_Changed_Once\", -{Stacks}, -1)"
+  },
+  {
+    "ID": "action_self_mp_recovery_boost",
+    "APIType": "Action",
+    "DisplayName": "给自己持续MP 回复量提高",
+    "Desc": "自己每次MP 回复量提高{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "MP"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_MpRecovery_Changed\", {Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_self_mp_recovery_boost_once",
+    "APIType": "Action",
+    "DisplayName": "给自己单次MP 回复量提高",
+    "Desc": "自己首次MP 回复量提高{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "MP"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_MpRecovery_Changed_Once\", {Stacks}, -1)"
+  },
+  {
+    "ID": "action_target_mp_recovery_weaken",
+    "APIType": "Action",
+    "DisplayName": "给对手持续MP 回复量降低",
+    "Desc": "对手每次MP 回复量降低{Stacks}点，首次施加期限为{Duration}",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "MP"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
+      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_MpRecovery_Changed\", -{Stacks}, {Duration})"
+  },
+  {
+    "ID": "action_target_mp_recovery_weaken_once",
+    "APIType": "Action",
+    "DisplayName": "给对手单次MP 回复量降低",
+    "Desc": "对手首次MP 回复量降低{Stacks}点",
+    "FuncName": "AddNpcBuff",
+    "Tags": ["Buff", "MP"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
+    ],
+    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_MpRecovery_Changed_Once\", -{Stacks}, -1)"
   },
   {
     "ID": "action_add_stat_buff",

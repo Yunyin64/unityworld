@@ -1,0 +1,106 @@
+[
+  {
+    "ID": "roster_zhu_xia",
+    "DisplayName": "祝夏",
+    "Surname": "祝",
+    "GivenName": "夏",
+    "DaoTitle": "",
+    "Gender": "Female",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitStat": {
+      "QiXue": 8,
+      "TiPo": 10,
+      "QiGan": 30,
+      "LingJi": 10,
+      "ShenShi": 11,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "MainGongFaId": "roster_ember_gather",
+    "InitCardPlacements": [
+      {
+        "Key": "roster_ember_gather",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_ember_fan",
+        "Value": {
+          "X": 1,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_zhu_xia_fan_shot",
+        "Value": {
+          "X": 2,
+          "Y": 4
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_cinder_pellet",
+        "Value": {
+          "X": 2,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "card_huo_shot",
+        "Value": {
+          "X": 2,
+          "Y": 1
+        }
+      },
+      {
+        "Key": "roster_zhu_xia_fan_step",
+        "Value": {
+          "X": 5,
+          "Y": 4
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_zhu_xia_kiln_thorn",
+        "Value": {
+          "X": 3,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_trail_ration",
+        "Value": {
+          "X": 1,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_mana_sand",
+        "Value": {
+          "X": 5,
+          "Y": 5
+        }
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "roster_ember_gather",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 2,
+        "CardID": "roster_ember_fan",
+        "EquipID": "roster_fire_fan"
+      }
+    ]
+  }
+]

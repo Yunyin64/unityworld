@@ -1,0 +1,100 @@
+[
+  {
+    "ID": "roster_shi_gang_return",
+    "DisplayName": "回墙符",
+    "Desc": "生成 4 点土系射击。若已有至少 2 灵盾，射击增至 5 点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_shi_gang_lantern",
+    "DisplayName": "隘灯",
+    "Desc": "己方首次灵盾实际吸收达成蓄力阈值时，回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_hold_pass",
+    "DisplayName": "守隘功",
+    "Desc": "持久盾每轮累计吸收 3 点伤害时，获得一次 +1 防御拼点强化。每轮至多一次，且同一时间最多存一份。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_earth_spear",
+    "DisplayName": "镇尘枪",
+    "Desc": "激活期内，每个己方扫描轮首次赢得拼点时，若灵盾不足 3，获得 1 灵盾。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Tu": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_spear_thrust",
+    "DisplayName": "枪刺",
+    "Desc": "以枪身的攻击值生成刺击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_spear_bar",
+    "DisplayName": "横枪",
+    "Desc": "以枪身的防御值生成格挡。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_shi_gang_pass_needle",
+    "DisplayName": "隘口水刺",
+    "Desc": "生成 5 点水系刺击。己方以格挡赢得对拼后，至下一轮结束，首次使用本卡的拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  }
+]

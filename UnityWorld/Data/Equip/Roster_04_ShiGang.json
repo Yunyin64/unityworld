@@ -1,0 +1,15 @@
+[
+  {
+    "ID": "roster_pass_spear",
+    "DisplayName": "石纹长枪",
+    "Size": 2,
+    "AttackBase": 5,
+    "DefendBase": 4,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_spear_thrust",
+      "roster_spear_bar"
+    ]
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "ID": "All_ShieldGain_Changed",
+    "DisplayName": "灵盾获得量提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "ShieldGain",
+      "Range": "All",
+      "Once": false
+    }
+  },
+  {
+    "ID": "All_ShieldGain_Changed_Once",
+    "DisplayName": "单次灵盾获得量提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "ShieldGain",
+      "Range": "All",
+      "Once": true
+    }
+  },
+  {
+    "ID": "All_MpRecovery_Changed",
+    "DisplayName": "MP 回复量提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "MpRecovery",
+      "Range": "All",
+      "Once": false
+    }
+  },
+  {
+    "ID": "All_MpRecovery_Changed_Once",
+    "DisplayName": "单次MP 回复量提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "MpRecovery",
+      "Range": "All",
+      "Once": true
+    }
+  }
+]

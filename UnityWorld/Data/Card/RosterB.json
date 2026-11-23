@@ -1,0 +1,128 @@
+[
+  {
+    "ID": "roster_bow_shot",
+    "DisplayName": "弩射",
+    "Desc": "以弩架攻击值生成射击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_bow_guard",
+    "DisplayName": "拦弩",
+    "Desc": "以弩架防御值生成格挡。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_vine_strike",
+    "DisplayName": "藤刺",
+    "Desc": "以藤杖攻击值生成刺击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_vine_guard",
+    "DisplayName": "架藤",
+    "Desc": "以藤杖防御值生成格挡。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_copper_cauldron",
+    "DisplayName": "薄铜炉",
+    "Desc": "激活或续期时，给上方共边法术提供冻结免疫，失活后免疫消失。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Huo": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_iron_shear",
+    "DisplayName": "断楔",
+    "Desc": "移除对手至多 3 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_reed_cut",
+    "DisplayName": "苇叶斩",
+    "Desc": "生成 5 点木系斩击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_cold_pierce",
+    "DisplayName": "凝霜针",
+    "Desc": "生成 5 点水系刺击。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_white_ash",
+    "DisplayName": "炉灰布",
+    "Desc": "开场获 2 护甲，抵消首次异方伤害的至多 2 点。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  }
+]

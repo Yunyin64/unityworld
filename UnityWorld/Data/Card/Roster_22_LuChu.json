@@ -1,0 +1,114 @@
+[
+  {
+    "ID": "roster_lu_chu_mirror",
+    "DisplayName": "照罅镜",
+    "Desc": "激活期间，每当己方打空异方灵盾，推进己方 5 基准 Tick。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Jin": 1,
+      "Tu": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_lu_chu_probe",
+    "DisplayName": "探罅刺",
+    "Desc": "以镜柄攻击值生成金系刺击。若目标没有灵盾，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lu_chu_cover",
+    "DisplayName": "推镜架",
+    "Desc": "以镜柄防御值生成护盾拼点。当前持有至少 3 灵盾时，拼点降低 1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lu_chu_grit",
+    "DisplayName": "磨盾砂",
+    "Desc": "生成 4 点金系斩击。效果结算时，破掉目标至多 1 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lu_chu_counter",
+    "DisplayName": "碎片筹",
+    "Desc": "本场第一次由己方实际打空异方灵盾时，回复 2 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_lu_chu_chisel",
+    "DisplayName": "钉盾錾",
+    "Desc": "对手有灵盾时生成 3 点金系打击，无遮蔽时生成 4 点金系射击。效果结算时破目标至多 2 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lu_chu_scar_stone",
+    "DisplayName": "映痕石",
+    "Desc": "生成 4 点土系射击。对手无灵盾时，拼点 +1。效果结算时破目标至多 1 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Tu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_lu_chu_gap",
+    "DisplayName": "找罅诀",
+    "Desc": "己方每轮第一次由己方法术效果打空异方灵盾时，积存下一次攻击拼点 +1。已有一次性攻击加成时不加第二份。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  }
+]

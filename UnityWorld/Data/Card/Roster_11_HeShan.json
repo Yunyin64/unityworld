@@ -1,0 +1,92 @@
+[
+  {
+    "ID": "roster_service_bow",
+    "DisplayName": "换匣弩",
+    "Desc": "激活期间，每当下邻消耗品成功发动，弩架当轮攻击 +2。每轮至多一次。上限 1 发，空弹且失活后离场。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "Amount",
+      "Flexible",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ProducesContest": false,
+    "AmountMax": 1
+  },
+  {
+    "ID": "roster_he_shan_shot",
+    "DisplayName": "续匣箭",
+    "Desc": "以快拆弩架攻击值生成金系射击。效果结算时，若已找不到场上的父弩，破对手 1 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_he_shan_bar",
+    "DisplayName": "空匣拦",
+    "Desc": "以快拆弩架防御值生成格挡。父弩已离场或弹药已耗尽时，拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_keep_magazine",
+    "DisplayName": "匣机诀",
+    "Desc": "首次开轮为法宝补一枚金灵元。己方每轮首次有灵活卡实际离场时推进 5 基准 Tick。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_packing",
+    "DisplayName": "备用弹匣",
+    "Desc": "发动扣 1 份，给上方共边卡补 1 发弹药。总共两份，耗尽后离场。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "Item",
+      "Consume",
+      "Flexible"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": false,
+    "StackMax": 2
+  },
+  {
+    "ID": "roster_powder_bag",
+    "DisplayName": "火末袋",
+    "Desc": "每场第一次己方卡实际耗尽弹药时，回复 3 MP。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  }
+]

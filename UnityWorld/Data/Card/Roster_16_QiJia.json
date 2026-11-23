@@ -1,0 +1,88 @@
+[
+  {
+    "ID": "roster_reed_cane",
+    "DisplayName": "青苇杖",
+    "Desc": "激活期间，每当己方法术实际滑移，回复 1 MP。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_qi_jia_prick",
+    "DisplayName": "理线刺",
+    "Desc": "以藤杖攻击值生成木系刺击。己方法术实际滑过后，下一次理线刺 +1，不叠加。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_qi_jia_brace",
+    "DisplayName": "控梭架",
+    "Desc": "以藤杖防御值生成水灵元点亮的格挡。己方法术实际滑过后，下一次控梭架 +1，不叠加。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_kite_return",
+    "DisplayName": "引梭诀",
+    "Desc": "己方每轮第一次有己方法术实际滑移时，令下一次斩击拼点 +1。已有一份加成时不叠加。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_kite_cast",
+    "DisplayName": "放线",
+    "Desc": "把本卡下方共边的一卡向右滑到下一个阻挡物前。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Mu": 1
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_kite_reel",
+    "DisplayName": "收线斩",
+    "Desc": "生成 4 点水系斩击。效果结算时把本卡上方共边的一卡向左滑到下一个阻挡物前。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  }
+]

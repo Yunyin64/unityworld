@@ -38,13 +38,16 @@ public static partial class TcaAlignmentTests
             scene.Start();
             var owner = scene.GetCombatants()[a.Id];
             var opponent = scene.GetCombatants()[b.Id];
+            VerifyValueBuffActions(lua, owner, opponent);
             VerifySelectors(lua, owner, opponent);
             VerifyResourceSettlement(lua, owner, opponent);
+            VerifyHealingBuffs(lua, owner, opponent);
             VerifyContestEvents(owner, opponent);
             VerifyContestPair(lua, owner, opponent);
             VerifyDamageDefense(lua, owner, opponent);
             VerifyDeflection(lua, owner, opponent);
             VerifyContestBuffs(lua, owner);
+            VerifyValueBuffStacks(owner);
             VerifyWoundSelection(lua, owner);
         }
         finally
@@ -52,6 +55,8 @@ public static partial class TcaAlignmentTests
             scene.Cleanup();
         }
         VerifyNextStabOnScan(lua);
+        VerifyDamageValueBuffs(lua);
+        VerifyResourceValueBuffs(lua);
         VerifyRoundEffects(lua);
         VerifySimultaneousRoundEffects(lua);
         VerifyEquipmentAndAffinity(lua);

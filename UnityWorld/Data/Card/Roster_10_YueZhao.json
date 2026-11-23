@@ -1,0 +1,100 @@
+[
+  {
+    "ID": "roster_rivet_bow",
+    "DisplayName": "挑铆弩",
+    "Desc": "激活期间，每当己方法术实际支付金灵元，弩架当轮攻击 +1。每轮至多一次。",
+    "Rarity": 0,
+    "Size": 2,
+    "Keywords": [
+      "FaBao",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Jin": 2
+    },
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_yue_zhao_bolt",
+    "DisplayName": "拉铆射",
+    "Desc": "以弩架攻击值生成金系射击，读取挑铆弩当轮已经获得的攻击加成。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_yue_zhao_guard",
+    "DisplayName": "贴甲引弦",
+    "Desc": "以弩架防御值生成格挡。若生成时对手已有待发攻击，则拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_yue_zhao_nail",
+    "DisplayName": "挑盾钉",
+    "Desc": "生成 3 点金系刺击，对手没有灵盾时为 4 点。结算时破掉对手至多 2 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "ProducesContest": true
+  },
+  {
+    "ID": "roster_yue_zhao_leather",
+    "DisplayName": "磨铆皮",
+    "Desc": "己方首次打空异方持久盾时，本轮获得 1 坚甲。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "Passive",
+      "Item"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_rivet_finder",
+    "DisplayName": "断铆诀",
+    "Desc": "己方每轮首次赢得拼点时，移除对手至多 1 灵盾。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "GongFa",
+      "Passive"
+    ],
+    "ManaCost": {},
+    "ProducesContest": false
+  },
+  {
+    "ID": "roster_yue_zhao_seam_pierce",
+    "DisplayName": "清铆水刺",
+    "Desc": "生成 5 点水系刺击。己方以效果清空敌人灵盾后，至下一轮结束，首次使用本卡的拼点 +1。",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "FaShu",
+      "SubPassive"
+    ],
+    "ManaCost": {
+      "Shui": 1
+    },
+    "ProducesContest": true
+  }
+]

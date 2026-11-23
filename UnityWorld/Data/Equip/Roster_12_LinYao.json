@@ -1,0 +1,14 @@
+[
+  {
+    "ID": "roster_gourd_stem",
+    "DisplayName": "藤柄葫芦",
+    "Size": 2,
+    "AttackBase": 4,
+    "DefendBase": 2,
+    "SpeedBase": 5,
+    "AmountBase": 3,
+    "FormListBase": [
+      "roster_coil_rattle"
+    ]
+  }
+]

@@ -1,2 +1,0 @@
--- KeywordRules.lua
--- 已废弃：Keyword 派生逻辑已移至各 Keyword 文件的 CheckCondition 函数

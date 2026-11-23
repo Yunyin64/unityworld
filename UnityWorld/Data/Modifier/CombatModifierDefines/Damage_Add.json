@@ -1,66 +1,534 @@
 [
   {
-    "ID": "Zhan_Damage_Add",
-    "DisplayName": "斩击增伤",
+    "ID": "All_DamageOut_Changed",
+    "DisplayName": "全伤害提高",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "All",
+      "Once": false
+    }
   },
   {
-    "ID": "Ci_Damage_Add",
-    "DisplayName": "刺击增伤",
+    "ID": "All_DamageOut_Changed_Once",
+    "DisplayName": "单次全伤害提高",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "All",
+      "Once": true
+    }
   },
   {
-    "ID": "Da_Damage_Add",
-    "DisplayName": "钝击增伤",
+    "ID": "Zhan_DamageOut_Changed",
+    "DisplayName": "斩击伤害提高",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Zhan",
+      "Once": false,
+      "LegacyId": "Zhan_Damage_Add"
+    }
   },
   {
-    "ID": "SheJi_Damage_Add",
-    "DisplayName": "射击增伤",
+    "ID": "Zhan_DamageOut_Changed_Once",
+    "DisplayName": "单次斩击伤害提高",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Zhan",
+      "Once": true
+    }
   },
   {
-    "ID": "Zhan_Resist",
+    "ID": "Ci_DamageOut_Changed",
+    "DisplayName": "刺击伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Ci",
+      "Once": false,
+      "LegacyId": "Ci_Damage_Add"
+    }
+  },
+  {
+    "ID": "Ci_DamageOut_Changed_Once",
+    "DisplayName": "单次刺击伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Ci",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Da_DamageOut_Changed",
+    "DisplayName": "钝击伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Da",
+      "Once": false,
+      "LegacyId": "Da_Damage_Add"
+    }
+  },
+  {
+    "ID": "Da_DamageOut_Changed_Once",
+    "DisplayName": "单次钝击伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Da",
+      "Once": true
+    }
+  },
+  {
+    "ID": "SheJi_DamageOut_Changed",
+    "DisplayName": "射击伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "SheJi",
+      "Once": false,
+      "LegacyId": "SheJi_Damage_Add"
+    }
+  },
+  {
+    "ID": "SheJi_DamageOut_Changed_Once",
+    "DisplayName": "单次射击伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "SheJi",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Jin_DamageOut_Changed",
+    "DisplayName": "金系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Jin",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Jin_DamageOut_Changed_Once",
+    "DisplayName": "单次金系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Jin",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Mu_DamageOut_Changed",
+    "DisplayName": "木系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Mu",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Mu_DamageOut_Changed_Once",
+    "DisplayName": "单次木系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Mu",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Shui_DamageOut_Changed",
+    "DisplayName": "水系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Shui",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Shui_DamageOut_Changed_Once",
+    "DisplayName": "单次水系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Shui",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Huo_DamageOut_Changed",
+    "DisplayName": "火系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Huo",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Huo_DamageOut_Changed_Once",
+    "DisplayName": "单次火系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Huo",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Tu_DamageOut_Changed",
+    "DisplayName": "土系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Tu",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Tu_DamageOut_Changed_Once",
+    "DisplayName": "单次土系伤害提高",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageOut",
+      "Range": "Tu",
+      "Once": true
+    }
+  },
+  {
+    "ID": "All_DamageIn_Changed",
+    "DisplayName": "全伤害抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "All",
+      "Once": false
+    }
+  },
+  {
+    "ID": "All_DamageIn_Changed_Once",
+    "DisplayName": "单次全伤害抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "All",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Zhan_DamageIn_Changed",
     "DisplayName": "斩击抗性",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Zhan",
+      "Once": false,
+      "LegacyId": "Zhan_Resist",
+      "InvertLegacyStacks": true
+    }
   },
   {
-    "ID": "Ci_Resist",
+    "ID": "Zhan_DamageIn_Changed_Once",
+    "DisplayName": "单次斩击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Zhan",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Ci_DamageIn_Changed",
     "DisplayName": "刺击抗性",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Ci",
+      "Once": false,
+      "LegacyId": "Ci_Resist",
+      "InvertLegacyStacks": true
+    }
   },
   {
-    "ID": "Da_Resist",
+    "ID": "Ci_DamageIn_Changed_Once",
+    "DisplayName": "单次刺击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Ci",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Da_DamageIn_Changed",
     "DisplayName": "钝击抗性",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Da",
+      "Once": false,
+      "LegacyId": "Da_Resist",
+      "InvertLegacyStacks": true
+    }
   },
   {
-    "ID": "SheJi_Resist",
+    "ID": "Da_DamageIn_Changed_Once",
+    "DisplayName": "单次钝击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Da",
+      "Once": true
+    }
+  },
+  {
+    "ID": "SheJi_DamageIn_Changed",
     "DisplayName": "射击抗性",
     "Duration": -1,
     "MaxStack": 99,
     "RefreshOnStack": false,
-    "StatModifiers": []
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "SheJi",
+      "Once": false,
+      "LegacyId": "SheJi_Resist",
+      "InvertLegacyStacks": true
+    }
+  },
+  {
+    "ID": "SheJi_DamageIn_Changed_Once",
+    "DisplayName": "单次射击抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "SheJi",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Jin_DamageIn_Changed",
+    "DisplayName": "金系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Jin",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Jin_DamageIn_Changed_Once",
+    "DisplayName": "单次金系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Jin",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Mu_DamageIn_Changed",
+    "DisplayName": "木系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Mu",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Mu_DamageIn_Changed_Once",
+    "DisplayName": "单次木系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Mu",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Shui_DamageIn_Changed",
+    "DisplayName": "水系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Shui",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Shui_DamageIn_Changed_Once",
+    "DisplayName": "单次水系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Shui",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Huo_DamageIn_Changed",
+    "DisplayName": "火系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Huo",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Huo_DamageIn_Changed_Once",
+    "DisplayName": "单次火系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Huo",
+      "Once": true
+    }
+  },
+  {
+    "ID": "Tu_DamageIn_Changed",
+    "DisplayName": "土系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Tu",
+      "Once": false
+    }
+  },
+  {
+    "ID": "Tu_DamageIn_Changed_Once",
+    "DisplayName": "单次土系抗性",
+    "Duration": -1,
+    "MaxStack": 99,
+    "RefreshOnStack": false,
+    "StatModifiers": [],
+    "ValueChange": {
+      "Stage": "DamageIn",
+      "Range": "Tu",
+      "Once": true
+    }
   }
 ]

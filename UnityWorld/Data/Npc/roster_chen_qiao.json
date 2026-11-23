@@ -1,0 +1,106 @@
+[
+  {
+    "ID": "roster_chen_qiao",
+    "DisplayName": "陈樵",
+    "Surname": "陈",
+    "GivenName": "樵",
+    "DaoTitle": "",
+    "Gender": "Female",
+    "NpcType": "Human",
+    "InitAge": 25,
+    "InitCultivationLevel": 2,
+    "InitialTraits": [],
+    "InitStat": {
+      "QiXue": 8,
+      "TiPo": 10,
+      "QiGan": 30,
+      "LingJi": 10,
+      "ShenShi": 12,
+      "WuXing": 10,
+      "JiYuan": 10,
+      "MeiLi": 10
+    },
+    "MainGongFaId": "roster_rolling_grit",
+    "InitCardPlacements": [
+      {
+        "Key": "roster_rolling_grit",
+        "Value": {
+          "X": 3,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_stone_flail",
+        "Value": {
+          "X": 1,
+          "Y": 3
+        }
+      },
+      {
+        "Key": "roster_flail_hit",
+        "Value": {
+          "X": 2,
+          "Y": 1
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_wind_push",
+        "Value": {
+          "X": 4,
+          "Y": 2
+        }
+      },
+      {
+        "Key": "roster_stone_pebble",
+        "Value": {
+          "X": 2,
+          "Y": 4
+        }
+      },
+      {
+        "Key": "roster_flail_guard",
+        "Value": {
+          "X": 1,
+          "Y": 5
+        },
+        "ParentPlacementIndex": 2
+      },
+      {
+        "Key": "roster_wood_thorn",
+        "Value": {
+          "X": 4,
+          "Y": 5
+        }
+      },
+      {
+        "Key": "roster_counterweight",
+        "Value": {
+          "X": 5,
+          "Y": 4
+        }
+      },
+      {
+        "Key": "roster_mana_sand",
+        "Value": {
+          "X": 1,
+          "Y": 2
+        }
+      }
+    ],
+    "InitGongFa": [
+      {
+        "PlacementIndex": 1,
+        "DefineId": "roster_rolling_grit",
+        "CurrentPoint": 100
+      }
+    ],
+    "InitEquip": [
+      {
+        "PlacementIndex": 2,
+        "CardID": "roster_stone_flail",
+        "EquipID": "roster_sand_flail"
+      }
+    ]
+  }
+]

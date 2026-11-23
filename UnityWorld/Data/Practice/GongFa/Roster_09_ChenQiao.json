@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "roster_rolling_grit",
+    "DisplayName": "推砾功",
+    "Desc": "每个己方轮第一次实际推动异方卡时，自身背包推进 6 基准 Tick。",
+    "BackpackWidth": 5,
+    "BackpackHeight": 5,
+    "PathType": "Wu",
+    "RealmLevel": 1,
+    "MaxPoint": 100,
+    "Completeness": 1,
+    "Points": [
+      {
+        "Threshold": 40,
+        "Type": "Card",
+        "RefId": "roster_wind_push"
+      }
+    ]
+  }
+]
