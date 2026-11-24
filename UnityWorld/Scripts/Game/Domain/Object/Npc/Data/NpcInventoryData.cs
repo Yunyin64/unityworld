@@ -24,11 +24,13 @@ namespace UnityWorld.Game.Domain
             return GetAllItems().Where(c => c.HasKeyword("Consume")).ToList();
         }
 
+        /// <summary>浅复制角色物品栏数据</summary>
         public IDomainDataBase Clone()
         {
             return (NpcInventoryData)MemberwiseClone();
         }
 
+        /// <summary>输出角色物品的数量及叠加信息</summary>
         public void Log()
         {
             var items = GetAllItems();

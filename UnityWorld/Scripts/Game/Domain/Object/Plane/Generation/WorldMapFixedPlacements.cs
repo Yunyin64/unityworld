@@ -6,6 +6,7 @@ public static partial class WorldMapGenerator
 {
     // Fixed positions use absolute odd-r Offset anchors. Template cells remain relative Axial offsets.
     // Repeated anchors reuse the same small template; no border direction or theme lives in the algorithm.
+    /// <summary>按配置的强制锚点放置地区并锁定占地</summary>
     private static void InstallFixedRegions(Context c)
     {
         foreach (var def in c.Regions.Values.Where(d => d.ForcedPositions.Count > 0))
@@ -43,6 +44,7 @@ public static partial class WorldMapGenerator
     }
 
     // Position reservation only: actual natural/artificial entities are still created around the snapshot.
+    /// <summary>为要求绝对位置的地标登记固定落点</summary>
     private static void InstallFixedLandmarks(Context c)
     {
         foreach (var def in c.Catalog.LandMarks.Values.OrderBy(d => d.ID, StringComparer.Ordinal))

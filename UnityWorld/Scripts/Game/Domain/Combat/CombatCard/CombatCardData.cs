@@ -9,8 +9,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>读取同场战斗的装备快照及有效战斗修正。</summary>
         public override Equip GetEquip() => Owner?.ReadBattleEquipment(Id);
 
+        /// <summary>按编号查战斗内可用的装备父卡</summary>
         protected override Card FindEquipmentCard(int id) => Owner?.FindBattleCard(id);
 
+        /// <summary>读取带战斗临时修正的绑定装备</summary>
         protected override Equip ReadBoundEquipment(Card equipmentCard) => Owner?.ReadBattleEquipment(equipmentCard.Id);
 
         /// <summary>本卡在持有者场上卡牌列表中的位置。</summary>
@@ -18,6 +20,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         // ── 阶段与计数 ──
 
+        /// <summary>旧版就绪状态字段</summary>
         private bool isReady;
         /// <summary>写入旧脚本可读的就绪标记。</summary>
         public void SetReady(bool ready) => isReady = ready;
@@ -25,6 +28,7 @@ namespace UnityWorld.Game.Domain.Combat
         public bool IsReady() => isReady;
 
         // 法术与招式每次发动只结算一次。法宝发动与常驻被动的开场结算各走自己的时序。
+        /// <summary>已提交的用卡是否仍待生效</summary>
         private bool AwaitingApply => UseCount != ApplyCount && CallMainKeyword("PaidUseAwaitsApply") is true;
 
         // 只在发动提交时累计；离场再入场沿用本轮次数，由所属背包换轮时清零。
@@ -36,10 +40,13 @@ namespace UnityWorld.Game.Domain.Combat
 
         // ── 固定与冻结 ──
 
+        /// <summary>锚定持续至哪一轮</summary>
         private int _rootedThroughRound;
 
+        /// <summary>当前轮是否仍受锚定</summary>
         internal bool IsRooted => Owner != null && _rootedThroughRound >= Owner.Backpack.Round;
 
+        /// <summary>延长在场卡牌的锚定期限</summary>
         internal void Root(int rounds)
         {
             if (rounds <= 0 || Owner == null || !Owner.Backpack.Placements.ContainsKey(Id)) return;
@@ -51,8 +58,10 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>本卡是否会在下次完整扫描时跳过发动并解冻。</summary>
         public bool IsFrozen { get; private set; }
+        /// <summary>按方向和关键词生效的抗冻结光环</summary>
         private readonly HashSet<(string Direction, string Keyword)> _freezeImmunityAuras = new();
 
+        /// <summary>注册覆盖指定方位和关键词的抗冻结光环</summary>
         internal void GrantFreezeImmunityAura(string direction, string keyword)
         {
             if (direction is not ("All" or "Up" or "Down" or "Left" or "Right" or "Neighbor")) return;
@@ -60,6 +69,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // 冻结时按当前布局查覆盖，来源失活和滑移会即时反映在判定中。
+        /// <summary>检查本卡是否处在可响应的抗冻结光环内</summary>
         internal bool IsFreezeImmune()
         {
             if (Owner == null || !Owner.Backpack.Placements.TryGetValue(Id, out var cells)) return false;
@@ -95,6 +105,7 @@ namespace UnityWorld.Game.Domain.Combat
             return true;
         }
 
+        /// <summary>在完整扫描末格解冻，并报告是否因此跳过发动</summary>
         internal bool ConsumeFreezeAtScanEnd()
         {
             if (!Thaw()) return false;

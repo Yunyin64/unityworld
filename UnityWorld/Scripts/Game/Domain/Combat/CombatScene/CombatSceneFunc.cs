@@ -3,6 +3,7 @@ namespace UnityWorld.Game.Domain.Combat
     public partial class CombatScene
     {
         // 同一批里每个到行的角色先各扫一行。充能带来的多余进度留给下一批。
+        /// <summary>分批处理达到行扫描进度的活跃角色</summary>
         private void ScanReadyRows()
         {
             var batches = 0;
@@ -33,6 +34,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>固定本批待发拼点的配对，再逐对结算</summary>
         private static void ResolveBoundaryContests(List<CombatNpc> due)
         {
             // 先固定本批的双方待发槽，再统一执行。前一对拼点的回调可能改变后续待发槽。
@@ -52,6 +54,7 @@ namespace UnityWorld.Game.Domain.Combat
                 pair.Owner.ProcessContestAtBoundary(pair.Own, pair.Target, pair.Other);
         }
 
+        /// <summary>处理轮末待发和轮末事件，结算变化后换行</summary>
         private void FinishScanRows(List<CombatNpc> due)
         {
             var endingRounds = due.Where(npc => npc.Backpack.Row == npc.Backpack.Height - 1).ToArray();
@@ -77,6 +80,7 @@ namespace UnityWorld.Game.Domain.Combat
             FlushCombatChanges();
         }
 
+        /// <summary>依次结算伤害、场上卡变化和角色战败</summary>
         private void FlushCombatChanges()
         {
             foreach (var npc in OrderedCombatants) npc.DealDamage();
@@ -84,6 +88,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var npc in OrderedCombatants) npc.CheckDefeated();
         }
 
+        /// <summary>给缺少有效对手的角色分配首个活跃敌人</summary>
         private void AssignTargets()
         {
             foreach (var npc in ActiveCombatants)

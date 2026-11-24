@@ -61,12 +61,14 @@ namespace UnityWorld.Game.Domain
             Delay = delay;
         }
 
+        /// <summary>输出剧情触发类别、配置和已触发状态</summary>
         public override void LogAllInfo()
         {
                 LogMgr.Instance.Dbg("│  StoryEntry: Trigger={0}, StoryId='{1}', StoryTags={2}, Chance={3}, Delay={4}, HasTriggered={5}",
                     Trigger, StoryId, StoryTags.ToInfoString(), Chance, Delay, HasTriggered);
         }
 
+        /// <summary>格式化触发类别与剧情编号</summary>
         public override string ToString()
         {
             return $"(Trigger={Trigger}, StoryId='{StoryId}')";

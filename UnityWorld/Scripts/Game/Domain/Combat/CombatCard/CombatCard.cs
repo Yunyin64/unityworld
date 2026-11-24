@@ -6,6 +6,7 @@ namespace UnityWorld.Game.Domain.Combat
     /// <summary>战斗卡的创建、发动、结算与离场时序。</summary>
     public partial class CombatCard : Card, ICombatEntity, ILuaBindable
     {
+        /// <summary>从世界卡复制的战斗独立数据</summary>
         private CardBaseData _combatBaseData = new();
         /// <summary>战斗私有快照，Lua 派生关键词和临时修改不会污染世界卡。</summary>
         public override CardBaseData BaseData => _combatBaseData;
@@ -107,6 +108,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (Phase == CombatCardPhase.Finished) SetPhase(ChargePhase);
         }
 
+        /// <summary>处理已提交的用卡并派发末格、耗灵和使用事件</summary>
         private void Use(IReadOnlyList<ElementType> paidMana)
         {
             // 脚本可在广播真正分派前移动卡。使用事件的方位始终取提交发动时的布局。

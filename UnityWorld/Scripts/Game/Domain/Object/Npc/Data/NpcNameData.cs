@@ -26,7 +26,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>道号（可随境界演变）</summary>
         public string DaoTitle { get; set; } = "";
 
-        /// <summary>完整显示名称（只读，拼接规则：道号 + 姓 + 名）</summary>
+        /// <summary>姓名（只读，拼接规则：姓 + 名）</summary>
         public string Name
         {
             get
@@ -35,6 +35,7 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>包含可选道号的完整显示名</summary>
         public string FullName
         {
             get
@@ -44,11 +45,13 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>浅复制角色姓名数据</summary>
         public NpcNameData Clone()
         {
             var copy = (NpcNameData)MemberwiseClone();
             return copy;
         }
+        /// <summary>通过领域数据接口复制姓名数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
 

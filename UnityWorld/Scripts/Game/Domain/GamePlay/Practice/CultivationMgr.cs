@@ -13,16 +13,21 @@ namespace UnityWorld.Game.Domain
     public class CultivationMgr : IGameplayMgrBase,ISoulBase
     {
         // ── 单例 ─────────────────────────────────────────────
+        /// <summary>当前修炼玩法管理器</summary>
         public static CultivationMgr Instance { get; private set; }
 
 
         // ── IDomainMgrBase 属性 ─────────────────────────────
+        /// <summary>管理器名称</summary>
         public string Name => "CultivationMgr";
+        /// <summary>修炼管理器职责说明</summary>
         public string Desc => "功法玩法管理器，管理修炼相关函数";
 
+        /// <summary>管理器的基础实体数据</summary>
         public SoulData Soul {get;}
 
         // ── 构造函数 ─────────────────────────────────────────
+        /// <summary>按种子初始化实体数据并登记实例</summary>
         public CultivationMgr(int seed)
         {
             Soul = new SoulData(seed);
@@ -60,7 +65,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 移除 NPC 持有的某个功法槽位。
-        /// 同时从激活列表中移除；若当前修炼的正好是该功法则清空。
+        /// 同时从激活列表和 GongFaMgr 中移除。
         /// </summary>
         public void RemoveCultivation(Npc npc, string defineId)
         {
@@ -158,37 +163,44 @@ namespace UnityWorld.Game.Domain
 
         // ── 生命周期方法（骨架占位）─────────────────────────
 
+        /// <summary>记录修炼管理器初始化日志</summary>
         public void Init()
         {
             LogMgr.Instance.Dbg("[CultivationMgr] 初始化完成（骨架模式）");
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()
         {
             // 依赖 NpcMgr、RealmDefineMgr、CultivationDefineMgr 已初始化
         }
 
+        /// <summary>保留修炼时步入口，当前不推进修炼</summary>
         public void Tick(float deltaTime)
         {
             // 修炼速度计算、元气关联、节点解锁等逻辑待实现
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()
         {
             // 轻量帧回调
         }
 
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt)
         {
             // 渲染更新
         }
 
+        /// <summary>释放修炼管理器实例</summary>
         public void End()
         {
             Instance = null;
         }
 
 
+        /// <summary>输出修炼管理器信息和功法定义数量</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg("┌── CultivationMgr · {0} ──────────────────────────", Name);

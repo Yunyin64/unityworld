@@ -35,6 +35,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 构造 ─────────────────────────────────────────
 
+        /// <summary>用特质编号和持有者编号构造实例</summary>
         public Trait(TraitId id, int ownerId)
         {
             Id = id;
@@ -72,6 +73,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 工具 ─────────────────────────────────────────
 
+        /// <summary>格式化特质编号、层数和持有者</summary>
         public override string ToString() => $"Trait({Id.Value} x{Stacks} owner={OwnerId})";
     }
 }

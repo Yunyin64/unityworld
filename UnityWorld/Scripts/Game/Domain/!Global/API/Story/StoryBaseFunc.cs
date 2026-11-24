@@ -52,7 +52,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 灵气/属性修改 ─────────────────────────────────────
 
-        /// <summary>修改地块五行浓度。参数：PlaneId(String), Element(String), Delta(Float)</summary>
+        /// <summary>修改地块五行浓度的预留入口，当前只记录参数。参数：PlaneId(String), Element(String), Delta(Float)</summary>
         [APIFunc("ModifyAura", APIType.Action, "修改地块五行浓度", Scope.Global, "PlaneId:String", "Element:String", "Delta:Float")]
         public static void ModifyAura(ContextBase ctx)
         {

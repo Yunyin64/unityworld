@@ -2,12 +2,19 @@ namespace UnityWorld.Game.Domain
 {
         public enum APIType
         {
+            /// <summary>未分类</summary>
             None,
+            /// <summary>数值计算</summary>
             Scale,
+            /// <summary>条件判定</summary>
             Condition,
+            /// <summary>战斗拼点</summary>
             Contest,
+            /// <summary>作用域选择</summary>
             Scope,
+            /// <summary>执行动作</summary>
             Action,
+            /// <summary>灵气操作</summary>
             Aura
         }
     /// <summary>
@@ -26,7 +33,9 @@ namespace UnityWorld.Game.Domain
         /// <summary>函数描述</summary>
         public string Desc { get; }
 
+        /// <summary>函数适用范围</summary>
         public Scope Scope { get; }
+        /// <summary>API 功能分类</summary>
         public APIType ApiType { get; }
 
         /// <summary>
@@ -39,7 +48,9 @@ namespace UnityWorld.Game.Domain
         /// 构造 APIFunc 标记
         /// </summary>
         /// <param name="funcName">函数名（全局唯一）</param>
+        /// <param name="type">函数的功能分类</param>
         /// <param name="desc">函数描述</param>
+        /// <param name="scope">函数适用的作用域</param>
         /// <param name="paramDefs">参数签名：每个元素为 "ParamName:Type" 或 "?ParamName:Type"</param>
         public APIFuncAttribute(string funcName,APIType type = APIType.None, string desc = "",Scope scope = Scope.Global, params string[] paramDefs)
         {

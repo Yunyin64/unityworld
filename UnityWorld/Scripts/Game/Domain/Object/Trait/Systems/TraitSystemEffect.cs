@@ -7,6 +7,7 @@ namespace UnityWorld.Game.Domain
     public class TraitSystemEffect : TraitSystemBase
     {
 
+        /// <summary>特质到期后从存续的持有角色身上移除</summary>
         public override void OnTick(Trait trait, float deltaTime)
         {
             if (NpcMgr.Instance == null) return;

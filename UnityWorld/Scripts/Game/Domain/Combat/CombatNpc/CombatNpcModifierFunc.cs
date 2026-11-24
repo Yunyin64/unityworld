@@ -9,7 +9,9 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public partial class CombatNpc
     {
+        /// <summary>本场角色持有的状态实例</summary>
         private List<CombatNpcModifier> Modifiers { get; set; } = new();
+        /// <summary>为状态属性来源分配的序号</summary>
         private int _modifierStatSource;
 
         /// <summary>
@@ -120,11 +122,13 @@ namespace UnityWorld.Game.Domain.Combat
         public void AddModifier(string defineId, int stacks = 1,float duration = -1)
             => AddModifierCore(defineId, stacks, duration, null);
 
+        /// <summary>校验层数和轮数后添加按轮计时的状态</summary>
         internal void AddRoundModifier(string defineId, int stacks, int rounds)
         {
             if (stacks > 0 && rounds >= 0) AddModifierCore(defineId, stacks, -1, rounds);
         }
 
+        /// <summary>按定义处理免疫、叠加和计时，然后装载状态</summary>
         private void AddModifierCore(string defineId, int stacks, float duration, int? rounds)
         {
             var define = CombatNpcModifierDefineMgr.Instance.Get(defineId);
@@ -168,12 +172,15 @@ namespace UnityWorld.Game.Domain.Combat
             if (isElementStatus) DispatchElementStackChange(defineId, before);
         }
 
+        /// <summary>判断定义编号是否对应基础五行状态</summary>
         internal static bool IsBaseElementStatus(string defineId) =>
             ElementType.BaseElementBuff.Values.Any(pair => pair.Item1 == defineId || pair.Item2 == defineId);
 
+        /// <summary>汇总指定五行状态的非负层数</summary>
         private long ReadElementStacks(string defineId) =>
             Modifiers.Where(modifier => modifier.DefineId == defineId).Sum(modifier => Math.Max(0L, modifier.CurrentStack));
 
+        /// <summary>在五行状态总层数变化后派发层数事件</summary>
         private void DispatchElementStackChange(string defineId, long before, long? committedAfter = null)
         {
             long after = committedAfter ?? ReadElementStacks(defineId);
@@ -197,6 +204,7 @@ namespace UnityWorld.Game.Domain.Combat
             DispatchElementStackChange(modifier.DefineId, before);
         }
 
+        /// <summary>消耗一层相应免疫，抵消本次五行状态添加</summary>
         private bool TryConsumeElementImmunity(string defineId)
         {
             var immunity = GetAllModifiers().FirstOrDefault(modifier => modifier.DefineId == $"ElementImmunity_{defineId}");
@@ -303,6 +311,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>按当前层数重建指定状态提供的属性修正</summary>
         private void RefreshModifierStats(CombatNpcModifier modifier)
         {
             if (modifier.StatSource == null) return;
@@ -311,9 +320,11 @@ namespace UnityWorld.Game.Domain.Combat
                 Stats.AddModifier(item.StatId, new StatModifier(item.Type, item.Value * modifier.CurrentStack, modifier.StatSource));
         }
 
+        /// <summary>汇总指定有效战斗状态的层数</summary>
         private long ReadBattleModifierAmount(string id)
             => GetAllModifiers().Where(modifier => modifier.DefineId == id).Sum(modifier => (long)modifier.CurrentStack);
 
+        /// <summary>取出指定状态的累计层数并消费该状态</summary>
         private long ConsumeBattleModifier(string id)
         {
             var amount = ReadBattleModifierAmount(id);

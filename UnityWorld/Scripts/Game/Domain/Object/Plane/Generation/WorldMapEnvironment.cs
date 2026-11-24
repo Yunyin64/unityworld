@@ -4,6 +4,7 @@ namespace UnityWorld.Game.Domain;
 
 public static partial class WorldMapGenerator
 {
+    /// <summary>从种子噪声和固定地区配置生成地块海拔、湿度和温度</summary>
     private static void GenerateEnvironment(Context c)
     {
         var settings = c.Profile.Environment;
@@ -28,6 +29,7 @@ public static partial class WorldMapGenerator
             uint seed=cell.IsFixed ? fixedSalt : salt;
             double x=cell.Id.Q+cell.Id.R*.5, y=cell.Id.R*Math.Sqrt(3)/2;
             double east=cell.Col/(double)(c.World.Width-1), south=cell.Row/(double)(c.World.Height-1);
+            // 混合多个尺度的噪声得到基础环境采样
             double F(uint channel) => .68*Noise(x/settings.NoiseScale,y/settings.NoiseScale,seed+channel)
                 +.25*Noise(x/settings.DetailScale,y/settings.DetailScale,seed+channel+173)
                 +.07*Noise(x/(settings.DetailScale*.5),y/(settings.DetailScale*.5),seed+channel+311);
@@ -43,6 +45,7 @@ public static partial class WorldMapGenerator
                 double weight=t*t*t*(t*(t*6-15)+10);
                 if(weight<=0) continue;
                 var b=def.FixedEnvironment;var v=def.FixedVariation;
+                // 对强制地区采样幅度受控的环境扰动
                 double V(uint channel)=>2*Noise(x/settings.FixedVariationScale,y/settings.FixedVariationScale,fixedSalt+channel)-1;
                 elevation+=weight*(b.Elevation+v.Elevation*V(17));
                 moisture+=weight*(b.Moisture+v.Moisture*V(53));
@@ -73,6 +76,7 @@ public static partial class WorldMapGenerator
         }
     }
 
+    /// <summary>对四个格点的噪声值做平滑插值</summary>
     private static double Noise(double x, double y, uint salt)
     {
         int ix = (int)Math.Floor(x), iy = (int)Math.Floor(y);
@@ -82,6 +86,7 @@ public static partial class WorldMapGenerator
         double d = NoisePoint(ix, iy + 1, salt), e = NoisePoint(ix + 1, iy + 1, salt);
         return (a + (b - a) * fx) * (1 - fy) + (d + (e - d) * fx) * fy;
     }
+    /// <summary>从整数坐标和随机盐生成稳定的噪声值</summary>
     private static double NoisePoint(int x, int y, uint salt)
     {
         uint h = unchecked((uint)x * 374761393U + (uint)y * 668265263U + salt * 2246822519U);

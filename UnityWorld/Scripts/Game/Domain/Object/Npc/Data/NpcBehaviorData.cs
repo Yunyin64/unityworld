@@ -20,12 +20,14 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public bool IsIdle => PrimaryBehavior == null;
 
+        /// <summary>复制行为数据及次要行为列表，沿用行为实例</summary>
         public NpcBehaviorData Clone()
         {
             var copy = (NpcBehaviorData)MemberwiseClone();
             copy.SecondaryBehaviors = new List<BehaviorBase>(SecondaryBehaviors);
             return copy;
         }
+        /// <summary>通过领域数据接口复制行为数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
         /// <summary>
@@ -45,7 +47,9 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public partial class Npc
     {
+        /// <summary>读取角色当前的主行为</summary>
         public BehaviorBase GetPrimaryBehavior() => BehaviorData.PrimaryBehavior;
+        /// <summary>读取角色当前的次要行为列表</summary>
         public List<BehaviorBase> GetSecondaryBehaviors() => BehaviorData.SecondaryBehaviors;
 
     }

@@ -6,9 +6,12 @@ namespace UnityWorld.Game.Domain;
 /// <summary>位面自己的NPC系统：出生落点和成员遍历；坐标写入交给NPC位置系统。</summary>
 public sealed class PlaneSystemNpc
 {
+    /// <summary>负责角色成员的位面</summary>
     private readonly Plane _plane;
+    /// <summary>绑定将管理成员的位面</summary>
     internal PlaneSystemNpc(Plane plane) { _plane = plane; }
 
+    /// <summary>校验角色已在本位面的可走格后补登记成员</summary>
     public bool AddNpc(int id)
     {
         WorldMgr.EnsureMutable();
@@ -16,6 +19,7 @@ public sealed class PlaneSystemNpc
         if (position == null || position.PlaneId != _plane.Id.Value || !_plane.TileSystem.CanWalk(position.TileId)) return false;
         return AddMember(id);
     }
+    /// <summary>移除成员并解除该角色在此位面的位置</summary>
     public bool RemoveNpc(int id)
     {
         WorldMgr.EnsureMutable();
@@ -23,15 +27,19 @@ public sealed class PlaneSystemNpc
         NpcMgr.Instance?.PositionSystem.LeavePlane(id, _plane.Id.Value);
         return true;
     }
+    /// <summary>把指定角色编号加入位面成员表</summary>
     internal bool AddMember(int id) => _plane.NpcData.Members.Add(id);
+    /// <summary>从位面成员表移除指定角色编号</summary>
     internal bool RemoveMember(int id) => _plane.NpcData.Members.Remove(id);
 
+    /// <summary>解除全部成员的位面归属并清空成员表</summary>
     internal void ClearMembers()
     {
         foreach (int id in _plane.NpcIds) NpcMgr.Instance?.PositionSystem.LeavePlane(id, _plane.Id.Value);
         _plane.NpcData.Members.Clear();
     }
 
+    /// <summary>在随机可走地块出生并放置一个生成角色</summary>
     public Npc Spawn(BirthContext context)
     {
         WorldMgr.EnsureMutable();
@@ -58,10 +66,12 @@ public sealed class PlaneSystemNpc
         }
     }
 
+    /// <summary>按出生顺序及编号取得一周的成员快照</summary>
     internal int[] GetWeeklyNpcIds()
         => _plane.NpcIds.OrderBy(id => NpcMgr.Instance.PositionSystem.GetPosition(id)?.BirthOrder ?? long.MaxValue)
             .ThenBy(id => id).ToArray();
 
+    /// <summary>按给定顺序结算成员本周行动并追加结果</summary>
     internal void AdvanceWeek(long week, IEnumerable<int> ids, List<NpcWeekResult> results)
     {
         foreach (int id in ids)

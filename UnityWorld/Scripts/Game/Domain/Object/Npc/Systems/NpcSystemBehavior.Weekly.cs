@@ -7,14 +7,20 @@ namespace UnityWorld.Game.Domain;
 
 public partial class NpcSystemBehavior
 {
+    /// <summary>移动行动标识</summary>
     private const string Move = MoveBehavior.BehaviorIdConstant;
+    /// <summary>探索行动标识</summary>
     private const string Explore = ExploreBehavior.BehaviorIdConstant;
+    /// <summary>工作行动标识</summary>
     private const string Work = WorkBehavior.BehaviorIdConstant;
 
     // 每种行动只有一个名额。可走邻格的数量只影响第二次抽选。
+    /// <summary>有可达邻格时的行动选项</summary>
     private static readonly IReadOnlyList<string> AllActions = Array.AsReadOnly(new[] { Move, Explore, Work });
+    /// <summary>原地可做的行动选项</summary>
     private static readonly IReadOnlyList<string> LocalActions = Array.AsReadOnly(new[] { Explore, Work });
 
+    /// <summary>读取角色的当前地块和主行动状态快照</summary>
     public NpcActionSnapshot GetAction(int id)
     {
         var position = NpcMgr.Instance.PositionSystem.GetPosition(id);
@@ -27,10 +33,14 @@ public partial class NpcSystemBehavior
             move?.Progress ?? 0, move != null ? MoveBehavior.AdjacentDistance : 0);
     }
 
+    /// <summary>尝试占用主行为槽并发起到目标格的周制移动</summary>
     public bool TryStartMove(int id, TileId target) => TryStartExplicit(id, Move, target);
+    /// <summary>尝试启动周制原地探索</summary>
     public bool TryStartExplore(int id) => TryStartExplicit(id, Explore, null);
+    /// <summary>尝试启动周制原地工作</summary>
     public bool TryStartWork(int id) => TryStartExplicit(id, Work, null);
 
+    /// <summary>确保世界可修改后启动周制行动</summary>
     private bool TryStartExplicit(int id, string action, TileId? target)
     {
         // 公开命令只占主槽，不推周；自动决策已经处在周结算内，直接共用下方的校验与提交。
@@ -38,11 +48,13 @@ public partial class NpcSystemBehavior
         return TryStartWeeklyAction(id, action, target) != null;
     }
 
+    /// <summary>确认角色已登记、仍存活且属于当前位面</summary>
     private static bool IsLiveMember(Npc? npc, NpcPositionData? position, Plane? plane)
         => npc != null && position != null && plane != null && position.PlaneId == plane.Id.Value
             && plane.ContainsNpc(npc.Id) && NpcMgr.Instance.BioSystem.Contains(npc.Id)
             && NpcMgr.Instance.BioSystem.GetData(npc.Id).IsAlive;
 
+    /// <summary>校验角色和目标格，为空闲角色建立周制行动</summary>
     private BehaviorBase? TryStartWeeklyAction(int id, string action, TileId? target)
     {
         var mgr = NpcMgr.Instance;
@@ -78,6 +90,7 @@ public partial class NpcSystemBehavior
         return next;
     }
 
+    /// <summary>终止周制主行为，移动时一并清除步行标记</summary>
     internal void StopWeeklyAction(int id)
     {
         // 离位、注销或源格失效时释放同一个绑定。只有走路才持有位置系统的 Walking 标记。
@@ -86,24 +99,28 @@ public partial class NpcSystemBehavior
         if (weekly is MoveBehavior) NpcMgr.Instance.PositionSystem.SetMoving(id, false);
     }
 
+    /// <summary>预留按角色和地图提供行动意向地点的入口</summary>
     private static void GetPreferredDestinations(Npc npc, Plane plane, long week,
         List<(int PlaneId, TileId Tile)> destinations)
     {
         // TODO: 空闲决策时根据角色和地图提供零到多个意向点，可跨多步。当前留空供后两步读取。
     }
 
+    /// <summary>预留按角色意向选择本周行动的入口</summary>
     private static void SelectWeeklyBehavior(Npc npc, IReadOnlyList<(int PlaneId, TileId Tile)> destinations,
         IReadOnlyList<string> availableActions, ref string? selected)
     {
         // TODO: 按角色意向从本周可用选项中选一个主行为。当前不填写，由调用方执行默认抽选。
     }
 
+    /// <summary>预留按角色意向选择可达邻格的入口</summary>
     private static void SelectMoveTargetByStrategy(Npc npc, IReadOnlyList<(int PlaneId, TileId Tile)> destinations,
         IReadOnlyList<TileId> neighbors, ref TileId? target)
     {
         // TODO: 仅在新选 Move 时结合角色意向挑一个可走邻格。当前不填写，由外层抽选和校验。
     }
 
+    /// <summary>结合策略和独立随机流决定新周行动及其目标</summary>
     private static (string Action, TileId? Target) ChooseWeeklyAction(Npc npc, Plane plane,
         NpcPositionData position, long week, IReadOnlyList<TileId> neighbors)
     {
@@ -125,6 +142,7 @@ public partial class NpcSystemBehavior
         return (action, target);
     }
 
+    /// <summary>结算角色本周的行动，空闲时选择新行动</summary>
     internal NpcWeekResult OnWeek(Plane plane, int id, long week)
     {
         var mgr = NpcMgr.Instance;
@@ -135,6 +153,7 @@ public partial class NpcSystemBehavior
         var weekly = primary?.IsWeeklyManaged == true ? primary : null;
         float speed = 0;
 
+        // 汇总本周结算类型、前后快照和遭遇
         NpcWeekResult Result(string kind, string reason = "", TileId? rejectedTarget = null,
             string? eventId = null, string? cardId = null)
         {

@@ -12,6 +12,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>该 NPC 当前持有的 Trait 实例表（TraitId → Trait）</summary>
         public Dictionary<TraitId, Trait> Traits { get; set; } = new();
 
+        /// <summary>特质数据复制入口，当前抛出未实现异常</summary>
         public IDomainDataBase Clone()
         {
             throw new NotImplementedException();
@@ -19,6 +20,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 日志 ────────────────────────────────────
 
+        /// <summary>保留角色特质日志入口</summary>
         public void Log()
         {
             // TODO: 由 DomainData Log 技能补全

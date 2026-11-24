@@ -5,6 +5,7 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
+        /// <summary>按元素叠加指定轮数的亲和增减</summary>
         internal void ChangeBattleAffinity(string element, int delta, int rounds)
         {
             if (element is not ("Jin" or "Mu" or "Shui" or "Huo" or "Tu") || delta == 0 || rounds < 0) return;
@@ -12,11 +13,13 @@ namespace UnityWorld.Game.Domain.Combat
             AddRoundModifier($"Affinity_{element}_{sign}", (int)Math.Min(int.MaxValue, Math.Abs((long)delta)), rounds);
         }
 
+        /// <summary>登记指定轮数的法宝元素供能</summary>
         internal void AddArtifactPower(ElementType element, int amount, int rounds)
         {
             AddRoundModifier($"ArtifactPower_{element.Kind}", amount, rounds);
         }
 
+        /// <summary>按卡牌编号顺序向场上法宝提供灵元</summary>
         private void PowerArtifacts()
         {
             var supplies = GetAllModifiers().Where(modifier => modifier.DefineId.StartsWith("ArtifactPower_", StringComparison.Ordinal)).ToArray();
@@ -92,11 +95,17 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // 字典支付签名保留并拒绝；Convert/ReduceMana API直接操作背包格实体。
+        /// <summary>拒绝旧式灵元池字典回收入口</summary>
         public void ManaConvert(Dictionary<ElementType, int> cost) => throw new NotSupportedException("旧字典转换入口已禁用；请通过 Convert API 回收格上灵元。");
+        /// <summary>拒绝旧式灵元池扣费</summary>
         public int ConsumeMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池扣费，请通过背包扫描点亮卡牌。");
+        /// <summary>拒绝旧式灵元池余额检查</summary>
         public bool CanAffordMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池资源检查。");
+        /// <summary>拒绝旧式灵元池试扣费</summary>
         public bool TryCostMana(Dictionary<ElementType, int> cost) => throw new NotSupportedException("不存在灵元池扣费。");
+        /// <summary>统计盘面上尚未分配的指定元素灵元</summary>
         public int GetManaCount(ElementType element) => Backpack.Mana.Values.Count(e => e.Equals(element));
+        /// <summary>列出盘面上未分配的灵元元素种类</summary>
         public IEnumerable<ElementType> GetUnassignedElements() => Backpack.Mana.Values.Distinct().ToArray();
 
         /// <summary>直接回复 MP，结算回复量修正后返回实际回复点数。</summary>
@@ -119,6 +128,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (final > 0) ChangeMP(final);
             return final;
         }
+        /// <summary>从当前蓝条扣除至多指定量并返回实扣值</summary>
         public int ReduceMP(int amount)
         {
             int final = Math.Min(Math.Max(0, amount), Math.Max(0, Mp));
@@ -126,6 +136,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (final > 0) ChangeMP(-final);
             return final;
         }
+        /// <summary>调整蓝条并派发蓝条变化事件</summary>
         private void ChangeMP(int amount)
         {
             Mp += amount;
@@ -133,6 +144,7 @@ namespace UnityWorld.Game.Domain.Combat
             Scene.TriggerCombatEvent("OnMPChanged", new APIContext { Caster = this, Scene = Scene });
         }
 
+        /// <summary>随机选取一种基础五行增益或减益编号</summary>
         public string RandomBaseElementBuff(bool isDebuff = false)
         {
             return ElementType.RandomBaseElementBuff(Scene.Soul,isDebuff);

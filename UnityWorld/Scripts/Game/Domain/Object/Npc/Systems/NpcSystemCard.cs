@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcSystemCard : NpcSystemBase<NpcCardData>
     {
+        /// <summary>按角色编号保存的持卡数据</summary>
         protected override Dictionary<int, NpcCardData> _dataTable { get; set ; } = new();
 
         /// <summary>
@@ -38,12 +39,14 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>从定义创建卡牌并记入角色的持卡数据</summary>
         public Card GainCard(NpcCardData data, string cardDefineId)
         {
             var card = CardMgr.Instance.InstantiateFromDefine(cardDefineId);
             return GainCard(data, card);
         }
         
+        /// <summary>登记一张现有的卡及其实例编号</summary>
         public Card GainCard(NpcCardData data, Card card)
         {
             if (card == null) throw new InvalidOperationException("不能获得不存在的卡定义。");
@@ -79,6 +82,7 @@ namespace UnityWorld.Game.Domain
                 throw new InvalidOperationException($"卡 {card.DefineId}/{card.Id}：" + string.Join("；", issues));
         }
 
+        /// <summary>校验消耗卡尚有合法的剩余次数可用于备战</summary>
         internal static void ValidateConsumeSelection(Card card)
         {
             if (card.HasKeyword("Consume") && (card.GetStack() <= 0 || card.GetStack() > card.GetStackMax()))
@@ -97,6 +101,7 @@ namespace UnityWorld.Game.Domain
             return data;
         }
 
+        /// <summary>阻止移除当前主功法卡或将其调至候补</summary>
         private static void GuardMainCard(NpcCardData data, int cardId)
         {
             if (data.MainGongFaCardId == cardId)
@@ -162,6 +167,7 @@ namespace UnityWorld.Game.Domain
             return size;
         }
 
+        /// <summary>汇总角色持有的全部卡牌体量</summary>
         public int GetAllCardSize(NpcCardData data)
         {
             int size = 0;
@@ -172,6 +178,7 @@ namespace UnityWorld.Game.Domain
             return size;
         }
 
+        /// <summary>保留角色持卡系统的时步入口</summary>
         public override void OnTick(Npc npc, float deltaTime)
         {
             // TODO: 卡牌系统逻辑
@@ -218,6 +225,7 @@ namespace UnityWorld.Game.Domain
                 data.EquippedFaBao.Add(fabaoCardId);
         }
 
+        /// <summary>补齐装备清单中尚未绑定到父卡的招式</summary>
         private static List<Card> CreateMissingEquipmentForms(NpcCardData data, Equip equip)
         {
             if (equip.FormList == null)
@@ -295,21 +303,25 @@ namespace UnityWorld.Game.Domain
         /// <summary>取消上场和候补选择。</summary>
         public void UnassignCard(int cardId) => NpcMgr.Instance.CardSystem.UnassignCard(this, cardId);
 
+        /// <summary>从定义创建新卡并加入本角色的持有列表</summary>
         public Card GainCard(string cardDefineId)
         {
             EnsureWorldCardOperation();
             return NpcMgr.Instance.CardSystem.GainCard(CardData, cardDefineId);
         }
+        /// <summary>把现有卡加入本角色的持有列表</summary>
         public void GainCard(Card card)
         {
             EnsureWorldCardOperation();
             NpcMgr.Instance.CardSystem.GainCard(CardData, card);
         }
+        /// <summary>从本角色移除卡并同步备战数据</summary>
         public void RemoveCard(Card card)
         {
             EnsureWorldCardOperation();
             NpcMgr.Instance.CardSystem.RemoveCard(this, card);
         }
+        /// <summary>汇总本角色所有持有卡的体量</summary>
         public int GetAllCardSize() => NpcMgr.Instance.CardSystem.GetAllCardSize(CardData);
         /// <summary>装备法宝并补齐该装备实例的持有招式。</summary>
         public void EquipFaBao(int fabaoCardId)

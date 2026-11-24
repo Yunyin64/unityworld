@@ -34,6 +34,7 @@ namespace UnityWorld.Game.Domain
         }
 
         
+        /// <summary>用一基格坐标和元素格式化灵元格列表</summary>
         private static string FormatManaCells(IReadOnlyList<KeyValuePair<BackpackCell, ElementType>> cells) =>
             string.Join(",", cells.Select(p => $"({p.Key.X + 1},{p.Key.Y + 1}):{p.Value}"));
 

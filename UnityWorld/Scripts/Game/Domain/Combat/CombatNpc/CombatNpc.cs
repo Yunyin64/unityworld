@@ -14,11 +14,15 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>所属战斗阵营</summary>
         public CombatTeam Team { get; set; } = CombatTeam.None;
 
+        /// <summary>对应的大世界角色</summary>
         public  Npc Owner{get;private set;}
 
         // 继承的卡牌/装配查询统一指向本场私有数据，避免相同 NPC Id 查询到世界仓库。
+        /// <summary>本场战斗卡和出战数据</summary>
         protected override NpcCardData CardData => Backpack.CardData;
+        /// <summary>本场战斗背包布局</summary>
         protected override NpcBackpackData BackpackData => Backpack.LayoutData;
+        /// <summary>本场战斗背包</summary>
         public CombatBackpack Backpack { get; private set; } = null!;
 
         /// <summary>所属战斗场景引用</summary>
@@ -26,14 +30,16 @@ namespace UnityWorld.Game.Domain.Combat
 
         // ── 战斗状态 ──────────────────────────────────────────
 
-        /// <summary>当前战斗状态（行动中/已阵亡/逃跑/跳过）</summary>
+        /// <summary>当前战斗状态（行动中/已被击败/逃跑/跳过/已阵亡）</summary>
         public CombatantStatus Status { get; set; } = CombatantStatus.Active;
 
         /// <summary>是否可以继续参与战斗</summary>
         public bool IsActive => Status == CombatantStatus.Active;
 
+        /// <summary>按名称累计的计时值</summary>
         public Dictionary<string, float> Ticks { get ; set ; } = new();
 
+        /// <summary>快照世界角色的属性、背包和装备，创建战斗角色</summary>
         public static CombatNpc CreateCombatNpc(Npc npc)
         {
             CombatNpc combatNpc = new CombatNpc(npc.Id);
@@ -57,8 +63,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>唯一待发位置；null 表示空槽。</summary>
         public ContestData PendingSlot { get; private set; }
 
+        /// <summary>待结算的伤害队列</summary>
         private Queue<DamageInfo> damageInfos { get; set; } = new();
 
+        /// <summary>推进活跃角色的计时、状态和场上卡</summary>
         public void Tick()
         {
             if (!IsActive) return;
@@ -67,11 +75,13 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var card in Field) card.Tick();
         }
 
+        /// <summary>按当前资源重新加载场上卡状态</summary>
         public void Refresh()
         {
             foreach (var card in Field) card.ReLoad();
         }
 
+        /// <summary>拒绝绕过背包扫描直接使用卡牌</summary>
         public void UseCard()
         {
             throw new NotSupportedException("卡牌只通过背包逐格扫描使用，不再收集 Ready 卡。");
@@ -87,6 +97,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         // ── 构造 ──────────────────────────────────────────────
 
+        /// <summary>以世界角色编号构造对应的战斗角色</summary>
         public CombatNpc(int id) : base(id)
         {
             
@@ -105,6 +116,7 @@ namespace UnityWorld.Game.Domain.Combat
             return val;
         }
 
+        /// <summary>按入队顺序结算伤害</summary>
         public void DealDamage()
         {
             while (damageInfos.Count > 0)
@@ -186,11 +198,13 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
 
+        /// <summary>格式化角色编号和名称</summary>
         public override string ToString()
         {
             return  string.Format("Npc[{0}{1}]",Id,GetName());   
         }
 
+        /// <summary>实例化卡组并初始化场上和候补卡</summary>
         public void PreStart()
         {
            // 从 Npc 读取卡组，实例化 Field
@@ -206,6 +220,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>初始化角色战斗数值并启动场上卡</summary>
         public void Start()
         {
             InitData();
@@ -216,6 +231,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
 
+        /// <summary>取消待发拼点，调用在场卡收尾并处理变更</summary>
         public void End()
         {
             CancelPending("CombatEnded");
@@ -232,6 +248,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var card in CardData.AllCards.OfType<CombatCard>()) card.Cleanup();
         }
 
+        /// <summary>将消息写入战斗追踪或静态战斗日志</summary>
         public void Log(string msg)
         {
             if (Scene != null) Scene.Trace(this, msg);

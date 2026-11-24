@@ -102,6 +102,7 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
+        /// <summary>用方向与关键词查找来源卡周围的卡</summary>
         private static List<CombatCard> FindDirectionalCards(APIContext ctx)
             => APIDomainFunc.GetDirectionalCards(ctx.SourceCard, ctx.GetStringValue("Direction"), ctx.GetStringValue("Keyword", "Any"));
 
@@ -251,6 +252,7 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
+        /// <summary>按范围选出卡牌并保存给后续条件使用</summary>
         [APIFunc("SelectCards", APIType.Condition, "按战斗 Domain 选卡", Scope.CombatCard, "Domain:String", "Result:List<CombatCard>")]
         public static APIContext SelectCards(APIContext ctx)
         {
@@ -262,6 +264,7 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
+        /// <summary>检查目标卡是否有指定关键词</summary>
         private static APIContext Keyword(string keyword,APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -277,27 +280,32 @@ namespace UnityWorld.Game.Domain
         {
             return Keyword("FaBao",ctx);
         }
+        /// <summary>检查目标卡是否有法术关键词</summary>
         [APIFunc("IsFaShu",APIType.Condition, "判断目标卡牌是否为法术", Scope.CombatCard, "Target:CombatCard", "Result:Bool")]
         public static APIContext IsFaShu(APIContext ctx)
         {
             return Keyword("FaShu",ctx);
         }
+        /// <summary>检查目标卡是否有功法关键词</summary>
         [APIFunc("IsGongFa",APIType.Condition, "判断目标卡牌是否为功法", Scope.CombatCard, "Target:CombatCard", "Result:Bool")]
         public static APIContext IsGongFa(APIContext ctx)
         {
             return Keyword("GongFa",ctx);
         }
+        /// <summary>检查目标卡是否有道具关键词</summary>
         [APIFunc("IsItem",APIType.Condition, "判断目标卡牌是否为物品", Scope.CombatCard, "Target:CombatCard", "Result:Bool")]
         public static APIContext IsItem(APIContext ctx)
         {
             return Keyword("Item",ctx);
         }
+        /// <summary>检查目标卡是否有装备关键词</summary>
         [APIFunc("IsEquip",APIType.Condition, "判断目标卡牌是否为装备", Scope.CombatCard, "Target:CombatCard", "Result:Bool")]
         public static APIContext IsEquip(APIContext ctx)
         {
             return Keyword("Equip",ctx);
         }
         
+        /// <summary>检查目标卡是否有招式关键词</summary>
         [APIFunc("IsZhaoShi",APIType.Condition, "判断目标卡牌是否为招式", Scope.CombatCard, "Target:CombatCard", "Result:Bool")]
         public static APIContext IsZhaoShi(APIContext ctx)
         {

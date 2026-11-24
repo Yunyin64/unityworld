@@ -29,6 +29,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>函数描述</summary>
         public string Desc;
 
+        /// <summary>注册函数的反射方法</summary>
         public MethodInfo Method;
 
         /// <summary>参数定义列表（有序）</summary>
@@ -63,6 +64,7 @@ namespace UnityWorld.Game.Domain
             return ParamsList[index].Name;
         }
 
+        /// <summary>列出函数名和参数签名</summary>
         public override string ToString()
             => $"API({FuncName}, Params=[{string.Join(", ", ParamsList.Select(p => $"{p.Name}:{p.Type}"))}])";
     }

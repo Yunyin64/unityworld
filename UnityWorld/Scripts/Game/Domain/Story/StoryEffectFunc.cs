@@ -11,6 +11,7 @@ namespace UnityWorld.Game.Domain
     public static class StoryEffectFunc
     {
         // ── 注册表 ─────────────────────────────────────────────
+        /// <summary>按忽略大小写的名称登记效果</summary>
         private static readonly Dictionary<string, Action<StoryContext, List<string>>> _registry = new(StringComparer.OrdinalIgnoreCase);
 
        

@@ -5,13 +5,18 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
+        /// <summary>按父卡编号索引的装备快照</summary>
         private readonly Dictionary<int, Equip> _battleEquipment = new();
+        /// <summary>按编号索引的装备来源父卡</summary>
         private readonly Dictionary<int, Card> _equipmentSources = new();
+        /// <summary>战斗装备属性的临时修正</summary>
         private readonly List<(int EquipmentId, string Stat, float Delta, int LastRound)> _equipmentChanges = new();
 
+        /// <summary>按编号查本场卡牌或快照中的装备父卡</summary>
         internal Card FindBattleCard(int id) => CardData.AllCards.FirstOrDefault(card => card.Id == id)
             ?? _equipmentSources.GetValueOrDefault(id);
 
+        /// <summary>从世界卡复制本场可用的装备和父卡数据</summary>
         private void SnapshotEquipment(Npc worldNpc)
         {
             // 已装备的父卡可以不在场上或候补；保留其数据而不额外创建场上卡。
@@ -24,6 +29,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>复制指定装备并计算尚未过期的属性修正</summary>
         internal Equip ReadBattleEquipment(int id)
         {
             if (!_battleEquipment.TryGetValue(id, out var original)) return null;
@@ -48,6 +54,7 @@ namespace UnityWorld.Game.Domain.Combat
             return result;
         }
 
+        /// <summary>给直接装备或招式绑定装备添加限时属性修正</summary>
         internal void ChangeEquipmentStat(CombatCard target, string stat, float delta, int rounds)
         {
             if (!float.IsFinite(delta) || delta == 0 || rounds < 0 ||

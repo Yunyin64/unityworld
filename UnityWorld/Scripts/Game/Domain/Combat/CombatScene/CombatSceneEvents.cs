@@ -7,11 +7,17 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>同一条事件链的诊断上限。超过上限时终止本场并报告最近的事件。</summary>
         public const int EventChainBudget = 10000;
 
+        /// <summary>等待派发的战斗事件队列</summary>
         private readonly Queue<APIContext> _eventQueue = new();
+        /// <summary>当前尚未退出的卡牌发动栈</summary>
         private readonly Stack<ActivationScope> _activationFrames = new();
+        /// <summary>最近派发的事件诊断记录</summary>
         private readonly Queue<string> _eventHistory = new();
+        /// <summary>此刻正在派发的事件</summary>
         private APIContext? _currentEvent;
+        /// <summary>事件编号计数器</summary>
         private long _nextEventId;
+        /// <summary>事件链编号计数器</summary>
         private long _nextChainId;
 
         /// <summary>本场事件链中止的原因和最近事件。正常运行时为空。</summary>
@@ -41,6 +47,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (_activationFrames.Count == 0) DrainCombatEvents();
         }
 
+        /// <summary>继承发动或触发事件的链路，或开启新链</summary>
         private void AssignEventChain(APIContext ctx)
         {
             if (_activationFrames.TryPeek(out var frame) && ReferenceEquals(frame.TriggerEvent, _currentEvent))
@@ -61,6 +68,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>按队列顺序派发事件并检查每条链的上限</summary>
         private void DrainCombatEvents()
         {
             // 外层循环会处理新入队的事件，两个通道都完成之后才轮到下一件。
@@ -99,6 +107,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>按场上顺序派发事件给卡牌和角色状态的 Lua 钩子</summary>
         private void DispatchToLua(APIContext ctx, HashSet<int> respondedCards)
         {
             var hookName = ctx.EventName;
@@ -123,6 +132,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>按施术角色与来源卡的作用域派发给 C# 监听者</summary>
         private static void DispatchToEventMgr(APIContext ctx)
         {
             // EventMgr 自行补上 Global；本场只提供这次事件涉及的 NPC 和卡牌作用域。
@@ -137,6 +147,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             /// <summary>本次排队派发中，这条事件链已取出的事件数。</summary>
             public int Count;
+            /// <summary>按事件内容记录已响应的卡</summary>
             private readonly Dictionary<(string Name, CombatNpc Caster, CombatCard Card, CombatNpcModifier Buff),
                 List<(APIContext Original, HashSet<int> Cards)>> _responses = new();
 
@@ -162,14 +173,18 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // 拼点要先广播再读取双方点数，只能在当前发动和事件派发都结束时开始。
+        /// <summary>是否已退出事件和卡牌发动栈</summary>
         internal bool AtContestBoundary => _currentEvent == null && _activationFrames.Count == 0;
 
+        /// <summary>检查卡牌是否已存在于发动栈</summary>
         internal bool IsActivating(CombatCard card) => _activationFrames.Any(frame => frame.Card == card);
 
         // 排队的监听者运行期间，原卡仍受重入保护，但监听者已经离开原卡的发动回调。
+        /// <summary>检查卡牌是否正在当前触发上下文中发动</summary>
         internal bool IsExecutingActivation(CombatCard card) => _activationFrames.Any(frame =>
             frame.Card == card && ReferenceEquals(frame.TriggerEvent, _currentEvent));
 
+        /// <summary>入栈记录一次发动，防止同一卡重入</summary>
         internal IDisposable? BeginActivation(CombatCard card)
         {
             if (IsActivating(card)) return null;
@@ -178,6 +193,7 @@ namespace UnityWorld.Game.Domain.Combat
             return frame;
         }
 
+        /// <summary>保存一次卡牌发动及其所属事件链</summary>
         private sealed class ActivationScope(CombatScene scene, CombatCard card, APIContext? trigger, long chainId) : IDisposable
         {
             /// <summary>正在发动的卡牌。</summary>
@@ -204,6 +220,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>更新单链派发峰值并保存近期事件日志</summary>
         private void RecordDispatchedEvent(APIContext ctx, int count)
         {
             LargestEventChain = Math.Max(LargestEventChain, count);
@@ -214,6 +231,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (count > EventChainBudget) AbortEventChain($"事件链超过诊断预算 {EventChainBudget}");
         }
 
+        /// <summary>记录失败原因，标记本场结束并抛出异常</summary>
         internal void AbortEventChain(string reason)
         {
             EventFailure ??= $"战斗事件链中止 Tick={CurrentTick}: {reason}; 最近事件: {string.Join(" | ", _eventHistory)}";

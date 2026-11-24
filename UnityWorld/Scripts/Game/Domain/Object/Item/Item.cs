@@ -29,10 +29,12 @@ namespace UnityWorld.Game.Domain
             };
         }
 
+        /// <summary>保留物品详情日志入口</summary>
         public override void LogAllInfo()
         {
         }
 
+        /// <summary>格式化物品定义编号和显示名</summary>
         public override string ToString() => $"[Item:{DefineId}] {DisplayName}";
     }
 }

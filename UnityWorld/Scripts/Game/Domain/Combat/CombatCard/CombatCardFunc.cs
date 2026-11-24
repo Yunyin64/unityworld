@@ -41,6 +41,7 @@ namespace UnityWorld.Game.Domain.Combat
             Log($"  入槽: {contestData}  [{Owner.GetName()}] ");
         }
 
+        /// <summary>用卡牌自己的 Lua 回调修正即将配对的拼点</summary>
         internal void ModifyPairedContest(ContestData contest)
         {
             if (!this.HasHook("OnBeforePairedContest") || CallMainKeyword("CanRespond", argument: true) is not true) return;
@@ -61,6 +62,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
         }
 
+        /// <summary>把卡牌冷却速度属性换算为单次增长量</summary>
         private float GetCDAdd()
         {
             var speed = GetStat("CDSpeed");

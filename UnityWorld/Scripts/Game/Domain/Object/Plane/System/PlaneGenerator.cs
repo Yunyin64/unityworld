@@ -10,8 +10,11 @@ namespace UnityWorld.Game.Domain
     {
         internal sealed class PreparedContent
         {
+            /// <summary>准备发布的地区实例</summary>
             public List<Region> Regions { get; } = new();
+            /// <summary>准备发布的地标实例</summary>
             public List<LandMark> LandMarks { get; } = new();
+            /// <summary>添加人工地标前的元气快照</summary>
             public Dictionary<TileId, TileAura> NaturalSnapshot { get; set; }
         }
 
@@ -52,6 +55,7 @@ namespace UnityWorld.Game.Domain
             }
 
             var singletons = new HashSet<string>(landMarks.ReservedSingletons, StringComparer.Ordinal);
+            // 按天然或人工阶段准备地标并检查单例冲突
             void PrepareLandmarks(bool isNatural)
             {
                 // 地区附带和独立散布都只提供位置计划，按同一个 IsNatural 阶段创建实际实体。

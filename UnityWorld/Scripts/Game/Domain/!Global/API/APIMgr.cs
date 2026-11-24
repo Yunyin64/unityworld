@@ -16,21 +16,27 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class APIMgr : IDomainMgrBase
     {
+        /// <summary>当前 API 管理器</summary>
         public static APIMgr Instance { get; private set; }
+        /// <summary>管理器名称</summary>
         public string Name => "APIMgr";
+        /// <summary>API 注册表职责说明</summary>
         public string Desc => "API函数注册表：管理所有Action函数签名定义与执行委托";
 
         // ── 存储 ──────────────────────────────────────────────
 
+        /// <summary>按函数名索引的签名表</summary>
         private readonly Dictionary<string, API> _apis = new();
 
         /// <summary>执行委托字典：funcName → 执行函数</summary>
         private readonly Dictionary<string, Action<ContextBase>> _handlers = new();
 
+        /// <summary>角色和卡牌的选目标入口</summary>
         private APIDomainFunc Funcs = new APIDomainFunc();
 
         // ── 构造 ──────────────────────────────────────────────
 
+        /// <summary>登记当前 API 管理器实例</summary>
         public APIMgr()
         {
             Instance = this;
@@ -72,7 +78,7 @@ namespace UnityWorld.Game.Domain
         // ── 校验 ──────────────────────────────────────────────
 
         /// <summary>
-        /// 校验 ActionDefine 的 params 是否匹配注册的函数签名。
+        /// 校验 ActionDefine 的 params 个数是否符合注册的函数签名。
         /// 返回错误信息，合法时返回空字符串。
         /// </summary>
         public string Validate(string funcName, List<object>? paramValues)
@@ -134,7 +140,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 扫描当前 Assembly 中所有带 [APIFunc] 的静态方法，
-        /// 校验签名为 static void Xxx(ContextBase ctx)，
+        /// 校验方法只接收 ContextBase 或其子类，返回 void 或 ContextBase 及其子类，
         /// 同时从 Attribute 的 ParamDefs 解析 API 签名定义，
         /// 一次性注册到 _handlers 和 _apis。
         /// </summary>
@@ -237,11 +243,16 @@ namespace UnityWorld.Game.Domain
             LogMgr.Instance.Dbg("[APIMgr] 初始化完成，已注册 {0} 个API签名，{1} 个Handler", _apis.Count, _handlers.Count);
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin() { }
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime) { }
+        /// <summary>保留帧更新回调</summary>
         public void Update() { }
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt) { }
 
+        /// <summary>清空签名和处理器注册并释放实例</summary>
         public void End()
         {
             _apis.Clear();
@@ -249,9 +260,12 @@ namespace UnityWorld.Game.Domain
             Instance = null;
         }
 
+        /// <summary>结束存档流程，无需写入注册表</summary>
         public IEnumerator Save() { yield break; }
+        /// <summary>结束读档流程，注册表由初始化重建</summary>
         public IEnumerator Load() { yield break; }
 
+        /// <summary>记录 API 注册概况及签名</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg("=== {0} ===  {1}", Name, Desc);
@@ -430,6 +444,7 @@ namespace UnityWorld.Game.Domain
             LogMgr.Instance.Dbg("[APIMgr] ExportLua 完成，已生成 {0} 个文件到: {1}", groups.Count, outputDir);
         }
 
+        /// <summary>生成指定分类和作用域的 Lua 文件</summary>
         private void GenerateLuaFile(string dir, APIType apiType,Scope scope, List<API> apis)
         {
             var sb = new StringBuilder();
@@ -493,6 +508,7 @@ namespace UnityWorld.Game.Domain
             LogMgr.Instance.Dbg("[APIMgr] ExportLua: 已生成 {0} ({1} 个函数)", filePath, apis.Count);
         }
 
+        /// <summary>把 Lua 参数按签名类型包装为上下文值</summary>
         private static string WrapParamValue(string paramName, string type)
         {
             string lower = type.ToLowerInvariant();
@@ -501,6 +517,7 @@ namespace UnityWorld.Game.Domain
             return paramName;
         }
 
+        /// <summary>将 API 参数类型转换为 Lua 注解类型</summary>
         private static string GetLuaTypeAnnotation(string type)
         {
             string lower = type.ToLowerInvariant();
@@ -514,11 +531,13 @@ namespace UnityWorld.Game.Domain
         }
 
         
+        /// <summary>按指定范围名查询目标卡</summary>
         public List<CombatCard> GetTargetCard(string key, APIContext ctx)
         {
            return Funcs.GetTargetCard(key,ctx);
         }
 
+        /// <summary>按指定范围名查询目标角色</summary>
         public List<CombatNpc> GetTargetNpc(string key, APIContext ctx)
         {
            return Funcs.GetTargetNpc(key,ctx);

@@ -12,8 +12,10 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public partial class NpcSystemBehavior : NpcSystemBase<NpcBehaviorData>
     {
+        /// <summary>按角色编号保存的行为数据</summary>
         protected override Dictionary<int, NpcBehaviorData> _dataTable { get; set; } = new();
 
+        /// <summary>清空全体角色的行为数据</summary>
         public void Clear() => _dataTable.Clear();
 
 

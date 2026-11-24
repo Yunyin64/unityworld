@@ -4,13 +4,16 @@ namespace UnityWorld.Game.Domain
 {
     public class NpcSystemBio : NpcSystemBase<NpcBioData>
     {   
+        /// <summary>按角色编号保存的生理数据</summary>
         protected override Dictionary<int, NpcBioData> _dataTable { get;set; } = new();
 
+        /// <summary>保留角色生理的时步入口</summary>
         public override void OnTick(Npc npc, float deltaTime)
         {
             
         }
         
+        /// <summary>更新姓与名，并按需更新字和道号</summary>
         public string ReName(NpcBioData data,string Surname,string GivenName,string CourtesyName = "" ,string DaoTitle = "")
         {
             data.NameData.Surname = Surname;
@@ -54,6 +57,7 @@ namespace UnityWorld.Game.Domain
 
     public partial class Npc
     {
+        /// <summary>更新角色的姓与名，返回拼接后的姓名</summary>
         public string ReName(string Surname,string GivenName,string CourtesyName = "" ,string DaoTitle = "") 
         => NpcMgr.Instance.BioSystem.ReName(BioData, Surname,GivenName);
     }

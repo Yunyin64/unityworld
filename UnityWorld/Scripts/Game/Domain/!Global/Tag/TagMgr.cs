@@ -12,11 +12,15 @@ namespace UnityWorld.Game.Domain.Tag
     /// </summary>
     public class TagMgr : IDomainMgrBase
     {
+        /// <summary>当前标签管理器</summary>
         public static TagMgr? Instance { get; private set; }
 
+        /// <summary>管理器名称</summary>
         public string Name => "TagMgr";
+        /// <summary>标签管理器职责说明</summary>
         public string Desc => "Tag 匹配与随机抽取管理器";
 
+        /// <summary>登记当前标签管理器实例</summary>
         public TagMgr()
         {
             Instance = this;
@@ -112,6 +116,7 @@ namespace UnityWorld.Game.Domain.Tag
 
         // ── 内部工具 ─────────────────────────────────────────
 
+        /// <summary>统计每种标签的出现次数，忽略大小写</summary>
         private static Dictionary<string, int> ToMultiset(List<string> tags)
         {
             var bag = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -123,41 +128,49 @@ namespace UnityWorld.Game.Domain.Tag
             return bag;
         }
 
+        /// <summary>保留独立初始化入口</summary>
         public void Init()
         {
             // TagMgr 主要依赖 TagDefineMgr，无需独立初始化
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()
         {
             // 无依赖初始化需求
         }
 
+        /// <summary>保留时步回调，标签匹配无持续状态</summary>
         public void Tick(float deltaTime)
         {
             // Tag 匹配是无状态的，无需 Tick
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()
         {
             // 无轻量回调需求
         }
 
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt)
         {
             // 无渲染逻辑
         }
 
+        /// <summary>释放当前标签管理器实例</summary>
         public void End()
         {
             Instance = null;
         }
 
+        /// <summary>结束存档流程，当前无写入</summary>
         public IEnumerator Save()
         {
             yield break;
         }
 
+        /// <summary>结束读档流程，当前无读取</summary>
         public IEnumerator Load()
         {
             yield break;

@@ -4,11 +4,15 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatScene
     {
+        /// <summary>按角色编号索引的参战者</summary>
         private Dictionary<int, CombatNpc> _combatants = new();
+        /// <summary>本场最终结算结果</summary>
         private CombatResult _result;
 
         // 回调可以改变存活状态。每个结算步骤都重新枚举，保持按 NPC Id 执行的顺序。
+        /// <summary>按编号排序的全部参战者</summary>
         private IEnumerable<CombatNpc> OrderedCombatants => _combatants.Values.OrderBy(npc => npc.Id);
+        /// <summary>按编号排序的活跃参战者</summary>
         private IEnumerable<CombatNpc> ActiveCombatants => OrderedCombatants.Where(npc => npc.IsActive);
 
         /// <summary>按大世界 NPC Id 查询本场的参战者。</summary>
@@ -17,6 +21,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>读取本场结算结果。在结算前调用会抛出异常。</summary>
         public CombatResult GetResult() => _result ?? throw new InvalidOperationException("战斗尚未结束。");
 
+        /// <summary>从世界角色创建战斗快照并绑定场景与队伍</summary>
         private void InitCombatants(IEnumerable<(Npc npc, CombatTeam team)> participants)
         {
             _combatants = new Dictionary<int, CombatNpc>();
@@ -29,9 +34,11 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>判断仍可行动的参战者是否至多来自一队</summary>
         private bool HasAtMostOneActiveTeam() =>
             _combatants.Values.Where(npc => npc.IsActive).Select(npc => npc.Team).Distinct().Count() <= 1;
 
+        /// <summary>根据存活队伍和角色状态汇总战斗结果</summary>
         private void BuildCombatResult(CombatEndReason reason)
         {
             var survivors = _combatants.Values.Where(npc => npc.IsActive).ToList();

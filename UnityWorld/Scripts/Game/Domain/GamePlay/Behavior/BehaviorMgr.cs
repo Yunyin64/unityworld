@@ -10,14 +10,18 @@ namespace UnityWorld.Game.Domain
     public class BehaviorMgr : IGameplayMgrBase
     {
         // ── 单例 ─────────────────────────────────────────────
+        /// <summary>当前行为管理器</summary>
         public static BehaviorMgr Instance { get; private set; }
 
 
         // ── IDomainMgrBase 属性 ─────────────────────────────
+        /// <summary>管理器名称</summary>
         public string Name => "BehaviorMgr";
+        /// <summary>行为管理器职责说明</summary>
         public string Desc => "行为管理器，管理行为相关函数";
 
         // ── 构造函数 ─────────────────────────────────────────
+        /// <summary>登记当前行为管理器实例</summary>
         public BehaviorMgr()
         {
             Instance = this;
@@ -53,37 +57,44 @@ namespace UnityWorld.Game.Domain
 
         // ── 生命周期方法（骨架占位）─────────────────────────
 
+        /// <summary>记录行为管理器初始化日志</summary>
         public void Init()
         {
             LogMgr.Instance.Dbg("[BehaviorMgr] 初始化完成（骨架模式）");
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()
         {
             
         }
 
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime)
         {
             
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()
         {
             // 轻量帧回调
         }
 
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt)
         {
             // 渲染更新
         }
 
+        /// <summary>释放行为管理器实例</summary>
         public void End()
         {
             Instance = null;
         }
 
 
+        /// <summary>保留行为管理日志入口</summary>
         public void Log()
         {
             

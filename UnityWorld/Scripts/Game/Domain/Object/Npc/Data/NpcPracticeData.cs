@@ -29,14 +29,17 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainDataBase ─────────────────────────────────
 
+        /// <summary>浅复制修炼进度数据</summary>
         public NpcPracticeData Clone()
         {
             var copy = (NpcPracticeData)MemberwiseClone();
             return copy;
         }
+        /// <summary>通过领域数据接口复制修炼进度</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
 
+        /// <summary>记录角色境界、修炼进度、功法和闭关状态</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg("┌── PracticeData · 修炼进度 ──────────────────────────");

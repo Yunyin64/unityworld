@@ -8,9 +8,11 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public class ContestData:IDomainDataBase
     {
+        /// <summary>发起拼点的回放动作编号</summary>
         internal long? PresentationActionId { get; set; }
+        /// <summary>关联的回放拼点编号</summary>
         internal long? PresentationContestId { get; set; }
-        /// <summary>拼点类型（Zhan/Ci/Da/SheJi/Shield/Block）</summary>
+        /// <summary>拼点类型（Zhan/Ci/Da/SheJi/Shield/Block/Dodge）</summary>
         public ContestType ContestType { get; set; } = ContestType.Zhan;
 
         /// <summary>拼点数值（攻击值/盾值/防值）</summary>
@@ -22,7 +24,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>元素类型（仅攻击类 Zhan/Ci/Da/SheJi 有效）</summary>
         public ElementType Element { get; set; } = ElementType.None;
 
-        /// <summary>来源卡牌状态（用于重置 CD、获取完整卡信息）</summary>
+        /// <summary>来源卡牌状态（用于获取持有者及卡牌信息）</summary>
         public CombatCard SourceCard { get; set; }
 
         /// <summary>来源 NPC</summary>
@@ -36,17 +38,21 @@ namespace UnityWorld.Game.Domain.Combat
         public bool IsDefenseType => ContestType is ContestType.Shield or ContestType.Block
             or ContestType.Dodge;
 
+        /// <summary>记录拼点的日志摘要</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg(ToString());
         }
         
+        /// <summary>浅复制当前拼点数据</summary>
         public ContestData Clone()
         {
             var copy = (ContestData)MemberwiseClone();
             return copy;
         }
+        /// <summary>通过领域数据接口浅复制拼点</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
+        /// <summary>把攻击拼点类型转换为伤害类型</summary>
         public DamageType ToDamageType()
         {
             switch (ContestType)
@@ -59,6 +65,7 @@ namespace UnityWorld.Game.Domain.Combat
             return DamageType.None;
         }
 
+        /// <summary>格式化来源卡、拼点类型、元素和点数</summary>
         public override string ToString()
         {
             // 简化格式：CardName|拼点类型|元素|数值

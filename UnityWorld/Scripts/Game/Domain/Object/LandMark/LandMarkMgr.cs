@@ -6,26 +6,44 @@ using UnityWorld.Game.Data;
 namespace UnityWorld.Game.Domain;
 
 /// <summary>创世自然阶段仅由生成器使用；普通放置始终走动态变化。</summary>
-internal enum LandMarkPlacementPhase { CreationNatural, Dynamic }
+internal enum LandMarkPlacementPhase
+{
+    /// <summary>创世阶段的天然地标放置</summary>
+    CreationNatural,
+    /// <summary>运行期地标放置</summary>
+    Dynamic
+}
 
 /// <summary>地标占位、单例与来源修正索引；候选地图可以准备实体而不向本管理器注册。</summary>
 public class LandMarkMgr : IDomainMgrBase
 {
+    /// <summary>当前地标管理器</summary>
     public static LandMarkMgr Instance { get; private set; }
+    /// <summary>按实例编号索引的地标</summary>
     private readonly Dictionary<int, LandMark> _allLandMarks = new();
+    /// <summary>按地标编号索引的落点地块</summary>
     private readonly Dictionary<int, Tile> _tiles = new();
+    /// <summary>地标放置使用的随机源</summary>
     private Rng _rng = new();
+    /// <summary>地图数据目录</summary>
     private MapCatalog _catalog;
+    /// <summary>管理器名称</summary>
     public string Name => "LandMarkMgr";
+    /// <summary>地标管理器职责说明</summary>
     public string Desc => "地标管理器";
+    /// <summary>已登记的地标数量</summary>
     public int Count => _allLandMarks.Count;
+    /// <summary>登记当前地标管理器实例</summary>
     public void Init() => Instance = this;
+    /// <summary>更换地标管理器的随机源</summary>
     public void SetRng(Rng rng) => _rng = rng;
     /// <summary>使用已通过严格审计的地图定义库。</summary>
     public void SetCatalog(MapCatalog catalog) => _catalog = catalog;
 
+    /// <summary>从地图目录或定义管理器读取地标定义</summary>
     private LandMarkDefine Resolve(string id)
         => _catalog != null ? _catalog.LandMarks.GetValueOrDefault(id) : LandMarkDefineMgr.Instance?.Get(id);
+    /// <summary>从地图目录或定义管理器读取地块修正定义</summary>
     private TileModifierDefine ResolveModifier(string id)
         => _catalog != null ? _catalog.Modifiers.GetValueOrDefault(id) : TileModifierDefineMgr.Instance?.Get(id);
 
@@ -90,6 +108,7 @@ public class LandMarkMgr : IDomainMgrBase
         return landmark;
     }
 
+    /// <summary>校验实例及单例冲突后登记地标和落点</summary>
     internal void Publish(LandMark landmark, Tile tile)
     {
         var define = Resolve(landmark.DefineId) ?? throw new InvalidDataException($"未知地标 {landmark.DefineId}");
@@ -100,6 +119,7 @@ public class LandMarkMgr : IDomainMgrBase
         if (tile.RegionId.HasValue) RegionMgr.Instance?.GetById(tile.RegionId.Value)?.AddLandMark(landmark.Id);
     }
 
+    /// <summary>移除地标并清理关联地块、区域和修正</summary>
     public bool Remove(int id)
     {
         if (!_allLandMarks.Remove(id, out var landmark)) return false;
@@ -119,20 +139,32 @@ public class LandMarkMgr : IDomainMgrBase
     }
     /// <summary>在全部已发布位面中检查某定义是否存在有效实例。</summary>
     public bool HasInstance(string defineId) => _allLandMarks.Values.Any(lm => lm.DefineId == defineId && lm.IsActive);
+    /// <summary>按实例编号查询地标</summary>
     public LandMark GetById(int id) => _allLandMarks.GetValueOrDefault(id);
+    /// <summary>枚举指定位面的已发布地标</summary>
     public IEnumerable<LandMark> GetByPlane(int planeId) => _allLandMarks.Values.Where(lm => lm.PlaneId == planeId);
+    /// <summary>筛出指定位面的天然地标</summary>
     public IEnumerable<LandMark> GetNaturalLandMarks(int planeId) => GetByPlane(planeId).Where(lm => Resolve(lm.DefineId)?.IsNatural == true);
+    /// <summary>筛出指定位面的人工地标</summary>
     public IEnumerable<LandMark> GetArtificialLandMarks(int planeId) => GetByPlane(planeId).Where(lm => Resolve(lm.DefineId)?.IsNatural == false);
+    /// <summary>保留世界启动回调</summary>
     public void Begin() { }
+    /// <summary>保留时步回调</summary>
     public void Tick(float deltaTime) { }
+    /// <summary>保留帧更新回调</summary>
     public void Update() { }
+    /// <summary>保留渲染回调</summary>
     public void Render(float dt) { }
+    /// <summary>移除所有地标及关联数据，再释放当前管理器</summary>
     public void End()
     {
         foreach (var id in _allLandMarks.Keys.ToArray()) Remove(id);
         if (ReferenceEquals(Instance, this)) Instance = null;
     }
+    /// <summary>结束存档流程，当前无写入</summary>
     public IEnumerator Save() { yield break; }
+    /// <summary>结束读档流程，当前无读取</summary>
     public IEnumerator Load() { yield break; }
+    /// <summary>记录地标管理器状态和地标总数</summary>
     public void Log() => LogMgr.Instance.Dbg("[{0}] {1} | LandMarks={2}", Name, Desc, Count);
 }

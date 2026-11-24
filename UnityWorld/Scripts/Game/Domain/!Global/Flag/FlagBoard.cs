@@ -10,6 +10,7 @@ namespace UnityWorld.Game.Domain
     public class FlagBoard<TKey> where TKey : notnull
     {
         // ── 内部数据 ──────────────────────────────────────────
+        /// <summary>按主体索引的键值黑板</summary>
         private readonly Dictionary<TKey, Dictionary<string, object>> _boards = new();
 
         // ── 写操作 ────────────────────────────────────────────

@@ -15,8 +15,10 @@ namespace UnityWorld.Game.Domain
         /// <summary>已使用次数</summary>
         public int UsageCount { get; set; } = 0;
 
+        /// <summary>创建空的行为卡数据</summary>
         public BehaviorCard() { }
 
+        /// <summary>以定义编号和归属角色创建行为卡</summary>
         public BehaviorCard(string defineId, int ownerId)
         {
             DefineId = defineId;

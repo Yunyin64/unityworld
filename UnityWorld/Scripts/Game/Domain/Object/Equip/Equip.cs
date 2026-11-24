@@ -55,6 +55,7 @@ namespace UnityWorld.Game.Domain
             };
         }
 
+        /// <summary>复制装备及其招式列表</summary>
         internal Equip Snapshot()
         {
             var copy = (Equip)MemberwiseClone();
@@ -62,12 +63,14 @@ namespace UnityWorld.Game.Domain
             return copy;
         }
 
+        /// <summary>保留装备详情日志入口</summary>
         public override void LogAllInfo()
         {
            
         }
 
 
+        /// <summary>格式化装备定义、名称及攻击、防御和速度</summary>
         public override string ToString() => $"[Equip:{DefineId}] {DisplayName} Atk={Attack} Def={Defend} Spd={Speed}";
     }
 }

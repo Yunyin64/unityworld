@@ -20,16 +20,19 @@ namespace UnityWorld.Game.Domain
         /// <summary>当前运动状态</summary>
         public NpcTypes.MoveState MoveState { get; set; } = NpcTypes.MoveState.Idle;
 
+        /// <summary>浅复制角色当前位面和地块位置数据</summary>
         public NpcPositionData Clone()
         {
             var copy = (NpcPositionData)MemberwiseClone();
             return copy;
         }
+        /// <summary>通过领域数据接口复制位置数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
 
         // ── 日志 ────────────────────────────────────
 
+        /// <summary>保留角色位置日志入口</summary>
         public void Log()
         {
             // TODO: 由 DomainData Log 技能补全

@@ -5,15 +5,18 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
+        /// <summary>按指定阶段筛出场上的卡牌</summary>
         public List<CombatCard> GetCards(CombatCardPhase phase)
         {
             return Field.Where(c => c.CheckPhase(phase)).ToList();
         }
 
+        /// <summary>返回当前选定的对手</summary>
         public CombatNpc GetTarget()
         {
             return Target;
         }
+        /// <summary>清空目标或换成指定的活跃对手</summary>
         public void ChangeTarget(CombatNpc target)
         {
             if (target == null) { Target = null; return; }
@@ -25,6 +28,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
         
 
+        /// <summary>保留角色触发器执行入口</summary>
         public void ApplyTrigger()
         {
             
@@ -59,12 +63,14 @@ namespace UnityWorld.Game.Domain.Combat
             Scene.TriggerCombatEvent("OnHeal", healed);
         }
 
+        /// <summary>增加正数生命值并标记回放效果</summary>
         public void RecoverHP(int amount)
         {
             if(amount <= 0) return;
             Hp += amount;
             Scene?.MarkPresentationEffect();
         }
+        /// <summary>在场上体量超限时判负并取消待发</summary>
         public void CheckDefeated()
         {
             int sp = GetSp();
@@ -77,6 +83,7 @@ namespace UnityWorld.Game.Domain.Combat
             } 
         }
 
+        /// <summary>按备战编号建立本场的场上卡和候补卡</summary>
         public void InitDeck()
         {
             var fieldIds = CardData.Field;
@@ -108,6 +115,7 @@ namespace UnityWorld.Game.Domain.Combat
             Log($"初始化卡组，运转池={Field.ToInfoString()}, Reserve={Reserve.Count}张, 当前SP={GetSp()}");
         }
 
+        /// <summary>双方均可行动且有待发时进入拼点结算</summary>
         public void ProcessContest()
         {
             var target = Target;
@@ -135,6 +143,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // 取消只结束待发，不执行 Apply。沿用本卡的 Lua 分派，让关键词处理收尾。
+        /// <summary>清空待发槽并恢复来源卡的充能阶段，派发取消事件</summary>
         private void CancelPending(string reason)
         {
             if (PendingSlot == null) return;
@@ -148,6 +157,7 @@ namespace UnityWorld.Game.Domain.Combat
             card.CallLua("OnPendingCancelled", ctx);
         }
 
+        /// <summary>取出并清空待发数据，记录退出回放</summary>
         private ContestData TakePending()
         {
             var data = PendingSlot;
@@ -155,6 +165,7 @@ namespace UnityWorld.Game.Domain.Combat
             if (data != null) RecordPending(data, false, "Taken");
             return data;
         }
+        /// <summary>记录拼点进入或退出待发槽的回放事件</summary>
         private void RecordPending(ContestData data, bool entered, string reason) =>
             Scene.RecordPresentation(CombatPresentationKind.PendingChanged, this, data.SourceCard,
                 new PresentationOrigin(data.PresentationActionId, null, data.PresentationContestId, null),
@@ -190,6 +201,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
 
+        /// <summary>校验所属角色和槽位后保存待发拼点</summary>
         public void AddContestData(ContestData data)
         {
             // Modifier 修正拼点数值;
@@ -198,6 +210,7 @@ namespace UnityWorld.Game.Domain.Combat
             PendingSlot = data;
             RecordPending(data, true, "Entered");
         }
+        /// <summary>应用来源角色的伤害修正后把伤害放入队列</summary>
         public void AddDamage(DamageInfo dmg)
         {
             dmg.PresentationOrigin ??= Scene.CapturePresentationOrigin();
@@ -259,6 +272,7 @@ namespace UnityWorld.Game.Domain.Combat
             int overflow = Math.Abs(valueA - valueB);
             if (Scene.PresentationRecordingEnabled)
             {
+                // 把单方拼点转换为回放数据
                 ContestSidePresentation Side(ContestData data) => new(data.OwnerNpc.Id,
                     CombatScene.PresentationCard(data.SourceCard), data.PresentationActionId,
                     data.ContestType.ToString(), data.Element.ToString(), data.FinalValue);
@@ -321,6 +335,7 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var card in Field) card.ModifyPairedContest(contest);
         }
 
+        /// <summary>将双方实际配对的拼点传给状态修正钩子</summary>
         private void ApplyPairedContestModifiers(ContestData contest, ContestData opponentContest)
         {
             // 持有者的 Buff 在配对结算前可以读取本次实际配对的两份拼点。
@@ -330,6 +345,7 @@ namespace UnityWorld.Game.Domain.Combat
             ModifyHook("PairedContest", ctx);
         }
 
+        /// <summary>让两张拼点卡处理各自结果并计算溢出伤害</summary>
         private void ResolveContestKeywords(APIContext pairedContext, ContestData winner, ContestData loser, int overflow)
         {
             var damage = winner.IsAttackType ? new DamageInfo(winner) { TargetNpc = loser.OwnerNpc } : null;
@@ -356,7 +372,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         /// <summary>
-        /// HP 清零处理：根据伤害来源选择对应伤势卡，塞入卡组，恢复 50% HP。
+        /// HP 清零处理：根据伤害来源选择对应伤势卡，塞入卡组，按 HpZeroRecoverRate 恢复 HP。
         /// </summary>
         public void HandleHpZero( DamageInfo ctx)
         {
@@ -366,6 +382,7 @@ namespace UnityWorld.Game.Domain.Combat
             Hp = (GetCombatHpMax() * GetStat("HpZeroRecoverRate")).ToInt() ;
          }
         
+        /// <summary>从定义创建完整伤势卡并排队加入战斗</summary>
         public CombatCard AddWound(string woundCardId)
         {
             // 通过 CardMgr 从 Define 实例化完整的 CardData（含 Effect/Action）

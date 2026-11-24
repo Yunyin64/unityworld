@@ -3,7 +3,7 @@ namespace UnityWorld.Game.Domain
     /// <summary>
     /// 基础地形类型枚举。
     /// 旧七类数值保留，湖泊为独立类型，由算法感知用于地形生成与五行浓度映射。
-    /// 策划如需扩展叙事语义标签，请使用 <see cref="UnityWorld.Game.Data.ExtraTerrainDefine"/>。
+    /// 地块类型及生成配置见 <see cref="UnityWorld.Game.Data.TileDefine"/>。
     /// </summary>
     public enum TerrainType
     {

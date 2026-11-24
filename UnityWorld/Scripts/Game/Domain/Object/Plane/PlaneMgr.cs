@@ -12,8 +12,10 @@ namespace UnityWorld.Game.Domain
     {
         // ── 数据 ─────────────────────────────────────────
 
+        /// <summary>按位面编号索引的实例</summary>
         private readonly Dictionary<PlaneId, Plane> _planes = new();
 
+        /// <summary>当前位面管理器</summary>
         public static PlaneMgr Instance { get; private set; } 
 
         /// <summary>主世界（唯一，游戏初始化时创建）</summary>
@@ -107,6 +109,7 @@ namespace UnityWorld.Game.Domain
             return plane;
         }
 
+        /// <summary>到达测试指定的发布阶段时抛出异常</summary>
         private void FailIfRequested(string stage)
         {
             if (PublicationFailureStageForTesting == stage)
@@ -159,8 +162,10 @@ namespace UnityWorld.Game.Domain
         /// <summary>当前位面总数（含封印）</summary>
         public int Count => _planes.Count;
 
+        /// <summary>管理器名称</summary>
         public string Name => "PlaneMgr";
 
+        /// <summary>管理器说明，当前为空</summary>
         public string Desc => "";
 
         // ── NPC归属 ───────────────────────────────────────
@@ -176,8 +181,8 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>
-        /// 将NPC从旧位面迁移到新位面（原子操作）。
-        /// 同时更新 NpcSystemPosition 里的位置记录（可选传入）。
+        /// 将 NPC 放置到目标位面的指定地块。
+        /// 通过现有 NpcSystemPosition 更新位置，可传入该实例。
         /// </summary>
         public bool MoveNpc(int npcId, PlaneId targetPlaneId,
                             TileId targetTileId = default,
@@ -203,21 +208,25 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()
         {
              
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()
         {
              
         }
 
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt)
         {
              
         }
 
+        /// <summary>销毁位面并清除地标、地区和原初元气登记</summary>
         public void End()
         {
             foreach (var plane in _planes.Values.ToArray())
@@ -232,11 +241,13 @@ namespace UnityWorld.Game.Domain
             if (ReferenceEquals(Instance, this)) Instance = null;
         }
 
+    /// <summary>结束存档流程，当前无写入</summary>
     public IEnumerator Save()
         {
             yield break;
         }
 
+    /// <summary>结束读档流程，当前无读取</summary>
     public IEnumerator Load()
         {
             yield break;

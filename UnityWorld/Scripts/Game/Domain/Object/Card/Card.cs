@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public partial class Card : GameEntityBase, IFormDefine<CardDefine>
     {
+        /// <summary>卡牌实例编号</summary>
         public int Id {get;set;}
         /// <summary>来源的 CardDefine ID</summary>
         public string DefineId { get; set; } = "";
@@ -28,6 +29,7 @@ namespace UnityWorld.Game.Domain
         }
 
 
+        /// <summary>格式化卡牌定义编号和显示名</summary>
         public override string ToString()
         {
             return $"Card({DefineId}, {DisplayName})";

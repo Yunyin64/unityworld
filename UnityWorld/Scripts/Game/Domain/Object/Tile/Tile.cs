@@ -17,16 +17,24 @@ namespace UnityWorld.Game.Domain
         public string TypeId { get; internal set; } = "plain";
         /// <summary>唯一生成来源，固定边界不归入无地区的基础填充。</summary>
         public TileGenerationSource Source { get; internal set; } = TileGenerationSource.Fill;
+        /// <summary>该地块所属的地区编号</summary>
         public int? RegionId { get; internal set; }
+        /// <summary>该地块放置的地标编号</summary>
         public int? LandMarkId { get; internal set; }
+        /// <summary>地块是否被强制地区锁定</summary>
         public bool IsFixed { get; internal set; }
+        /// <summary>本格是否预留绝对位置地标</summary>
         public bool HasForcedLandmark { get; internal set; }
+        /// <summary>地块的海拔、温度和湿度</summary>
         public MapEnvironment Environment { get; internal set; } = new();
+        /// <summary>内部持有的水文数据</summary>
         private MapWater _water = new();
         /// <summary>Detached read-only projection: callers may inspect/copy it without mutating the world.</summary>
         public MapWater Water { get => _water.Copy(); internal set => _water = value.Copy(); }
+        /// <summary>是否禁用全部移动方式</summary>
         public bool BlockAllMovement { get; internal set; }
         // null 表示继承类型定义；显式空集合表示禁止，不能按“没有权限”回退放行。
+        /// <summary>地块覆盖的允许移动方式</summary>
         public IReadOnlyList<string> AllowedMovement { get; internal set; }
 
         // ── 五行元气 ──────────────────────────────────────
@@ -42,11 +50,13 @@ namespace UnityWorld.Game.Domain
 
         // ── 构造 ──────────────────────────────────────────
 
+        /// <summary>用指定坐标创建默认地块</summary>
         public Tile(TileId id)
         {
             Id = id;
         }
 
+        /// <summary>用指定坐标和五行元气值创建地块</summary>
         public Tile(TileId id, TileAura currentAura)
         {
             Id = id;
@@ -86,6 +96,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 工具 ──────────────────────────────────────────
 
+        /// <summary>格式化地块坐标和当前元气</summary>
         public override string ToString() => $"Tile({Id}, {CurrentAura})";
     }
 }

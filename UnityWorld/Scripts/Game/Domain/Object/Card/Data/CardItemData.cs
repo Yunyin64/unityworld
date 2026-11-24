@@ -19,11 +19,13 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainDataBase ─────────────────────────────────
 
+        /// <summary>浅复制卡与物品的关联数据</summary>
         public IDomainDataBase Clone()
         {
             return (CardItemData)MemberwiseClone();
         }
 
+        /// <summary>记录卡牌编号和关联物品信息</summary>
         public void Log()
         {
             var item = GetItem();

@@ -5,10 +5,12 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public sealed partial class CombatBackpack
     {
+        /// <summary>允许尝试的四个滑动方向</summary>
         private static readonly CombatCardSlideType[] SlideDirections =
             [CombatCardSlideType.Up, CombatCardSlideType.Down, CombatCardSlideType.Left, CombatCardSlideType.Right];
 
         // Lua 可以直接传枚举；已有模板和空间条件传方向名。数字和未知名称都没有方向。
+        /// <summary>从枚举或名称解析滑动方向</summary>
         internal static CombatCardSlideType ReadSlideDirection(object value) => value switch
         {
             CombatCardSlideType direction => direction,
@@ -16,6 +18,7 @@ namespace UnityWorld.Game.Domain.Combat
             _ => CombatCardSlideType.None
         };
 
+        /// <summary>把滑动方向转换为一格的坐标差</summary>
         private static BackpackCell DirectionOffset(CombatCardSlideType direction) => direction switch
         {
             CombatCardSlideType.Up => new(0, -1),
@@ -25,6 +28,7 @@ namespace UnityWorld.Game.Domain.Combat
             _ => default
         };
 
+        /// <summary>检查两组占格是否按指定方位共享边</summary>
         internal static bool HasSharedEdge(IReadOnlyList<BackpackCell> reference,
             IReadOnlyList<BackpackCell> candidate, string direction)
         {
@@ -35,6 +39,7 @@ namespace UnityWorld.Game.Domain.Combat
             return offset != default && reference.Any(cell => candidate.Contains(new(cell.X + offset.X, cell.Y + offset.Y)));
         }
 
+        /// <summary>尝试沿选定方向滑动卡牌并更新占格</summary>
         internal bool TrySlide(CombatCard card, CombatCardSlideType direction, CombatNpc mover, CombatCard sourceCard)
         {
             if (!ReferenceEquals(card?.Owner?.Backpack, this)) return false;
@@ -101,6 +106,7 @@ namespace UnityWorld.Game.Domain.Combat
             return true;
         }
 
+        /// <summary>检查卡牌能否平移指定格数到目标位置</summary>
         private bool CanSlideTo(int cardId, IReadOnlyList<BackpackCell> cells, BackpackCell offset, int distance)
         {
             foreach (var cell in cells)
@@ -152,6 +158,7 @@ namespace UnityWorld.Game.Domain.Combat
             return Array.AsReadOnly(replaced);
         }
 
+        /// <summary>移除非主功法卡及其占格和出战记录</summary>
         internal void RemoveCard(int cardId)
         {
             if (cardId == MainCardId) throw new InvalidOperationException("主功法固定卡不能移除。");

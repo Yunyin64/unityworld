@@ -37,8 +37,10 @@ namespace UnityWorld.Game.Domain
             ValidCells = [.. ValidCells], MainCardCells = [.. MainCardCells],
             PlacedCards = PlacedCards.Select(entry => entry.Clone()).ToList()
         };
+        /// <summary>通过领域数据接口复制背包布局</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
+        /// <summary>保留背包布局日志入口</summary>
         public void Log()
         {
             

@@ -286,7 +286,7 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
-        /// <summary>位移目标卡牌到指定位置。参数：Domain(String), Position(String: First/Last/Random)</summary>
+        /// <summary>位移目标卡牌到指定位置的预留入口，当前拒绝执行。参数：Domain(String), Position(String: First/Last/Random)</summary>
         [APIFunc("Displace", APIType.Action, "位移目标卡牌", Scope.CombatCard, "Domain:String", "Position:String")]
         public static APIContext Displace(APIContext ctx)
         {

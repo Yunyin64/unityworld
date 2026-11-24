@@ -19,11 +19,13 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainDataBase ─────────────────────────────────
 
+        /// <summary>浅复制卡与装备的关联数据</summary>
         public IDomainDataBase Clone()
         {
             return (CardEquipData)MemberwiseClone();
         }
 
+        /// <summary>记录卡牌编号和关联装备信息</summary>
         public void Log()
         {
             var eq = GetEquip();
@@ -45,9 +47,9 @@ namespace UnityWorld.Game.Domain
 
         
         /// <summary>
-        /// 获取所属装备数据（通过 ParentCardId → EquipMgr）。
+        /// 读取装备数据（招式卡用 ParentCardId，装备卡读自身）。
         /// 返回 ContextBase 包含 Attack/Defend/Speed/Amount/DisplayName/Element。
-        /// 无父装备时返回空 ContextBase。
+        /// 查不到装备时返回空 ContextBase。
         /// </summary>
         public ContextBase GetEquipData()
         {
@@ -66,8 +68,10 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
+        /// <summary>按编号查找世界装备卡</summary>
         protected virtual Card FindEquipmentCard(int id) => CardMgr.Instance?.GetById(id);
 
+        /// <summary>读取指定父卡实际关联的装备</summary>
         protected virtual Equip ReadBoundEquipment(Card equipmentCard) => equipmentCard.GetEquip();
     }
 }

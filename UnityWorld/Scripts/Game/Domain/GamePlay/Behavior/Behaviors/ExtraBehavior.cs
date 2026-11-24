@@ -9,8 +9,10 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class ExtraBehavior : BehaviorBase
     {
+        /// <summary>自定义行为的类型标识</summary>
         private readonly string _behaviorId;
 
+        /// <summary>此实例的自定义行为标识</summary>
         public override string BehaviorId => _behaviorId;
 
         /// <summary>

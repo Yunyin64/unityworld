@@ -13,10 +13,13 @@ namespace UnityWorld.Game.Domain
     public class BehaviorCardMgr : IDomainMgrBase
     {
         // ── 单例 ─────────────────────────────────────────────
+        /// <summary>当前行为卡管理器</summary>
         public static BehaviorCardMgr? Instance { get; private set; }
 
         // ── IDomainMgrBase ────────────────────────────────────
+        /// <summary>管理器名称</summary>
         public string Name => "BehaviorCardMgr";
+        /// <summary>行为卡管理器职责说明</summary>
         public string Desc => "行为卡运行时管理器：人·抉择池驱动核心";
 
         // ── 内部数据 ──────────────────────────────────────────
@@ -24,19 +27,28 @@ namespace UnityWorld.Game.Domain
         private readonly Dictionary<int, List<BehaviorCard>> _cardTable = new();
 
         // ── 构造 ──────────────────────────────────────────────
+        /// <summary>登记当前行为卡管理器实例</summary>
         public BehaviorCardMgr()
         {
             Instance = this;
         }
 
         // ── IDomainMgrBase 生命周期 ───────────────────────────
+        /// <summary>保留管理器初始化入口</summary>
         public void Init()   { }
+        /// <summary>保留世界启动回调</summary>
         public void Begin()  { }
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime) { }
+        /// <summary>保留帧更新回调</summary>
         public void Update() { }
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt) { }
+        /// <summary>清空持有的行为卡并释放管理器</summary>
         public void End()    { _cardTable.Clear(); Instance = null; }
+        /// <summary>结束存档流程，当前无写入</summary>
         public IEnumerator Save() { yield break; }
+        /// <summary>结束读档流程，当前无读取</summary>
         public IEnumerator Load() { yield break; }
 
         /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>
@@ -105,7 +117,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 使用一张行为卡：
-        /// 1. 检查 NPC 是否空闲（主行为槽为空）
+        /// 1. 使用主行为卡时检查 NPC 是否空闲（主行为槽为空）
         /// 2. 根据 Define.BehaviorId 创建 Behavior 实例
         /// 3. 将 Define 的生命周期 Story 规则转换为 BehaviorStoryEntry 列表
         /// 4. 填入 NPC 行为槽（主/次）

@@ -14,23 +14,30 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class TraitMgr:IDomainMgrBase
     {
+        /// <summary>当前特质管理器</summary>
         public static TraitMgr? Instance { get; private set; }
 
+        /// <summary>管理器名称</summary>
         public string Name => "TraitMgr";
 
+        /// <summary>管理器说明，当前为空</summary>
         public string Desc => "";
 
         // int → 该 NPC 当前持有的 Trait 实例表（TraitId → Trait）
+        /// <summary>各角色持有的特质实例表</summary>
         private readonly Dictionary<int, Dictionary<TraitId, Trait>> _traitTable = new();
 
         // 特质定义数据源（由外部注入）
+        /// <summary>提供特质配置的数据管理器</summary>
         private IDataMgrBase<TraitDefine>? _traitDefineMgr;
 
+        /// <summary>登记当前特质管理器实例</summary>
         public TraitMgr()
         {
             Instance = this;
         }
 
+        /// <summary>保留管理器初始化入口</summary>
         public void Init()
         {
              
@@ -52,7 +59,7 @@ namespace UnityWorld.Game.Domain
         // ── 添加 ──────────────────────────────────────────
 
         /// <summary>
-        /// 给 NPC 添加一个 Trait 实例，并立即将其 StatModifier 写入 StatBlock。
+        /// 给 NPC 添加一个 Trait 实例，属性修正应用仍待接入。
         /// 若已持有同 ID 的 Trait，则忽略（层数由外部调用 Trait.AddStack 管理）。
         /// </summary>
         /// <returns>true=添加成功，false=已存在或 NPC 未注册</returns>
@@ -103,7 +110,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 重新应用 NPC 所有 Trait 的属性修正（存档加载后调用）。
-        /// 先清除所有旧 Modifier，再按最新 TraitDefine 重新写入。
+        /// 当前仅撤销旧修正，写入新修正待接入。
         /// </summary>
         public void ReapplyAll(Npc npc)
         {
@@ -129,6 +136,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 内部工具 ──────────────────────────────────────
 
+        /// <summary>检查特质定义是否有修正，实际应用逻辑预留</summary>
         private void ApplyModifiers(StatBlock stats, Trait trait)
         {
             if (_traitDefineMgr == null) return;
@@ -137,11 +145,13 @@ namespace UnityWorld.Game.Domain
 
         }
 
+        /// <summary>按特质来源键移除相关属性修正</summary>
         private static void RevokeModifiers(StatBlock stats, Trait trait)
             => stats.RemoveModifiersBySource($"trait:{trait.Id.Value}");
 
         
 
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime)
         {
             
@@ -149,31 +159,37 @@ namespace UnityWorld.Game.Domain
         }
 
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()
         {
              
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()
         {
              
         }
 
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt)
         {
              
         }
 
+        /// <summary>保留世界结束回调</summary>
         public void End()
         {
              
         }
 
+    /// <summary>结束存档流程，当前无写入</summary>
     public IEnumerator Save()
         {
             yield break;
         }
 
+    /// <summary>结束读档流程，当前无读取</summary>
     public IEnumerator Load()
         {
             yield break;

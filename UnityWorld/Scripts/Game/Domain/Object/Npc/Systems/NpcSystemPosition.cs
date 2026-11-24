@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcSystemPosition : NpcSystemBase<NpcPositionData>
     {
+        /// <summary>按角色编号保存的位置数据</summary>
         protected override Dictionary<int, NpcPositionData> _dataTable { get ; set  ; } = new();
 
         /// <summary>
@@ -20,11 +21,13 @@ namespace UnityWorld.Game.Domain
             Register(npc, new NpcPositionData());
         }
 
+        /// <summary>保留角色位置的时步入口</summary>
         public override void OnTick(Npc npc, float deltaTime)
         {
             
         }
 
+        /// <summary>读取已放置角色的位置快照</summary>
         public NpcPositionData GetPosition(int id)
             => _dataTable.TryGetValue(id, out var data) && data.IsPlaced ? data.Clone() : null;
 
@@ -37,6 +40,7 @@ namespace UnityWorld.Game.Domain
             return PlaceCore(id, planeId, tile);
         }
 
+        /// <summary>校验落点并更新位置、位面成员和出生顺序</summary>
         private bool PlaceCore(int id, int planeId, TileId tile)
         {
             var plane = PlaneMgr.Instance?.GetPlaneById(planeId);
@@ -62,6 +66,7 @@ namespace UnityWorld.Game.Domain
             return PlaceCore(id, planeId, target);
         }
 
+        /// <summary>根据是否正在移动设置步行或静止</summary>
         internal void SetMoving(int id, bool moving)
         {
             if (_dataTable.TryGetValue(id, out var data))
@@ -78,6 +83,7 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>列出已放置且空闲的活跃角色可走的邻格</summary>
         public IReadOnlyList<TileId> GetMoveCandidates(int id)
         {
             var mgr = NpcMgr.Instance;
@@ -107,15 +113,19 @@ namespace UnityWorld.Game.Domain
             return plane.TileSystem.GetTilesInRange(data.TileId, GetDisplayRadius(npc));
         }
 
+        /// <summary>读取角色当前探索行动速度</summary>
         public float GetActionSpeed(Npc npc) => ReadExplorationValue(npc, "ExploreActionSpeed");
+        /// <summary>向下取整得到角色的探索展示半径</summary>
         public double GetDisplayRadius(Npc npc) => Math.Floor((double)ReadExplorationValue(npc, "ExploreDisplayRadius"));
 
+        /// <summary>校验探索行动速度和展示半径的属性定义</summary>
         internal static void ValidateExplorationDefinitions()
         {
             ValidateDefinition(StatDefineMgr.Instance?.Get("ExploreActionSpeed"), "ExploreActionSpeed");
             ValidateDefinition(StatDefineMgr.Instance?.Get("ExploreDisplayRadius"), "ExploreDisplayRadius");
         }
 
+        /// <summary>验证探索属性的归属、类型、上下限及默认值</summary>
         private static void ValidateDefinition(StatDefine define, string id)
         {
             if (define == null || define.ID != id || define.Type != "Npc" || define.BaseType != StatBaseType.Derived ||
@@ -124,6 +134,7 @@ namespace UnityWorld.Game.Domain
                 throw new InvalidOperationException($"探索属性{id}缺失或定义非法。");
         }
 
+        /// <summary>校验探索属性定义并读取非负有限的最终值</summary>
         private static float ReadExplorationValue(Npc npc, string id)
         {
             ArgumentNullException.ThrowIfNull(npc);
@@ -134,6 +145,7 @@ namespace UnityWorld.Game.Domain
             return value;
         }
 
+        /// <summary>终止周行动，解除位面成员身份并注销位置</summary>
         public override void Unregister(int id)
         {
             NpcMgr.Instance?.BehaviorSystem.StopWeeklyAction(id);
@@ -141,6 +153,7 @@ namespace UnityWorld.Game.Domain
             base.Unregister(id);
         }
 
+        /// <summary>逐个注销角色位置及各自关联状态</summary>
         public void Clear()
         {
             foreach (int id in _dataTable.Keys.ToArray()) Unregister(id);

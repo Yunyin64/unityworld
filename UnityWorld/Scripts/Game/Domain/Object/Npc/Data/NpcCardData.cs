@@ -8,7 +8,9 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcCardData : IDomainDataBase
     {
+        /// <summary>角色持有的卡牌编号</summary>
         public List<int> AllCardIds { get; set; } = new();
+        /// <summary>角色实际持有的卡牌实例</summary>
         public List<Card> AllCards { get; set; } = new();
 
         // 持有关系与卡牌分组标记仍归这里；空间参数和卡位归 NpcBackpackData。
@@ -23,10 +25,12 @@ namespace UnityWorld.Game.Domain
         /// <summary>主功法布局等级。</summary>
         public int MainGongFaLevel { get; set; } = 1;
 
+        /// <summary>创建空的角色卡牌数据</summary>
         public NpcCardData()
         {
             
         }
+        /// <summary>复制持卡实例及全部出战选择</summary>
         public NpcCardData Clone()
         {
             var copy = (NpcCardData)MemberwiseClone();
@@ -35,6 +39,7 @@ namespace UnityWorld.Game.Domain
             copy.Field = [.. Field]; copy.Reserve = [.. Reserve]; copy.EquippedFaBao = [.. EquippedFaBao];
             return copy;
         }
+        /// <summary>通过领域数据接口复制持卡数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
         /// <summary>仅复制集合和选择标记，装配候选继续引用原持有卡，不修改卡对象。</summary>
@@ -59,6 +64,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 日志 ────────────────────────────────────
 
+        /// <summary>记录持有卡数量和场上、候补卡编号</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg("│  AllCards: {0}", AllCards.Count);
@@ -70,7 +76,9 @@ namespace UnityWorld.Game.Domain
     
     public partial class Npc
     {
+        /// <summary>读取角色持有的卡牌列表</summary>
         public List<Card> GetAllCards() => CardData.AllCards;
+        /// <summary>读取角色持有的卡牌编号列表</summary>
         public List<int> GetAllCardIds() => CardData.AllCardIds;
 
     }

@@ -14,8 +14,10 @@ namespace UnityWorld.Game.Domain
         /// <summary>触发前置条件（AND 逻辑，全部满足才进入候选池）</summary>
         public List<StoryCondition> Conditions { get; set; } = [];
 
+        /// <summary>创建空的劫缘条目</summary>
         public KarmaEntry() { }
 
+        /// <summary>用剧情编号、权重和条件创建劫缘条目</summary>
         public KarmaEntry(string storyId, float weight, List<StoryCondition>? conditions = null)
         {
             StoryId    = storyId;

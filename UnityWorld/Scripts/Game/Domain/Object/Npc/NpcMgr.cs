@@ -10,25 +10,36 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcMgr: DomainMgrBase<Npc>, ISoulBase
     {
+        /// <summary>当前角色管理器</summary>
         public static NpcMgr Instance { get; private set; }
 
         // ── 子系统 ────────────────────────────────────────
+        /// <summary>角色生理系统</summary>
         public NpcSystemBio BioSystem { get; } = new();
+        /// <summary>角色修行系统</summary>
         public NpcSystemCultivation CultivationSystem { get; } = new();
+        /// <summary>角色持卡系统</summary>
         public NpcSystemCard CardSystem { get; } = new();
+        /// <summary>角色备战背包系统</summary>
         public NpcSystemBackpack BackpackSystem { get; } = new();
+        /// <summary>角色位置系统</summary>
         public NpcSystemPosition PositionSystem { get; } = new();
+        /// <summary>角色行为系统</summary>
         public NpcSystemBehavior BehaviorSystem { get; } = new();
+        /// <summary>角色特质系统</summary>
         public NpcSystemTrait   TraitSystem { get; } = new();
+        /// <summary>角色性格系统</summary>
         public NpcSystemPersonality   PersonalitySystem { get; } = new();
 
 
+        /// <summary>以种子初始化基础实体数据并登记管理器</summary>
         public NpcMgr(int seed = 12345)
         {
             Soul = new SoulData(seed);
             Instance = this;
         }
 
+        /// <summary>管理器的基础实体数据</summary>
         public SoulData Soul {get;set;}
 
         // ── Tick ─────────────────────────────────────────
@@ -51,26 +62,31 @@ namespace UnityWorld.Game.Domain
 
             }
         }
+        /// <summary>保留管理器初始化入口</summary>
         public override void Init()
         {
             
         }
 
+        /// <summary>保留世界启动回调</summary>
         public override void Begin()
         {
             
         }
 
+        /// <summary>保留帧更新回调</summary>
         public override void Update()
         {
             
         }
 
+        /// <summary>保留渲染回调</summary>
         public override void Render(float dt)
         {
             
         }
 
+        /// <summary>注销全部角色，清理位置、行为和背包数据</summary>
         public override void End()
         {
             // 包括失败创建和未落地对象；新世界不继承旧位置或周移动。
@@ -79,11 +95,13 @@ namespace UnityWorld.Game.Domain
             BackpackSystem.Clear();
         }
 
+    /// <summary>结束存档流程，当前无写入</summary>
     public override IEnumerator Save()
         {
             yield break;
         }
 
+    /// <summary>结束读档流程，当前无读取</summary>
     public override IEnumerator Load()
         {
             yield break;
@@ -132,6 +150,7 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>依次初始化角色的生理、位置及其余领域数据</summary>
         private void InitializeSystems(BirthContext ctx)
         {
             BioSystem.OnEntityBorn(ctx); PositionSystem.OnEntityBorn(ctx);
@@ -142,6 +161,7 @@ namespace UnityWorld.Game.Domain
         }
 
         // 在分配实体 ID 之前，用与卡实例和编辑器一致的解析检查模板几何。
+        /// <summary>检查模板的摆放定义及主功法配置</summary>
         private static void ValidateTemplateGeometry(NpcDefine define)
         {
             if (define.InitCardDeck.Length != 0)
@@ -170,6 +190,7 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>按模板创建卡牌和占格，绑定主功法及装备</summary>
         private void AssembleTemplateBackpack(Npc npc, NpcDefine define)
         {
             var data = CardSystem.GetData(npc.Id);
@@ -185,6 +206,7 @@ namespace UnityWorld.Game.Domain
             var mains = data.AllCards.Where(c => c.DefineId == define.MainGongFaId).ToList();
             if (mains.Count != 1) throw new InvalidOperationException($"主功法 {define.MainGongFaId} 必须唯一对应位置列表实例，实际 {mains.Count} 张。");
 
+            // 按摆放下标或唯一的卡定义解析绑定对象
             Card ResolveBinding(string cardId, int? placementIndex)
             {
                 if (placementIndex is int index)
@@ -237,17 +259,21 @@ namespace UnityWorld.Game.Domain
             npc.ValidateBackpackLayout();
         }
 
+        /// <summary>清理模板装配失败留下的角色及系统数据</summary>
         private void CleanupFailedAssembly(Npc npc)
             => RemoveCore(npc.Id, npc);
 
+        /// <summary>清理世界角色出生失败留下的组件和索引</summary>
         internal void CleanupFailedWorldBirth(Npc npc) => RemoveCore(npc.Id, npc);
 
+        /// <summary>检查世界可修改后注销指定角色</summary>
         public override void Remove(int id)
         {
             WorldMgr.EnsureMutable();
             RemoveCore(id);
         }
 
+        /// <summary>解除角色登记并清理持卡、位置和各系统数据</summary>
         private void RemoveCore(int id, Npc knownNpc = null)
         {
             // 正常注销和失败装配共用清理，不再只删除实体字典中的壳。

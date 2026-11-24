@@ -10,6 +10,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>实例 ID（= 所属 Card.Id）</summary>
         public int Id { get; set; }
 
+        /// <summary>功法显示名</summary>
         public string DisplayName { get; set; } = "";
 
         /// <summary>功法定义 ID</summary>
@@ -55,8 +56,10 @@ namespace UnityWorld.Game.Domain
         }
 
 
+        /// <summary>格式化功法显示名和定义编号</summary>
         public override string ToString() => $"({DisplayName}:{DefineId})";
 
+        /// <summary>保留功法详情日志入口</summary>
         public override void LogAllInfo()
         {
             

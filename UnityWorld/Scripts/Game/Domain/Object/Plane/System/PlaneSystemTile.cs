@@ -6,13 +6,19 @@ namespace UnityWorld.Game.Domain;
 /// <summary>位面自己的地块系统：管理地块，并提供通行与空间查询。</summary>
 public sealed class PlaneSystemTile
 {
+    /// <summary>负责地块数据的位面</summary>
     private readonly Plane _plane;
+    /// <summary>绑定将管理地块的位面</summary>
     internal PlaneSystemTile(Plane plane) { _plane = plane; }
 
+    /// <summary>按六边形坐标查找地块</summary>
     public Tile GetTile(TileId id) => _plane.TileData.Entries.GetValueOrDefault(id);
+    /// <summary>检查世界可修改后写入或覆盖指定地块</summary>
     public void SetTile(Tile tile) { WorldMgr.EnsureMutable(); _plane.TileData.Entries[tile.Id] = tile; }
+    /// <summary>检查世界可修改后移除指定地块</summary>
     public bool RemoveTile(TileId id) { WorldMgr.EnsureMutable(); return _plane.TileData.Entries.Remove(id); }
 
+    /// <summary>读取地块覆盖或定义中的允许移动方式</summary>
     public IReadOnlyList<string> GetMovementModes(Tile tile)
     {
         var define = tile == null ? null : GameDataMgr.Instance?.MapCatalog?.Tiles.GetValueOrDefault(tile.TypeId);
@@ -20,6 +26,7 @@ public sealed class PlaneSystemTile
         return Array.AsReadOnly(modes.ToArray());
     }
 
+    /// <summary>检查地块在活跃位面内且允许步行</summary>
     public bool CanWalk(TileId id)
     {
         if (_plane.State != PlaneTypes.PlaneState.Active || !_plane.IsInBounds(id)) return false;
@@ -40,6 +47,7 @@ public sealed class PlaneSystemTile
             .Select(tile => tile.CopyForObservation()).ToArray());
     }
 
+    /// <summary>用长整数计算两个六边形格之间的距离</summary>
     private static long Distance(TileId a, TileId b)
     {
         long q = (long)a.Q - b.Q, r = (long)a.R - b.R;

@@ -13,17 +13,25 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class CardMgr : DomainMgrBase<Card>,ISoulBase
     {
+        /// <summary>当前卡牌管理器</summary>
         public static CardMgr Instance { get; private set; }
 
         // ── 子系统 ────────────────────────────────────────
+        /// <summary>通用卡牌数据系统</summary>
         public CardSystemData DataSystem { get; } = new();
+        /// <summary>功法卡附属数据系统</summary>
         public CardSystemGongFa GongFaSystem { get; } = new();
+        /// <summary>装备卡附属数据系统</summary>
         public CardSystemEquip EquipSystem { get; } = new();
+        /// <summary>物品卡附属数据系统</summary>
         public CardSystemItem ItemSystem { get; } = new();
 
+        /// <summary>管理器的基础实体数据</summary>
         public SoulData Soul { get; set; }      
+        /// <summary>管理器持有的随机源</summary>
         private readonly Rng _rng = new();
 
+        /// <summary>卡牌数据的 JSON 序列化选项</summary>
         private static readonly JsonSerializerOptions _jsonOpts = new()
         {
             WriteIndented = true,
@@ -31,6 +39,7 @@ namespace UnityWorld.Game.Domain
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
 
+        /// <summary>按种子初始化实体数据并登记管理器</summary>
         public CardMgr(int seed)
         {
             Soul = new SoulData(seed);
@@ -38,6 +47,7 @@ namespace UnityWorld.Game.Domain
         }
 
         // ── 从 Define 实例化 ──────────────────────────────────
+        /// <summary>校验卡牌定义，创建并注册卡牌及其运行数据</summary>
         public Card InstantiateFromDefine(CardDefine cardDefine)
         {
             // 先校验角色再分配实体 ID，避免无效定义留下半注册卡牌。
@@ -98,7 +108,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 从 CardDefine 实例化一张 Card，加入管理并返回。
-        /// CardDefine → 遍历 EffectIds → 每个 EffectDefine 构造 EffectData → 拼 TagBag。
+        /// 找不到 CardDefine 时记录错误并返回 null。
         /// </summary>
         public Card InstantiateFromDefine(string cardDefineId)
         {
@@ -114,9 +124,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 卡组组合（原 CardSystemDeck）────────────────────────
 
-        /// <summary>
-        /// 根据主题 TagBag 从卡池中匹配组合一套卡组
-        /// </summary>
+        /// <summary>保留按主题组合卡组的入口，当前返回空列表</summary>
         /// <param name="themeTags">卡组主题 TagBag（重复表示浓度）</param>
         /// <param name="matchType">匹配类型</param>
         /// <param name="matchDegree">匹配度</param>
@@ -134,26 +142,34 @@ namespace UnityWorld.Game.Domain
 
         // ── 生命周期 ──────────────────────────────────────────
 
+        /// <summary>保留管理器初始化入口</summary>
         public override void Init() { }
 
+        /// <summary>保留世界启动回调</summary>
         public override void Begin() { }
 
+        /// <summary>保留时步回调</summary>
         public override void Tick(float deltaTime) { }
 
+        /// <summary>保留帧更新回调</summary>
         public override void Update() { }
 
+        /// <summary>保留渲染回调</summary>
         public override void Render(float dt) { }
 
+        /// <summary>释放当前卡牌管理器实例</summary>
         public override void End()
         {
             Instance = null;
         }
 
+    /// <summary>结束存档流程，当前无写入</summary>
     public override IEnumerator Save()
         {
             yield break;
         }
 
+    /// <summary>结束读档流程，当前无读取</summary>
     public override IEnumerator Load()
         {
             yield break;

@@ -2,7 +2,13 @@ using System.Collections.Generic;
 
 namespace UnityWorld.Game.Domain
 {
-    public enum PlaneGenerationMode { BasicFill, Continent }
+    public enum PlaneGenerationMode
+    {
+        /// <summary>按默认地块填补矩形位面</summary>
+        BasicFill,
+        /// <summary>按大陆生成规则建图</summary>
+        Continent
+    }
 
     /// <summary>
     /// 创建位面时的配置参数，传给 PlaneMgr.CreatePlane 使用
@@ -37,8 +43,11 @@ namespace UnityWorld.Game.Domain
         /// </summary>
         public IEnumerable<Tile>? InitialTiles { get; set; } = null;
 
+        /// <summary>位面采用的地图生成模式</summary>
         public PlaneGenerationMode GenerationMode { get; set; } = PlaneGenerationMode.BasicFill;
+        /// <summary>地图生成预设编号</summary>
         public string GenerationProfileId { get; set; } = "china-inspired-v1";
+        /// <summary>地图生成随机种子</summary>
         public int GenerationSeed { get; set; } = 12345;
         /// <summary>可选的普通生成参数；为空时使用代码默认预设，没有额外的 Define JSON。</summary>
         public UnityWorld.Game.Data.WorldGenerationOptions GenerationOptions { get; set; }
@@ -116,7 +125,7 @@ namespace UnityWorld.Game.Domain
         // ── 位面级元气加成 ─────────────────────────────────
 
         /// <summary>
-        /// 位面对所有地块的五行元气加成（叠加到地块 BaseAura 上）。
+        /// 位面对所有地块的五行元气加成（计算有效元气时叠加到地块 CurrentAura 上）。
         /// 默认全为 0。
         /// </summary>
         public TileAura PlaneAuraBonus { get; } = new()
@@ -127,9 +136,13 @@ namespace UnityWorld.Game.Domain
         // ── 地块 ──────────────────────────────────────────
 
         // Plane是复杂对象：数据有唯一归属，操作由所属System承担。
+        /// <summary>位面内的地块数据</summary>
         public PlaneTileData TileData { get; } = new();
+        /// <summary>位面成员数据</summary>
         public PlaneNpcData NpcData { get; } = new();
+        /// <summary>位面地块管理系统</summary>
         public PlaneSystemTile TileSystem { get; }
+        /// <summary>位面角色管理系统</summary>
         public PlaneSystemNpc NpcSystem { get; }
 
         /// <summary>本位面所有地块（只读视图）</summary>
@@ -282,6 +295,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 工具 ──────────────────────────────────────────
 
+        /// <summary>格式化位面编号、类型、流速和成员数量</summary>
         public override string ToString()
             => $"Plane({Id.Value}, \"{Name}\", {Kind}, x{TimeFlowRate}, tiles={TileCount}, npcs={NpcCount})";
     }

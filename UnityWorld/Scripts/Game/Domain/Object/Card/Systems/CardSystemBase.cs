@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     {
         /// <summary>以 cardId 为键的数据表</summary>
         protected abstract Dictionary<int, T> _dataTable { get; set; }
+        /// <summary>已登记的卡牌数据条目数</summary>
         public int RegisteredCount => _dataTable.Count;
 
         /// <summary>注册一张 Card 的数据</summary>
@@ -29,6 +30,7 @@ namespace UnityWorld.Game.Domain
             _dataTable.Remove(cardId);
         }
 
+        /// <summary>推进指定卡牌在本系统中的时步</summary>
         public abstract void OnTick(Card card, float deltaTime);
     }
 }

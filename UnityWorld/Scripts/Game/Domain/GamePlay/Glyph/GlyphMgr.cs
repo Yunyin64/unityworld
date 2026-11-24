@@ -33,7 +33,9 @@ namespace UnityWorld.Game.Domain
         public SoulData Soul { get; }
 
         // ── 内部数据 ─────────────────────────────────────────
+        /// <summary>姓名和道号的候选字库</summary>
         private NameLibrary _nameLibrary = new();
+        /// <summary>随机取名的随机源</summary>
         private Rng _rng;
 
         // ── 构造函数 ─────────────────────────────────────────
@@ -42,6 +44,7 @@ namespace UnityWorld.Game.Domain
         /// 构造 GlyphMgr，初始化 SoulData 和 Rng
         /// </summary>
         /// <param name="seed">随机种子</param>
+        /// <param name="baseDir">读取名字库的根目录</param>
         public GlyphMgr(int seed, string baseDir = null)
         {
             Soul = new SoulData(seed);
@@ -55,17 +58,15 @@ namespace UnityWorld.Game.Domain
 
         // ── 名字生成（纯工厂，不存数据）─────────────────────
 
-        /// <summary>
-        /// 随机生成完整姓名（道号+姓+名）
-        /// </summary>
-        /// <param name="gender">性别（决定名字池选择）</param>
-        /// <returns>格式："道号前缀道号后缀·姓名"</returns>
+        /// <summary>从字库随机抽取姓氏，空池时用默认姓氏</summary>
         public string RandomSurname()
         {
             string surname = RandomFrom(_nameLibrary.Surnames, "佚");
             return surname;
         }
 
+        /// <summary>按角色性别从对应候选池抽取名字</summary>
+        /// <param name="gender">性别（决定名字池选择）</param>
         public string RandomGivenname(NpcTypes.Gender gender)
         {
             string[] firstPool = gender == NpcTypes.Gender.Female
@@ -104,7 +105,7 @@ namespace UnityWorld.Game.Domain
             LogMgr.Instance.Dbg("[GlyphMgr] 初始化完成，名字库已加载");
         }
 
-        /// <summary>有耦合初始化</summary>
+        /// <summary>保留世界启动回调</summary>
         public void Begin() { }
 
         /// <summary>帧更新（GlyphMgr 不存数据，无需 Tick）</summary>
@@ -122,6 +123,7 @@ namespace UnityWorld.Game.Domain
             Instance = null;
         }
 
+        /// <summary>生成性别、姓氏、名字和道号并写入出生上下文</summary>
         public BirthContext GeneratorNpc(BirthContext ctx)
         {
             var npc = ctx.MainNpc;

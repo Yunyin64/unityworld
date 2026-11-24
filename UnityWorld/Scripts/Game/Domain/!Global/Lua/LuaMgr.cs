@@ -11,8 +11,11 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class LuaMgr : IDomainMgrBase
     {
+        /// <summary>当前 Lua 管理器</summary>
         public static LuaMgr Instance { get; private set; }
+        /// <summary>管理器名称</summary>
         public string Name => "LuaMgr";
+        /// <summary>Lua 管理器职责说明</summary>
         public string Desc => "Lua运行时管理器：NLua State 生命周期、脚本加载";
 
         // ── Lua State ────────────────────────────────────────────
@@ -70,6 +73,7 @@ namespace UnityWorld.Game.Domain
             LogMgr.Instance.Dbg("[LuaMgr] 初始化完成，Lua State 已创建");
         }
 
+        /// <summary>从触发器定义建立钩子名到事件编号的映射</summary>
         public void Begin()
         {
             var triggers = TriggerDefineMgr.Instance.GetAll().ToList();
@@ -82,8 +86,11 @@ namespace UnityWorld.Game.Domain
                 HookToEventId.Add(funcname, id);
             }
         }
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime) { }
+        /// <summary>保留帧更新回调</summary>
         public void Update() { }
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt) { }
 
         /// <summary>
@@ -98,9 +105,12 @@ namespace UnityWorld.Game.Domain
             Instance = null;
         }
 
+        /// <summary>结束存档流程，当前无写入</summary>
         public IEnumerator Save() { yield break; }
+        /// <summary>结束读档流程，当前无读取</summary>
         public IEnumerator Load() { yield break; }
 
+        /// <summary>记录 Lua 执行环境是否已创建</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg("=== {0} ===  {1}", Name, Desc);
@@ -362,6 +372,7 @@ namespace UnityWorld.Game.Domain
         //  UTF-8 脚本加载（替代 DoFile，避免 GBK 乱码）
         // ══════════════════════════════════════════════════════════
 
+        /// <summary>以 UTF-8 执行脚本文件并返回其结果</summary>
         private object[] DoFileUtf8(string filePath)
         {
             return _runtime.ExecuteFile(filePath);

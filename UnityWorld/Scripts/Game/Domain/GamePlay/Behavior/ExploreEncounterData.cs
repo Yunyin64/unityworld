@@ -11,14 +11,19 @@ internal sealed class ExploreEncounterData
 {
     private sealed class Encounter
     {
+        /// <summary>探索遭遇配置编号</summary>
         public string ID { get; init; } = "";
         // 缺少 Chance 与显式的 0 有不同含义，前者在加载时报告配置错误。
+        /// <summary>已抽中的遭遇实际触发概率</summary>
         public double Chance { get; init; } = double.NaN;
+        /// <summary>遭遇触发后授予的行为卡编号</summary>
         public string? BehaviorCardId { get; init; }
     }
 
+    /// <summary>按编号索引的探索遭遇配置</summary>
     private readonly Dictionary<string, Encounter> _events = new(StringComparer.Ordinal);
 
+    /// <summary>载入遭遇表并校验地块与行为卡引用</summary>
     internal static ExploreEncounterData Load(string path, MapCatalog map, BehaviorCardDataMgr cards)
     {
         var result = new ExploreEncounterData();
@@ -61,6 +66,7 @@ internal sealed class ExploreEncounterData
         return result;
     }
 
+    /// <summary>从当前格抽取一次遭遇并按概率触发，授予配置的行为卡</summary>
     internal static (string? EventId, string? GrantedCardId) Resolve(Plane plane, TileId tileId, int npcId, Rng rng)
     {
         var tile = plane.GetTile(tileId) ?? throw new InvalidOperationException($"Missing exploration tile {tileId}.");

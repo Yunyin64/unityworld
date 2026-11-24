@@ -35,6 +35,7 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainDataBase ─────────────────────────────────
 
+        /// <summary>复制角色持有和激活的功法编号列表</summary>
         public NpcGongFaData Clone()
         {
             var copy = (NpcGongFaData)MemberwiseClone();
@@ -42,8 +43,10 @@ namespace UnityWorld.Game.Domain
             copy.ActiveSlotCardIds = new List<int>(ActiveSlotCardIds);
             return copy;
         }
+        /// <summary>通过领域数据接口复制功法数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
+        /// <summary>记录持有和激活的功法列表</summary>
         public void Log()
         {
             var allGongFa = GetAllGongFa();

@@ -4,8 +4,12 @@ namespace UnityWorld.Game.Domain;
 
 public static partial class WorldMapGenerator
 {
+    /// <summary>保存一个候选地形及其实际填充权重</summary>
+    /// <param name="Type">候选地形定义</param>
+    /// <param name="Weight">候选有效权重</param>
     private readonly record struct FillChoice(TileDefine Type, double Weight);
 
+    /// <summary>筛选与环境、水系和邻格兼容的候选并计算权重</summary>
     private static List<FillChoice> FillChoices(Context c, int i, IReadOnlyList<FillChoice> baseCandidates, HashSet<string> excluded = null)
     {
         var choices = new List<FillChoice>();
@@ -25,6 +29,7 @@ public static partial class WorldMapGenerator
         return choices;
     }
 
+    /// <summary>按候选约束填充空地，发生冲突时回溯重试</summary>
     private static void Fill(Context c)
     {
         int count = c.World.Cells.Length;
@@ -43,6 +48,7 @@ public static partial class WorldMapGenerator
                 .Select(t => new FillChoice(t, t.FillWeight * EnvironmentScore(t.Environment, c.World.Cells[i].Environment))).ToList();
             if (bases[i].Count == 0) c.Fail("fill", $"No environment/water-compatible fill type at ({c.World.Cells[i].Col},{c.World.Cells[i].Row}); no fallback is permitted.");
         }
+        // 按最新候选数和版本把未填地块重新入队
         void Enqueue(int i)
         {
             if (i < 0 || c.World.Cells[i].TileDefineId != null) return;
@@ -120,6 +126,7 @@ public static partial class WorldMapGenerator
         }
     }
 
+    /// <summary>记录各候选的基础、环境及邻接权重</summary>
     private static List<FillCandidateRecord> CandidateRecords(Context c, int index, IReadOnlyList<FillChoice> choices)
         => choices.Select(x =>
         {
@@ -128,6 +135,7 @@ public static partial class WorldMapGenerator
                 AdjacencyWeight = x.Weight / (x.Type.FillWeight * environment), FinalWeight = x.Weight };
         }).ToList();
 
+    /// <summary>依地标规则和权重在合格的填充空格散布地标</summary>
     private static void ScatterLandmarks(Context c)
     {
         var definitions = c.Catalog.LandMarks.Values.OrderBy(x => x.ID, StringComparer.Ordinal).Where(x => x.ForcedPositions.Count == 0 && x.SpawnWeight > 0).ToArray();

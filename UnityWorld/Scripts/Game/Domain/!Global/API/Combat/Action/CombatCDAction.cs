@@ -6,6 +6,7 @@ namespace UnityWorld.Game.Domain
     public static partial class CombatBaseFunc
     {
         // Self/Target are role targets. Legacy card selectors are deduplicated by owner.
+        /// <summary>解析时序操作的目标角色范围</summary>
         private static List<CombatNpc> TimeTargets(APIContext ctx)
         {
             var domain = ctx.GetStringValue("Domain");
@@ -96,6 +97,7 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
+        /// <summary>校验属性受支持后向目标卡添加属性修正</summary>
         [APIFunc("AddCardStatBuff", APIType.Action, "给目标卡牌添加永久属性修正；Min/Max/ManaAdj已废弃禁用", Scope.CombatCard, "Domain:String", "StatId:String", "Value:Float")]
         public static APIContext AddCardStatBuff(APIContext ctx)
         {

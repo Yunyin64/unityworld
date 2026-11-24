@@ -6,6 +6,7 @@ namespace UnityWorld.Game.Domain
     /// <summary>管理 NPC 的空间和摆放；卡牌分组、装备和主功法标记仍保存在 NpcCardData。</summary>
     public class NpcSystemBackpack : NpcSystemBase<NpcBackpackData>
     {
+        /// <summary>按角色编号保存的备战布局</summary>
         protected override Dictionary<int, NpcBackpackData> _dataTable { get; set; } = new();
         /// <summary>出生时注册独立的空装配。</summary>
         public override void OnEntityBorn(BirthContext context) => Register(context.MainNpc, new NpcBackpackData());
@@ -80,8 +81,20 @@ namespace UnityWorld.Game.Domain
             return definition;
         }
 
+        /// <summary>记录装备定义及其要求携带的招式清单</summary>
+        /// <param name="EquipDefineId">装备定义编号</param>
+        /// <param name="Forms">装备要求携带的招式定义</param>
         public sealed record EquippedForms(string EquipDefineId, IReadOnlyList<string>? Forms);
+        /// <summary>记录实际放置的招式及其父装备绑定</summary>
+        /// <param name="EntryId">招式摆放条目编号</param>
+        /// <param name="DefineId">招式定义编号</param>
+        /// <param name="ParentEntryId">父装备的条目编号</param>
+        /// <param name="HasPosition">招式是否有合法的锚点标记</param>
         public sealed record PlacedForm(int EntryId, string DefineId, int? ParentEntryId, bool HasPosition);
+        /// <summary>记录一项装备或招式配置问题</summary>
+        /// <param name="EntryId">出错条目编号</param>
+        /// <param name="Code">机器可读的问题编号</param>
+        /// <param name="Message">可显示的问题描述</param>
         public sealed record EquipmentFormIssue(int EntryId, string Code, string Message);
 
         /// <summary>按装备条目核对自带招式及坐标。条目标识由调用方提供，格子范围和重叠由布局规则检查。</summary>
@@ -136,6 +149,7 @@ namespace UnityWorld.Game.Domain
         }
 
         // 完整的战前装配才要求装备招式齐全。编辑时允许逐张摆放。
+        /// <summary>从备战布局提取招式和装备，校验绑定及占格</summary>
         internal static void EnsureEquipmentForms(NpcBackpackData backpack, NpcCardData cards)
         {
             var field = cards.Field.ToHashSet();
@@ -158,6 +172,7 @@ namespace UnityWorld.Game.Domain
                 throw new InvalidOperationException(string.Join("；", errors));
         }
 
+        /// <summary>复制出战选择和布局，作为待校验的编辑数据</summary>
         private (NpcCardData Cards, NpcBackpackData Layout) BeginEdit(Npc npc)
         {
             var cards = NpcMgr.Instance.CardSystem.GetWorldData(npc);
@@ -165,16 +180,19 @@ namespace UnityWorld.Game.Domain
             return (cards.CloneSelection(), GetData(npc.Id).Clone());
         }
 
+        /// <summary>提交角色的出战选择与布局</summary>
         private void Commit(Npc npc, NpcCardData cards, NpcBackpackData layout)
         {
             NpcMgr.Instance.CardSystem.Register(npc, cards);
             Register(npc, layout);
         }
 
+        /// <summary>取得指定持有卡，不存在时抛出异常</summary>
         private static Card RequireCard(NpcCardData cards, int cardId) => cards.AllCards.SingleOrDefault(card => card.Id == cardId)
             ?? throw new InvalidOperationException($"未持有卡 {cardId}。");
 
         // 主功法按现有配置直接写入空间参数，战斗阶段不再查询世界功法管理器。
+        /// <summary>按选定主功法定义更新背包布局</summary>
         private static void ApplyMainDefinition(NpcBackpackData layout, NpcCardData cards)
         {
             if (cards.MainGongFaCardId is not int mainId) throw new InvalidOperationException("背包必须显式选择一张已持有的主功法卡。");
@@ -188,6 +206,7 @@ namespace UnityWorld.Game.Domain
             layout.MainCardCells = [.. space.MainCardCells];
         }
 
+        /// <summary>在布局中登记或更新指定卡的摆放锚点</summary>
         private static void SetPosition(NpcBackpackData layout, int cardId, BackpackPosition position)
         {
             var entry = layout.PlacedCards.SingleOrDefault(item => item.CardId == cardId);

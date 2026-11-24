@@ -5,6 +5,7 @@ namespace UnityWorld.Game.Domain.Combat
     /// <summary>一场独立的战斗。调用方可以逐 Tick 推进，也可以用 Run 一次运行到结算。</summary>
     public partial class CombatScene : GameEntityBase, ISoulBase
     {
+        /// <summary>战斗当前的生命周期阶段</summary>
         private CombatPhase _phase = CombatPhase.Idle;
 
         /// <summary>本场战斗的随机数数据。</summary>
@@ -112,6 +113,7 @@ namespace UnityWorld.Game.Domain.Combat
                 EndCombat(CombatEndReason.AllDefeated);
         }
 
+        /// <summary>标记战斗结束，完成角色收尾并生成结果</summary>
         private void EndCombat(CombatEndReason reason)
         {
             SetPhaseFinished();
@@ -128,8 +130,10 @@ namespace UnityWorld.Game.Domain.Combat
             if (ReferenceEquals(mainScene, this)) mainScene = null;
         }
 
+        /// <summary>将战斗阶段设为已结束</summary>
         internal void SetPhaseFinished() => _phase = CombatPhase.Finished;
 
+        /// <summary>断言当前阶段符合调用要求，否则抛出异常</summary>
         private void AssertPhase(CombatPhase expected, string methodName)
         {
             if (_phase != expected)

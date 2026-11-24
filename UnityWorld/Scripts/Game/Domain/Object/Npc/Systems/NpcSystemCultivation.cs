@@ -11,6 +11,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcSystemCultivation : NpcSystemBase<NpcCultivationData>
     {
+        /// <summary>按角色编号保存的修行数据</summary>
         protected override Dictionary<int, NpcCultivationData> _dataTable { get; set; } = new();
 
 
@@ -53,7 +54,7 @@ namespace UnityWorld.Game.Domain
             data.PracticeData.NowGongFaCardId = gongFa.Id;
         }
         /// <summary>
-        /// NPC 诞生时：创建修行数据，根据 Soul 计算五行亲和，根据八大属性计算战斗三维
+        /// NPC 诞生时：创建修行数据，应用预置属性和功法，从 Soul 计算五行亲和
         /// </summary>
         public override void OnEntityBorn(BirthContext context)
         {
@@ -89,6 +90,7 @@ namespace UnityWorld.Game.Domain
 
         }
 
+        /// <summary>保留角色修行数据的时步入口</summary>
         public override void OnTick(Npc npc, float deltaTime)
         {
             // 修行数据的 Tick 逻辑由 NpcSystemPractice 驱动

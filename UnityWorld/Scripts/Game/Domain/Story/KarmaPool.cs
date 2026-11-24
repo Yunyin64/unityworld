@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     public class KarmaPool
     {
         // ── 内部数据 ──────────────────────────────────────────
+        /// <summary>当前登记的劫缘条目</summary>
         private readonly List<KarmaEntry> _entries = [];
 
         // ── 回调 ──────────────────────────────────────────────

@@ -21,7 +21,7 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>战斗结束时的状态</summary>
         public CombatantStatus FinalStatus { get; set; }
 
-        /// <summary>本场战斗承受的 HP 总损耗（正数 = 损损失）</summary>
+        /// <summary>预留的本场 HP 总损耗，当前结算未填入</summary>
         public float HpLost { get; set; }
 
         /// <summary>是否在本场战斗中被击败</summary>
@@ -40,9 +40,12 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public class CombatResult : ContextBase
     {
+        /// <summary>保护消耗次数回写的锁</summary>
         private readonly object _commitLock = new();
+        /// <summary>消耗次数是否已回写</summary>
         private bool _consumptionCommitted;
 
+        /// <summary>核对全部消耗卡后一次性回写次数，清除耗尽卡的备战位置</summary>
         internal void CommitConsumption(IReadOnlyList<(Npc npc, CombatTeam team)> participants)
         {
             lock (_commitLock)

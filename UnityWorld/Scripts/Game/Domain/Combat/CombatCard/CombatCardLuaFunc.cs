@@ -115,6 +115,7 @@ namespace UnityWorld.Game.Domain.Combat
             Scene = Owner?.Scene
         };
 
+        /// <summary>创建卡牌上下文并设置一个参数</summary>
         private APIContext CreateCtx<T>(string key, T value)
         {
             var api = CreateCtx();
@@ -131,6 +132,7 @@ namespace UnityWorld.Game.Domain.Combat
             RunKeywordHooks(hookName, eventCtx, alias);
         }
 
+        /// <summary>获取主关键词生命周期表中的指定 Lua 钩子</summary>
         private LuaFunction GetMainKeywordHook(string hookName)
         {
             var name = BaseData.MainKeyword.ToString();
@@ -142,6 +144,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // 直接调用本卡唯一主词，不走全场广播、卡脚本或普通关键词，也不记录额外表现。
+        /// <summary>调用主关键词钩子并返回首个结果</summary>
         internal object CallMainKeyword(string hookName, APIContext ctx = null, object argument = null)
         {
             using var hook = GetMainKeywordHook(hookName);
@@ -161,6 +164,7 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        /// <summary>按主关键词资格检查和链内去重后分发事件</summary>
         internal void DispatchCombatEvent(string hookName, APIContext ctx, HashSet<int> respondedCards)
         {
             if (CallMainKeyword("CanRespond", ctx, false) is not true) return;
@@ -180,7 +184,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>
         /// 遍历卡牌 Keywords 列表，查 LuaMgr 注册表调用对应 hook 函数。
-        /// keyword 未注册 → 报错日志；keyword 存在但无对应 hook → 静默跳过。
+        /// keyword 未注册 → 报错日志；无对应 hook 时尝试 fallback，两者都没有则静默跳过。
         /// </summary>
         public void RunKeywordHooks(string hookName, APIContext ctx, string fallback = null)
         {

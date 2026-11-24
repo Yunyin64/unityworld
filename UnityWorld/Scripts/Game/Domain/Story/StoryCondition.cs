@@ -61,12 +61,14 @@ namespace UnityWorld.Game.Domain
 
         // ── 各类型求值 ─────────────────────────────────────────
 
+        /// <summary>把当前世界时间与配置阈值比较</summary>
         private bool EvaluateWorldTime(StoryContext ctx)
         {
             if (!float.TryParse(Value, out float threshold)) return false;
             return CompareFloat(ctx.CurrentTime, threshold);
         }
 
+        /// <summary>读取主体角色的指定属性并与阈值比较</summary>
         private bool EvaluateNpcStat(StoryContext ctx)
         {
             if (ctx.Subject is not Npc npc) return false;
@@ -75,6 +77,7 @@ namespace UnityWorld.Game.Domain
             return CompareFloat(statVal, threshold);
         }
 
+        /// <summary>角色标签判定占位，当前返回失败</summary>
         private bool EvaluateNpcTag(StoryContext ctx)
         {
             // TODO: 待 NpcSystemTag 实现后接入，当前返回 false
@@ -82,11 +85,13 @@ namespace UnityWorld.Game.Domain
             return false;
         }
 
+        /// <summary>角色特质判定占位，当前直接通过</summary>
         private bool EvaluateNpcTrait(StoryContext ctx)
         {
             return true;
         }
 
+        /// <summary>地块五行条件占位，当前返回失败</summary>
         private bool EvaluateAuraElement(StoryContext ctx)
         {
             // TODO: 待接入 AuraDaoMgr 查询五行浓度，当前返回 false
@@ -94,6 +99,7 @@ namespace UnityWorld.Game.Domain
             return false;
         }
 
+        /// <summary>角色关系判定占位，当前返回失败</summary>
         private bool EvaluateRelation(StoryContext ctx)
         {
             // TODO: 待关系系统实现后接入，当前返回 false
@@ -103,6 +109,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 通用比较 ──────────────────────────────────────────
 
+        /// <summary>按配置运算符比较数值，判等容差为 0.001</summary>
         private bool CompareFloat(float actual, float threshold) => Operator switch
         {
             StoryConditionOperator.GreaterThan        => actual > threshold,

@@ -5,9 +5,12 @@ namespace UnityWorld.Game.Domain
 {
     public class APIDomainFunc
     {
+        /// <summary>卡牌范围名对应的取目标函数</summary>
         private Dictionary<string, Func<APIContext, List<CombatCard>>> _cardFuncs = new();
+        /// <summary>角色范围名对应的取目标函数</summary>
         private Dictionary<string, Func<APIContext, List<CombatNpc>>> _npcFuncs = new();
 
+        /// <summary>注册内置角色和卡牌取目标规则</summary>
         public APIDomainFunc()
         {
             // Card（按优先级排序：自身 → 己方 → 对方）
@@ -36,6 +39,7 @@ namespace UnityWorld.Game.Domain
         }
 
         // ── Card ──────────────────────────────────────────
+        /// <summary>按来源卡的方位及关键词查找目标卡</summary>
         internal static List<CombatCard> GetDirectionalCards(CombatCard source, string direction, string keyword)
         {
             var owner = source?.Owner;
@@ -47,12 +51,14 @@ namespace UnityWorld.Game.Domain
         }
 
 
+        /// <summary>取上下文中的来源卡</summary>
         private List<CombatCard> GetSelfCard(APIContext ctx)
         {
             if (ctx.SourceCard == null) return new();
             return new() { ctx.SourceCard };
         }
 
+        /// <summary>从施术者场上随机取一张卡</summary>
         private List<CombatCard> GetRandomCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -63,6 +69,7 @@ namespace UnityWorld.Game.Domain
             return new() { cards[idx] };
         }
 
+        /// <summary>取施术者场上除来源卡以外的卡</summary>
         private List<CombatCard> GetOtherCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -71,6 +78,7 @@ namespace UnityWorld.Game.Domain
             return caster.GetField().Where(c => c != source).ToList();
         }
 
+        /// <summary>取场上列表中紧邻来源卡的前后两张卡</summary>
         private List<CombatCard> GetAdjacentCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -85,6 +93,7 @@ namespace UnityWorld.Game.Domain
             return result;
         }
 
+        /// <summary>取场上列表中来源卡的前一张卡</summary>
         private List<CombatCard> GetAboveOneCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -96,6 +105,7 @@ namespace UnityWorld.Game.Domain
             return new() { field[index - 1] };
         }
 
+        /// <summary>取占格完全位于来源卡上方的卡</summary>
         private List<CombatCard> GetAboveAllCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -109,6 +119,7 @@ namespace UnityWorld.Game.Domain
                 .ThenBy(c => caster.Backpack.Placements[c.Id].Min(p => p.X)).ThenBy(c => c.Id).ToList();
         }
 
+        /// <summary>取场上列表中来源卡的后一张卡</summary>
         private List<CombatCard> GetBelowOneCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -120,6 +131,7 @@ namespace UnityWorld.Game.Domain
             return new() { field[index + 1] };
         }
 
+        /// <summary>取场上列表中位于来源卡之后的全部卡</summary>
         private List<CombatCard> GetBelowAllCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -131,6 +143,7 @@ namespace UnityWorld.Game.Domain
             return field.Skip(index + 1).ToList();
         }
 
+        /// <summary>取施术者场上的全部卡</summary>
         private List<CombatCard> GetAllCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -138,6 +151,7 @@ namespace UnityWorld.Game.Domain
             return caster.GetField();
         }
 
+        /// <summary>取对手场上的全部卡</summary>
         private List<CombatCard> GetTargetAllCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -147,6 +161,7 @@ namespace UnityWorld.Game.Domain
             return target.GetField();
         }
 
+        /// <summary>从对手场上随机取一张卡</summary>
         private List<CombatCard> GetTargetRandomCard(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -161,12 +176,14 @@ namespace UnityWorld.Game.Domain
 
         // ── Npc ──────────────────────────────────────────
 
+        /// <summary>取上下文中的施术者</summary>
         private List<CombatNpc> GetSelfNpc(APIContext ctx)
         {
             if (ctx.Caster == null) return new();
             return new() { ctx.Caster };
         }
 
+        /// <summary>取施术者当前的对手</summary>
         private List<CombatNpc> GetTargetNpc(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -178,6 +195,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 分发 ──────────────────────────────────────────
 
+        /// <summary>按已注册的范围名选卡</summary>
         public List<CombatCard> GetTargetCard(string key, APIContext ctx)
         {
             if (_cardFuncs.TryGetValue(key, out var func))
@@ -186,6 +204,7 @@ namespace UnityWorld.Game.Domain
             return new();
         }
 
+        /// <summary>按已注册的范围名选角色</summary>
         public List<CombatNpc> GetTargetNpc(string key, APIContext ctx)
         {
             if (_npcFuncs.TryGetValue(key, out var func))

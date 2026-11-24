@@ -57,6 +57,7 @@ namespace UnityWorld.Game.Domain
             Tu   += bonus.Tu;
         }
 
+        /// <summary>将金木水火土浓度格式化为一位小数</summary>
         public override string ToString()
             => string.Format("Aura(金{0:F1} 木{1:F1} 水{2:F1} 火{3:F1} 土{4:F1})", Jin, Mu, Shui, Huo, Tu);
     }

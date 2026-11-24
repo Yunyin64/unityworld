@@ -9,7 +9,7 @@ namespace UnityWorld.Game.Domain.Combat
         Idle,
         /// <summary>已初始化（参战者已注册）</summary>
         Initialized,
-        /// <summary>预备完成（HP快照、卡组初始化、Target分配）</summary>
+        /// <summary>预备完成（卡组初始化、Target分配）</summary>
         PreStarted,
         /// <summary>战斗进行中</summary>
         Running,
@@ -91,6 +91,7 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>跳过本回合（眩晕/冻结等）</summary>
         Skipped,
+        /// <summary>角色已死亡</summary>
         Death
     }
     

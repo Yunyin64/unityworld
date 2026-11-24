@@ -4,6 +4,7 @@ namespace UnityWorld.Game.Domain;
 
 public static partial class WorldMapGenerator
 {
+    /// <summary>按固定地形或海拔阈值标记海洋覆盖</summary>
     private static void ClassifySea(Context c)
     {
         foreach (var cell in c.World.Cells)
@@ -21,12 +22,14 @@ public static partial class WorldMapGenerator
         }
     }
 
+    /// <summary>在预算内放置满足最低数量的湖泊地区</summary>
     private static void PlaceLakes(Context c)
     {
         var definitions = c.Regions.Values.Where(x => x.GenerationPhase == "lake").ToArray();
         var slots = definitions.SelectMany(x => Enumerable.Repeat(x, x.MinCount)).ToArray();
         int attempts = 0, backtracks = 0;
         var random = c.Random("lake-placement");
+        // 逐个试放必须出现的湖泊，失败时回溯
         bool Search(int depth)
         {
             if (depth == slots.Length) return true;
@@ -77,6 +80,7 @@ public static partial class WorldMapGenerator
 
     // Directed drainage graph: lake water is one node, shore/island cells are obstacles.
     // Reverse adjacency is flooded from legal terminals; parent ranks strictly decrease.
+    /// <summary>构建排水图、累计径流并规划河道和湖泊出流</summary>
     private static void PlanHydrology(Context c)
     {
         var settings = c.Profile.Hydrology;
@@ -114,12 +118,17 @@ public static partial class WorldMapGenerator
         var rank = Enumerable.Repeat(-1, size).ToArray();
         var height = new double[size]; var runoff = new double[size]; var visited = new bool[size];
         var edge = new Dictionary<(int from, int to), (int cell, int next)>();
+        // 判定格子是否为可规划河道的空陆地或已配置河段
         bool Land(int i) => i >= 0 && (c.World.Cells[i].Water.Kind == "none" && c.World.Cells[i].TileDefineId == null || authored.ContainsKey(i));
+        // 判定格子是否为海洋出水面
         bool Surface(int i) => i >= 0 && c.World.Cells[i].Water.Kind == "ocean";
         // Full width clearance is reserved before accumulation, so a later large trunk cannot
         // force an undocumented one-cell pinch beside protected mountains or lake shores.
+        // 检查格子能否纳入河宽覆盖带
         bool BandCell(int i) => i >= 0 && (c.World.Cells[i].TileDefineId == null || authored.ContainsKey(i) || c.World.Cells[i].Water.Kind is "lake" or "ocean");
+        // 检查格子是否可容纳规划的河道中心线
         bool Center(int i) => Land(i) && (narrow.Contains(i) || Enumerable.Range(0, 6).Any(d => BandCell(c.Neighbors[i][(d + 2) % 6]) && BandCell(c.Neighbors[i][(d + 5) % 6])));
+        // 登记两个不同排水节点的连接和实际格子
         void Edge(int from, int to, int cell, int next)
         {
             if (from == to) return;
@@ -155,6 +164,7 @@ public static partial class WorldMapGenerator
             }
         }
         var heap = new PriorityQueue<int, (double height, int node)>();
+        // 标记排水根已访问并按排水高度入队
         void Root(int node) { if (visited[node]) return; visited[node] = true; heap.Enqueue(node, (height[node], node)); }
         for (int i = 0; i < count; i++) if (Surface(i) && (c.World.Cells[i].TileDefineId == null && settings.OceanTypeIds.Any(id=>c.Catalog.Tiles[id].AllowFill) || settings.OceanTypeIds.Contains(c.World.Cells[i].TileDefineId))) Root(i);
         if (!settings.RequireOceanExit && settings.AllowInlandLakes) foreach (var p in settings.LakeSinks)

@@ -48,20 +48,35 @@ public static partial class WorldMapGenerator
 
     private sealed class Context
     {
+        /// <summary>用于生成的地图定义目录</summary>
         public readonly MapCatalog Catalog;
+        /// <summary>本轮有效的生成参数</summary>
         public readonly WorldGenerationOptions Profile;
+        /// <summary>当前尝试的地图草稿</summary>
         public readonly GeneratedWorld World;
+        /// <summary>按格和方向索引的邻格</summary>
         public readonly int[][] Neighbors;
+        /// <summary>按编号索引的启用地区模板</summary>
         public readonly Dictionary<string, RegionDefine> Regions;
+        /// <summary>已经预留的单例地标定义</summary>
         public readonly HashSet<string> Singletons;
+        /// <summary>地区、填充、水系、地标随机源</summary>
         public readonly MapRandom RegionRandom, FillRandom, WaterRandom, LandmarkRandom;
+        /// <summary>本次尝试序号</summary>
         public readonly int Attempt;
+        /// <summary>按格子索引记录的排水顺位</summary>
         public readonly int[] DrainOrder;
+        /// <summary>按地区模板缓存的候选锚点</summary>
         public readonly Dictionary<string, List<int>> AnchorPools = new(StringComparer.Ordinal);
+        /// <summary>按模板索引的已放置地区</summary>
         public readonly Dictionary<string, List<GeneratedRegion>> PlacedByType = new(StringComparer.Ordinal);
+        /// <summary>可用的填充地形定义</summary>
         public readonly TileDefine[] FillTypes;
+        /// <summary>计入覆盖率的地区格数</summary>
         public int RegionCells;
+        /// <summary>各格受地区间距约束的计数</summary>
         public readonly int[] RegionBuffer;
+        /// <summary>建立单次地图生成的草稿、邻格和随机流</summary>
         public Context(MapCatalog catalog, WorldGenerationOptions profile, int seed, int attempt, IReadOnlySet<string> singleton)
         {
             Catalog = catalog; Profile = profile; Attempt = attempt;
@@ -83,31 +98,40 @@ public static partial class WorldMapGenerator
             Singletons = singleton == null ? new(StringComparer.Ordinal) : new(singleton, StringComparer.Ordinal);
             RegionRandom = Random("regions"); FillRandom = Random("fill"); WaterRandom = Random("water"); LandmarkRandom = Random("landmarks");
         }
+        /// <summary>为指定生成阶段派生独立随机流</summary>
         public MapRandom Random(string phase) => new(World.Seed, Profile.GeneratorVersion, phase, Attempt);
+        /// <summary>将有效轴坐标转为行序索引，越界返回负值</summary>
         public int Index(TileId id)
         {
             var (col, row) = Plane.AxialToOffset(id);
             return col < 0 || col >= Profile.Width || row < 0 || row >= Profile.Height ? -1 : row * Profile.Width + col;
         }
+        /// <summary>执行指定阶段并记录其耗时</summary>
         public void Stage(string name, Action action)
         {
             var sw = Stopwatch.StartNew();
             try { action(); }
             finally { World.Diagnostics.StageMilliseconds[name] = sw.Elapsed.TotalMilliseconds; }
         }
+        /// <summary>抛出带失败阶段和当前诊断的地图生成异常</summary>
         public void Fail(string stage, string reason) => throw new MapGenerationException(stage, reason, World.Diagnostics);
     }
 
+    /// <summary>检查环境的海拔、湿度和温度是否符合硬条件</summary>
     private static bool EnvironmentMatches(EnvironmentRule rule, MapEnvironment e) => rule.Matches(e.Elevation, e.Moisture, e.Temperature);
+    /// <summary>按海拔、湿度和温度计算环境适应权重</summary>
     private static double EnvironmentScore(EnvironmentRule rule, MapEnvironment e) => rule.Score(e.Elevation, e.Moisture, e.Temperature);
+    /// <summary>检查三项环境数值是否有限且都在零到一之间</summary>
     private static bool ValidEnvironment(MapEnvironment e) => double.IsFinite(e.Elevation) && double.IsFinite(e.Moisture)
         && double.IsFinite(e.Temperature) && e.Elevation >= 0 && e.Elevation <= 1 && e.Moisture >= 0 && e.Moisture <= 1 && e.Temperature >= 0 && e.Temperature <= 1;
+    /// <summary>判断两种相邻地形是否满足双方的允许和禁止规则</summary>
     private static bool AdjacentAllowed(TileDefine a, TileDefine b)
         => (a.AllowedNeighborIds.Count == 0 || a.AllowedNeighborIds.Contains(b.ID))
         && !a.ForbiddenNeighborIds.Contains(b.ID)
         && (b.AllowedNeighborIds.Count == 0 || b.AllowedNeighborIds.Contains(a.ID))
         && !b.ForbiddenNeighborIds.Contains(a.ID);
 
+    /// <summary>判定候选类型是否匹配该格规划的水域与河宽</summary>
     private static bool WaterCompatible(Context c, int i, TileDefine type)
     {
         var w = c.World.Cells[i].Water;
@@ -124,6 +148,7 @@ public static partial class WorldMapGenerator
         };
     }
 
+    /// <summary>按有效权重随机选中一个列表下标</summary>
     private static int WeightedIndex<T>(IReadOnlyList<T> values, Func<T, double> weight, MapRandom random)
     {
         double sum = 0;

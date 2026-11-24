@@ -8,6 +8,7 @@ namespace UnityWorld.Game.Domain.Combat
     public sealed partial class CombatBackpack
     {
         // 初始化同一个背包实例；状态与操作按职责拆在其他 partial 文件中。
+        /// <summary>复制备战布局和选牌，建立战斗背包的占格索引</summary>
         public CombatBackpack(NpcBackpackData layout, NpcCardData cards)
         {
             // 空间和卡牌选择分别复制；构造期间也不依赖世界功法管理器。

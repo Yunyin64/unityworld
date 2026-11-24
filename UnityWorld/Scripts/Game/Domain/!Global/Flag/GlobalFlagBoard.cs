@@ -9,6 +9,7 @@ namespace UnityWorld.Game.Domain
     public class GlobalFlagBoard
     {
         // ── 内部数据 ──────────────────────────────────────────
+        /// <summary>忽略键大小写的全局变量表</summary>
         private readonly Dictionary<string, object> _flags = new(StringComparer.OrdinalIgnoreCase);
 
         // ── 写操作 ────────────────────────────────────────────

@@ -2,6 +2,7 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
+        /// <summary>派发轮首事件，为法宝供能并抽取灵元</summary>
         internal void BeginBackpackRound(bool opening = false)
         {
             DispatchRoundEvent("OnRoundStart");
@@ -9,6 +10,7 @@ namespace UnityWorld.Game.Domain.Combat
             DoManaDraw(opening);
         }
 
+        /// <summary>派发携带当前背包轮次的战斗事件</summary>
         internal void DispatchRoundEvent(string name)
         {
             var ctx = new APIContext { Caster = this, Scene = Scene };
@@ -16,6 +18,7 @@ namespace UnityWorld.Game.Domain.Combat
             Scene.TriggerCombatEvent(name, ctx);
         }
 
+        /// <summary>清除截至当前轮的装备修正和过期状态</summary>
         internal void ExpireRoundEffects()
         {
             _equipmentChanges.RemoveAll(effect => effect.LastRound <= Backpack.Round);

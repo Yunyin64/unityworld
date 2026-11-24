@@ -32,11 +32,13 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainDataBase ─────────────────────────────────
 
+        /// <summary>浅复制卡与功法的关联数据</summary>
         public IDomainDataBase Clone()
         {
             return (CardGongFaData)MemberwiseClone();
         }
 
+        /// <summary>记录卡牌编号和关联功法信息</summary>
         public void Log()
         {
             var gf = GetGongFa();
@@ -55,6 +57,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>是否为功法卡</summary>
         public bool IsGongFaCard => GongFaMgr.Instance?.GetById(Id) != null;
 
+        /// <summary>读取当前卡关联的功法实例</summary>
         public GongFa GetGongFa() => GongFaData.GetGongFa();
     }
 }

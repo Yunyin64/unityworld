@@ -28,13 +28,18 @@ namespace UnityWorld.Game.Domain
 
         // ── 失衡权重缓存（本 Tick 计算结果）─────────────────
 
+        /// <summary>各元素绝对偏差的缓存</summary>
         private readonly Dictionary<BaseElementType, float> _imbalanceWeightCache = new();
+        /// <summary>五行失衡缓存是否有效</summary>
         private bool _cacheValid = false;
 
+        /// <summary>管理器名称</summary>
         public string Name => "AuraDaoMgr";
 
+        /// <summary>管理器说明，当前为空</summary>
         public string Desc => "";
 
+        /// <summary>登记当前五行灵气管理器实例</summary>
         public AuraDaoMgr(int seed = 12345)
         {
             Instance = this;
@@ -79,6 +84,7 @@ namespace UnityWorld.Game.Domain
             _cacheValid = false;
         }
 
+        /// <summary>检查五行浓度是有限值并复制快照</summary>
         private static TileAura Copy(TileAura value)
         {
             if (value == null || !float.IsFinite(value.Jin) || !float.IsFinite(value.Mu)
@@ -134,7 +140,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>
         /// 获取指定元素的失衡程度（绝对偏差值，越大表示越失衡）。
-        /// 结果来自本 Tick 的缓存计算，OnTick 时自动刷新。
+        /// 通过缓存读取，快照变更等情况使缓存失效。
         /// </summary>
         public float GetImbalanceWeight(BaseElementType element)
         {
@@ -154,6 +160,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 内部工具 ──────────────────────────────────────
 
+        /// <summary>在缓存失效时重新计算各元素的绝对偏差</summary>
         private void EnsureCache()
         {
             if (_cacheValid) return;
@@ -165,31 +172,37 @@ namespace UnityWorld.Game.Domain
             _cacheValid = true;
         }
 
+        /// <summary>保留管理器初始化入口</summary>
         public void Init()
         {
              
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()
         {
              
         }
 
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime)
         {
              
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()
         {
              
         }
 
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt)
         {
              
         }
 
+        /// <summary>清空位面、原初值和失衡数据，并释放当前实例</summary>
         public void End()
         {
             _originSnapshot.Clear();
@@ -199,6 +212,7 @@ namespace UnityWorld.Game.Domain
             if (ReferenceEquals(Instance, this)) Instance = null;
         }
 
+        /// <summary>保留灵气管理日志入口</summary>
         public void Log()
         {
              

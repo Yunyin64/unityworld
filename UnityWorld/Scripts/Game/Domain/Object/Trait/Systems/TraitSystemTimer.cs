@@ -8,6 +8,7 @@ namespace UnityWorld.Game.Domain
     public class TraitSystemTimer : TraitSystemBase
     {
 
+        /// <summary>累加特质持续时间并检查到期</summary>
         public override void OnTick(Trait trait, float deltaTime)
         {
             trait.TickTime(deltaTime);

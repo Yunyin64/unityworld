@@ -12,13 +12,19 @@ namespace UnityWorld.Game.Domain
         /// <summary>移动行为常量 ID</summary>
         public const string BehaviorIdConstant = "Move";
 
+        /// <summary>移动行为的类型标识</summary>
         public override string BehaviorId => BehaviorIdConstant;
 
+        /// <summary>走完一段相邻地块所需进度</summary>
         public const double AdjacentDistance = 100;
+        /// <summary>当前移动目标地块</summary>
         public TileId TargetTile { get; private set; }
+        /// <summary>已累计的移动进度</summary>
         public double Progress { get; private set; }
+        /// <summary>已推进的移动周数</summary>
         public long ProcessedWeeks { get; private set; }
 
+        /// <summary>创建以当前地块为起点的周制移动行为</summary>
         internal MoveBehavior(int planeId, TileId from, TileId target)
             : base(planeId, from)
         {
@@ -36,6 +42,7 @@ namespace UnityWorld.Game.Domain
             return Progress >= AdjacentDistance ? "arrived" : "moving";
         }
 
+        /// <summary>创建带时长和可选剧情的秒制移动行为</summary>
         public MoveBehavior(float duration, List<BehaviorStoryEntry>? storyEntries = null, Rng? rng = null)
             : base(duration, storyEntries, rng)
         {

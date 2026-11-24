@@ -33,11 +33,13 @@ namespace UnityWorld.Game.Domain
         /// <summary>狂热</summary>
         public float Zeal { get; set; } = 0f;
 
+        /// <summary>浅复制角色性格数据</summary>
         public NpcPersonalityData Clone()
         {
             var copy = (NpcPersonalityData)MemberwiseClone();
             return copy;
         }
+        /// <summary>通过领域数据接口复制性格数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
         // ── 日志 ────────────────────────────────────

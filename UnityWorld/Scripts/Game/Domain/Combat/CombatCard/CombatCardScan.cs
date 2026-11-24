@@ -4,9 +4,12 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatCard
     {
+        /// <summary>本次用卡的回放动作编号</summary>
         internal long? PresentationActionId { get; private set; }
+        /// <summary>本次用卡的回放拼点编号</summary>
         internal long? PresentationContestId { get; set; }
 
+        /// <summary>处理卡牌扫描末格，尝试发动或通知未能发动</summary>
         internal void ResolveScanEnd(ref bool rowActivationUsed)
         {
             // 充能可以在同一 Tick 扫多行。上次已结算的卡按实际蓄灵进入下一次扫描。
@@ -26,12 +29,14 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>兼容旧调用。事件可驱动激活中的被动，主动发动只由扫描授权。</summary>
         public bool TryUseFromEvent(APIContext eventCtx) => false;
 
+        /// <summary>检查场景、蓄灵和主关键词是否允许末格发动</summary>
         private bool CanUseAtScanEnd()
         {
             if (Scene.IsFinished || !Owner.IsActive || Scene.IsActivating(this) || !HasActivationResources()) return false;
             return CallMainKeyword("CanCommitScan") is true;
         }
 
+        /// <summary>占用本行发动名额，支付灵元并提交用卡</summary>
         private void CommitScanUse(ref bool rowActivationUsed)
         {
             Scene.ThrowIfEventAborted();

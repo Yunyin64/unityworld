@@ -22,6 +22,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>是否有效（销毁后置 false）</summary>
         public bool IsActive { get; set; } = true;
 
+        /// <summary>以实例编号、类型和位置信息创建地标</summary>
         public LandMark(int id, string defineId, TileId position, int planeId)
         {
             Id       = id;
@@ -30,6 +31,7 @@ namespace UnityWorld.Game.Domain
             PlaneId  = planeId;
         }
 
+        /// <summary>格式化地标编号、定义和地块坐标</summary>
         public override string ToString() => $"LandMark({Id}, {DefineId}, {Position})";
     }
 }

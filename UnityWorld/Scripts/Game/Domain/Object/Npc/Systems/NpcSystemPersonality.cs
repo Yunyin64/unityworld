@@ -8,6 +8,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcSystemPersonality : NpcSystemBase<NpcPersonalityData>
     {
+        /// <summary>按角色编号保存的性格数据</summary>
         protected override Dictionary<int, NpcPersonalityData> _dataTable { get; set; } = new();
 
         /// <summary>

@@ -3,7 +3,13 @@ using UnityWorld.Game.Data;
 namespace UnityWorld.Game.Domain;
 
 /// <summary>Pure generation plans. Runtime identities are assigned only by the publisher.</summary>
-public enum TileGenerationSource { Region = 1, Fill = 2 }
+public enum TileGenerationSource
+{
+    /// <summary>由地区拼图生成</summary>
+    Region = 1,
+    /// <summary>由空地填充生成</summary>
+    Fill = 2
+}
 
 /// <summary>Finite normalized generation conditions, independent of final authored tile types.</summary>
 public sealed class MapEnvironment
@@ -23,17 +29,27 @@ public sealed class MapWater
 {
     /// <summary>Water footprint, independent of directed flow: none/ocean/lake/river.</summary>
     public string Kind { get; set; } = "none";
+    /// <summary>所属水体编号</summary>
     public string BodyId { get; set; }
+    /// <summary>水面高度，陆地为空</summary>
     public double? SurfaceLevel { get; set; }
+    /// <summary>用于排水路径的计算海拔</summary>
     public double DrainageElevation { get; set; }
+    /// <summary>排水遍历顺序，未分配为 -1</summary>
     public int DrainageRank { get; set; } = -1;
+    /// <summary>该格产生的径流量</summary>
     public double LocalRunoff { get; set; }
+    /// <summary>排水目标节点索引</summary>
     public int DrainageTarget { get; set; } = -1;
+    /// <summary>该格累积的径流量</summary>
     public double Runoff { get; set; }
+    /// <summary>河道宽度</summary>
     public int Width { get; set; }
     /// <summary>Row-major owning centerline index; -1 outside river bands.</summary>
     public int CenterlineIndex { get; set; } = -1;
+    /// <summary>该格是否为河道中心线</summary>
     public bool IsCenterline { get; set; }
+    /// <summary>当前水文标记的成因</summary>
     public string Reason { get; set; }
     /// <summary>Bit d denotes inflow from neighbour direction d, using TileId.Directions.</summary>
     public int IncomingMask { get; set; }
@@ -106,6 +122,7 @@ public sealed class FillCandidateRecord
 /// <summary>A complete fixed-orientation region placement, with runtime identity deliberately absent.</summary>
 public sealed class GeneratedRegion
 {
+    /// <summary>地区是否由强制位置放置</summary>
     public bool IsFixed { get; set; }
     /// <summary>Zero-based placement sequence used by cell associations and stable hashes.</summary>
     public int Index { get; set; }
@@ -137,16 +154,27 @@ public sealed class EnvironmentAdjustmentRecord
 /// <summary>Whole lake node; shoreline/islands remain ordinary authored tiles in its region.</summary>
 public sealed class GeneratedLake
 {
+    /// <summary>生成的湖泊水体编号</summary>
     public string Id { get; set; }
+    /// <summary>湖泊所属的地区序号</summary>
     public int RegionIndex { get; set; }
+    /// <summary>湖泊是否没有外流出口</summary>
     public bool Closed { get; set; }
+    /// <summary>湖泊水面高度</summary>
     public double SurfaceLevel { get; set; }
+    /// <summary>湖泊覆盖的地块索引</summary>
     public List<int> CellIndices { get; set; } = new();
+    /// <summary>湖泊出口所在格索引</summary>
     public int OutletCell { get; set; } = -1;
+    /// <summary>湖泊出口的下游格索引</summary>
     public int OutletTarget { get; set; } = -1;
+    /// <summary>流入湖泊的入水点索引</summary>
     public List<int> InletCells { get; set; } = new();
+    /// <summary>湖泊自身产生的径流量</summary>
     public double LocalRunoff { get; set; }
+    /// <summary>湖泊排水目标节点索引</summary>
     public int DrainageTarget { get; set; } = -1;
+    /// <summary>湖泊累积的径流量</summary>
     public double Runoff { get; set; }
 }
 
@@ -183,6 +211,7 @@ public sealed class MapGenerationDiagnostics
     public int RiverCellCount { get; set; }
     /// <summary>Ordinary puzzle land divided by eligible land after fixed, sea, river and whole lake-region exclusion.</summary>
     public double RegionCoverage { get; set; }
+    /// <summary>按名称记录的生成指标</summary>
     public Dictionary<string, double> Metrics { get; set; } = new(StringComparer.Ordinal);
     /// <summary>Adds one rejection and, while capacity remains, an illustrative sample.</summary>
     public void Reject(string reason, string sample = null)
@@ -213,6 +242,7 @@ public sealed class GeneratedWorld
     public GeneratedCell[] Cells { get; set; }
     /// <summary>Author puzzles in stable acceptance sequence.</summary>
     public List<GeneratedRegion> Regions { get; set; } = new();
+    /// <summary>生成方案中的全部湖泊</summary>
     public List<GeneratedLake> Lakes { get; set; } = new();
     /// <summary>Bounded evidence and phase measurements for this generation.</summary>
     public MapGenerationDiagnostics Diagnostics { get; set; } = new();
@@ -235,6 +265,7 @@ public sealed class MapGenerationException : Exception
 /// <summary>FNV-1a derived independent project Rng streams; never calls entity NewId.</summary>
 internal sealed class MapRandom
 {
+    /// <summary>当前生成阶段的随机源</summary>
     private readonly UnityWorld.Core.Rng _rng;
     /// <summary>Derives an independent stream from seed, version, phase and attempt.</summary>
     public MapRandom(int seed, string version, string stage, int attempt)

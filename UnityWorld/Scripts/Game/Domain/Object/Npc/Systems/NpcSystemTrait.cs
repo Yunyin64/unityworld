@@ -14,6 +14,7 @@ namespace UnityWorld.Game.Domain
     /// </summary>
     public class NpcSystemTrait : NpcSystemBase<NpcTraitData>
     {
+        /// <summary>按角色编号保存的特质数据</summary>
         protected override Dictionary<int, NpcTraitData> _dataTable { get; set; } = new();
 
         // ── 注册 ──────────────────────────────────────────
@@ -28,10 +29,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 添加 ──────────────────────────────────────────
 
-        /// <summary>
-        /// 给 NPC 添加一个 Trait 实例，并立即将其 StatModifier 写入 StatBlock。
-        /// 若已持有同 ID 的 Trait，则忽略（层数由外部调用 Trait.AddStack 管理）。
-        /// </summary>
+        /// <summary>保留赋予特质的接口，当前直接返回成功</summary>
         /// <returns>true=添加成功，false=已存在或定义缺失</returns>
         public bool AddTrait(Npc npc, TraitId traitId)
         {
@@ -41,9 +39,9 @@ namespace UnityWorld.Game.Domain
         // ── 移除 ──────────────────────────────────────────
 
         /// <summary>
-        /// 移除 NPC 的某个 Trait，并立即撤销其 StatModifier。
+        /// 移除 NPC 特质的预留入口，当前直接返回成功。
         /// </summary>
-        /// <returns>true=移除成功，false=不存在</returns>
+        /// <returns>当前固定返回 true</returns>
         public bool RemoveTrait(Npc npc, TraitId traitId)
         {
             return true;
@@ -63,7 +61,7 @@ namespace UnityWorld.Game.Domain
             return null;
         }
 
-        /// <summary>NPC 是否持有指定 Trait</summary>
+        /// <summary>保留特质持有查询，当前直接返回真</summary>
         public bool HasTrait(int id, TraitId traitId)
         {
             return true;
@@ -71,10 +69,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 存档恢复 ──────────────────────────────────────
 
-        /// <summary>
-        /// 重新应用 NPC 所有 Trait 的属性修正（存档加载后调用）。
-        /// 先清除所有来源为 "trait:*" 的旧 Modifier，再按最新 TraitDefine 重新写入。
-        /// </summary>
+        /// <summary>保留重新应用角色全部特质修正的入口</summary>
         public void ReapplyAll(Npc npc)
         {
             
@@ -91,6 +86,7 @@ namespace UnityWorld.Game.Domain
 
         // ── Tick ──────────────────────────────────────────
 
+        /// <summary>保留角色特质的时步入口</summary>
         public override void OnTick(Npc npc, float deltaTime)
         {
             
@@ -98,11 +94,13 @@ namespace UnityWorld.Game.Domain
 
         // ── 内部工具 ──────────────────────────────────────
 
+        /// <summary>保留写入单个特质属性修正的入口</summary>
         private void ApplyModifiers(StatBlock stats, Trait trait)
         {
             
         }
 
+        /// <summary>按特质来源键移除相关属性修正</summary>
         private static void RevokeModifiers(StatBlock stats, Trait trait)
             => stats.RemoveModifiersBySource($"trait:{trait.Id.Value}");
     }

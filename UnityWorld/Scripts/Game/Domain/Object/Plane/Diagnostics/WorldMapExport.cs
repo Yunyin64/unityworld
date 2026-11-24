@@ -8,6 +8,7 @@ namespace UnityWorld.Game.Domain;
 /// <summary>导出同一核心生成结果；结构哈希排除运行时实体 ID 和计时信息。</summary>
 public static class WorldMapExport
 {
+    /// <summary>使用驼峰属性名的导出选项</summary>
     private static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     /// <summary>规范化地图结构摘要；环境以百万分之一精度表达。</summary>
@@ -106,6 +107,7 @@ public static class WorldMapExport
         return directory;
     }
 
+    /// <summary>创建含种子及时间戳的诊断输出目录</summary>
     private static string RunDirectory(string root, int seed)
     {
         string directory = Path.Combine(Path.GetFullPath(root), $"seed-{seed}-{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid().ToString("N")[..8]}");
@@ -113,5 +115,6 @@ public static class WorldMapExport
         return directory;
     }
 
+    /// <summary>计算 UTF-8 文本的 SHA-256 小写十六进制摘要</summary>
     private static string Hash(string text) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
 }

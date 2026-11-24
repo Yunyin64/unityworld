@@ -15,8 +15,9 @@ namespace UnityWorld.Game.Domain
         /// <summary>外观配置引用（ AppearanceData）</summary>
         public NpcAppearanceData AppearanceData { get; set; } = new();
 
-        /// <summary>名字（只读代理，返回 NameData.FullName 拼接结果）</summary>
+        /// <summary>名字（只读代理，返回 NameData.Name 拼接结果）</summary>
         public string Name { get => NameData.Name; }
+        /// <summary>含道号的角色全名</summary>
         public string FullName { get => NameData.FullName; }
 
         /// <summary>性别</summary>
@@ -48,6 +49,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>死亡时的 Tick（null = 活着）</summary>
         public int DeathTick { get; set; }
 
+        /// <summary>复制生理数据及独立的姓名、外观副本</summary>
         public NpcBioData Clone()
         {
             var copy = (NpcBioData)MemberwiseClone();
@@ -55,8 +57,10 @@ namespace UnityWorld.Game.Domain
             copy.AppearanceData = AppearanceData.Clone();
             return copy;
         }
+        /// <summary>通过领域数据接口复制生理数据</summary>
         IDomainDataBase IDomainDataBase.Clone() => Clone();
 
+        /// <summary>输出姓名、种族、年龄等角色生理信息</summary>
         public void Log()
         {
             LogMgr.Instance.Dbg("┌── Bio · 凡间肉身 ──────────────────────────");
@@ -75,9 +79,13 @@ namespace UnityWorld.Game.Domain
 
     public partial class Npc
     {
+        /// <summary>读取角色的姓与名</summary>
         public string GetName() => BioData.Name;  
+        /// <summary>读取角色性别</summary>
         public NpcTypes.Gender GetGender() => BioData.Gender;
+        /// <summary>读取角色种族类型</summary>
         public NpcTypes.NpcType GetNpcType() => BioData.NpcType;
+        /// <summary>角色的外观数据</summary>
         public NpcAppearanceData AppearanceData => BioData.AppearanceData;
 
     }

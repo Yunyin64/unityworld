@@ -2,6 +2,7 @@ namespace UnityWorld.Game.Domain;
 
 public static partial class WorldMapGenerator
 {
+    /// <summary>计算地区覆盖和河湖指标并校验生成约束</summary>
     private static void AuditHydrologyMetrics(Context c)
     {
         var m = c.World.Diagnostics.Metrics;
@@ -38,12 +39,14 @@ public static partial class WorldMapGenerator
             if(cell.Water.IsCenterline && cell.Water.Width>1)
             {
                 int d=cell.Water.OutDirection;
+                // 按候选方向检查邻格能否组成要求的水带
                 bool Fits(int offset)=>new[]{(d+offset)%6,(d+offset+3)%6}.Take(cell.Water.Width-1).All(v=>c.Neighbors[i][v]>=0 && c.World.Cells[c.Neighbors[i][v]].Water.Kind is "river" or "lake" or "ocean");
                 if(!Fits(2) && !Fits(1)) c.Fail("water", $"Required actual river width missing at {cell.Id}.");
             }
             foreach (int n in c.Neighbors[i].Where(n => n > i))
             {
                 var other = c.World.Cells[n];
+                // 检查地块是否属于允许环境断崖的固定地区
                 bool Cliff(GeneratedCell x) => x.IsFixed && c.Catalog.Regions[c.World.Regions[x.RegionIndex.Value].DefineId].AllowEnvironmentCliff;
                 bool cliff = Cliff(cell) != Cliff(other) && (Cliff(cell) || Cliff(other));
                 if (cliff) { cliffEdges++; continue; }

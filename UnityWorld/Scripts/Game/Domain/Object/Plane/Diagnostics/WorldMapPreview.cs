@@ -16,6 +16,7 @@ public static class WorldMapPreview
         return Template.Replace("__MAP_DATA__",Convert.ToBase64String(output.ToArray()),StringComparison.Ordinal);
     }
 
+    /// <summary>可嵌入地图数据的 HTML 模板</summary>
     private const string Template = """
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

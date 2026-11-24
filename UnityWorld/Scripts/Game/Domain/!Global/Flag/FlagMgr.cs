@@ -13,10 +13,13 @@ namespace UnityWorld.Game.Domain
     public class FlagMgr : IDomainMgrBase
     {
         // ── 单例 ─────────────────────────────────────────────
+        /// <summary>当前黑板管理器</summary>
         public static FlagMgr Instance { get; private set; }
 
         // ── IDomainMgrBase ────────────────────────────────────
+        /// <summary>管理器名称</summary>
         public string Name => "FlagMgr";
+        /// <summary>黑板系统职责说明</summary>
         public string Desc => "变量黑板系统：NPC/Tile/Plane/全局 KV 状态存储";
 
         // ── 各维度黑板 ────────────────────────────────────────
@@ -34,6 +37,7 @@ namespace UnityWorld.Game.Domain
         public GlobalFlagBoard Global { get; } = new();
 
         // ── 构造 ──────────────────────────────────────────────
+        /// <summary>登记当前黑板管理器实例</summary>
         public FlagMgr()
         {
             Instance = this;
@@ -51,9 +55,13 @@ namespace UnityWorld.Game.Domain
             LogMgr.Instance.Dbg("[FlagMgr] 初始化完成");
         }
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()  { }
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime) { }
+        /// <summary>保留帧更新回调</summary>
         public void Update() { }
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt) { }
 
         /// <summary>清理：释放所有 Flag 数据</summary>
@@ -65,7 +73,9 @@ namespace UnityWorld.Game.Domain
             Global.ClearAll();
         }
 
+        /// <summary>结束存档流程，当前无写入</summary>
         public IEnumerator Save() { yield break; }
+        /// <summary>结束读档流程，当前无读取</summary>
         public IEnumerator Load() { yield break; }
 
         // ── 便捷静态访问 ──────────────────────────────────────
@@ -90,6 +100,7 @@ namespace UnityWorld.Game.Domain
         public static bool IsGlobal(string key)
             => Instance?.Global.GetBool(key) ?? false;
 
+        /// <summary>保留黑板日志输出入口</summary>
         public void Log()
         {
             

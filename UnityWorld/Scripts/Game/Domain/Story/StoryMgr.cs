@@ -13,10 +13,13 @@ namespace UnityWorld.Game.Domain
     public class StoryMgr : IDomainMgrBase
     {
         // ── 单例 ─────────────────────────────────────────────
+        /// <summary>当前剧情管理器</summary>
         public static StoryMgr? Instance { get; private set; }
 
         // ── IDomainMgrBase ────────────────────────────────────
+        /// <summary>管理器名称</summary>
         public string Name => "StoryMgr";
+        /// <summary>剧情调度职责说明</summary>
         public string Desc => "叙事事件管理器：天地人三池调度与统一触发入口";
 
         // ── 配置 ──────────────────────────────────────────────
@@ -24,17 +27,24 @@ namespace UnityWorld.Game.Domain
         public float KarmaTriggerInterval { get; set; } = 30f;
 
         // ── 内部状态 ──────────────────────────────────────────
+        /// <summary>按角色编号索引的宿命池</summary>
         private readonly Dictionary<int, FatePool>  _fatePools  = new();
+        /// <summary>按角色编号索引的劫缘池</summary>
         private readonly Dictionary<int, KarmaPool> _karmaPools = new();
+        /// <summary>劫缘池距离上次检查的累计时间</summary>
         private float   _karmaTimer = 0f;
+        /// <summary>剧情调度的当前世界时间</summary>
         private float   _currentTime = 0f;
+        /// <summary>剧情调度用的随机源</summary>
         private Rng?    _rng;
 
         // ── 全局故事池（用于 TriggerByTag 匹配） ─────────────
         // 所有 StoryDefine 的 Tags 映射，懒加载
+        /// <summary>按剧情编号缓存的标签</summary>
         private Dictionary<string, List<string>>? _storyTagsCache;
 
         // ── 构造 ──────────────────────────────────────────────
+        /// <summary>设置剧情随机种子并登记管理器实例</summary>
         public StoryMgr(int seed = 0)
         {
             Instance = this;
@@ -75,7 +85,9 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>保留帧更新回调</summary>
         public void Update()  { }
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt) { }
 
         /// <summary>清理</summary>
@@ -86,7 +98,9 @@ namespace UnityWorld.Game.Domain
             _storyTagsCache = null;
         }
 
+        /// <summary>结束存档流程，当前无写入</summary>
         public IEnumerator Save() { yield break; }
+        /// <summary>结束读档流程，当前无读取</summary>
         public IEnumerator Load() { yield break; }
 
         // ── 公共 API：三池管理 ────────────────────────────────
@@ -164,7 +178,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>
-        /// 通过 Tags 在全局 StoryPool 中 TagBag 匹配后触发权重最高的 Story
+        /// 通过 Tags 触发匹配标签数量最多的 Story
         /// </summary>
         public void TriggerStoryByTags(List<string> tags, object subject, StoryPoolSource source = StoryPoolSource.Karma, Rng? rng = null)
         {
@@ -194,12 +208,14 @@ namespace UnityWorld.Game.Domain
 
         // ── 内部方法 ──────────────────────────────────────────
 
+        /// <summary>取得指定角色并触发到期的宿命剧情</summary>
         private void OnFateTrigger(int npcId, string storyId)
         {
             var subject = NpcMgr.Instance?.GetById(npcId);
             TriggerStory(storyId, subject, StoryPoolSource.Fate, _rng);
         }
 
+        /// <summary>为每个角色的劫缘池进行一次触发检查</summary>
         private void TriggerAllKarmaPools()
         {
             foreach (var (npcId, karmaPool) in _karmaPools)
@@ -211,6 +227,7 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>首次匹配时按剧情编号建立标签缓存</summary>
         private void BuildStoryTagsCache()
         {
             if (_storyTagsCache != null) return;

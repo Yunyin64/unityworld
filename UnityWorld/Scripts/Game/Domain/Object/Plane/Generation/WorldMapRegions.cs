@@ -6,15 +6,23 @@ public static partial class WorldMapGenerator
 {
     private sealed class RegionPlan
     {
+        /// <summary>候选地区的模板定义</summary>
         public RegionDefine Define;
+        /// <summary>地区是否来自强制放置</summary>
         public bool IsFixed;
+        /// <summary>候选地区锚点的行序索引</summary>
         public int Anchor;
+        /// <summary>地区占格、地形和环境计划</summary>
         public List<(int index, string type, MapEnvironment environment)> Cells = new();
+        /// <summary>计划放置的地标编号及落点</summary>
         public List<(int index, string define)> Landmarks = new();
+        /// <summary>本地区造成的环境调整</summary>
         public List<EnvironmentAdjustmentRecord> Adjustments = new();
+        /// <summary>候选放置的环境适应分</summary>
         public double Score;
     }
 
+    /// <summary>为模板计算并缓存符合水系等要求的候选锚点</summary>
     private static List<int> AnchorPool(Context c, RegionDefine define)
     {
         if (c.AnchorPools.TryGetValue(define.ID, out var pool)) return pool;
@@ -36,9 +44,11 @@ public static partial class WorldMapGenerator
         return pool;
     }
 
+    /// <summary>检查模板在锚点的占位、环境和约束并构造放置计划</summary>
     private static bool TryRegion(Context c, RegionDefine def, int anchor, out RegionPlan plan, bool report = true)
     {
         plan = null;
+        // 按需记录候选地区被拒原因并返回失败
         bool Reject(string reason) { if (report) c.World.Diagnostics.Reject("region." + reason, def.ID + " @ " + c.World.Cells[anchor].Id); return false; }
         var placed = c.PlacedByType[def.ID];
         if (def.MaxCount >= 0 && placed.Count >= def.MaxCount) return Reject("max-count");
@@ -126,6 +136,7 @@ public static partial class WorldMapGenerator
         plan = trial; return true;
     }
 
+    /// <summary>把已通过验证的地区、地格和地标写入草稿</summary>
     private static GeneratedRegion CommitRegion(Context c, RegionPlan plan)
     {
         var region = new GeneratedRegion { Index = c.World.Regions.Count, DefineId = plan.Define.ID,
@@ -156,6 +167,7 @@ public static partial class WorldMapGenerator
         return region;
     }
 
+    /// <summary>回退地区摆放并释放占地、地标和计数</summary>
     private static void UndoRegion(Context c, RegionPlan plan, GeneratedRegion region)
     {
         foreach (int i in region.CellIndices)
@@ -168,9 +180,11 @@ public static partial class WorldMapGenerator
         ChangeRegionBuffer(c,region.CellIndices,-1);
     }
 
+    /// <summary>判断地块可否纳入普通地区覆盖率的陆地分母</summary>
     private static bool EligibleLand(Context c,int i) => !c.World.Cells[i].IsFixed && c.World.Cells[i].Water.Kind=="none"
         && !(c.World.Cells[i].RegionIndex is int r && c.Catalog.Regions[c.World.Regions[r].DefineId].GenerationPhase=="lake");
 
+    /// <summary>对地区占格和指定距离内的格子增减间距占用计数</summary>
     private static void ChangeRegionBuffer(Context c,IEnumerable<int> cells,int delta)
     {
         var seen=new HashSet<int>(cells);var frontier=seen.ToArray();
@@ -178,6 +192,7 @@ public static partial class WorldMapGenerator
         foreach(int i in seen) c.RegionBuffer[i]+=delta;
     }
 
+    /// <summary>在尝试和回溯预算内满足普通地区最低数量</summary>
     private static void PlaceRequiredRegions(Context c)
     {
         var required = c.Regions.Values.Where(x => x.ForcedPositions.Count == 0 && x.GenerationPhase=="ordinary" && x.MinCount > 0).ToArray();
@@ -201,6 +216,7 @@ public static partial class WorldMapGenerator
         }
         var slots = required.OrderBy(x => choices[x.ID].Count).ThenByDescending(x => x.TerrainLayout.Count).ThenBy(x => x.ID, StringComparer.Ordinal)
             .SelectMany(x => Enumerable.Repeat(x, x.MinCount)).ToArray();
+        // 按当前放置深度尝试下一个必需地区，失败时回溯
         bool Search(int depth)
         {
             if (depth == slots.Length) return true;
@@ -221,6 +237,7 @@ public static partial class WorldMapGenerator
         if (!Search(0)) c.Fail("required-regions", "Required regions unsatisfied within budgets: " + string.Join(", ", required.Select(x => $"{x.ID}: missing {x.MinCount - c.PlacedByType[x.ID].Count}, candidates={choices[x.ID].Count}")));
     }
 
+    /// <summary>按随机权重补充普通地区，争取达到目标覆盖率</summary>
     private static void PlaceOptionalRegions(Context c)
     {
         int available = Enumerable.Range(0,c.World.Cells.Length).Count(i=>EligibleLand(c,i));

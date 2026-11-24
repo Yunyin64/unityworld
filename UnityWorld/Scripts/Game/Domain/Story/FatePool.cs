@@ -31,7 +31,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>
-        /// 推进时间检查：处理所有时间 <= currentTime 的条目
+        /// 推进时间检查：处理所有时间 &lt;= currentTime 的条目
         /// 触发后从池中移除（无论条件是否满足）
         /// </summary>
         public void Tick(float currentTime)

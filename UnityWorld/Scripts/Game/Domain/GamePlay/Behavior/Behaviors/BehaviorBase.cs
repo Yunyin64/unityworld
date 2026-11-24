@@ -27,6 +27,7 @@ namespace UnityWorld.Game.Domain
 
         /// <summary>周行为启动时绑定的位面与实际地块。只有周实例使用这两个值。</summary>
         public int PlaneId { get; }
+        /// <summary>周行为启动时所在的地块</summary>
         public TileId FromTile { get; }
 
         /// <summary>行为持续时间（外部传入，如 BehaviorCardDefine.BehaviorDuration）</summary>
@@ -41,7 +42,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>Story 触发规则列表</summary>
         public List<BehaviorStoryEntry> StoryEntries { get; protected set; } = new();
 
-        /// <summary>持有者 NPC ID（由 NpcSystemBehavior 在 AddPrimary 时设置）</summary>
+        /// <summary>持有者 NPC ID（由 NpcSystemBehavior 在登记行为时设置）</summary>
         public int Ownerint { get; set; }
 
         /// <summary>随机数生成器（由外部传入，保证可复现）</summary>
@@ -49,6 +50,7 @@ namespace UnityWorld.Game.Domain
 
         // ── 构造 ─────────────────────────────────────────────────────────────────
 
+        /// <summary>用持续时间、剧情和随机源创建秒制行为</summary>
         protected BehaviorBase(float duration, List<BehaviorStoryEntry>? storyEntries = null, Rng? rng = null)
         {
             Duration = duration;
@@ -56,6 +58,7 @@ namespace UnityWorld.Game.Domain
             _rng = rng;
         }
 
+        /// <summary>将周行为绑定到启动位面与出发地块</summary>
         protected BehaviorBase(int planeId, TileId fromTile) : this(float.PositiveInfinity)
         {
             IsWeeklyManaged = true;
@@ -75,7 +78,7 @@ namespace UnityWorld.Game.Domain
         }
 
         /// <summary>
-        /// 行为每 Tick 调用：推进时间、结算 OnTick/OnTimer 类型的 StoryEntry
+        /// 秒制行为每 Tick 调用：推进时间、结算 OnTick/OnTimer 类型的 StoryEntry
         /// </summary>
         public virtual void OnTick(float deltaTime)
         {
@@ -187,11 +190,13 @@ namespace UnityWorld.Game.Domain
             }
         }
 
+        /// <summary>返回带右括号的行为类型标识</summary>
         public override string ToString()
         {
             return $"{BehaviorId})";
         }
 
+        /// <summary>输出持有者、行为分类和进度等诊断信息</summary>
         public  override void LogAllInfo()
         {
             LogMgr.Instance.Dbg("│ ── 行为 ───────────────────────────────────");

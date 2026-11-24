@@ -15,10 +15,14 @@ namespace UnityWorld.Game.Domain
         {
             return _dataTable[npcId];
         }
+        /// <summary>移除指定角色的系统数据</summary>
         public virtual void Unregister(int npcId) => _dataTable.Remove(npcId);
+        /// <summary>检查是否已登记指定角色的数据</summary>
         public bool Contains(int npcId) => _dataTable.ContainsKey(npcId);
+        /// <summary>本系统已登记的角色数</summary>
         public int RegisteredCount => _dataTable.Count;
 
+        /// <summary>推进指定角色在本系统中的时步</summary>
         public abstract void OnTick(Npc npc, float deltaTime);
 
         /// <summary>NPC 诞生时回调（子类可选覆写）</summary>

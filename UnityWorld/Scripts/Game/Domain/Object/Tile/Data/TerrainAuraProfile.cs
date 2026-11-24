@@ -9,14 +9,23 @@ namespace UnityWorld.Game.Domain
     public static class TerrainAuraProfile
     {
         // ── 预缓存的只读实例 ─────────────────────────────────────
+        /// <summary>平原的基础五行浓度</summary>
         private static readonly TileAura PlainProfile     = new TileAura { Jin = 1.0f, Mu = 1.0f, Shui = 1.0f, Huo = 1.0f, Tu = 1.0f };
+        /// <summary>丘陵的基础五行浓度</summary>
         private static readonly TileAura HillProfile      = new TileAura { Jin = 1.0f, Mu = 0.8f, Shui = 0.8f, Huo = 0.8f, Tu = 1.5f };
+        /// <summary>山地的基础五行浓度</summary>
         private static readonly TileAura MountainProfile  = new TileAura { Jin = 2.0f, Mu = 0.5f, Shui = 0.8f, Huo = 0.8f, Tu = 1.2f };
+        /// <summary>河流的基础五行浓度</summary>
         private static readonly TileAura RiverProfile = new TileAura { Jin = 0.8f, Mu = 1.2f, Shui = 2.5f, Huo = 0.5f, Tu = 0.8f };
+        /// <summary>湖泊的基础五行浓度</summary>
         private static readonly TileAura LakeProfile = new TileAura { Jin = .6f, Mu = 1.4f, Shui = 3f, Huo = .3f, Tu = .8f };
+        /// <summary>海洋的基础五行浓度</summary>
         private static readonly TileAura OceanProfile     = new TileAura { Jin = 0.5f, Mu = 0.8f, Shui = 4.0f, Huo = 0.3f, Tu = 0.5f };
+        /// <summary>沙漠的基础五行浓度</summary>
         private static readonly TileAura DesertProfile    = new TileAura { Jin = 1.0f, Mu = 0.3f, Shui = 0.3f, Huo = 2.5f, Tu = 1.5f };
+        /// <summary>森林的基础五行浓度</summary>
         private static readonly TileAura ForestProfile    = new TileAura { Jin = 0.8f, Mu = 2.5f, Shui = 1.2f, Huo = 0.5f, Tu = 0.8f };
+        /// <summary>未知地形使用的基础浓度</summary>
         private static readonly TileAura DefaultProfile   = new TileAura { Jin = 1.0f, Mu = 1.0f, Shui = 1.0f, Huo = 1.0f, Tu = 1.0f };
 
         /// <summary>

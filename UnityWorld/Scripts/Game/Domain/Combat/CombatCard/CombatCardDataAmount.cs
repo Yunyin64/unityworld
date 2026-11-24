@@ -2,6 +2,7 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatCard
     {
+        /// <summary>存储本场卡牌的剩余弹药</summary>
         private int _currentAmount = -1;
 
         /// <summary>本场余弹。同一张卡重新入场沿用余弹，无弹药机制时为 -1。</summary>
@@ -51,6 +52,7 @@ namespace UnityWorld.Game.Domain.Combat
         
         // ── 消耗与耗尽离场 ──
 
+        /// <summary>本场开战时的消耗次数</summary>
         internal int InitialConsumeStack { get; private set; } = -1;
 
         /// <summary>当前战斗剩余消耗次数，无消耗关键词时返回 -1。</summary>

@@ -5,6 +5,7 @@ namespace UnityWorld.Game.Domain.Combat
     public partial class CombatCard
     {
         // 蓄灵属于单张战斗卡实例，不进入世界卡数据，也不由背包重复保存。
+        /// <summary>卡牌已接收的各枚灵元</summary>
         private readonly List<ElementType> _assignedMana = new();
 
         /// <summary>当前已接收的灵元；对外只读，转移统一由背包协调。</summary>
@@ -30,6 +31,7 @@ namespace UnityWorld.Game.Domain.Combat
         public CombatCardPhase ChargePhase => HasActivationResources() ? CombatCardPhase.Fulling : CombatCardPhase.Waiting;
 
         // 活跃法宝可以边生效边蓄灵；只有等待扫描的卡随灵元变化切换阶段。
+        /// <summary>在等待、充满或已结束阶段重新判断充能状态</summary>
         private void RefreshChargePhase()
         {
             if (Phase is CombatCardPhase.Waiting or CombatCardPhase.Fulling or CombatCardPhase.Finished)
@@ -68,6 +70,7 @@ namespace UnityWorld.Game.Domain.Combat
         }
 
         // 转移方完成提交后再通知，监听者看到的是已释放的源格和已写入的卡。
+        /// <summary>派发充灵事件，附本次元素、总量及充满状态</summary>
         internal void DispatchManaCharged(ElementType element)
         {
             var ctx = CreateCtx();
@@ -94,6 +97,7 @@ namespace UnityWorld.Game.Domain.Combat
             throw new NotSupportedException("灵元进入卡牌即点亮，不存在额外支付。");
         }
 
+        /// <summary>按实付总量和元素分组派发耗灵事件</summary>
         private void DispatchManaUsed(IReadOnlyList<ElementType> paidMana)
         {
             if (paidMana.Count == 0) return;

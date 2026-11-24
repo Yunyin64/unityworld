@@ -19,6 +19,7 @@ public static partial class WorldMapGenerator
         AuditWater(c);
     }
 
+    /// <summary>把独立地图方案和邻格索引装入核验上下文</summary>
     private static Context ContextForPlan(MapCatalog catalog, WorldGenerationOptions profile, GeneratedWorld world)
     {
         var c = new Context(catalog, profile, world.Seed, 0, null);
@@ -28,6 +29,7 @@ public static partial class WorldMapGenerator
         return c;
     }
 
+    /// <summary>检查指定格的出入流是否符合排水高程和顺序</summary>
     private static bool FlowValidAt(Context c, int index, Func<int, MapEnvironment> environment)
     {
         var w = c.World.Cells[index].Water;
@@ -46,6 +48,7 @@ public static partial class WorldMapGenerator
         return true;
     }
 
+    /// <summary>根据出流方向重建入流掩码并校验可修补范围</summary>
     private static void RepairWater(Context c)
     {
         var expected = new int[c.World.Cells.Length];
@@ -81,6 +84,7 @@ public static partial class WorldMapGenerator
             c.World.Diagnostics.Repairs.Add($"water {c.World.Cells[change.index].Id}: incoming mask {change.before} -> {change.after}");
     }
 
+    /// <summary>核验湖泊范围、河道连接、出入流和排水循环</summary>
     private static void AuditWater(Context c)
     {
         var colors = new byte[c.World.Cells.Length];
@@ -156,6 +160,7 @@ public static partial class WorldMapGenerator
         }
     }
 
+    /// <summary>核验地图尺寸、强制放置、地形、水文及连通性</summary>
     private static void Audit(Context c)
     {
         if (c.World.Cells.Length != 40000) c.Fail("audit", "Main continent must contain 40000 cells.");
@@ -237,6 +242,7 @@ public static partial class WorldMapGenerator
         AuditWater(c); AuditConnectivity(c); AuditHydrologyMetrics(c);
     }
 
+    /// <summary>按组校验配置锚点和地区之间的移动连通性</summary>
     private static void AuditConnectivity(Context c)
     {
         foreach (var group in c.Profile.ConnectivityGroups)
@@ -252,6 +258,7 @@ public static partial class WorldMapGenerator
                 }
             }
             if (points.Count == 0) continue;
+            // 判断该格是否允许当前连通组要求的移动方式
             bool Allowed(int i)
             {
                 if (i < 0 || i >= c.World.Cells.Length) return false;

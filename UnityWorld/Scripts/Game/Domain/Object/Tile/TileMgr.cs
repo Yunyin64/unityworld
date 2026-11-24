@@ -12,6 +12,7 @@ namespace UnityWorld.Game.Domain
     public class TileMgr : IDomainMgrBase
     {
         // ── 单例 ─────────────────────────────────────────
+        /// <summary>当前地块管理器</summary>
         public static TileMgr? Instance { get; private set; }
 
         // ── 生命周期 ──────────────────────────────────────
@@ -66,20 +67,29 @@ namespace UnityWorld.Game.Domain
 
         // ── IDomainMgrBase 接口 ───────────────────────────
 
+        /// <summary>保留世界启动回调</summary>
         public void Begin()  { }
+        /// <summary>保留时步回调</summary>
         public void Tick(float deltaTime) { }
+        /// <summary>保留帧更新回调</summary>
         public void Update() { }
+        /// <summary>保留渲染回调</summary>
         public void Render(float dt) { }
 
+        /// <summary>释放当前地块管理器实例</summary>
         public void End()
         {
             Instance = null;
         }
 
+        /// <summary>结束存档流程，当前无写入</summary>
         public IEnumerator Save() { yield break; }
+        /// <summary>结束读档流程，当前无读取</summary>
         public IEnumerator Load() { yield break; }
 
+        /// <summary>管理器名称</summary>
         public string Name => "TileMgr";
+        /// <summary>地块管理器职责说明</summary>
         public string Desc => "地块管理器（跨位面查询）";
 
         /// <summary>日志输出（输出Name、Desc、存的数据信息的数量与概括）</summary>

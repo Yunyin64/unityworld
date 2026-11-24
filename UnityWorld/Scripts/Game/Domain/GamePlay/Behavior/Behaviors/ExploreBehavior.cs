@@ -13,6 +13,7 @@ namespace UnityWorld.Game.Domain
         /// <summary>探索行为常量 ID</summary>
         public const string BehaviorIdConstant = "Explore";
 
+        /// <summary>探索行为的类型标识</summary>
         public override string BehaviorId => BehaviorIdConstant;
 
         /// <summary>本格周探索。行为卡仍通过下方按秒数构造的入口启动。</summary>
@@ -24,6 +25,7 @@ namespace UnityWorld.Game.Domain
         internal (string? EventId, string? GrantedCardId) AdvanceWeek(Plane plane, Rng rng)
             => ExploreEncounterData.Resolve(plane, FromTile, Ownerint, rng);
 
+        /// <summary>创建带时长和可选剧情的秒制探索行为</summary>
         public ExploreBehavior(float duration, List<BehaviorStoryEntry>? storyEntries = null, Rng? rng = null)
             : base(duration, storyEntries, rng)
         {
