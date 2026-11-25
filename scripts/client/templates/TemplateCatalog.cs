@@ -20,6 +20,7 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
     private readonly Dictionary<string, ShapeDefine> _shapes = new(StringComparer.Ordinal);
     private readonly Dictionary<string, CultivationDefine> _cultivations = new(StringComparer.Ordinal);
     private readonly Dictionary<string, EquipDefine> _equips = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, ExtraElementDefine> _extraElements = new(StringComparer.Ordinal);
     private readonly Dictionary<string, StatDefine> _stats = new(StringComparer.Ordinal);
     private readonly Dictionary<string, TemplateSource> _sources = new(StringComparer.Ordinal);
     public string DataRoot { get; }
@@ -39,6 +40,8 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
     public CultivationDefine? GetCultivation(string id) => Copy(_cultivations, id);
     public EquipDefine? GetEquip(string id) => Copy(_equips, id);
     public StatDefine? GetStat(string id) => Copy(_stats, id);
+    /// <summary>从本代目录判断 Mod 扩展费用名。</summary>
+    public bool HasExtraElement(string id) => _extraElements.ContainsKey(id);
     public IEnumerable<StatDefine> GetStats() => Stats;
     public TemplateSource? GetSource(string kind, string id) => _sources.GetValueOrDefault(kind + ":" + id);
 
@@ -52,6 +55,7 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
         catalog.Read("Practice/GongFa", catalog._cultivations);
         catalog.Read("Equip", catalog._equips);
         catalog.Read("Stat", catalog._stats);
+        catalog.Read("ExtraElementDefines.json", catalog._extraElements, optional: true);
         string after = Fingerprint(catalog.DataRoot);
         if (before != after) throw new IOException("读取期间玩法数据发生变化，请重新刷新。");
         catalog.DataFingerprint = after;
@@ -61,12 +65,14 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
     private void Read<T>(string directory, Dictionary<string, T> target, bool optional = false) where T : DefineBase
     {
         string root = Path.Combine(DataRoot, "Data", directory.Replace('/', Path.DirectorySeparatorChar));
-        if (!Directory.Exists(root))
+        if (!Directory.Exists(root) && !File.Exists(root))
         {
             if (optional) return;
             throw new DirectoryNotFoundException($"缺少定义目录：{root}");
         }
-        foreach (string file in Directory.EnumerateFiles(root, "*.json", SearchOption.TopDirectoryOnly).OrderBy(p => p, StringComparer.Ordinal))
+        IEnumerable<string> files = File.Exists(root) ? new[] { root }
+            : Directory.EnumerateFiles(root, "*.json", SearchOption.TopDirectoryOnly).OrderBy(p => p, StringComparer.Ordinal);
+        foreach (string file in files)
         {
             string json = File.ReadAllText(file);
             if (string.IsNullOrWhiteSpace(json)) continue; // Existing loader ignores empty files.

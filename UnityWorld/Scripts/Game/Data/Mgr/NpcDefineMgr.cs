@@ -34,6 +34,7 @@ namespace UnityWorld.Game.Data
             ctx.Set("GivenName", define.GivenName);
             ctx.Set("DaoTitle", define.DaoTitle);
             ctx.Set("InitAge", define.InitAge);
+            ctx.Set("InitCultivationLevel", define.InitCultivationLevel);
             ctx.Set("InitStat", define.InitStat);
             ctx.Set("InitCardDeck", define.InitCardDeck);
             ctx.Set("InitTraits", define.InitialTraits);

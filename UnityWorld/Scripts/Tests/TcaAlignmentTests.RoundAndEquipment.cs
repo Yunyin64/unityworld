@@ -125,6 +125,8 @@ public static partial class TcaAlignmentTests
 
         var swords = a.GetAllCards().Where(card => card.DefineId == "card_fabao_jian").ToArray();
 
+        swords[0].BaseData.ManaCost = new() { [ElementType.Mu] = 1, [ElementType.Huo] = 1, [ElementType.Tu] = 1 };
+        swords[1].BaseData.ManaCost = new() { [ElementType.None] = 1 };
         var scene = new CombatScene();
         scene.Init(7353, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 200);
         try
@@ -153,6 +155,8 @@ public static partial class TcaAlignmentTests
             Check(owner.GetAffinity().Mu == 0, "主动移除亲和 Modifier 同时撤掉属性增量");
             affinity.Call(ctx, "Self", "Mu", 1, 1);
 
+            Check(thrust.GetEquipData().GetStringValue("Element") == "Tu" &&
+                otherThrust.GetEquipData().GetStringValue("Element") == "None", "同一招式按绑定实例的配置费用取五行");
             var equip = swordCard.GetEquip();
             Check(equip.Attack == 6 && equip.Defend == 2 && equip.Speed == 5.5f
                 && thrust.GetEquipData().GetValue("Attack", 0) == 6
@@ -169,6 +173,8 @@ public static partial class TcaAlignmentTests
             for (int i = 0; i < 10; i++) scene.Tick();
             Check(owner.PendingSlot?.SourceCard == thrust && owner.PendingSlot.ContestValue == 6,
                 "真实剑刺 Lua 用修改后的装备攻击构造拼点");
+            Check(owner.PendingSlot.Element.Equals(ElementType.Tu) &&
+                new DamageInfo(owner.PendingSlot).ElementType.Equals(ElementType.Tu), "受生终点从装备传入真实剑刺拼点及伤害");
             change.Call(ctx, "Self", "Attack", 1, 1);
             Check(thrust.GetEquipData().GetValue("Attack", 0) == 7 && owner.PendingSlot.ContestValue == 6,
                 "已构造待发不随装备数值倒改");
@@ -185,10 +191,50 @@ public static partial class TcaAlignmentTests
                 parentOffField.GetField().Single(card => card.Id == thrust.Id).GetEquipData().GetValue("Attack", 0) == 4,
                 "仍装备但未上场的父卡为招式提供同场快照");
             VerifyBoundDefenseContest(lua, a, b, swords);
+            VerifyBoundElements(a, b, swords[1]);
         }
         finally
         {
             scene.Cleanup();
+        }
+    }
+
+    /// <summary>同一招式读取指定父器费用，真实拼点只携带一个伤害元素。</summary>
+    private static void VerifyBoundElements(Npc a, Npc b, Card sword)
+    {
+        var cases = new (string[] Costs, ElementType Expected)[]
+        {
+            (["Mu", "Huo", "Jin"], ElementType.Huo),
+            (["Mu", "Huo", "Tu", "Jin"], ElementType.Jin),
+            (["Mu", "Huo", "Tu", "Jin", "Shui"], ElementType.Tu),
+            (["None"], ElementType.None)
+        };
+        a.Stats.AddModifier("ManaDrawCost", StatModifier.Override(0, "绑定元素验证"));
+        foreach (var (costs, expected) in cases)
+        {
+            sword.BaseData.ManaCost = ElementType.ToDic(costs.ToDictionary(id => id, _ => 1));
+            var scene = new CombatScene();
+            scene.Init(7453, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 60);
+            try
+            {
+                scene.PreStart();
+                scene.Start();
+                var owner = scene.GetCombatants()[a.Id];
+                var form = owner.GetField().Single(c => c.ParentCardId == sword.Id && c.DefineId == "card_form_jian_ci");
+                void Charge(CombatCard card, ElementType element)
+                {
+                    var cell = owner.Backpack.EmptyCells()[0];
+                    owner.Backpack.PlaceMana(cell, element);
+                    Check(owner.Backpack.TryAssign(cell, card), "绑定元素样例真实充灵");
+                }
+                if (expected.Equals(ElementType.None))
+                    Charge(owner.GetField().Single(c => c.Id == sword.Id), ElementType.Huo);
+                Charge(form, ElementType.Jin);
+                for (int tick = 0; tick < 10; tick++) scene.Tick();
+                Check(owner.PendingSlot?.SourceCard == form && owner.PendingSlot.Element.Equals(expected)
+                    && new DamageInfo(owner.PendingSlot).ElementType.Equals(expected), "装备到拼点和伤害：" + expected);
+            }
+            finally { scene.Cleanup(); }
         }
     }
 

@@ -61,7 +61,7 @@ public partial class TemplateLoadoutPanel : Panel
         foreach (var cultivation in catalog.Cultivations)
         {
             var card = catalog.GetCard(cultivation.ID);
-            if (card == null || CardLibraryQuery.UnavailableReason(card, catalog.GetShape) != null) continue;
+            if (card == null || CardLibraryQuery.UnavailableReason(card, catalog.GetShape, catalog.HasExtraElement) != null) continue;
             _main.AddItem(DefinitionName(cultivation));
             int index = _main.ItemCount - 1;
             _main.SetItemMetadata(index, cultivation.ID);

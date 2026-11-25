@@ -7,6 +7,7 @@
   "SubPassive": { "DisplayName": "附带被动", "SortOrder": 55 },
   "Item": { "DisplayName": "物品", "SortOrder": 60 },
   "Armor": { "DisplayName": "护甲", "SortOrder": 70 },
+  "Temp": { "DisplayName": "临时", "SortOrder": 85 },
   "Wound": { "DisplayName": "伤势", "SortOrder": 80 },
   "Amount": { "DisplayName": "弹药", "SortOrder": 90 },
   "Consume": { "DisplayName": "消耗", "SortOrder": 100 },

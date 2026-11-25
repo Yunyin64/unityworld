@@ -99,7 +99,7 @@ public partial class ObserverBackpackView : Control
         var card = _npc.Cards.FirstOrDefault(c => c.Cells.Any(cell => cell.X == x && cell.Y == y));
         if (card != null)
         {
-            string resources = string.Join("、", card.RequiredElements.Select(e => $"{ObserverArtCatalog.ElementName(e.Element)} ×{e.Amount}"));
+            string resources = string.Join("、", card.RequiredElements.Select(e => $"{ObserverArtCatalog.CostName(e.Element)} ×{e.Amount}"));
             TooltipText = "";
             string title = ObserverArtCatalog.CardName(card.Name, card.DefineId);
             string detail = $"定义 {card.DefineId} · 实例 {card.Id} · 占格 {card.Size}\n状态 {card.Phase}{(card.IsFrozen ? " · 冻结" : "")}\n真实点亮 {card.AssignedElements.Count}/{card.RequiredElements.Sum(e => e.Amount)} · 需求 {resources}\n累计使用 {card.UseCount} · 生效 {card.ApplyCount}";

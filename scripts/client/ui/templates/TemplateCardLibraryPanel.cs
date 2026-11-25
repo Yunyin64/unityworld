@@ -135,14 +135,14 @@ public partial class TemplateCardLibraryPanel : Panel
 
         _elements.Clear();
         _elements.Add("");
-        _elements.Add("None");
+        _elements.Add(CardLibraryFilter.NoCost);
         _element.Clear();
         _element.AddItem("全部元素");
         _element.AddItem("无灵元需求");
         foreach (string id in _definitions.SelectMany(card => card.ManaCost.Keys).Distinct().OrderBy(id => id, StringComparer.Ordinal))
         {
             _elements.Add(id);
-            _element.AddItem(ObserverArtCatalog.ElementName(id));
+            _element.AddItem(ObserverArtCatalog.CostName(id));
         }
         _element.Select(Math.Max(0, _elements.IndexOf(_filter.Element)));
 
@@ -175,14 +175,14 @@ public partial class TemplateCardLibraryPanel : Panel
         SetProcess(false);
         if (_art == null || _catalog == null) return;
         Clear(_cards);
-        var matches = CardLibraryQuery.Search(_definitions, _filter, _catalog.GetShape);
+        var matches = CardLibraryQuery.Search(_definitions, _filter, _catalog.GetShape, _catalog.HasExtraElement);
         _count.Text = $"{matches.Count} 张";
         foreach (var card in matches)
         {
             var tile = new TemplateCardTile { CustomMinimumSize = new(132, 102) };
             _cards.AddChild(tile);
             tile.Configure(card, _art.Card(card.ID), _art.CardTranspose(card.ID), _canDrag,
-                CardLibraryQuery.UnavailableReason(card, _catalog.GetShape));
+                CardLibraryQuery.UnavailableReason(card, _catalog.GetShape, _catalog.HasExtraElement));
             tile.Selected += id => CardSelected?.Invoke(id);
         }
         if (matches.Count == 0)

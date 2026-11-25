@@ -152,41 +152,8 @@ namespace UnityWorld.Game.Domain
         
         /// <summary>检查卡牌是否含指定关键词</summary>
         public bool HasKeyword(string keyword) => BaseData.Keywords.Contains(keyword);
-        /// <summary>
-        /// 获取卡牌的主元素类型：取灵元消耗中数量最大的元素；若有多个并列最大则返回Mix；无消耗返回None
-        /// </summary>
-        public ElementType GetElementType()
-        {
-            var manaCost = GetManaCost();
-            if (manaCost == null || manaCost.Count == 0)
-                return ElementType.None;
-
-            int maxVal = -1;
-            ElementType maxType = ElementType.None;
-            bool tied = false;
-
-            foreach (var kv in manaCost)
-            {
-                if (kv.Key.Kind == BaseElementType.Extra || kv.Key.Kind == BaseElementType.None)
-                    continue;
-
-                if (kv.Value > maxVal)
-                {
-                    maxVal = kv.Value;
-                    maxType = kv.Key;
-                    tied = false;
-                }
-                else if (kv.Value == maxVal)
-                {
-                    tied = true;
-                }
-            }
-
-            if (maxVal < 0)
-                return ElementType.None;
-
-            return tied ? ElementType.Mix : maxType;
-        }
+        /// <summary>由配置的五行费用读取本卡单一出手元素。</summary>
+        public ElementType GetElementType() => ElementType.FromManaCost(GetManaCost());
     }
     
 }

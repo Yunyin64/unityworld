@@ -16,7 +16,7 @@ internal static class ObserverCardPainter
         if (cells.Count == 0) return;
         var surface = ObserverCardSurface.Create(card.Cells, cells);
         cells = surface.Regions;
-        var requirements = card.RequiredElements.OrderBy(e => Array.IndexOf(ElementOrder, e.Element))
+        var requirements = card.RequiredElements.OrderBy(e => e.Element == "None").ThenBy(e => Array.IndexOf(ElementOrder, e.Element))
             .SelectMany(e => Enumerable.Repeat(e.Element, Math.Max(0, e.Amount))).ToArray();
         var assigned = card.AssignedElements.GroupBy(e => e).ToDictionary(g => g.Key, g => g.Count());
         if (requirements.Length == 0)
@@ -24,6 +24,8 @@ internal static class ObserverCardPainter
         for (int part = 0; part < requirements.Length; part++)
         {
             string element = requirements[part];
+            // 指定色已优先分配，剩余的基础五行按实付颜色点亮通用份额。
+            if (element == "None") element = ElementOrder.FirstOrDefault(e => assigned.GetValueOrDefault(e) > 0) ?? "None";
             bool lit = assigned.TryGetValue(element, out int count) && count > 0;
             if (lit) assigned[element] = count - 1;
             Color color = Bright(element);

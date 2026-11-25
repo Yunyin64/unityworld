@@ -1,3 +1,5 @@
+using UnityWorld.Game.Data;
+
 namespace UnityWorld.Game.Domain.Combat
 {
     /// <summary>记录原卡本次开战、耗用后和正式战斗结算后的次数。</summary>
@@ -6,7 +8,6 @@ namespace UnityWorld.Game.Domain.Combat
     /// <param name="RemainingCount">本场实际耗用后剩余的次数。</param>
     /// <param name="FinalCount">计入准备后的世界回写次数。</param>
     public sealed record CombatConsumptionResult(int CardId, int InitialCount, int RemainingCount, int FinalCount);
-
     /// <summary>
     /// 单个参战者的战斗结算数据（用于回写大世界）
     /// </summary>
@@ -30,6 +31,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>本场战斗内共行动的回合数</summary>
         public int TurnsActed { get; set; }
 
+        /// <summary>本场新获的普通伤口定义，每张保留一项。</summary>
+        internal IReadOnlyList<string> GainedWounds { get; set; } = Array.Empty<string>();
+
         /// <summary>参战消耗卡的次数结算，含已离场卡。</summary>
         public IReadOnlyList<CombatConsumptionResult> Consumption { get; init; } = Array.Empty<CombatConsumptionResult>();
     }
@@ -40,23 +44,29 @@ namespace UnityWorld.Game.Domain.Combat
     /// </summary>
     public class CombatResult : ContextBase
     {
-        /// <summary>保护消耗次数回写的锁</summary>
+        /// <summary>保护本场全部世界回写的锁</summary>
         private readonly object _commitLock = new();
-        /// <summary>消耗次数是否已回写</summary>
-        private bool _consumptionCommitted;
+        /// <summary>本场正式结果是否已提交</summary>
+        private bool _committed;
 
-        /// <summary>核对全部消耗卡后一次性回写次数，清除耗尽卡的备战位置</summary>
-        internal void CommitConsumption(IReadOnlyList<(Npc npc, CombatTeam team)> participants)
+        /// <summary>先核对所有参战者，再提交消耗次数和普通伤口。</summary>
+        internal void CommitToWorld(IReadOnlyList<(Npc npc, CombatTeam team)> participants)
         {
             lock (_commitLock)
             {
-                if (_consumptionCommitted) return;
+                if (_committed) return;
                 var changes = new List<(Npc Npc, Card Card, CombatConsumptionResult Entry)>();
+                var gained = new List<(Npc Npc, CardDefine Define)>();
                 foreach (var outcome in Get<List<CombatantResult>>("Combatants"))
                 {
-                    if (outcome.Consumption.Count == 0) continue;
                     var npc = participants.Single(item => item.npc.Id == outcome.NpcId).npc;
-                    var held = npc.GetAllCards().ToDictionary(card => card.Id);
+                    var held = NpcMgr.Instance.CardSystem.GetWorldData(npc).AllCards.ToDictionary(card => card.Id);
+                    foreach (var defineId in outcome.GainedWounds)
+                    {
+                        var define = CardDefineMgr.Instance.Get(defineId)
+                            ?? throw new InvalidOperationException($"缺少待提交的伤口定义 {defineId}。");
+                        gained.Add((npc, define));
+                    }
                     foreach (var entry in outcome.Consumption)
                     {
                         if (!held.TryGetValue(entry.CardId, out var card) || !card.HasKeyword("Consume") ||
@@ -72,7 +82,8 @@ namespace UnityWorld.Game.Domain.Combat
                     if (entry.FinalCount == 0) npc.UnassignCard(card.Id);
                     card.BaseData.Stack = entry.FinalCount;
                 }
-                _consumptionCommitted = true;
+                foreach (var (npc, define) in gained) npc.GainCard(CardMgr.Instance.InstantiateFromDefine(define));
+                _committed = true;
             }
         }
         // ── 战斗场景结算 ────────────────────────────────────────

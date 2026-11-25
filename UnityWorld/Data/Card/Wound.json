@@ -1,5 +1,15 @@
 [
   {
+    "ID": "card_wound_mana_exhaustion",
+    "DisplayName": "灵力耗尽",
+    "Desc": "补灵不足造成的临时伤口，战后移除。",
+    "Size": 1,
+    "Keywords": ["Passive", "Wound", "Temp"],
+    "ManaCost": {},
+    "Tags": ["伤势"],
+    "ProducesContest": false
+  },
+  {
     "ID": "card_wound_slash",
     "DisplayName": "伤口",
     "Desc": "斩击造成的伤口，持续自伤",

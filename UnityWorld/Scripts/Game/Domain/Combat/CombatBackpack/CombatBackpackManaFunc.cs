@@ -13,12 +13,14 @@ namespace UnityWorld.Game.Domain.Combat
 
         /// <summary>
         /// 只选择可接收灵元的卡，不转移资源。距离函数保留为策略入口，当前默认算法非最终玩法定案。
-        /// 同距先下方、再左方，最后按实例 Id 排序，保持现有重放顺序。
+        /// 先补指定色，再比较距离。同距先下方、再左方，最后按实例 Id。
         /// </summary>
         public CombatCard? SelectManaTarget(BackpackCell source, ElementType element, IEnumerable<CombatCard> cards)
         {
-            return cards.Where(c => ReferenceEquals(c.Owner?.Backpack, this) && Placements.ContainsKey(c.Id) && c.CanAcceptMana(element))
-                .OrderBy(c => ManaTargetDistance(source, Placements[c.Id]))
+            return cards.Where(c => ReferenceEquals(c.Owner?.Backpack, this) && Placements.ContainsKey(c.Id))
+                .Where(c => c.CanAcceptMana(element))
+                .OrderByDescending(c => c.NeedsSpecificMana(element))
+                .ThenBy(c => ManaTargetDistance(source, Placements[c.Id]))
                 .ThenByDescending(c => Placements[c.Id].Max(p => p.Y))
                 .ThenBy(c => Placements[c.Id].Min(p => p.X))
                 .ThenBy(c => c.Id).FirstOrDefault();

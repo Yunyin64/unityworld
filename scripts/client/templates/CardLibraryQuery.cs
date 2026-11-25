@@ -19,7 +19,9 @@ public sealed class CardLibraryFilter
 {
     public string Text { get; set; } = "";
     public HashSet<string> Keywords { get; set; } = new(StringComparer.Ordinal);
-    /// <summary>Empty = no restriction; "None" = no mana requirement; otherwise exact element ID.</summary>
+    /// <summary>卡库中“无灵元需求”的筛选项，区别于通用费用键。</summary>
+    public const string NoCost = "(无费用)";
+    /// <summary>空字符串显示全部，其他选项按费用键或无费用筛选。</summary>
     public string Element { get; set; } = "";
     public int? Size { get; set; }
     public bool OnlyAvailable { get; set; }
@@ -37,14 +39,14 @@ public static class CardLibraryQuery
         .OrderBy(k => k.SortOrder).ThenBy(k => k.Id, StringComparer.Ordinal).ToArray();
 
     public static IReadOnlyList<CardDefine> Search(IEnumerable<CardDefine> cards, CardLibraryFilter filter,
-        Func<string, ShapeDefine?>? findShape = null)
+        Func<string, ShapeDefine?>? findShape = null, Func<string, bool>? hasExtraElement = null)
     {
         string text = filter.Text.Trim();
         return cards.Where(c =>
             (text.Length == 0 || c.ID.Contains(text, StringComparison.OrdinalIgnoreCase) || c.DisplayName.Contains(text, StringComparison.OrdinalIgnoreCase) || c.Desc.Contains(text, StringComparison.OrdinalIgnoreCase)) &&
             filter.Keywords.All(k => c.Keywords.Contains(k, StringComparer.Ordinal)) &&
-            (filter.Element.Length == 0 || (filter.Element == "None" ? c.ManaCost.Count == 0 : c.ManaCost.ContainsKey(filter.Element))) &&
-            (!filter.Size.HasValue || c.Size == filter.Size) && (!filter.OnlyAvailable || UnavailableReason(c, findShape) == null))
+            (filter.Element.Length == 0 || (filter.Element == CardLibraryFilter.NoCost ? c.ManaCost.Count == 0 : c.ManaCost.ContainsKey(filter.Element))) &&
+            (!filter.Size.HasValue || c.Size == filter.Size) && (!filter.OnlyAvailable || UnavailableReason(c, findShape, hasExtraElement) == null))
             .OrderBy(c => c.DisplayName, StringComparer.Ordinal).ThenBy(c => c.ID, StringComparer.Ordinal).ToArray();
     }
 
@@ -54,15 +56,15 @@ public static class CardLibraryQuery
         var messages = filter.Keywords.Where(k => !ids.Contains(k)).Select(k => $"关键词 {k} 已不存在，已移除筛选。").ToList();
         filter.Keywords.IntersectWith(ids);
         if (filter.Size.HasValue && !definitions.Any(c => c.Size == filter.Size)) { filter.Size = null; messages.Add("原占格选项已不存在，已清除。"); }
-        if (filter.Element.Length > 0 && filter.Element != "None" && !definitions.Any(c => c.ManaCost.ContainsKey(filter.Element)))
+        if (filter.Element.Length > 0 && filter.Element != CardLibraryFilter.NoCost && !definitions.Any(c => c.ManaCost.ContainsKey(filter.Element)))
         { filter.Element = ""; messages.Add("原灵元需求选项已不存在，已清除。"); }
         return messages;
     }
 
     /// <summary>Per-card content availability. Missing artwork is deliberately never consulted.</summary>
-    public static string? UnavailableReason(CardDefine card, Func<string, ShapeDefine?>? findShape = null)
+    public static string? UnavailableReason(CardDefine card, Func<string, ShapeDefine?>? findShape = null, Func<string, bool>? hasExtraElement = null)
     {
-        var errors = TemplateEditorValidator.ValidateCard(card, findShape).Where(i => i.Severity == TemplateIssueSeverity.Error).Select(i => i.Message).ToArray();
+        var errors = TemplateEditorValidator.ValidateCard(card, findShape, hasExtraElement).Where(i => i.Severity == TemplateIssueSeverity.Error).Select(i => i.Message).ToArray();
         return errors.Length == 0 ? null : string.Join("；", errors);
     }
 }

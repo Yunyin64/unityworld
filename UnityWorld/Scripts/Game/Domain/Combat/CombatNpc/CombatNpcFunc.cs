@@ -181,7 +181,9 @@ namespace UnityWorld.Game.Domain.Combat
             var ret = new CombatResult();
             if (target == null || !target.IsActive) { contestData.SourceCard.Apply(); return ret; }
 
-                Scene.TriggerCombatEvent("OnStraight", new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene });
+            var straightContext = new APIContext { Caster = this, SourceCard = contestData.SourceCard, Scene = Scene };
+            straightContext.Set("ContestType", contestData.ContestType.ToString());
+            Scene.TriggerCombatEvent("OnStraight", straightContext);
             if (contestData.IsAttackType)
             {
                 Log($"  直击: {contestData} → [{target.GetName()}]");
@@ -385,11 +387,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>从定义创建完整伤势卡并排队加入战斗</summary>
         public CombatCard AddWound(string woundCardId)
         {
-            // 通过 CardMgr 从 Define 实例化完整的 CardData（含 Effect/Action）
-            var injuryCard = CardMgr.Instance?.InstantiateFromDefine(woundCardId);
-            if (injuryCard == null) throw new InvalidOperationException($"缺少完整伤口卡定义：{woundCardId}。");
-            // 伤势卡塞入卡组
-            var card = CombatCard.CreateFromData(injuryCard);
+            var define = CardDefineMgr.Instance.Get(woundCardId)
+                ?? throw new InvalidOperationException($"缺少完整伤口卡定义：{woundCardId}。");
+            var card = CombatCard.CreateFromDefine(define);
             AddCombatCard(card);
             return card;
         }
@@ -398,17 +398,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// </summary>
         private string ResolveWoundCardId(DamageInfo ctx)
         {
-            // 重伤判定：伤害值超过阈值时固定生成重伤卡
-            Func<CardDefine, bool> func = c => true;
-            if(ctx.Damage > GetTiPo())
-            {
-               func = c => c.Keywords.Contains("Wound") && c.Size == 2 && c.GetShape().Count == c.Size && c.CompatibilityStatus == "Migrated";
-            }
-            else
-            {
-               func = c => c.Keywords.Contains("Wound") && c.Size == 1 && c.GetShape().Count == c.Size && c.CompatibilityStatus == "Migrated";
-            }
-            var woundCards = CardDefineMgr.Instance?.Query(func).ToList();
+            int size = ctx.Damage > GetTiPo() ? 2 : 1;
+            var woundCards = CardDefineMgr.Instance?.Query(c => c.ID != ManaExhaustionWoundId
+                && c.Keywords.Contains("Wound") && c.Size == size && c.GetShape().Count == size
+                && c.CompatibilityStatus == "Migrated").ToList();
             if(woundCards != null && woundCards.Count > 0)
             {
                 return woundCards[Scene.Soul.Random(0,woundCards.Count)].ID;

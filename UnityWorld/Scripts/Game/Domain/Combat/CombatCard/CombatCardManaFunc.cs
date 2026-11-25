@@ -14,18 +14,36 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>当前点亮份数，不包含仍在背包格上的灵元。</summary>
         public int LitCount => _assignedMana.Count;
 
-        /// <summary>只接收仍缺少的匹配元素；冻结不阻止蓄灵，待发期间不接收下一次资源。</summary>
+        /// <summary>当前蓄灵还缺指定颜色。</summary>
+        internal bool NeedsSpecificMana(ElementType element) =>
+            element.Kind != BaseElementType.None
+            && _assignedMana.Count(e => e.Equals(element)) < GetManaCost().GetValueOrDefault(element);
+
+        /// <summary>检查当前元素能否填入指定或通用费用。</summary>
         public bool CanAcceptMana(ElementType element)
         {
-            return !CheckPhase(CombatCardPhase.InPending) &&
-                (!HasConsume || ConsumeStack > 0) &&
-                _assignedMana.Count < GetSize() && GetManaCost().TryGetValue(element, out var required) &&
-                _assignedMana.Count(e => e.Equals(element)) < required && HasScanOpportunity;
+            if (!HasScanOpportunity || CheckPhase(CombatCardPhase.InPending) || (HasConsume && ConsumeStack <= 0)
+                || element.Kind == BaseElementType.None) return false;
+            if (NeedsSpecificMana(element)) return true;
+            var costs = GetManaCost();
+            if (!element.IsBasic || !costs.TryGetValue(ElementType.None, out int generic)) return false;
+
+            // 按现存灵元重算，剥离后指定色缺口和通用缺口都会随之恢复。
+            int used = _assignedMana.Count;
+            foreach (var cost in costs)
+                if (cost.Key.Kind != BaseElementType.None)
+                    used -= Math.Min(cost.Value, _assignedMana.Count(e => e.Equals(cost.Key)));
+            return used < generic;
         }
 
-        /// <summary>检查本卡是否已按元素需求满灵，不执行支付或改变状态。</summary>
-        public bool HasActivationResources() => _assignedMana.Count == GetSize() &&
-            GetManaCost().All(cost => _assignedMana.Count(e => e.Equals(cost.Key)) == cost.Value) && HasScanOpportunity;
+        /// <summary>检查总份数与各指定色缺口，通用份额由额外五行支付。</summary>
+        public bool HasActivationResources()
+        {
+            var costs = GetManaCost();
+            return HasScanOpportunity && LitCount > 0 && LitCount == costs.Values.Sum(n => (long)n)
+                && costs.All(cost => cost.Key.Kind == BaseElementType.None
+                    || _assignedMana.Count(e => e.Equals(cost.Key)) >= cost.Value);
+        }
 
         /// <summary>按当前实际蓄灵得出的等待阶段，供核心与主关键词共同读取。</summary>
         public CombatCardPhase ChargePhase => HasActivationResources() ? CombatCardPhase.Fulling : CombatCardPhase.Waiting;
@@ -88,7 +106,7 @@ namespace UnityWorld.Game.Domain.Combat
             RefreshChargePhase();
         }
 
-        /// <summary>点亮需求由 Size 等量的定义决定，不再读取资源池或旧减费属性。</summary>
+        /// <summary>点亮需求由卡牌配置的费用决定，不再读取资源池或旧减费属性。</summary>
         public Dictionary<ElementType, int> GetCombatManaCost() => new(GetManaCost());
 
         /// <summary>保留旧支付入口，调用时报告当前采用点亮机制。</summary>

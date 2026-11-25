@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain.Combat
 {
@@ -75,6 +76,27 @@ namespace UnityWorld.Game.Domain.Combat
             combatCard.Ticks.Add("CD", 0);
 
             return combatCard;
+        }
+
+        /// <summary>创建只存在于战斗中的卡牌实例。</summary>
+        internal static CombatCard CreateFromDefine(CardDefine define)
+        {
+            var data = CardMgr.CreateBaseData(define);
+            var id = CardMgr.Instance.Soul.NewId();
+            var card = new CombatCard
+            {
+                Id = id,
+                DefineId = define.ID,
+                DisplayName = define.DisplayName,
+                ParentCardId = id,
+                Stats = new StatBlock(),
+                _combatBaseData = data
+            };
+            card.InitialConsumeStack = card.ConsumeStack;
+            card._currentAmount = card.GetAmountMax();
+            card.Ticks.Add("Main", 0);
+            card.Ticks.Add("CD", 0);
+            return card;
         }
 
         /// <summary>初始化本卡脚本并执行战前回调。</summary>

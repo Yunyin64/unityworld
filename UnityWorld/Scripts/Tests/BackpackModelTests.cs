@@ -110,7 +110,9 @@ namespace UnityWorld.Tests
             Reject(() => NpcSystemCard.ValidateCard(badShape), "Size与形状不符");
             badShape = CombatCard.CreateFromData(card);
             badShape.BaseData.ManaCost[ElementType.Jin] = 2;
-            Reject(() => NpcSystemCard.ValidateCard(badShape), "Size与激活数量不符");
+            NpcSystemCard.ValidateCard(badShape);
+            badShape.BaseData.ManaCost[ElementType.Jin] = 0;
+            Reject(() => NpcSystemCard.ValidateCard(badShape), "主动卡费用分量必须为正");
             var mismatchedMain = CreateNpc();
             var mainCard = mismatchedMain.GetAllCards().Single(c => c.Id == mismatchedMain.GetCombatCardSnapshot().MainGongFaCardId);
             mainCard.BaseData.Size = 2;

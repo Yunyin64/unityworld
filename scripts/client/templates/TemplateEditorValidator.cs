@@ -16,6 +16,8 @@ public interface ITemplateEditorDefinitions
     EquipDefine? GetEquip(string id);
     StatDefine? GetStat(string id);
     IEnumerable<StatDefine> GetStats();
+    /// <summary>当前定义目录中是否注册了该扩展五行。</summary>
+    bool HasExtraElement(string id);
 }
 
 /// <summary>客户端编辑器的配置检查与属性预览；只读取定义，不创建角色或调用后端装配。</summary>
@@ -88,7 +90,7 @@ public static class TemplateEditorValidator
             cards[i] = card;
             if (card == null) { completeSizes = false; Error("card.missing", $"卡牌定义不存在：{entry.Key}。", field + ".Key", index); continue; }
             if (card.Size > 0) occupied += card.Size; else completeSizes = false;
-            issues.AddRange(ValidateCard(card, definitions.GetShape).Select(issue => issue with { FieldPath = field + ".Key", PlacementIndex = index }));
+            issues.AddRange(ValidateCard(card, definitions.GetShape, definitions.HasExtraElement).Select(issue => issue with { FieldPath = field + ".Key", PlacementIndex = index }));
             List<BackpackCell> shape;
             try { shape = card.GetShape(definitions.GetShape); }
             catch (Exception) { continue; } // ValidateCard 已给出形状原因；不猜测未知占格。
@@ -204,20 +206,21 @@ public static class TemplateEditorValidator
     }
 
     /// <summary>供目录兼容提示与模板预检使用；不读取 Lua、不需要运行实体。</summary>
-    public static IReadOnlyList<TemplateIssue> ValidateCard(CardDefine? card, Func<string, ShapeDefine?>? findShape = null)
+    public static IReadOnlyList<TemplateIssue> ValidateCard(CardDefine? card, Func<string, ShapeDefine?>? findShape = null,
+        Func<string, bool>? hasExtraElement = null)
     {
         if (card == null) return [new("card.missing", TemplateIssueSeverity.Error, "卡牌定义不存在。", "")];
         List<BackpackCell> shape;
         try { shape = card.GetShape(findShape ?? (_ => null)); }
         catch (Exception exception) { return [new("card.shape", TemplateIssueSeverity.Error, exception.Message, "SizeShape")]; }
         return ValidateCardProperties(card.ID, card.Size, shape, card.Keywords, card.ManaCost, card.MaxUsesPerRound,
-            card.CompatibilityStatus, card.CompatibilityReason);
+            card.CompatibilityStatus, card.CompatibilityReason, hasExtraElement);
     }
 
     /// <summary>编辑器的卡牌配置诊断，供卡库提示与模板检查使用。</summary>
     private static IReadOnlyList<TemplateIssue> ValidateCardProperties(string cardId, int size, IReadOnlyList<BackpackCell>? shape,
         IReadOnlyList<string>? keywords, IReadOnlyDictionary<string, int>? mana, int maxUsesPerRound,
-        string compatibility, string compatibilityReason)
+        string compatibility, string compatibilityReason, Func<string, bool>? hasExtraElement)
     {
         var issues = new List<TemplateIssue>();
         void Add(string code, string message, string field) => issues.Add(new(code, TemplateIssueSeverity.Error, message, field));
@@ -230,8 +233,11 @@ public static class TemplateEditorValidator
             Add("card.shape", "形状必须规范化、无重复且占格数等于正数 Size。", "Shape");
         bool validMain = CardKeywordRoles.TryGetMain(keywords, out var main, out var mainError);
         if (!validMain) Add("card.main", $"卡 {cardId} 的 {mainError}", "Keywords");
-        if (validMain && main != CardMainKeyword.Passive && (mana.Values.Any(n => n <= 0) || mana.Values.Sum(n => (long)n) != size))
-            Add("card.mana-size", "主动卡的激活灵元总数必须等于 Size，且各需求为正数。", "ManaCost");
+        foreach (var key in mana.Keys)
+            if (!ElementType.IsKnownCostKey(key, hasExtraElement))
+                Add("card.mana-key", $"卡 {cardId} 的费用键 {key} 未注册。", "ManaCost");
+        if (validMain && main != CardMainKeyword.Passive && (mana.Count == 0 || mana.Values.Any(n => n <= 0)))
+            Add("card.mana-cost", "主动卡至少需要一份灵元，且各项需求须为正数。", "ManaCost");
         if (validMain && main == CardMainKeyword.ZhaoShi && maxUsesPerRound < 1)
             Add("card.form-limit", "招式每轮成功发动上限必须为正数。", "MaxUsesPerRound");
         return issues.AsReadOnly();

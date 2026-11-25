@@ -45,13 +45,17 @@ namespace UnityWorld.Game.Domain.Combat
             var survivingTeams = survivors.Select(npc => npc.Team).Distinct().ToList();
             var winner = survivingTeams.Count == 1 ? survivingTeams[0] : CombatTeam.None;
 
-            var results = _combatants.Values.Select(npc => new CombatantResult
+            var results = new List<CombatantResult>();
+            foreach (var npc in OrderedCombatants)
             {
-                NpcId = npc.Id,
-                Team = npc.Team,
-                FinalStatus = npc.Status,
-                Consumption = npc.GetConsumptionResults()
-            }).ToList();
+                var outcome = new CombatantResult
+                {
+                    NpcId = npc.Id, Team = npc.Team, FinalStatus = npc.Status,
+                    Consumption = npc.GetConsumptionResults()
+                };
+                npc.CollectCardSettlement(outcome);
+                results.Add(outcome);
+            }
 
             _result = CombatResult.CombatSceneResult(reason, winner, CurrentTick, results);
             var winnerNames = winner == CombatTeam.None ? "无" : string.Join("、", survivors.Select(npc => npc.GetName()));

@@ -63,6 +63,7 @@ namespace UnityWorld.Game.Domain.Combat
                 npc.CheckDefeated();
                 if (npc.IsActive) npc.BeginBackpackRound(opening: true);
             }
+            FlushCombatChanges();
         }
 
         /// <summary>推进一个 Tick，处理到行的背包、战斗结束条件和存活角色的刷新。</summary>
@@ -72,6 +73,7 @@ namespace UnityWorld.Game.Domain.Combat
             haslog = false;
             AssertPhase(CombatPhase.Running, nameof(Tick));
             CurrentTick++;
+            foreach (var npc in OrderedCombatants) npc.DestroyMarkedCards();
 
             // 先让所有人按 Tick 开始时的速度累积进度。回调里新增的速度效果从下个 Tick 生效。
             foreach (var npc in ActiveCombatants) npc.Backpack.AdvanceNaturalTick();
@@ -118,6 +120,7 @@ namespace UnityWorld.Game.Domain.Combat
         {
             SetPhaseFinished();
             foreach (var npc in OrderedCombatants) npc.End();
+            foreach (var npc in OrderedCombatants) npc.DestroyMarkedCards();
             BuildCombatResult(reason);
         }
 

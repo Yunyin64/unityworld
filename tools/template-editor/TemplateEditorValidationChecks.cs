@@ -59,8 +59,19 @@ public static class TemplateEditorValidationChecks
         definitions.Stats.Remove("SpMax");
         var unavailable = TemplateEditorValidator.Validate(Basic(), definitions);
         Check(!unavailable.IsValid && unavailable.SpMax == null && unavailable.Issues.Any(i => i.Code == "sp.unavailable"), "SP不可用阻塞");
-        Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "bad-cost", Size = 2, Keywords = ["FaBao"], ManaCost = new() { ["Jin"] = 1 } })
-            .Any(i => i.Code == "card.mana-size"), "卡库共用主动灵元成本检查");
+        var large = new CardDefine { ID = "one-fire", Size = 3, Keywords = ["FaBao"], ManaCost = new() { ["Huo"] = 1 } };
+        var small = new CardDefine { ID = "two-wood", Size = 1, Keywords = ["FaShu"], ManaCost = new() { ["Mu"] = 2 } };
+        Check(TemplateEditorValidator.ValidateCard(large).Count == 0 && TemplateEditorValidator.ValidateCard(small).Count == 0,
+            "编辑器按形状验证占格，独立读取大卡低费与小卡高费");
+        large.ManaCost = new() { ["None"] = 1 };
+        var generic = new CardLibraryFilter { Element = "None" };
+        Check(CardLibraryQuery.Search([large, small], generic).Single().ID == large.ID
+            && CardLibraryQuery.UnavailableReason(large) == null, "卡库能筛选并预检通用费用");
+        large.ManaCost["Hou"] = 1;
+        Check(TemplateEditorValidator.ValidateCard(large).Any(i => i.Code == "card.mana-key"
+            && i.Message.Contains("Hou") && i.Message.Contains(large.ID)), "拼错的费用键单独定位");
+        large.ManaCost.Clear();
+        Check(TemplateEditorValidator.ValidateCard(large).Any(i => i.Code == "card.mana-cost"), "主动卡空费用非法");
         Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "no-main", Keywords = ["Item"] })
             .Any(i => i.Message.Contains("缺少 Main")), "编辑器报告零 Main");
         Check(TemplateEditorValidator.ValidateCard(new CardDefine { ID = "two-main", Keywords = ["FaBao", "Passive"] })
@@ -88,6 +99,7 @@ public static class TemplateEditorValidationChecks
         public CultivationDefine? GetCultivation(string id) => catalog.GetCultivation(id);
         public EquipDefine? GetEquip(string id) => catalog.GetEquip(id);
         public StatDefine? GetStat(string id) => Stats.GetValueOrDefault(id);
+        public bool HasExtraElement(string id) => catalog.HasExtraElement(id);
         public IEnumerable<StatDefine> GetStats() => Stats.Values;
     }
 }

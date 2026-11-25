@@ -47,6 +47,7 @@ namespace UnityWorld.Game.Domain.Combat
             combatNpc.Owner = npc;
             combatNpc.Backpack = new CombatBackpack(npc.GetBackpackSnapshot(), npc.GetCombatCardSnapshot());
             combatNpc.Backpack.PresentationOwner = combatNpc;
+            combatNpc._initialCards.UnionWith(combatNpc.CardData.AllCardIds);
             // 先从世界卡快照取装备底值，随后所有招式读本场装备。
             combatNpc.SnapshotEquipment(npc);
             combatNpc.CardData.AllCards = combatNpc.CardData.AllCards
@@ -189,8 +190,7 @@ namespace UnityWorld.Game.Domain.Combat
                 if (Backpack.Mana.ContainsKey(cell))
                 {
                     // 选卡与转移统一由背包负责，候选卡仍由本次扫描传入。
-                    var selected = Backpack.AssignManaAt(cell, Field);
-                   // Log(selected == null ? $"格({x + 1},{cell.Y + 1}) 灵元留格" : $"格({x + 1},{cell.Y + 1}) 灵元进入 {selected.DefineId} 点亮={selected.LitCount}/{selected.GetSize()}");
+                    Backpack.AssignManaAt(cell, Field);
                 }
                 if (Backpack.CardAt(cell) is not int id || !Backpack.IsCardCompleteAt(id, cell)) continue;
                 Field.Single(c => c.Id == id).ResolveScanEnd(ref rowActivationUsed);
@@ -234,9 +234,16 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>取消待发拼点，调用在场卡收尾并处理变更</summary>
         public void End()
         {
+            if (Scene?.IsFinished != true) throw new InvalidOperationException("只有确定战斗结果后才能执行战末回调。");
             CancelPending("CombatEnded");
             // 战斗可能在两个末格之间结束。让仍在场的持续效果也能完成本场收尾。
-            foreach (var card in Field.ToArray()) card.CallLua("OnCombatEnd");
+            var ending = Field.ToArray();
+            foreach (var card in ending)
+            {
+                var ctx = new APIContext { Caster = this, SourceCard = card, Scene = Scene };
+                card.InvokeOwnHook("OnCombatEnd", ctx);
+                card.DispatchKeywordHooks("OnCombatEnd", ctx, acceptDestruction: true);
+            }
             DealFieldChange();
         }
         /// <summary>清理本场角色和所属卡牌的独立监听。</summary>

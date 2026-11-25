@@ -50,6 +50,28 @@ namespace UnityWorld.Game.Domain
         /// <summary>校验卡牌定义，创建并注册卡牌及其运行数据</summary>
         public Card InstantiateFromDefine(CardDefine cardDefine)
         {
+            var data = CreateBaseData(cardDefine);
+            var cardid = Soul.NewId();
+            var card = new Card
+            {
+                Id = cardid,
+                DefineId = cardDefine.ID,
+                DisplayName = cardDefine.DisplayName,
+                ParentCardId = cardid,
+                Stats = StatMgr.Instance.CreateBlock(cardid, GetType()),
+            };
+            DataSystem.Register(card, data);
+            GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
+            EquipSystem.Register(card, new CardEquipData { CardId = card.Id });
+            ItemSystem.Register(card, new CardItemData { CardId = card.Id });
+
+            Add(card.Id, card);
+            return card;
+        }
+
+        /// <summary>校验定义，生成独立的卡牌基础数据。</summary>
+        internal static CardBaseData CreateBaseData(CardDefine cardDefine)
+        {
             // 先校验角色再分配实体 ID，避免无效定义留下半注册卡牌。
             var main = CardKeywordRoles.RequireMain(cardDefine.Keywords, cardDefine.ID);
             var consumes = cardDefine.Keywords.Contains("Consume");
@@ -61,42 +83,29 @@ namespace UnityWorld.Game.Domain
                 throw new InvalidOperationException($"招式 {cardDefine.ID} 的每轮发动上限必须为正数。");
             if (cardDefine.ManaCost.Keys.Any(k => k is "Min" or "Max"))
                 throw new InvalidOperationException($"卡 {cardDefine.ID} 的 Min/Max 灵元需求已 Deprecated，禁止实例化以免变成免费或无效费用。");
-            var shape = cardDefine.GetShape();
-            var cardid = Soul.NewId();
-            var card = new Card
+            foreach (var key in cardDefine.ManaCost.Keys)
+                if (!ElementType.IsKnownCostKey(key))
+                    throw new InvalidOperationException($"卡 {cardDefine.ID} 的费用键 {key} 未注册。");
+            return new CardBaseData
             {
-                Id = cardid,
-                DefineId = cardDefine.ID,
-                DisplayName = cardDefine.DisplayName,
-                ParentCardId = cardid,
-                Stats = StatMgr.Instance.CreateBlock(cardid,GetType()),
+                Size = cardDefine.Size,
+                Shape = cardDefine.GetShape(),
+                ScanActivatable = cardDefine.ScanActivatable,
+                MaxUsesPerRound = cardDefine.MaxUsesPerRound,
+                ProducesContest = cardDefine.ProducesContest,
+                CompatibilityStatus = cardDefine.CompatibilityStatus,
+                CompatibilityReason = cardDefine.CompatibilityReason,
+                Cooldown = cardDefine.Cooldown,
+                AmountMax = cardDefine.AmountMax,
+                StackMax = cardDefine.StackMax,
+                Stack = consumes ? cardDefine.StackMax : 0,
+                ManaCost = ElementType.ToDic(cardDefine.ManaCost),
+                Keywords = [.. cardDefine.Keywords],
+                Tags = [.. cardDefine.Tags],
             };
-            DataSystem.Register(card, new CardBaseData
-                {
-                    Size = cardDefine.Size,
-                    Shape = shape,
-                    ScanActivatable = cardDefine.ScanActivatable,
-                    MaxUsesPerRound = cardDefine.MaxUsesPerRound,
-                    ProducesContest = cardDefine.ProducesContest,
-                    CompatibilityStatus = cardDefine.CompatibilityStatus,
-                    CompatibilityReason = cardDefine.CompatibilityReason,
-                    Cooldown = cardDefine.Cooldown,
-                    AmountMax = cardDefine.AmountMax,
-                    StackMax = cardDefine.StackMax,
-                    Stack = consumes ? cardDefine.StackMax : 0,
-                    ManaCost = ElementType.ToDic(cardDefine.ManaCost),
-                    Keywords = [.. cardDefine.Keywords],
-                    Tags = [.. cardDefine.Tags],
-                });
-            GongFaSystem.Register(card, new CardGongFaData { CardId = card.Id });
-            EquipSystem.Register(card, new CardEquipData { CardId = card.Id });
-            ItemSystem.Register(card, new CardItemData { CardId = card.Id });
-
-            Add(card.Id,card);
-            return card;
         }
 
-        /// <summary>撤销未完成模板装配产生的全部卡注册。</summary>
+        /// <summary>注销指定卡实例的所有注册项与属性块。</summary>
         public void UnregisterCard(int cardId)
         {
             DataSystem.Unregister(cardId); GongFaSystem.Unregister(cardId);

@@ -59,7 +59,7 @@ public sealed class TemplateDraft
     {
         var card = catalog.GetCard(cardId);
         if (card == null) { error = "卡牌定义不存在。"; return false; }
-        error = CardLibraryQuery.UnavailableReason(card, catalog.GetShape) ?? "";
+        error = CardLibraryQuery.UnavailableReason(card, catalog.GetShape, catalog.HasExtraElement) ?? "";
         if (error.Length != 0) return false;
         var entry = new TemplateCardEntry { CardDefineId = cardId, Position = position };
         if (position != null && !CanPlace(catalog, entry, position.Value, out error)) return false;
@@ -91,7 +91,7 @@ public sealed class TemplateDraft
         var cultivation = entry == null ? null : catalog.GetCultivation(entry.CardDefineId);
         var card = entry == null ? null : catalog.GetCard(entry.CardDefineId);
         if (entry == null || cultivation == null || card == null) { error = "主功法必须同时有卡牌与功法定义。"; return false; }
-        error = CardLibraryQuery.UnavailableReason(card, catalog.GetShape) ?? "";
+        error = CardLibraryQuery.UnavailableReason(card, catalog.GetShape, catalog.HasExtraElement) ?? "";
         if (error.Length != 0) return false;
         BackpackLevelDefine layout;
         try { layout = cultivation.GetBackpackDefinition(1); layout.GetValidCells(); }

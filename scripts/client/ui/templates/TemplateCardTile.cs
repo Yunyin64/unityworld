@@ -34,7 +34,7 @@ public partial class TemplateCardTile : Control
     {
         _card = card; _texture = texture; _transpose = transpose; _canDrag = canDrag;
         _unavailable = !string.IsNullOrWhiteSpace(unavailableReason);
-        string requirements = string.Join("、", card.ManaCost.Select(p => $"{ObserverArtCatalog.ElementName(p.Key)} × {p.Value}"));
+        string requirements = string.Join("、", card.ManaCost.Select(p => $"{ObserverArtCatalog.CostName(p.Key)} × {p.Value}"));
         _description = $"[{card.ID}]\n占格 {card.Size} · {string.Join(" / ", card.Keywords)}\n灵元需求：{(requirements.Length == 0 ? "无" : requirements)}\n{card.Desc}"
             + (string.IsNullOrWhiteSpace(unavailableReason) ? "" : "\n不可添加：" + unavailableReason);
         MouseDefaultCursorShape = canDrag ? CursorShape.PointingHand : CursorShape.Arrow;

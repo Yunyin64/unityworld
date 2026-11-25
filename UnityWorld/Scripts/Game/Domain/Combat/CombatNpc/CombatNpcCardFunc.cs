@@ -27,10 +27,39 @@ namespace UnityWorld.Game.Domain.Combat
             return Reserve;
         }
 
+        private readonly HashSet<int> _initialCards = new();
+
+        /// <summary>从本场卡组中移除已登记销毁的实例。</summary>
+        internal void DestroyMarkedCards()
+        {
+            var toRemove = CardData.AllCards.OfType<CombatCard>()
+                .Where(card => card.MarkedForDestruction).ToArray();
+            foreach (var card in toRemove)
+            {
+                // 战末仍在场的临时卡也要释放占格和监听。
+                if (Field.Contains(card))
+                {
+                    Backpack.RemoveCard(card.Id);
+                    Field.Remove(card);
+                    card.Cleanup();
+                }
+                CardData.AllCards.Remove(card);
+                CardData.AllCardIds.Remove(card.Id);
+            }
+        }
+
+        /// <summary>从战末卡组汇总本场新增的普通伤口。</summary>
+        internal void CollectCardSettlement(CombatantResult result)
+        {
+            result.GainedWounds = CardData.AllCards
+                .Where(card => !_initialCards.Contains(card.Id) && card.HasKeyword("Wound") && !card.HasKeyword("Temp"))
+                .Select(card => card.DefineId).ToArray();
+        }
+
         /// <summary>汇总本场各消耗卡的初始及剩余次数</summary>
         internal IReadOnlyList<CombatConsumptionResult> GetConsumptionResults()
         {
-            return Array.AsReadOnly(CardData.AllCards.OfType<CombatCard>().Where(card => card.InitialConsumeStack >= 0)
+            return Array.AsReadOnly(CardData.AllCards.OfType<CombatCard>().Where(card => _initialCards.Contains(card.Id) && card.InitialConsumeStack >= 0)
                 .OrderBy(card => card.Id)
                 .Select(card => new CombatConsumptionResult(card.Id, card.InitialConsumeStack, card.GetStack(), card.GetStack())).ToArray());
         }
@@ -136,6 +165,7 @@ namespace UnityWorld.Game.Domain.Combat
                 switch (changeType)
                 {
                     case CombatFieldChangeType.Add:
+                        if (card.MarkedForDestruction) break;
                         var manaBefore = Scene.PresentationRecordingEnabled ? Backpack.Mana.ToDictionary(p => p.Key, p => p.Value) : null;
                         var replaced = Backpack.Insert(card, card.HasKeyword("Wound"));
                         // 原背包在入场时创建空蓄灵；现在由战斗卡重置自己的状态。
@@ -169,11 +199,15 @@ namespace UnityWorld.Game.Domain.Combat
                         var left = new APIContext { Caster = this, SourceCard = card, Scene = Scene };
                         // 只有实际生效的请求能说明离场原因。此时占格和在场 SP 已经释放。
                         left.Set("RemovalReason", removalReason);
-                        card.CallLua("OnLeave", left);
+                        card.InvokeOwnHook("OnLeave", left);
+                        card.DispatchKeywordHooks("OnLeave", left, acceptDestruction: true);
                         card.End();
                         Scene.TriggerCombatEvent("OnCardLeave", left);
                         if (healed)
                         {
+                            // 只销毁本场治愈的新伤，旧伤仍按原样留在世界角色手中。
+                            if (!_initialCards.Contains(card.Id) && !card.HasKeyword("Temp"))
+                                card.MarkedForDestruction = true;
                             left.Set("WoundSize", card.GetSize());
                             Scene.TriggerCombatEvent("OnWoundHealed", left);
                         }

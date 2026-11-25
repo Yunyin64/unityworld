@@ -70,13 +70,13 @@ public partial class TemplateEditorView
         var card=id==null?null:Catalog.GetCard(id);
         if(card==null){FlowText(_details,id==null?"点击背包或卡牌库中的卡牌查看。":"定义已缺失："+id,16);if(entry!=null)FlowButton(_details,"移除缺失条目",()=>RemoveEntry(entry.EntryId));return;}
         var tile=new TemplateCardTile{CustomMinimumSize=new(160,108)};_details.AddChild(tile);
-        tile.Configure(card,_art.Card(card.ID),_art.CardTranspose(card.ID),false,CardLibraryQuery.UnavailableReason(card,Catalog.GetShape));
+        tile.Configure(card,_art.Card(card.ID),_art.CardTranspose(card.ID),false,CardLibraryQuery.UnavailableReason(card,Catalog.GetShape, Catalog.HasExtraElement));
         FlowText(_details,card.ID,13);
         FlowText(_details,"占格 "+card.Size+"    冷却 "+card.Cooldown+" Tick",17);
-        FlowText(_details,"灵元需求："+(card.ManaCost.Count==0?"无":string.Join(" · ",card.ManaCost.Select(p=>ObserverArtCatalog.ElementName(p.Key)+" × "+p.Value))),16);
+        FlowText(_details,"灵元需求："+(card.ManaCost.Count==0?"无":string.Join(" · ",card.ManaCost.Select(p=>ObserverArtCatalog.CostName(p.Key)+" × "+p.Value))),16);
         FlowText(_details,"关键词："+string.Join(" · ",card.Keywords.Select(k=>_keywordLabels.TryGetValue(k,out var l)?l.DisplayName:k)),15);
         FlowText(_details,card.Desc,16);
-        var unavailable=CardLibraryQuery.UnavailableReason(card,Catalog.GetShape);if(unavailable!=null)FlowText(_details,"不可装配："+unavailable,15);
+        var unavailable=CardLibraryQuery.UnavailableReason(card,Catalog.GetShape, Catalog.HasExtraElement);if(unavailable!=null)FlowText(_details,"不可装配："+unavailable,15);
         if(entry==null)
         {
             var add=FlowButton(_details,"添加到未放置列表",()=>

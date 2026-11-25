@@ -74,8 +74,8 @@ namespace UnityWorld.Game.Domain
                 issues.Add("形状必须规范化、无重复且占格数等于正数 Size。");
             if (!CardKeywordRoles.TryGetMain(data.Keywords, out var main, out var mainError))
                 issues.Add(mainError);
-            else if (main != CardMainKeyword.Passive && (mana.Values.Any(n => n <= 0) || mana.Values.Sum(n => (long)n) != data.Size))
-                issues.Add("主动卡的激活灵元总数必须等于 Size，且各需求为正数。");
+            else if (main != CardMainKeyword.Passive && (mana.Count == 0 || mana.Values.Any(n => n <= 0)))
+                issues.Add("主动卡至少需要一份灵元，且各项需求须为正数。");
             if (main == CardMainKeyword.ZhaoShi && data.MaxUsesPerRound < 1)
                 issues.Add("招式每轮成功发动上限必须为正数。");
             if (issues.Count > 0)

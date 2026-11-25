@@ -74,6 +74,46 @@ namespace UnityWorld.Game.Domain
             };
         }
         
+        // 相生环中后一位受生，前一位克后两位。顺序只描述关系，不用来破平。
+        internal static readonly IReadOnlyList<ElementType> GeneratingCycle = Array.AsReadOnly(new[] { Mu, Huo, Tu, Jin, Shui });
+
+        /// <summary>是否为可支付通用费用的基础五行。</summary>
+        public bool IsBasic => Kind is BaseElementType.Mu or BaseElementType.Huo or BaseElementType.Tu
+            or BaseElementType.Jin or BaseElementType.Shui;
+
+        /// <summary>费用名须显式写 None、基础五行或已注册扩展名。</summary>
+        public static bool IsKnownCostKey(string key, Func<string, bool>? hasExtra = null) =>
+            key == "None" || GeneratingCycle.Any(element => element.ToString() == key)
+            || (hasExtra != null ? hasExtra(key) : ExtraElementMgr.Instance?.Contains(key) == true);
+
+        /// <summary>按最高指定五行费用推导出手元素，纯通用或无五行返回 None。</summary>
+        /// <remarks>并列的完整相生链取终点（木火土取土），否则取对其余都占优者；五色齐平取土。</remarks>
+        public static ElementType FromManaCost(IReadOnlyDictionary<ElementType, int> costs)
+        {
+            if (costs == null || costs.Count == 0) return None;
+            int highest = 0;
+            var candidates = new List<int>(5);
+            for (int i = 0; i < GeneratingCycle.Count; i++)
+            {
+                if (!costs.TryGetValue(GeneratingCycle[i], out int amount) || amount <= 0 || amount < highest) continue;
+                if (amount > highest) candidates.Clear();
+                highest = amount;
+                candidates.Add(i);
+            }
+            if (candidates.Count == 0) return None;
+            if (candidates.Count == 5) return Tu;
+
+            foreach (int start in candidates)
+            {
+                int length = 1;
+                while (candidates.Contains((start + length) % 5)) length++;
+                if (length == candidates.Count) return GeneratingCycle[(start + length - 1) % 5];
+            }
+            // 相生赢前一位，相克赢后两位。不构成整链的子集中恰有一个全胜者。
+            int winner = candidates.Single(i => candidates.All(j => i == j || (j - i + 5) % 5 is 4 or 2));
+            return GeneratingCycle[winner];
+        }
+
         /// <summary>各基础元素的增益和减益编号</summary>
         public static Dictionary<ElementType,(string,string)> BaseElementBuff = new Dictionary<ElementType, (string, string)>
         {

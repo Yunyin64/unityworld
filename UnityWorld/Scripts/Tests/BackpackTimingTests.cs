@@ -88,14 +88,20 @@ namespace UnityWorld.Tests
 
         private static void MultipleRows()
         {
-            var a = NewNpc(); var b = NewNpc(); var scene = Scene(a, b);
+            var a = NewNpc(); var b = NewNpc();
+            var probes = Enumerable.Range(0, 5).Select(y => BackpackModelTests.Place(a, "bp_focus", 2, y)).ToArray();
+            var scene = Scene(a, b);
             var na = scene.GetCombatants()[a.Id]; var nb = scene.GetCombatants()[b.Id];
+            var cards = probes.Select(world => na.GetField().Single(c => c.Id == world.Id)).ToArray();
+            foreach (var card in cards) Light(na, card);
+            // 首行卡首次发动后，右侧格的灵元可为第六次行扫描再次点亮它。
+            na.Backpack.PlaceMana(new(3, 0), ElementType.Jin);
             for (int i = 0; i < 4; i++) scene.Tick();
             na.Backpack.Charge(60);
             scene.Tick();
             Check(na.Backpack.Round == 2 && na.Backpack.Row == 1 && na.Backpack.ScanProgress == 5, "同 Tick 跨轮六行并保留余量");
             Check(nb.Backpack.Row == 0 && nb.Backpack.ScanProgress == 5, "充能不推进对手");
-            Check(scene.TraceLog.Count(x => x.Contains($"Npc={a.Id} ") && x.Contains("扫描行")) == 6, "每个完成行均真实扫描");
+            Check(cards.Select(c => c.UseCount).SequenceEqual(new[] { 2, 1, 1, 1, 1 }), "六次扫描逐行实际发动，跨轮再次扫到首行");
             na.Backpack.Charge(10000); scene.Tick();
             Check(na.Backpack.Round == 202 && na.Backpack.Row == 1 && na.Backpack.ScanProgress == 6, "一千合法行压力不静默截断");
             scene.Cleanup();

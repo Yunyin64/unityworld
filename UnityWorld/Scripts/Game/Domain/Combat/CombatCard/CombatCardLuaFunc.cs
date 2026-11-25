@@ -132,6 +132,9 @@ namespace UnityWorld.Game.Domain.Combat
             RunKeywordHooks(hookName, eventCtx, alias);
         }
 
+        /// <summary>已登记销毁，等待 Tick 开头或战末清理。</summary>
+        internal bool MarkedForDestruction { get; set; }
+
         /// <summary>获取主关键词生命周期表中的指定 Lua 钩子</summary>
         private LuaFunction GetMainKeywordHook(string hookName)
         {
@@ -187,6 +190,10 @@ namespace UnityWorld.Game.Domain.Combat
         /// keyword 未注册 → 报错日志；无对应 hook 时尝试 fallback，两者都没有则静默跳过。
         /// </summary>
         public void RunKeywordHooks(string hookName, APIContext ctx, string fallback = null)
+            => DispatchKeywordHooks(hookName, ctx, fallback);
+
+        /// <summary>分发关键词回调，实际离场或战末可采纳销毁请求。</summary>
+        internal void DispatchKeywordHooks(string hookName, APIContext ctx, string fallback = null, bool acceptDestruction = false)
         {
             var keywords = GetKeywords();
             if (keywords == null || keywords.Count == 0) return;
@@ -210,8 +217,10 @@ namespace UnityWorld.Game.Domain.Combat
                 try
                 {
                     using var presentation = Scene?.BeginPresentationEffect(this, "Keyword:" + kw + ":" + hookName);
-                    func.Call(this, ctx);
+                    var result = func.Call(this, ctx);
                     Scene?.ThrowIfEventAborted();
+                    if (acceptDestruction && result.Length > 0 && result[0] is "DestroyCard")
+                        MarkedForDestruction = true;
                     presentation?.Complete();
                 }
                 catch (Exception ex)

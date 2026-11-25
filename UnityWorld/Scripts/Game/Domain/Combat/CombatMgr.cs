@@ -106,7 +106,7 @@ namespace UnityWorld.Game.Domain
 
                 combatScene.Init(12345, participants, 2000);
                 var result = combatScene.Run();
-                result.CommitConsumption(participants);
+                result.CommitToWorld(participants);
                 return result;
             }
         }

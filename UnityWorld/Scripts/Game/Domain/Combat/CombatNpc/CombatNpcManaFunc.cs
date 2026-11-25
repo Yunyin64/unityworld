@@ -31,14 +31,22 @@ namespace UnityWorld.Game.Domain.Combat
                 var supplyElement = ElementType.GetElementType(supply.DefineId["ArtifactPower_".Length..]);
                 for (int i = 0; i < supply.CurrentStack; i++)
                 {
-                    // 先随机选择法宝，再从它仍可接收的匹配元素中随机选择一份。
-                    var candidates = artifacts.Select(card => (Card: card, Elements: card.GetManaCost().Keys
-                            .Where(element => (supplyElement.Equals(ElementType.None) || supplyElement.Equals(element))
-                                && card.CanAcceptMana(element)).OrderBy(element => element.ToString(), StringComparer.Ordinal).ToArray()))
-                        .Where(candidate => candidate.Elements.Length > 0).ToArray();
-                    if (candidates.Length == 0) break;
-                    var selected = candidates[Scene.Soul.Random(0, candidates.Length)];
-                    var element = selected.Elements[Scene.Soul.Random(0, selected.Elements.Length)];
+                    // 先补指定色。随机先选法宝，再选它可接收的颜色。
+                    var options = artifacts.SelectMany(card =>
+                    {
+                        IEnumerable<ElementType> colors = supplyElement.Equals(ElementType.None)
+                            ? card.GetManaCost().Keys.Concat(ElementType.GeneratingCycle).Distinct()
+                            : new[] { supplyElement };
+                        return colors.OrderBy(e => e.ToString(), StringComparer.Ordinal)
+                            .Where(card.CanAcceptMana)
+                            .Select(e => (Card: card, Element: e, NeedsColor: card.NeedsSpecificMana(e)));
+                    }).ToArray();
+                    if (options.Length == 0) break;
+                    bool hasSpecificCost = options.Any(o => o.NeedsColor);
+                    var candidates = options.Where(o => o.NeedsColor == hasSpecificCost).GroupBy(o => o.Card).ToArray();
+                    var group = candidates[Scene.Soul.Random(0, candidates.Length)].ToArray();
+                    var selected = group[Scene.Soul.Random(0, group.Length)];
+                    var element = selected.Element;
                     if (!selected.Card.TryReceiveMana(element)) continue;
                     Scene.MarkPresentationEffect();
                     selected.Card.DispatchManaCharged(element);
@@ -46,20 +54,29 @@ namespace UnityWorld.Game.Domain.Combat
             }
         }
 
+        internal const string ManaExhaustionWoundId = "card_wound_mana_exhaustion";
+
         /// <summary>开场/本方轮末补灵入口，不再自带独立 CD。</summary>
         public void DoManaDraw(bool noCheck = false)
         {
             if (!IsActive) return;
             Scene.TriggerCombatEvent("OnBaseManaDraw", new APIContext { Caster = this, Scene = Scene });
-            DrawMana((int)GetStat("ManaDrawCost"));
+            DrawMana((int)GetStat("ManaDrawCost"), true);
         }
 
         /// <summary>只按实际落入空格的数量支付 MP；每个灵元是一个有位置的实体。</summary>
-        public void DrawMana(int planned)
+        public void DrawMana(int planned) => DrawMana(planned, false);
+
+        // 仅基础补灵产生耗尽伤口，以抽取前的空格和余额计算本次缺口。
+        private void DrawMana(int planned, bool basicDraw)
         {
             if (!IsActive) return;
             var empty = Backpack.EmptyCells();
-            var actual = Math.Min(Math.Max(0, planned), Math.Min(Math.Max(0, Mp), empty.Count));
+            int due = Math.Min(Math.Max(0, planned), empty.Count);
+            int available = Math.Max(0, Mp);
+            int actual = Math.Min(due, available);
+            bool exhausted = basicDraw && due > available;
+            int emptyCount = empty.Count;
             var affinity = GetAffinity();
             var weights = new (ElementType Element, int Weight)[]
             {
@@ -90,7 +107,8 @@ namespace UnityWorld.Game.Domain.Combat
                 //Log($"生成灵元 {chosen} → 格({cell.X + 1},{cell.Y + 1})");
             }
             if (actual > 0) ChangeMP(-actual);
-            Log($"补灵 计划={planned} 实际={actual} MP成本={actual} 剩余MP={Mp}");
+            if (exhausted) AddWound(ManaExhaustionWoundId);
+            Log($"补灵 计划={planned} 空格={emptyCount} 应补={due} 支付前MP={available} 实际={actual} MP成本={actual} 剩余MP={Mp} 耗尽伤口={exhausted}");
             if (actual > 0) Scene.TriggerCombatEvent("OnManaDraw", new APIContext { Caster = this, Scene = Scene });
         }
 
@@ -141,7 +159,11 @@ namespace UnityWorld.Game.Domain.Combat
         {
             Mp += amount;
             if (amount != 0) Scene?.MarkPresentationEffect();
-            Scene.TriggerCombatEvent("OnMPChanged", new APIContext { Caster = this, Scene = Scene });
+            var ctx = new APIContext { Caster = this, Scene = Scene };
+            ctx.Set("Before", Mp - amount);
+            ctx.Set("After", Mp);
+            ctx.Set("Delta", amount);
+            Scene.TriggerCombatEvent("OnMPChanged", ctx);
         }
 
         /// <summary>随机选取一种基础五行增益或减益编号</summary>

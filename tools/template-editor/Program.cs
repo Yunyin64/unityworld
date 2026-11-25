@@ -79,7 +79,7 @@ Check(CardLibraryQuery.Keywords(cards, labels).Any(k => k.Id == "FutureKeyword" 
 var filter = new CardLibraryFilter { Keywords = new() { "FutureKeyword", "FaShu" }, Element = "Huo" };
 Check(CardLibraryQuery.Search(cards, filter).Single().ID == "memory_only", "AND/混合元素检索失败。");
 filter.Keywords.Add("RemovedKeyword"); Check(CardLibraryQuery.Reconcile(filter, cards).Count == 1 && !filter.Keywords.Contains("RemovedKeyword"), "刷新筛选消失提示失败。");
-filter.Clear(); filter.Element = "None";
+filter.Clear(); filter.Element = CardLibraryFilter.NoCost;
 Check(CardLibraryQuery.Search(cards, filter).All(c => c.ManaCost.Count == 0), "无灵元需求检索错误。");
 VerifyShapes();
 Console.WriteLine($"TEMPLATE_EDITOR_DATA_OK checks={checks} templates={catalog.Npcs.Count} cards={catalog.Cards.Count} output={output}");
@@ -104,7 +104,12 @@ void VerifyShapes()
         JsonSerializer.Serialize(new[] { catalog.GetCultivation("jin_fa") }, TemplateJson.Options));
     File.WriteAllText(Path.Combine(data, "Stat", "Stats.json"), JsonSerializer.Serialize(catalog.Stats, TemplateJson.Options));
 
+    File.WriteAllText(Path.Combine(data, "ExtraElementDefines.json"), """[{"ID":"smoke-extra"}]""");
     var shapes = TemplateCatalog.Load(dataRoot);
+    var modCard = new CardDefine { ID = "mod-cost", Keywords = ["FaShu"], ManaCost = new() { ["smoke-extra"] = 1 } };
+    Check(CardLibraryQuery.UnavailableReason(modCard, shapes.GetShape, shapes.HasExtraElement) == null &&
+        CardLibraryQuery.UnavailableReason(modCard, catalog.GetShape, catalog.HasExtraElement) != null,
+        "独立 Mod 目录的扩展费用可识别且不污染其他目录");
     var fixture = TemplateDraft.New(shapes, NpcTypes.NpcType.Human, "shape-fixture");
     Check(fixture.TryAddCard(shapes, core.ID, null, out _) &&
         fixture.SetMainCard(shapes, fixture.Entries[0].EntryId, out _), "形状样例可选主功法");

@@ -171,7 +171,13 @@ namespace UnityWorld.Tests
             NpcSystemCard.ValidateCard(passive);
             Check(!passive.BaseData.HasActiveAbility && passive.GetManaCost().Count == 0, "纯被动不强制主动费用");
             var eventOnly = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "event-fee", Size = 2, Keywords = ["FaBao"], ManaCost = new() { ["Jin"] = 1 } });
-            ExpectInvalid(() => NpcSystemCard.ValidateCard(eventOnly), "纯法宝也校验费用等于Size");
+            NpcSystemCard.ValidateCard(eventOnly);
+            eventOnly.GetManaCost().Clear();
+            ExpectInvalid(() => NpcSystemCard.ValidateCard(eventOnly), "主动卡费用不能为空");
+            ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine
+            {
+                ID = "bad-key", Keywords = ["FaBao"], ManaCost = new() { ["None"] = 1, ["Hou"] = 1 }
+            }), "未知键不能覆盖通用费", "bad-key", "Hou");
             var legacyKeyword = CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "mislabelled-legacy", Keywords = ["Passive", "ManaAdj_Jin"] });
             ExpectInvalid(() => NpcSystemCard.ValidateCard(legacyKeyword), "误标Migrated仍拒绝废弃Keyword");
             ExpectInvalid(() => CardMgr.Instance.InstantiateFromDefine(new CardDefine { ID = "legacy-cost", Keywords = ["FaShu"], ManaCost = new() { ["Min"] = 1 } }), "废弃需求不降级无效元素", "Deprecated");

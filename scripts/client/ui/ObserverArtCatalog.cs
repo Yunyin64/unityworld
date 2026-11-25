@@ -40,6 +40,9 @@ public sealed class ObserverArtCatalog
         "Tu" => new Color("c8aa75"), _ => new Color("d4dbdf")
     };
 
+    /// <summary>费用键 None 在费用栏中显示为通用。</summary>
+    public static string CostName(string key) => key == "None" ? "通用" : ElementName(key);
+
     /// <summary>元素标签，无映射时保留原 ID。</summary>
     public static string ElementName(string element) => element switch
     {

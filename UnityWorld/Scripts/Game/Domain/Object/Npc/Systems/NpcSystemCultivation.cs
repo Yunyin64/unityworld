@@ -61,6 +61,7 @@ namespace UnityWorld.Game.Domain
             var npc = context.MainNpc;
             // 创建并注册修行数据
             var data = new NpcCultivationData();
+            data.PracticeData.CurrentRealmLevel = context.GetValue("InitCultivationLevel", 0);
             Register(npc, data);
 
             // InitStat 写入（来自 NpcDefine 或外部预设）

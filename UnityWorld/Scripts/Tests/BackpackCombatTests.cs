@@ -56,6 +56,7 @@ namespace UnityWorld.Tests
             SlotsAndTimeline();
             Wounds();
             FullBattles();
+            CombatManaRuleTests.Run();
             Console.WriteLine($"BACKPACK_COMBAT_TESTS_OK assertions={_count}");
         }
 
