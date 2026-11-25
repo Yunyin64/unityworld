@@ -16,7 +16,7 @@
       "TiPo": 10,
       "QiGan": 30,
       "LingJi": 10,
-      "ShenShi": 12,
+      "ShenShi": 13,
       "WuXing": 10,
       "JiYuan": 10,
       "MeiLi": 10
@@ -77,7 +77,7 @@
           "X": 5,
           "Y": 3
         },
-        "Key": "card_form_jian_zhan",
+        "Key": "card_form_zhan",
         "ParentPlacementIndex": 3
       },
       {
@@ -85,7 +85,15 @@
           "X": 1,
           "Y": 5
         },
-        "Key": "card_form_jian_ci",
+        "Key": "card_form_ci",
+        "ParentPlacementIndex": 3
+      },
+      {
+        "Value": {
+          "X": 2,
+          "Y": 5
+        },
+        "Key": "card_form_ge",
         "ParentPlacementIndex": 3
       }
     ],

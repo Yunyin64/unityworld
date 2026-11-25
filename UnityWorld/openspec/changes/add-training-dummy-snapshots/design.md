@@ -59,26 +59,26 @@
 建议在现有 `skills/combat-simulation/scripts/run.ps1` 加入显式基准模式，复用模板解析、场景推进、错误记录和输出路径。以下是**拟议用法**，工作目录为仓库根。
 
 ```powershell
-pwsh -NoProfile -File skills/combat-simulation/scripts/run.ps1 -BenchmarkSubject roster_qu_ze -MeasurementPlan 'dummy-baseline.json' -Limit 250
+pwsh -NoProfile -File skills/combat-simulation/scripts/run.ps1 -BenchmarkSubject roster_qu_ze
 ```
 
-默认对手为木桩，建议上限 250，未指定清单时加载随工具提供的默认清单。传入清单时按其中启用的条目采样，显式 Tick 必须在 0 与上限之间。复用 `-WorldSeed`、`-Seeds`，默认世界种子 12345、战斗种子 1 至 100，一种子一局，待测方先装配为 A 方。`-BenchmarkOpponent` 可指定已有模板。
+默认对手为木桩，每场推进到实际终局或达到 1000 Tick 上限。未指定清单时加载默认清单。传入清单时按其中启用的条目采样。定点 Tick 为非负 Int32，若局终未到达该 Tick，该条目值为 null。复用 `-WorldSeed`、`-Seeds`，默认世界种子 12345、战斗种子 1 至 100，一种子一局，待测方先装配为 A 方。`-BenchmarkOpponent` 可指定已有模板。
 
 现有轮赛批内共享世界，实例分配受前序局影响。基准模式按样本重建同一世界起点，先以逐样本独立进程复用单局执行路径，接受相应启动开销。固定世界种子和装配顺序，只改变战斗种子。批次开头冻结输入指纹，执行中发现文件或程序集变化时报错，避免一次汇总跨两个版本。某场失败继续其余种子，记录异常和阶段；单独使用同一战斗种子应重现该样本。
 
 ### 增加一条测量
 
-每场记录是一组键值对，键是条目 ID，值是该场的一项数据。采集配置决定值从哪里来。定点条目在指定 Tick 结算后记值；首次事件条目在事件实际发生时锁定本场首次值，后续同类事件保留原值。以下是默认的三个测项。示例沿用待测者 A 的伤口视角，观察方属于配置。
+每场记录是一组键值对，键是条目 ID，值是该场的一项数据。采集配置决定值从哪里来。定点条目在指定 Tick 结算后记值，首次事件在第一次发生时锁定。默认清单在 50、100、200、300、400、500、750、1000 Tick 与终局分别读取待测方的剩余 HP、剩余 MP 和已完成的背包扫描轮数。既有的伤害、伤口、用卡、资源收支和对手终局测项也在清单内。同前缀的条目排在一起，定点按 Tick 递增。以下是第 50 Tick 的三项配置。
 
 ```json
 [
-    {"id":"damageOut_50",  "side":"subject", "metric":"damageOutHp", "at":50},
-    {"id":"damageOut_100", "side":"subject", "metric":"damageOutHp", "at":100},
-    {"id":"firstWoundTick", "side":"subject", "metric":"firstWoundTick"}
+    {"id":"Hp_50", "side":"subject", "metric":"hp", "at":50},
+    {"id":"Mp_50", "side":"subject", "metric":"mp", "at":50},
+    {"id":"rounds_50", "side":"subject", "metric":"roundsCompleted", "at":50}
 ]
 ```
 
-添加已有指标只需在清单加一项，例如 `damageOut_150`。循环、资源等条目按需启用。首次伤口和首次扣血由指标自身定义触发事件，配置省略 `at`，每场各观察方各指标只允许一个首次值。预检定位重复键、与固定键重名、未知指标或角色、非法定点以及给首次事件配置固定 Tick 的错误。
+添加已有指标只需在清单加一项，例如 `mpSpent_150`。循环、资源等条目按需启用。首次伤口和首次扣血由指标自身定义触发事件，配置省略 `at`，每场各观察方各指标只允许一个首次值。预检定位重复键、与固定键重名、未知指标或角色、非法定点以及给首次事件配置固定 Tick 的错误。
 
 ### 用实际结算事实填充指标
 
@@ -89,9 +89,12 @@ pwsh -NoProfile -File skills/combat-simulation/scripts/run.ps1 -BenchmarkSubject
 | `damageOutHp`、`damageOutShield` | 从开场累计对敌扣血点数、被盾吸收点数 | `DamageResolved` 的 `SourceNpcId` 与 `TargetNpcId` 归属双方，分别累加 `HpDamage`、`ShieldAbsorbed`。沿用清零恢复前引擎记录的伤害，包含穿过零点的部分；自伤、无来源伤害不计对敌输出 |
 | `roundsCompleted` | 完成本方背包扫描的轮数 | 逐次计入 `OnRoundEnd`。开场已进入第一轮时读数为 0；加速可让一个 Tick 内完成多轮 |
 | `manaSpent`、`manaSpentByElement` | 已成功支付的灵元枚数及各五行枚数 | `CommitScanUse` 记录的 `CardUsed.Before` 是本次实付元素。分配、落格、剥离或被伤口替换各有自己的行为，不并入支付。后续通用费用也按实际支付的五行计 |
-| `mpSpent`、`mpRecovered` | 从开场累计的 MP 实扣与实回点数 | `ChangeMP` 掌握有符号实变量，现有 `OnMPChanged` 未带该值。拟在提交处提供场景内只读观察，用负变化绝对值和正变化分别累计，初始赋满不算回复 |
+| `mpSpent`、`mpRecovered` | 从开场累计的 MP 实扣与实回点数 | `ChangeMP` 提交后的 `OnMPChanged` 已携带 `Delta`。本场监听按负变化绝对值和正变化分别累计，初始赋满不算回复 |
 | `firstHpLossTick`、`firstWoundTick` | 本人首次实际扣血、首次新增伤口成功落盘的 Tick | 前者按承伤者第一笔正 `HpDamage`；后者取首个含 `Wound` 的 `CardAddedToBackpack`。初始自带伤口属于模板起始状态。未发生为 null |
 | `hp`、`mp`、`shield`、`spUsed` | 节点当时的点数 | 从双方战斗实例读取。期末余额用于解释累计量 |
+| `damageInHp`、`hpHitsOut`、`maxHitOutHp` | 承伤扣血总量、造成对敌扣血的笔数、单笔对敌扣血峰值 | 按 `DamageResolved` 的实际 HP 伤害计，承伤包括自伤与无来源伤害 |
+| `firstCardUseTick`、`cardUses` | 首次发动卡牌的 Tick 和累计发动次数 | 每次扫描提交产生一条 `CardUsed`，包括零费发动与法宝续期 |
+| `woundsAdded` | 新增伤口张数 | 每次含 `Wound` 的卡牌入场计一张，后来治愈的伤口仍计入累计数 |
 
 例：某修士在 Tick 49 前累计完成 0 轮、实付 2 枚灵元、花费 5 MP。Tick 50 完成本轮、用卡实付 1 枚、下一轮补灵花费 3 MP，并在同一步回复 2 MP。该节点应读到 1 轮、累计实付 3 枚、累计消耗 8 MP，余额相对 Tick 49 减少 1。此例用于验收口径。
 
@@ -105,22 +108,22 @@ LogMgr 拟提供独立的离线快照入口。每场维护按条目 ID 索引的
 
 建议默认落在项目目录 `UnityWorld/Reports/CombatBenchmarks/<批次ID>/<场次ID>.md`，也可指定持久化输出目录。每次运行分配独立批次目录，同种子复跑保留两次结果。以 UTF-8 写入同目录临时文件，完成后再改为最终文件名。模拟器关闭后可以直接用 Markdown 阅读器打开。
 
-**单场 Markdown 完整示例**
+**只启用三个测项的单场 Markdown 示例**
 
 | 条目ID | 值 |
 | --- | --- |
-| seed | 1 |
-| NpcA | roster_qu_ze |
-| NpcB | training_dummy |
-| damageOut_50 | 12 |
-| damageOut_100 | null |
-| firstWoundTick | 75 |
-| FinsihTick | 75 |
-| Finishreson | AllDefeated |
+| seed（战斗种子） | 1 |
+| NpcA（待测方模板） | roster_qu_ze |
+| NpcB（对手模板） | training_dummy |
+| damageOut_50（待测方，第 50 Tick，累计对敌扣血） | 12 |
+| damageOut_100（待测方，第 100 Tick，累计对敌扣血） | null |
+| firstWoundTick（待测方，首张新增伤口落盘的 Tick） | 75 |
+| FinsihTick（战斗结束 Tick） | 75 |
+| Finishreson（战斗结束原因） | AllDefeated |
 
 文件内容只有上述两列表格。前三行是战斗种子和双方模板 ID，中间按配置顺序列启用的测项，最后两行是实际结束 Tick 和结束原因。键拼写沿用约定，正常结束原因取引擎返回值。真实零值写 `0`；未抵达的定点、整场未发生的首次事件均写字面量 `null`。例中 Tick 50 已输出 12 点，第 75 Tick 首次出伤口并结束，因此第 100 Tick 的输出无值。标题、说明、单位、独立状态列和复现元数据均不属于单场表格。
 
-批次清单保留模板与程序集指纹、实例覆盖、种子顺序及测量清单。现有方案的批次 JSON 记录每份 Markdown 的相对路径和汇总统计。每场 Markdown 独立可读，汇总可从同批 Markdown 和清单重建。
+批次清单保留模板与程序集指纹、实例覆盖、种子顺序、测量清单及各 ID 的中文含义。批次 JSON 记录每份 Markdown 的相对路径和汇总统计。`summary.md` 依次列条目 ID、描述、平均数、中位数和 null 个数，只对成功场次统计。偶数个读数的中位数取中间两项的平均。两份汇总都可从同批 Markdown 和清单重建。
 
 按对手和条目 ID 汇总，只用到达该时点的成功局计算该项均值和分位数。分位数采用最近秩，排序后取第 ⌈p×n⌉ 项。成功且终局恰落在节点的样本计入该点，早于节点结束的局单列。失败场保留诊断读数，整场退出正式汇总。节点覆盖可核对为计划局数＝失败＋提前结束＋有效到达。首次事件按整场值汇总发生局数/成功局数，时间分布只取非空值。若需按节点分析，批次端从首次 Tick 和结束 Tick 推导；无人到达时比例和分布均为空。终点读数可按局追溯。
 

@@ -29,6 +29,13 @@ public partial class CombatScene
     /// <summary>读取当前表现记录的快照，保留未消费的记录。</summary>
     public IReadOnlyList<CombatPresentationEvent> ReadPresentationEvents() => Array.AsReadOnly(_presentationEvents.ToArray());
 
+    /// <summary>读取指定偏移之后的表现事实。观察者独立推进偏移，完整回放仍可读取。</summary>
+    public IReadOnlyList<CombatPresentationEvent> ReadPresentationEvents(int offset)
+    {
+        if (offset == _presentationEvents.Count) return Array.Empty<CombatPresentationEvent>();
+        return _presentationEvents.GetRange(offset, _presentationEvents.Count - offset).AsReadOnly();
+    }
+
     /// <summary>取走自上次消费以来的所有表现记录，供客户端构建本帧。</summary>
     public IReadOnlyList<CombatPresentationEvent> DrainPresentationEvents()
     {

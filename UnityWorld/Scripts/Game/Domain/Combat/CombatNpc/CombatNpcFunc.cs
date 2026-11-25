@@ -248,11 +248,13 @@ namespace UnityWorld.Game.Domain.Combat
             contestA.PresentationContestId = contestB.PresentationContestId = contestId;
             contestA.SourceCard.PresentationContestId = contestB.SourceCard.PresentationContestId = contestId;
             using var presentationOrigin = Scene.EnterPresentationOrigin(new PresentationOrigin(null, null, contestId, null));
-            // 双方到达实际配对边界后，先由各自主词处理该拼点，再执行角色修正。
+            // 先处理场上牌的修正，再让来源卡按实际对手修正本次拼点，最后处理角色状态。
             contestA.SourceCard.CallMainKeyword("OnBeforePairedContest", argument: contestA);
             contestB.SourceCard.CallMainKeyword("OnBeforePairedContest", argument: contestB);
-            npcB.ApplyPairedContestModifiers(contestB, contestA);
-            npcA.ApplyPairedContestModifiers(contestA, contestB);
+            var contestContextA = ApplySourceContestModifier(contestA, contestB);
+            var contestContextB = ApplySourceContestModifier(contestB, contestA);
+            npcB.ModifyHook("PairedContest", contestContextB);
+            npcA.ModifyHook("PairedContest", contestContextA);
             contestA.ContestValue = contestA.FinalValue;
             contestB.ContestValue = contestB.FinalValue;
 
@@ -337,14 +339,15 @@ namespace UnityWorld.Game.Domain.Combat
             foreach (var card in Field) card.ModifyPairedContest(contest);
         }
 
-        /// <summary>将双方实际配对的拼点传给状态修正钩子</summary>
-        private void ApplyPairedContestModifiers(ContestData contest, ContestData opponentContest)
+        /// <summary>让来源卡按双方实际拼点修正本次出招，再返回供角色状态使用的上下文。</summary>
+        private APIContext ApplySourceContestModifier(ContestData contest, ContestData opponentContest)
         {
-            // 持有者的 Buff 在配对结算前可以读取本次实际配对的两份拼点。
-            var ctx = new APIContext { Caster = this, SourceCard = contest.SourceCard, Scene = Scene };
+            var ctx = new APIContext { Caster = contest.OwnerNpc, SourceCard = contest.SourceCard, Scene = Scene };
             ctx.Set("ContestData", contest);
             ctx.Set("OpponentContestData", opponentContest);
-            ModifyHook("PairedContest", ctx);
+            if (contest.SourceCard.HasHook("ModifyPairedContest"))
+                contest.SourceCard.InvokeOwnHook("ModifyPairedContest", ctx);
+            return ctx;
         }
 
         /// <summary>让两张拼点卡处理各自结果并计算溢出伤害</summary>

@@ -1,0 +1,26 @@
+[
+  {
+    "ID": "card_form_strike",
+    "DisplayName": "抓击",
+    "Desc": "基础爪招，造成<武器>点刺伤",
+    "Rarity": 0,
+    "Size": 1,
+    "Cooldown": 40,
+    "Keywords": [
+      "ZhaoShi",
+      "Ci"
+    ],
+    "ManaCost": {
+      "Jin": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "刺",
+      "爪"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  }
+]

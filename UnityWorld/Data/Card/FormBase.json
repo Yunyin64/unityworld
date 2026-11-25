@@ -1,327 +1,490 @@
 [
   {
-    "ID": "card_form_jian_zhan",
-    "DisplayName": "剑斩",
-    "Desc": "基础剑招，造成<武器>点斩伤",
+    "ID": "card_form_ge",
+    "DisplayName": "格",
+    "Desc": "按<武器><防御>格开来招",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 50,
+    "Keywords": [
+      "ZhaoShi",
+      "Block"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御",
+      "格挡"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_dang",
+    "DisplayName": "挡",
+    "Desc": "按<武器><防御>抵挡来招",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_shan",
+    "DisplayName": "闪",
+    "Desc": "按<武器><防御>闪避来招",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "Dodge"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御",
+      "闪避"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_zhan",
+    "DisplayName": "斩",
+    "Desc": "按<武器><攻击>发起斩击",
+    "Rarity": 0,
+    "Size": 1,
     "Keywords": [
       "ZhaoShi",
       "Zhan"
     ],
     "ManaCost": {
-      "Jin": 1
+      "None": 1
     },
     "Tags": [
       "武器",
       "攻击",
-      "斩",
-      "剑"
+      "斩"
     ],
     "ProducesContest": true,
     "CompatibilityStatus": "Migrated",
     "CompatibilityReason": ""
   },
   {
-    "ID": "card_form_jian_ci",
-    "DisplayName": "剑刺",
-    "Desc": "基础剑招，造成<武器>点刺伤",
+    "ID": "card_form_ci",
+    "DisplayName": "刺",
+    "Desc": "按<武器><攻击>发起刺击",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 45,
     "Keywords": [
       "ZhaoShi",
       "Ci"
     ],
     "ManaCost": {
-      "Jin": 1
+      "None": 1
     },
     "Tags": [
       "武器",
       "攻击",
-      "刺",
-      "剑"
+      "刺"
     ],
     "ProducesContest": true,
     "CompatibilityStatus": "Migrated",
     "CompatibilityReason": ""
   },
   {
-    "ID": "card_form_jian_qi",
-    "DisplayName": "剑气",
-    "Desc": "基础剑招，造成<武器>点射伤",
+    "ID": "card_form_da",
+    "DisplayName": "打",
+    "Desc": "按<武器><攻击>发起打击",
     "Rarity": 0,
     "Size": 1,
-    "Cooldown": 55,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {
-      "Jin": 1
-    },
-    "Tags": [
-      "武器",
-      "攻击",
-      "射击",
-      "剑"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Migrated",
-    "CompatibilityReason": ""
-  },
-  {
-    "ID": "card_form_dao_zhan",
-    "DisplayName": "刀斩",
-    "Desc": "基础刀招，造成4点<武器>斩伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 60,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "斩",
-      "刀"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_dao_qi",
-    "DisplayName": "刀气",
-    "Desc": "基础刀招，造成4点<武器>射伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 65,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "射击",
-      "刀"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_dao_da",
-    "DisplayName": "刀打",
-    "Desc": "基础刀招，造成3点<武器>打伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 55,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "打",
-      "刀"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_quan_da",
-    "DisplayName": "拳打",
-    "Desc": "基础拳招，造成2点<武器>打伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 40,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "打",
-      "拳"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_quan_feng",
-    "DisplayName": "拳风",
-    "Desc": "基础拳招，造成2点<武器>射伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 45,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "射击",
-      "拳"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_ci_quan",
-    "DisplayName": "刺拳",
-    "Desc": "基础拳招，造成2点<武器>刺伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 35,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "刺",
-      "拳"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_qiang_ci",
-    "DisplayName": "枪刺",
-    "Desc": "基础枪招，造成4点<武器>刺伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 60,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "刺",
-      "枪"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_qiang_sao",
-    "DisplayName": "枪扫",
-    "Desc": "基础枪招，造成3点<武器>斩伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 50,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "斩",
-      "枪"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_qiang_za",
-    "DisplayName": "枪砸",
-    "Desc": "基础枪招，造成4点<武器>打伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 70,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "攻击",
-      "打",
-      "枪"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_fist_block",
-    "DisplayName": "拳挡",
-    "Desc": "格挡<武器>点",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 30,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "防御",
-      "格挡",
-      "拳"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_blade_block",
-    "DisplayName": "刀挡",
-    "Desc": "格挡<武器>点",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 40,
-    "Keywords": [
-      "ZhaoShi"
-    ],
-    "ManaCost": {},
-    "Tags": [
-      "武器",
-      "防御",
-      "格挡",
-      "刀"
-    ],
-    "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
-  },
-  {
-    "ID": "card_form_strike",
-    "DisplayName": "抓击",
-    "Desc": "基础爪招，造成<武器>点刺伤",
-    "Rarity": 0,
-    "Size": 1,
-    "Cooldown": 40,
     "Keywords": [
       "ZhaoShi",
-      "Ci"
+      "Da"
     ],
     "ManaCost": {
-      "Jin": 1
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "打"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_she",
+    "DisplayName": "射",
+    "Desc": "按<武器><攻击>发起射击",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "射击"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_pi",
+    "DisplayName": "劈",
+    "Desc": "按<武器><攻击>发起斩击，对上挡时本招拼点加<武器><速度>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "斩",
+      "克制"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_liao",
+    "DisplayName": "撩",
+    "Desc": "按<武器><攻击>发起斩击，对上刺击时本招拼点加<武器><速度>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "斩",
+      "克制"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_za",
+    "DisplayName": "砸",
+    "Desc": "按<武器><攻击>发起打击，对上斩击时本招拼点加<武器><速度>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "打",
+      "克制"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_sao",
+    "DisplayName": "扫",
+    "Desc": "按<武器><攻击>发起打击，对上闪避时本招拼点加<武器><速度>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "打",
+      "克制"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_tiao",
+    "DisplayName": "挑",
+    "Desc": "按<武器><攻击>发起刺击，对上打击时本招拼点加<武器><速度>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
     },
     "Tags": [
       "武器",
       "攻击",
       "刺",
-      "爪"
+      "克制"
     ],
     "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_gou",
+    "DisplayName": "钩",
+    "Desc": "按<武器><攻击>发起刺击，对上格时本招拼点加<武器><速度>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "刺",
+      "克制"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_tui",
+    "DisplayName": "推",
+    "Desc": "按<武器><防御>发起打击",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "攻击",
+      "打"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_jie",
+    "DisplayName": "截",
+    "Desc": "按<武器><攻击>发动<格>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "Block"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御",
+      "格挡"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_zhuan",
+    "DisplayName": "转",
+    "Desc": "以<武器><速度>发动<闪>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "Dodge"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御",
+      "闪避"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_cheng",
+    "DisplayName": "撑",
+    "Desc": "以<武器><速度>发动<格>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi",
+      "Block"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御",
+      "格挡"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_xie",
+    "DisplayName": "卸",
+    "Desc": "以<武器><速度>发动<挡>",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "防御"
+    ],
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_yun",
+    "DisplayName": "运",
+    "Desc": "转化<武器><速度>个灵元",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器"
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_xu",
+    "DisplayName": "蓄",
+    "Desc": "获得<武器><速度>层「下次斩击强化」Buff",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "强化"
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_zhen",
+    "DisplayName": "振",
+    "Desc": "获得<武器><速度>层「下次打击强化」Buff",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "强化"
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_dian",
+    "DisplayName": "点",
+    "Desc": "获得<武器><速度>层「下次刺击强化」Buff",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "强化"
+    ],
+    "ProducesContest": false,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
+  },
+  {
+    "ID": "card_form_miao",
+    "DisplayName": "瞄",
+    "Desc": "获得<武器><速度>层「下次射击强化」Buff",
+    "Rarity": 0,
+    "Size": 1,
+    "Keywords": [
+      "ZhaoShi"
+    ],
+    "ManaCost": {
+      "None": 1
+    },
+    "Tags": [
+      "武器",
+      "强化"
+    ],
+    "ProducesContest": false,
     "CompatibilityStatus": "Migrated",
     "CompatibilityReason": ""
   }

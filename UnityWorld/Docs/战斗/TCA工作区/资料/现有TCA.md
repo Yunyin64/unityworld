@@ -1,12 +1,12 @@
 # 现有 TCA
 
-资料版本 `TCA-E-2026-11-23.1` · 已发布 · 2026-11-23（北京时间）
+资料版本 `TCA-E-2026-11-25.1` · 已发布 · 2026-11-25（北京时间）
 
-项目基线 `master` / `85cd9577290b8f59c8b57907ce2f758a87ab2c91`
+项目基线 `master` / `19d4d33ec3f2fee56d76bfd33f0b25ae1de85541`
 
 [玩法与接口索引](玩法与接口索引.md) · [发布状态、验证与反馈](变更与反馈.md) · [现行目录规格](../../../../openspec/specs/combat-tca-catalog/spec.md)
 
-目录共 **32 个 Ready T、21 个 Ready C、45 个 Ready A 模板**，T 和 C 的计数含空节点。14 条进阶记录可手动选用，抽样权重为 0。另有 **8 个 Pending 条目**，保留原 ID、参数及评分供后续设计。各表沿用页首基线，强化与抗性的动作条目已按当前工作区更新。Ready 表示正式目录收录可执行入口，Pending 表示正式目录保留历史或待接入设计。配置 34 行 T 对应 34 个唯一 ID，当前无重复。所有 Ready 模板均有目录及 Lua 签名回归，行为测试和实卡采用以条目证据为准。[目录校验](../../../../Scripts/Tests/TcaAlignmentTests.Catalog.cs)卡牌和词条 Lua 通过 `[APIFunc]` 调用 C# 结算。
+目录共 **32 个 Ready T、21 个 Ready C、72 个 Ready A 模板**，含两个空节点和 35 个动作函数。另保留 **8 个 Pending 条目**。14 个进阶节点权重为 0，可手动选用。T 配置 34 行，按 ID 去重后 34 项。表中目录、实卡、回归均以页首主线为准。Ready 的模板与 Lua 注册已通过目录回归。当前随机生成器在单次 Buff 模板的显示阶段会报错，具体见[本版验证](变更与反馈.md#本版验证与双向反查)。 [目录校验](../../../../Scripts/Tests/TcaAlignmentTests.Catalog.cs)
 
 随机组合另用 `trigger_none` 表示无额外触发，并复用 `cond_none` 表示无条件。两者按 JSON 权重抽取。 [抽样规则与组合问题](../随机组合试验/组合规则与问题.md)
 
@@ -34,15 +34,15 @@
 | OnExhausted | 本次扣除使消耗由正数变为零 | Caster、SourceCard、Amount、Stack | [CurrentAmount、TryConsume](../../../../Scripts/Game/Domain/Combat/CombatCard/CombatCardDataAmount.cs) |
 | OnCardLeave | 场上或候补实际移除后。被移除卡先执行局部 Hook OnLeave | Caster、SourceCard、RemovalReason | [DealFieldChange](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcCardFunc.cs) |
 | OnContestOverflow | 确定对拼结果后、两卡 Apply 前 | 双方角色、卡、类型、最终点数、IsDraw、Overflow。有胜负时附带 Winner、Loser 及各自卡、类型、类型名和点数，Caster、SourceCard 为胜方。平局时 Caster、SourceCard 取配对 A 方 | [ResolveContest、Straight](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) |
-| OnBaseManaDraw | 开场和本方轮末，在基础放灵元之前 | Caster 为补灵方 | [DoManaDraw、DrawMana、ChangeMP](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcManaFunc.cs) |
+| OnBaseManaDraw | 开场和后续本方新一轮开始，供能结束后、基础补灵放灵元前 | Caster 为补灵方 | [DoManaDraw、DrawMana、ChangeMP](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcManaFunc.cs) |
 | OnManaDraw | 基础补灵或主动 Draw 实际放入灵元并扣 MP 后 | Caster 为补灵方 | [DoManaDraw、DrawMana、ChangeMP](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcManaFunc.cs) |
 | OnMPChanged | MP 实际变化后 | Caster 为 MP 所属角色 | [DoManaDraw、DrawMana、ChangeMP](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcManaFunc.cs) |
 | OnDamage | 护盾吸收后实际扣 HP 时，在 HP 清零处理前 | Caster 为受伤者，SourceCard 为伤害来源（可空） | [CombatNpc.ApplyDamage](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpc.cs) |
-| OnHeal | 实际正向回复 HP 后 | Caster 为受治疗者 | [ApplyHeal](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) |
+| OnHeal | 实际正向回复 HP 后，结算已应用治疗与受疗修正 | Caster 为受治疗者，Amount 为实际回复量，SourceNpc 为施术者（可空） | [ApplyHeal](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) |
 | OnArtifactActivated / OnArtifactRenewed / OnArtifactDeactivated | 法宝分别激活、成功续期和失活 | Caster、SourceCard | [FaBao.OnScanEnd、OnPhaseChanged](../../../../Data/LuaScripts/Keywords/FaBao.lua) |
 | OnManaCharged | 一枚灵元实际充入卡 | Caster、SourceCard、ChargedElement、LitCount、IsFullyCharged | [DispatchManaCharged、DispatchManaUsed](../../../../Scripts/Game/Domain/Combat/CombatCard/CombatCardManaFunc.cs) |
-| OnWoundGained / OnWoundHealed | 新伤势实际落格或因治疗释放占格 | Caster、SourceCard、WoundSize。治疗移除时还有 RemovalReason | [DealFieldChange](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcCardFunc.cs) |
-| OnManaUsed | 进阶。一次发动实际提交灵元支付 | Caster、SourceCard、Total、Kinds、各出现元素的 PaidJin / PaidMu / PaidShui / PaidHuo / PaidTu | [DispatchManaCharged、DispatchManaUsed](../../../../Scripts/Game/Domain/Combat/CombatCard/CombatCardManaFunc.cs) |
+| OnWoundGained / OnWoundHealed | 新伤势实际落格或因治疗释放占格 | Caster、SourceCard、WoundSize。基础补灵短缺且临时伤势「灵力耗尽」实际落格也发 OnWoundGained；战末临时清理不算治愈。治疗移除时还有 RemovalReason | [DealFieldChange](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcCardFunc.cs) |
+| OnManaUsed | 进阶。一次发动实际提交灵元支付，通用费用仍按实付五行记账 | Caster、SourceCard、Total、Kinds、各出现元素的 PaidJin / PaidMu / PaidShui / PaidHuo / PaidTu | [DispatchManaCharged、DispatchManaUsed](../../../../Scripts/Game/Domain/Combat/CombatCard/CombatCardManaFunc.cs) |
 | OnElementStackChanged | 进阶。指定五行状态实际变化 | Caster、ChangedBuffId、Before、After、Delta | [五行状态层数变更](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcModifierFunc.cs) |
 | OnShieldExhausted | 进阶。灵盾从正数降到零 | Caster、SourceCard、SourceNpc、Before、Reason（Damage/Effect） | [CombatNpc.DispatchShieldExhausted](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcData.cs) |
 | OnShieldChargeReady | 进阶。灵盾实际吸收累计达标 | Caster、SourceBuff、Round、Absorbed、Threshold、DamageElement、ChargeBuffId，SourceCard 可为空 | [CombatNpc.ApplyDamage](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpc.cs) |
@@ -55,6 +55,7 @@
 | Tick、OnTick、OnPassiveTick | 卡自身、词条、已激活被动或 Modifier 的逐 Tick 生命周期 |
 | OnPassiveActivated、OnPassiveDeactivated | 被动激活状态改变。连续续期不重复执行激活回调 |
 | OnPendingCancelled | 已支付的待发因败退或战斗结束被取消。Reason 记录原因，灵活可据此检查余量 |
+| OnResolveContest | 非平局正式配对的两张来源卡各执行一次词条钩子，以各自卡为来源，顺序为胜方后败方。用于通吃、格的下次强化和闪的充能或承伤。见[拼点结果词条](玩法与接口索引.md#主线发动事件与拼点) |
 | OnBeforePairedContest | 实际配对比较之前，激活的来源可调整本次招式拼点。长剑在此消费加成 |
 
 行为样例可查[对拼](../../../../Scripts/Tests/TcaAlignmentTests.Contest.cs)、[轮次与装备](../../../../Scripts/Tests/TcaAlignmentTests.RoundAndEquipment.cs)、[空间](../../../../Scripts/Tests/TcaAlignmentTests.Spatial.cs)、[资源与离场](../../../../Scripts/Tests/TcaAlignmentTests.Consumables.cs)、[扩展](../../../../Scripts/Tests/TcaAlignmentTests.Extension.cs)。剑斩、剑刺生成拼点，长剑监听结算。其他事件在行为夹具中的采用范围以各测试为准。
@@ -106,6 +107,8 @@
 
 ## A · 动作模板及入口
 
+数值 Buff 共 28 个定向模板，覆盖拼点、伤害、治疗、灵盾获得与 MP 回复。原 `action_add_npc_buff` 模板已退役，`AddNpcBuff` Lua 入口继续由新模板调用。持续版按模板给出的期限，单次版由对应 Lua 在首次匹配时消费。 [Buff 模板](../../../../Data/Action/ActionTemplate_Buff.json) · [目录回归](../../../../Scripts/Tests/TcaAlignmentTests.Catalog.cs)
+
 下表均为主线 Ready。名称以模板 ID 和函数名双索引。效果示例用于说明语义，实卡和行为回归以条目标示为准。参数是模板给出的选择，运行语义以实现列为准。实现列按文件名和方法定位，源码类型为 `CombatBaseFunc`。调用包装分为 [角色动作](../../../../Data/LuaScripts/CombatNpc_Action.lua)、[卡动作](../../../../Data/LuaScripts/CombatCard_Action.lua)、[拼点](../../../../Data/LuaScripts/CombatNpc_Contest.lua) 和 [光环](../../../../Data/LuaScripts/CombatCard_Aura.lua)，均调用 `API:Execute`。同类规格、最小用法见 [接口索引](玩法与接口索引.md)。
 
 | 模板 ID / 函数 | 玩家语义 | 参数 | 设计、模板与实卡 | 主线实现 |
@@ -121,7 +124,7 @@
 | `action_add_artifact_power` / `AddArtifactPower` | 轮首随机给场上法宝补当前需要的灵元 | Domain、Element、Amount、Rounds | 火供能只补火，None 可以补任一匹配五行。[供能回归 VerifyArtifactPower](../../../../Scripts/Tests/TcaAlignmentTests.RoundAndEquipment.cs) | 同上 · [AddArtifactPower → PowerArtifacts](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatManaAction.cs) |
 | `action_refill_ammo` / `RefillAmmo` | 补充余弹至有效上限 | Domain、Amount | [弹药模板](../../../../Data/Action/ActionTemplate_Ammo.json) · [弹药 Lua 回归](../../../../Scripts/Tests/TcaAlignmentTests.Consumables.cs) | [CombatBaseFunc.RefillAmmo](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatBaseAction.cs) → `CombatCard.RefillAmount` |
 | `action_slide_card` / `SlideCard` | 沿四向滑到障碍前，灵元可穿越，终点灵元让位 | Domain、Direction | 作用于完整卡形，保持蓄灵与 SP。[空间回归 VerifySpatialEffects、VerifyRandomSlide](../../../../Scripts/Tests/TcaAlignmentTests.Spatial.cs) | [位移模板](../../../../Data/Action/ActionTemplate_Spatial.json) · [SlideCard → TrySlide](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatBaseAction.cs) |
-| `action_heal` / `Heal` | 治疗至多 HealValue 点，受最大 HP 限制 | Domain、HealValue | [效果模板](../../../../Data/Action/ActionTemplate_Effect.json)；[再生](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Buff_Mu.lua) 用于基础补灵 | [CombatBaseAction.Heal](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatBaseAction.cs) → `ApplyHeal`，实际回复后派发 OnHeal |
+| `action_heal` / `Heal` | 先修正施术者治疗量，再修正目标受疗量，按目标缺血截断 | Domain、HealValue | [效果模板](../../../../Data/Action/ActionTemplate_Effect.json)；[再生](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Buff_Mu.lua) 用于基础补灵 | [CombatBaseAction.Heal](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatBaseAction.cs) → `ApplyHeal`，实际回复后派发 OnHeal |
 | `action_self_heal_boost`、`action_self_heal_boost_once` / `AddNpcBuff` | 给自己治疗提高，增加自己施加的治疗量 | 强度，持续版可选期限 | [动作模板](../../../../Data/Action/ActionTemplate_Buff.json) · [治疗 Buff 定义](../../../../Data/Modifier/CombatModifierDefines/Heal_Changed.json) | [ApplyHeal](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) |
 | `action_target_heal_received_weaken`、`action_target_heal_received_weaken_once` / `AddNpcBuff` | 给对手受疗降低，减少对手接受的治疗量 | 强度，持续版可选期限 | [动作模板](../../../../Data/Action/ActionTemplate_Buff.json) · [治疗 Buff 定义](../../../../Data/Modifier/CombatModifierDefines/Heal_Changed.json) | [ApplyHeal](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcFunc.cs) |
 | `action_self_shield_gain_boost`、`action_self_shield_gain_boost_once` / `AddNpcBuff` | 给自己灵盾获得量提高，持续版或单次版 | 强度，持续版可选期限 | [动作模板](../../../../Data/Action/ActionTemplate_Buff.json) · [资源 Buff 定义](../../../../Data/Modifier/CombatModifierDefines/Resource_Changed.json) | [结算](../../../../Scripts/Game/Domain/Combat/CombatNpc/CombatNpcData.cs) |
@@ -145,10 +148,10 @@
 | `action_slow` / `Slow` | 整包半速，同类延时 | Self/Target、DurationTicks | 同上；[土系减速](../../../../Data/Card/Lua/card_tu_slow.lua) Apply | `CombatCDAction.Slow` → `Backpack.AddSlow`；时序、效果子项 |
 | `action_haste` / `Haste` | 整包双速，同类延时 | Self/Target、DurationTicks | 同上；[木系加速](../../../../Data/Card/Lua/card_mu_haste.lua) Apply | `CombatCDAction.Haste` → `Backpack.AddHaste`；时序、效果子项 |
 | `action_remove_wound` / `RemoveRandomWound` | 随机选一张场上伤口排队移除 | Domain、Size、Exact（true 等于，false 至多） | [卡组模板](../../../../Data/Action/ActionTemplate_Deck.json)；Exact=true 选等体量，false 选至多该体量。[伤势选择回归](../../../../Scripts/Tests/TcaAlignmentTests.Targeting.cs)，实卡调用待证 | `CombatBaseAction.RemoveRandomWound` → `HealWound` → `DealFieldChange` |
-| `action_convert` / `Convert` | 灵元转化／回收格上灵元为 MP，1 个回 1 点 | Domain、Element（None 任意）、MaxAmount | [灵元模板](../../../../Data/Action/ActionTemplate_Mana.json)；[迁移规格](../../../../openspec/specs/combat-mana-manipulation/spec.md)；本版通过满 MP、MP 空缺、指定元素、保护已点亮测试 | [CombatManaAction.Convert](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatManaAction.cs) → `RemoveMana`、`RecoverMP` |
-| `action_recover_mp` / `RecoverMP` | 直接回复 MP，受上限限制 | Domain、Amount | [MP 模板](../../../../Data/Action/ActionTemplate_MP.json)；浩瀚在基础补灵前按层回复 | CombatManaAction.RecoverMP → CombatNpc.RecoverMP |
+| `action_convert` / `Convert` | 灵元转化／回收格上灵元为 MP，1 个回 1 点 | Domain、Element（None 任意）、MaxAmount | [灵元模板](../../../../Data/Action/ActionTemplate_Mana.json)；[迁移规格](../../../../openspec/specs/combat-mana-manipulation/spec.md)；本版通过满 MP、MP 空缺、指定元素、保护已点亮测试 | [CombatManaAction.Convert](../../../../Scripts/Game/Domain/!Global/API/Combat/Action/CombatManaAction.cs) → `RemoveMana`、`RestoreMP`。维持 1:1，回复量 Buff 在此保留 |
+| `action_recover_mp` / `RecoverMP` | 直接回复 MP，吃回复量修正，最后受 MP 上限限制 | Domain、Amount | [MP 模板](../../../../Data/Action/ActionTemplate_MP.json)；浩瀚在基础补灵前按层回复 | CombatManaAction.RecoverMP → CombatNpc.RecoverMP |
 | `action_reduce_mp` / `ReduceMP` | 直接减少 MP，最低降至零 | Domain、Amount | 同上；石化在基础补灵前按层削减 | CombatManaAction.ReduceMP → CombatNpc.ReduceMP |
-| `action_draw` / `Draw` | 立刻将 MP 放成格上灵元，实际入格才扣款 | Domain、Amount | [灵元模板](../../../../Data/Action/ActionTemplate_Mana.json)；[回灵](../../../../Data/Card/Lua/card_huo_drain.lua) Apply 抽 3；效果测试通过 Draw 链 | `CombatManaAction.Draw` → `CombatNpc.DrawMana` |
+| `action_draw` / `Draw` | 立刻将 MP 放成格上灵元，按实际入格扣款，余额不足时只补可支付部分 | Domain、Amount | [灵元模板](../../../../Data/Action/ActionTemplate_Mana.json)；[回灵](../../../../Data/Card/Lua/card_huo_drain.lua) Apply 抽 3；效果测试通过 Draw 链 | `CombatManaAction.Draw` → `CombatNpc.DrawMana`。主动 Draw 不发耗尽伤口 |
 | `action_reduce_mana` / `ReduceMana` | 摧毁格上灵元，不足部分成功 | Domain、Element（None 任意）、Amount | [灵元模板](../../../../Data/Action/ActionTemplate_Mana.json)；效果测试真实 Lua 减灵及后续 Draw，未在生产卡中定位独立调用 | `CombatManaAction.ReduceMana` → `RemoveMana`；保留已点亮资源，MP 无变化 |
 | `action_add_element_buff` / `AddElementBuff` | 循环施加元素状态，每次加一层 | Domain、Element、IsDebuff、Count | [五行状态模板](../../../../Data/Action/ActionTemplate_ElementBuff.json)；[锐意](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Buff_Jin.lua) 与 [中毒](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Debuff_Mu.lua) 真实 Lua。具名同族下列 | `CombatManaAction.AddElementBuff` → `AddModifier` 人物叠层；None 每次随机 |
 | `action_remove_element_buff` / `RemoveElementBuff` | 循环选匹配状态，每次减一层 | Domain、Element、IsDebuff、Count | 同上；[载德](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Buff_Tu.lua) 清减益、[灼烧](../../../../Data/Modifier/CombatModifierDefines/Lua/Element_Debuff_Huo.lua) 清增益 | `CombatManaAction.RemoveElementBuff` → `ReduceStack(1)`；None 匹配任一对应正负的五行状态 |
@@ -194,4 +197,5 @@
 | --- | --- |
 | 持久加盾 | [测试卡 bp_focus](../../../../Data/Card/Lua/bp_focus.lua) 的 Apply 内联 `self.m_Owner:ChangeShield(2)`，新效果可使用上表的 GainShield 模板。 |
 | 长剑下次招式对拼 +1 | [长剑脚本](../../../../Data/Card/Lua/card_fabao_jian.lua) 的 `OnContestOverflow`、`OnBeforePairedContest`、`OnPassiveDeactivated` 串联卡专用规则。拼点消费与法宝失活清理均有回归 |
+| 基础补灵与灵力耗尽 | 开场及本方每轮基础补灵按空格和扣费前 MP 结算。应补量大于可用 MP 时，本次生成一张临时伤势，当前没有单独的 TCA 动作模板。可用 OnWoundGained 监听实际落格。 [补灵规则与代码](玩法与接口索引.md#基础补灵通用费用与卡形) |
 | 灵元改色／换色、指定格换位 | [纳音设计](../../../../Data/Card/NayinDesign.md) 有设计来源。改色可组合 C# 两个操作，指定格换位缺核心操作。详见 [背包格能力](玩法与接口索引.md#背包格能力) |

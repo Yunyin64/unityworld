@@ -55,6 +55,35 @@ namespace UnityWorld.Core
     {
 
         public static LogMgr Instance { get; private set; }
+
+        /// <summary>当前独立模拟局的离线测项，按配置顺序保存。null 表示尚无读数。</summary>
+        public Dictionary<string, string?> OfflineSnapshot { get; } = new(StringComparer.Ordinal);
+
+        /// <summary>将本局已采集的键值表原子保存为 UTF-8 Markdown，不经过控制台或普通日志历史。</summary>
+        public void ExportOfflineSnapshot(string path, IReadOnlyDictionary<string, string>? labels = null)
+        {
+            var report = new StringBuilder("| 条目ID | 值 |\n| --- | --- |\n");
+            foreach (var pair in OfflineSnapshot)
+            {
+                var value = (pair.Value ?? "null").Replace("\\", "\\\\").Replace("|", "\\|")
+                    .Replace("\r", " ").Replace("\n", " ");
+                report.Append("| ").Append(pair.Key);
+                if (labels != null && labels.TryGetValue(pair.Key, out var label))
+                    report.Append('（').Append(label).Append('）');
+                report.Append(" | ").Append(value).Append(" |\n");
+            }
+
+            var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            try
+            {
+                File.WriteAllText(temporary, report.ToString(), new UTF8Encoding(false));
+                File.Move(temporary, path);
+            }
+            finally
+            {
+                if (File.Exists(temporary)) File.Delete(temporary);
+            }
+        }
         // ────────── IDomainMgrBase ──────────
         public string Name => "LogMgr";
         public string Desc => $"Level={MinLevel} Ring={_ringBuffer.Count}/{RingCapacity}";
@@ -391,6 +420,7 @@ namespace UnityWorld.Core
 
         public void End()
         {
+            OfflineSnapshot.Clear();
             FlushAggregation();
             CloseLogFile();
             OnLogEmitted = null;

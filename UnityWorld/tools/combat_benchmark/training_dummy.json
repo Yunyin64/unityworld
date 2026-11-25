@@ -1,0 +1,12 @@
+{
+    "ID": "training_dummy",
+    "DisplayName": "木桩",
+    "InitStat": { "QiXue": 10, "QiGan": 10, "ShenShi": 10, "TiPo": 10 },
+    "MainGongFaId": "training_dummy_gongfa",
+    "InitCardPlacements": [
+        { "Key": "training_dummy_gongfa", "Value": { "X": 3, "Y": 3 } }
+    ],
+    "InitGongFa": [
+        { "DefineId": "training_dummy_gongfa", "PlacementIndex": 1, "CurrentPoint": 0 }
+    ]
+}

@@ -34,7 +34,7 @@ namespace UnityWorld.Tests
             ConfiguredShapes();
             ConfiguredShapeBattle();
             InstanceAndSnapshotIsolation();
-            BindingAndSourceIsolation();
+            GeneratedAndPlayerCardSources();
             RejectAndRollback();
             FormalTemplates();
             Console.WriteLine($"TEMPLATE_BACKPACK_TESTS_OK assertions={_assertions}");
@@ -207,40 +207,8 @@ namespace UnityWorld.Tests
             Check(ca.LitCount == 1 && cb.LitCount == 0 && sa.GetField().Single(c => c.Id == duplicates[1].Id).LitCount == 0, "重复实例及同源战斗点亮隔离");
         }
 
-        private static void BindingAndSourceIsolation()
+        private static void GeneratedAndPlayerCardSources()
         {
-            var definition = Basic();
-            definition.InitCardPlacements.Add(new() { Key = "card_fabao_jian", Value = new(1, 4) });
-            definition.InitCardPlacements.Add(new() { Key = "card_fabao_jian", Value = new(4, 4) });
-            definition.InitEquip = [new() { CardID = "card_fabao_jian", EquipID = "long_sword", PlacementIndex = 4 }, new() { CardID = "card_fabao_jian", EquipID = "great_sword", PlacementIndex = 5 }];
-            definition.InitCardPlacements.AddRange([
-                new() { Key = "card_form_jian_ci", Value = new(2, 2), ParentPlacementIndex = 4 },
-                new() { Key = "card_form_jian_zhan", Value = new(3, 2), ParentPlacementIndex = 4 },
-                new() { Key = "card_form_jian_ci", Value = new(4, 2), ParentPlacementIndex = 5 },
-                new() { Key = "card_form_jian_zhan", Value = new(5, 2), ParentPlacementIndex = 5 },
-                new() { Key = "card_form_jian_qi", Value = new(5, 3), ParentPlacementIndex = 5 }
-            ]);
-            var missing = Copy(definition);
-            missing.InitCardPlacements.RemoveAt(9);
-            ExpectInvalid(() => NpcMgr.Instance.Assemble(missing), "缺少巨剑的剑气", "great_sword", "card_form_jian_qi");
-            var wrongParent = Copy(definition);
-            wrongParent.InitCardPlacements[9].ParentPlacementIndex = 4;
-            ExpectInvalid(() => NpcMgr.Instance.Assemble(wrongParent), "长剑不能提供剑气", "long_sword", "card_form_jian_qi");
-            var overSp = Copy(definition);
-            overSp.InitStat["ShenShi"] = 11;
-            ExpectInvalid(() => NpcMgr.Instance.Assemble(overSp), "计入自带招式后 SP 不足", "SP 容量错误");
-            var npc = NpcMgr.Instance.Assemble(definition);
-            var cards = npc.GetAllCards();
-            Check(cards.Count == definition.InitCardPlacements.Count && cards.Count(c => c.DefineId == "jin_fa") == 1, "仅配置清单造卡，无重复主卡/解锁子卡");
-            Check(cards[0].GetGongFa().CurrentPoint == 100, "绑定已有主卡修炼进度");
-            Check(cards[3].GetEquip().Attack == 4 && cards[4].GetEquip().Attack == 8 && cards[3].GetEquip().Id != cards[4].GetEquip().Id, "同定义装备绑定不同实例属性");
-            var thrusts = cards.Where(c => c.DefineId == "card_form_jian_ci").ToArray();
-            Check(thrusts.Length == 2 && thrusts[0].ParentCardId == cards[3].Id && thrusts[1].ParentCardId == cards[4].Id &&
-                thrusts[0].GetEquipData().GetValue("Attack", 0) == 4 && thrusts[1].GetEquipData().GetValue("Attack", 0) == 8,
-                "同名剑刺分别绑定两把装备并读取各自攻防");
-            var reread = NpcMgr.Instance.Assemble(Copy(definition)).GetAllCards();
-            Check(reread.Count == cards.Count && reread[5].ParentCardId == reread[3].Id && reread[7].ParentCardId == reread[4].Id,
-                "重新装配每个显式条目只生成一次");
             var generated = NpcMgr.Instance.AssembleGenerated(new NpcDefine { ID = "generated-no-template", InitGongFa = [new() { DefineId = "jin_fa", CurrentPoint = 25 }] });
             Check(generated.GetAllCards().Count(c => c.DefineId == "jin_fa") == 1 && generated.GetAllCards().Any(c => c.DefineId == "card_jin_slash"), "非模板功法解锁发牌保留");
             var player = NpcMgr.Instance.AssembleGenerated(new NpcDefine { ID = "player-no-template" }, NpcAssemblySource.Player);
@@ -248,8 +216,8 @@ namespace UnityWorld.Tests
             Check(player.GetAllCards().Any(c => c.DefineId == "card_jin_slash"), "玩家获得功法发牌保留");
             var equipped = generated.GainEquip("card_fabao_jian", "long_sword"); generated.EquipFaBao(equipped.Id); generated.AssignAllToField();
             generated.EquipFaBao(equipped.Id);
-            Check(generated.GetAllCards().Count(c => c.Id != equipped.Id && c.ParentCardId == equipped.Id) == 2,
-                "非模板装备重复装配只复用两条自带招式");
+            Check(generated.GetAllCards().Count(c => c.Id != equipped.Id && c.ParentCardId == equipped.Id) == equipped.GetEquip().FormList.Count,
+                "非模板装备重复装配只复用本件装备的自带招式");
         }
 
         private static void RejectAndRollback()
@@ -308,8 +276,8 @@ namespace UnityWorld.Tests
                 {
                     var sword = combat.GetField().Single(c => c.DefineId == "card_fabao_jian");
                     var forms = combat.GetField().Where(c => c.Id != sword.Id && c.ParentCardId == sword.Id).ToArray();
-                    Check(npc.GetFieldSize() == 12 && npc.GetSpMax() == 12 && combat.GetField().Count == 9 && forms.Length == 2,
-                        "武修全九卡入包，两把招式都归长剑，SP 12/12");
+                    Check(npc.GetFieldSize() == 13 && npc.GetSpMax() == 13 && combat.GetField().Count == 10 && forms.Length == 3,
+                        "武修十张卡入包，三招都归长剑，SP 13/13");
                 }
                 var free = combat.Backpack.EmptyCells().ToHashSet();
                 Check(free.Any(c => free.Contains(new(c.X + 1, c.Y))), definition.ID + "保留完整两格伤口位置");

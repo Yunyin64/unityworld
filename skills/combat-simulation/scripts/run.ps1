@@ -20,11 +20,36 @@ param(
     [switch]$TraceResources,
     [switch]$TraceArtifactPhases,
     [string[]]$TraceManaPair,
-    [string]$OutputPath = (Join-Path ([IO.Path]::GetTempPath()) "unityworld-combat-$([guid]::NewGuid()).json")
+    [string]$OutputPath = (Join-Path ([IO.Path]::GetTempPath()) "unityworld-combat-$([guid]::NewGuid()).json"),
+    [string]$BenchmarkSubject,
+    [string]$BenchmarkOpponent,
+    [string]$MeasurementPlan,
+    [string]$BenchmarkOutputDirectory
 )
 
 $ErrorActionPreference = 'Stop'
 if (-not ($IsWindows -and [Environment]::Is64BitProcess)) { throw '后端模拟需要 Windows x64 和 PowerShell 7.4 或更高版本。' }
+if ($BenchmarkSubject) {
+    $supported = @('BenchmarkSubject','BenchmarkOpponent','MeasurementPlan','BenchmarkOutputDirectory','Seeds','WorldSeed','Limit')
+    foreach ($option in $PSBoundParameters.Keys) {
+        if ($option -notin $supported) { throw "木桩基准模式不支持 -$option。" }
+    }
+    $benchmarkDir = Join-Path $PSScriptRoot '../../../UnityWorld/tools/combat_benchmark'
+    $options = @('--subject', $BenchmarkSubject, '--world-seed', $WorldSeed)
+    if ($BenchmarkOpponent) { $options += @('--opponent', $BenchmarkOpponent) }
+    if ($MeasurementPlan) {
+        if ($MeasurementPlan -eq 'dummy-baseline.json' -and -not (Test-Path -LiteralPath $MeasurementPlan)) {
+            $MeasurementPlan = Join-Path $benchmarkDir $MeasurementPlan
+        }
+        $options += @('--plan', $MeasurementPlan)
+    }
+    if ($PSBoundParameters.ContainsKey('Seeds')) { $options += "--seeds=$($Seeds -join ',')" }
+    if ($PSBoundParameters.ContainsKey('Limit')) { $options += @('--limit', $Limit) }
+    if ($BenchmarkOutputDirectory) { $options += @('--output', $BenchmarkOutputDirectory) }
+    & python -X utf8 (Join-Path $benchmarkDir 'benchmark.py') @options
+    exit $LASTEXITCODE
+}
+if ($BenchmarkOpponent -or $MeasurementPlan -or $BenchmarkOutputDirectory) { throw '请使用 -BenchmarkSubject 指定待测角色。' }
 if (-not ($ListTemplates -or $Pair -or $Templates -or $Only -or $PSBoundParameters.ContainsKey('Scope'))) {
     throw '请选择 -ListTemplates、-Pair、-Templates、-Only 或 -Scope。'
 }

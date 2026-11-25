@@ -11,6 +11,32 @@ using UnityWorld.Game.World;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+// 基准批次先用正式定义加载器解析模板 ID 和显示名，包括 Mod 提供的配置。
+if (args.Length == 2 && args[0] == "--combat-benchmark-catalog")
+{
+    UnityWorld.Core.LogMgr.MinLevel = UnityWorld.Core.LogLevel.Error;
+    var logger = new UnityWorld.Core.LogMgr(0);
+    logger.Init();
+    var templates = new NpcDefineMgr(Path.Combine(args[1], "Data", "Npc"));
+    templates.Load();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(templates.GetAll().Select(npc => new { npc.ID, npc.DisplayName })));
+    Environment.ExitCode = UnityWorld.Core.LogMgr.History.Count == 0 ? 0 : 1;
+    logger.End();
+    return;
+}
+
+if (args.FirstOrDefault() == "--combat-benchmark-sample")
+{
+    Environment.ExitCode = UnityWorld.ConsoleHost.CombatBenchmark.Run(args);
+    return;
+}
+
+if (args.Length == 2 && args[0] == "--combat-benchmark-checks")
+{
+    UnityWorld.ConsoleHost.CombatBenchmarkChecks.Run(args[1]);
+    return;
+}
+
 // 移动的测试／演示有自己的生命周期，不能落入默认战斗或逐帧秒更新。
 if (args.Contains("--npc-movement-demo"))
 {

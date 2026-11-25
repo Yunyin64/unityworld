@@ -1,0 +1,12 @@
+[
+    {
+        "ID": "training_dummy_gongfa",
+        "DisplayName": "木桩功法",
+        "Desc": "木桩专用白板功法，占用一格。",
+        "Size": 1,
+        "Keywords": ["GongFa", "Passive"],
+        "ManaCost": {},
+        "ProducesContest": false,
+        "CompatibilityStatus": "Migrated"
+    }
+]

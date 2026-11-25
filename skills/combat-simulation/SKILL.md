@@ -30,6 +30,32 @@ pwsh -NoProfile -File $run -Pair '曲泽,段萤' -WorldSeed 12345 -Seeds '1207,3
 
 ## 读战报
 
+### 打木桩
+
+在仓库根构建同一份 Debug 程序集后，基准模式用 Python 3.10+ 标准库调度真实后端。每个种子单独装配双方，固定待测者为 A，木桩为 B；木桩开场 20 HP、30 MP、SP 1/10，自身基础补灵为零。
+
+```powershell
+pwsh -NoProfile -File skills/combat-simulation/scripts/run.ps1 -BenchmarkSubject roster_qu_ze -Seeds 37
+```
+
+省略 `-Seeds` 默认跑 1–100。可用 `-BenchmarkOpponent` 指定对照组。基准战斗推进到正常结算，默认最多 1000 Tick。默认在 50、100、200、300、400、500、750、1000 Tick 和终局读取待测方的剩余 HP、剩余 MP 和已完成的背包扫描轮数。同前缀的条目排在一起，定点按 Tick 递增。另记实际结束时点 `FinsihTick`。
+
+默认表也包含第 50 至 500 Tick 每隔 50 Tick 的累计伤害、终局伤害、扣血和伤口事件、用卡、资源收支及对手终局状态。`mp_finish` 和 `rounds_finish` 是已有终局条目，分别与 `Mp_Last`、`rounds_Last` 读取同一数值。
+
+复制 `UnityWorld/tools/combat_benchmark/dummy-baseline.json`，用 `-MeasurementPlan` 传入副本。例如追加下面这个条目，便在原表中多一行第 150 Tick 的实际 MP 消耗。定点填整数，终局填字符串 `finish`，首次事件省略 `at`。
+
+```json
+{ "id": "mpSpent_150", "side": "subject", "metric": "mpSpent", "at": 150 }
+```
+
+从打印的批次目录打开 `seed-37.md`。每个启用的条目一行，真实零值写 0，未到达的节点或未发生的首次事件写 null。`FinsihTick` 和 `Finishreson` 沿用约定拼写。采样不进入普通日志。默认位置为 `UnityWorld/Reports/CombatBenchmarks`，可通过 `-BenchmarkOutputDirectory` 改存其他目录。
+
+打开批次目录的 `summary.md`，表格包含「条目ID」「描述」「平均数」「中位数」「null个数」。失败场单列。成功局未到采样点或事件未发生时记 null，手动缩短 Tick 上限也适用。零值参与计算。偶数个读数取中间两项的平均值作为中位数。
+
+`summary.json` 引用逐场文件，按条目给出覆盖局数和分布。首次事件同时给出发生局数与成功局数。`manifest.json` 保存输入、版本指纹、指标字典和错误诊断。可在进程关闭后用 `python UnityWorld/tools/combat_benchmark/benchmark.py --summarize <批次目录>/manifest.json` 重建两份汇总。
+
+### 普通对战
+
 - 先看进程退出码，再读 `battles`。逐局异常记在 `reason = Error` 的 `error` 中。启动或参数失败时看终端报错。核对实际对手、不同种子数和换边覆盖。两次装配顺序共享一个战斗种子。
 - 按 `reason` 和 `winner` 一起统计。`AllDefeated` 且有胜者计胜负，双方均败退时单列。`TurnLimitReached` 单列触顶，末 Tick 即使带有胜者也保留该事实。汇报有效胜负的分母，附种子、Tick 上限和战报路径。
 - 查看 `leftState` / `rightState` 中的 `uses`、`effects`、`wounds` 和 `pendingValues` 判断实际用牌情况。法宝的使用、激活光环和后续事件实效分别核对。长局用 `resourceTrace` 对齐两边 MP、盘上余灵和后续行动。
