@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
+
+[ext_resource type="Texture2D" uid="uid://b2pt0vjebwphv" path="res://assets/art/ui/combat_log_panel.png" id="log"]
+
+[sub_resource type="AtlasTexture" id="Texture_log"]
+atlas = ExtResource("log")
+region = Rect2(0, 61, 2172, 598)
+
+[node name="Log" type="Control"]
+offset_right = 628.0
+offset_bottom = 133.0
+pivot_offset = Vector2(314, 133)
+mouse_filter = 2
+theme = ExtResource("theme")
+
+[node name="Scroll" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+self_modulate = Color(0.41, 0.48, 0.57, 1)
+texture = SubResource("Texture_log")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Title" type="Label" parent="."]
+anchor_right = 1.0
+offset_left = 50.0
+offset_top = 18.0
+offset_right = -153.0
+offset_bottom = 46.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 21
+text = "战斗记录"
+horizontal_alignment = 0
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Expand" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -114.0
+offset_top = 21.0
+offset_right = -32.0
+offset_bottom = 47.0
+mouse_filter = 0
+text = "展开"
+theme_override_font_sizes/font_size = 14
+
+[node name="Recent" type="RichTextLabel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 53.0
+offset_right = -38.0
+offset_bottom = -26.0
+mouse_filter = 0
+theme_override_colors/default_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/normal_font_size = 15
+scroll_active = false
+autowrap_mode = 0
+selection_enabled = true
+text = "T0 · 双方角色已入场"

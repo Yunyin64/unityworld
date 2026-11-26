@@ -1,0 +1,372 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/ui/exploration/ExplorationWorld3D.cs" id="1"]
+[ext_resource type="Theme" path="res://assets/presentation/test_ui_theme.tres" id="2"]
+[ext_resource type="Shader" path="res://assets/presentation/exploration_ground_3d.gdshader" id="3"]
+[ext_resource type="Shader" path="res://assets/presentation/exploration_water_3d.gdshader" id="4"]
+[ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/rock_color.webp" id="5"]
+[ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/rock_normal.webp" id="6"]
+[ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/rock_surface.webp" id="7"]
+[ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/grass_color.webp" id="8"]
+[ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/grass_normal.webp" id="9"]
+[ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/litter_color.webp" id="10"]
+[ext_resource type="Shader" path="res://assets/presentation/exploration_sky_3d.gdshader" id="11"]
+[ext_resource type="Shader" path="res://assets/presentation/exploration_outline_3d.gdshader" id="12"]
+
+[sub_resource type="ShaderMaterial" id="SkyMaterial"]
+shader = ExtResource("11")
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMaterial")
+
+[sub_resource type="Environment" id="Environment"]
+resource_local_to_scene = true
+background_mode = 1
+background_color = Color(0.075, 0.129, 0.149, 1)
+sky = SubResource("Sky")
+ambient_light_source = 2
+ambient_light_color = Color(0.67, 0.78, 0.91, 1)
+ambient_light_energy = 0.42
+ambient_light_sky_contribution = 0.24
+reflected_light_source = 2
+tonemap_mode = 3
+ssr_enabled = true
+ssr_max_steps = 42
+ssr_fade_in = 0.06
+ssr_fade_out = 1.8
+ssr_depth_tolerance = 0.18
+ssao_enabled = true
+ssao_radius = 0.53
+ssao_intensity = 1.25
+ssao_power = 1.1
+ssil_enabled = true
+ssil_radius = 0.52
+ssil_intensity = 0.32
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.42, 0.57, 0.59, 1)
+fog_density = 0.16
+fog_depth_curve = 1.46
+fog_depth_begin = 34.0
+fog_depth_end = 59.0
+volumetric_fog_density = 0.012
+volumetric_fog_length = 64.0
+volumetric_fog_anisotropy = 0.42
+volumetric_fog_sky_affect = 0.75
+
+[sub_resource type="ShaderMaterial" id="GroundMaterial"]
+shader = ExtResource("3")
+shader_parameter/rock_albedo = ExtResource("5")
+shader_parameter/rock_normal = ExtResource("6")
+shader_parameter/rock_surface = ExtResource("7")
+shader_parameter/grass_albedo = ExtResource("8")
+shader_parameter/grass_normal = ExtResource("9")
+shader_parameter/litter_albedo = ExtResource("10")
+
+[sub_resource type="ShaderMaterial" id="WaterMaterial"]
+shader = ExtResource("4")
+
+[sub_resource type="ShaderMaterial" id="OuterOceanMaterial"]
+shader = ExtResource("4")
+shader_parameter/outer_ocean = true
+
+[sub_resource type="ShaderMaterial" id="OutlineMaterial"]
+resource_local_to_scene = true
+render_priority = 100
+shader = ExtResource("12")
+
+[sub_resource type="QuadMesh" id="OutlineQuad"]
+size = Vector2(2, 2)
+
+[sub_resource type="PlaneMesh" id="OceanMesh"]
+size = Vector2(640, 640)
+
+[sub_resource type="StandardMaterial3D" id="RimMaterial"]
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="StandardMaterial3D" id="GridMaterial"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.11, 0.20, 0.19, 0.68)
+
+[sub_resource type="StandardMaterial3D" id="SelectionMaterial"]
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.84, 0.42, 1)
+
+[sub_resource type="StandardMaterial3D" id="ActorBaseMaterial"]
+albedo_color = Color(0.79, 0.67, 0.34, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="ActorRobeMaterial"]
+albedo_color = Color(0.12, 0.45, 0.43, 1)
+roughness = 0.79
+
+[sub_resource type="StandardMaterial3D" id="ActorHatMaterial"]
+albedo_color = Color(0.94, 0.77, 0.47, 1)
+roughness = 0.7
+
+[sub_resource type="CylinderMesh" id="ActorBase"]
+material = SubResource("ActorBaseMaterial")
+top_radius = 0.22
+bottom_radius = 0.24
+height = 0.065
+radial_segments = 6
+
+[sub_resource type="CylinderMesh" id="ActorRobe"]
+material = SubResource("ActorRobeMaterial")
+top_radius = 0.062
+bottom_radius = 0.125
+height = 0.33
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="ActorHat"]
+material = SubResource("ActorHatMaterial")
+top_radius = 0.021
+bottom_radius = 0.155
+height = 0.1
+radial_segments = 12
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.069, 0.132, 0.135, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.47, 0.53, 0.42, 0.85)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_left = 5
+corner_radius_bottom_right = 5
+
+[node name="ExplorationWorld3D" type="Node3D"]
+script = ExtResource("1")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-49, -32, 0)
+light_color = Color(1, 0.872, 0.72, 1)
+light_energy = 1.16
+light_angular_distance = 1.1
+shadow_enabled = true
+directional_shadow_max_distance = 66.0
+
+[node name="MapCamera" type="Camera3D" parent="."]
+projection = 1
+current = true
+size = 13.0
+near = 0.1
+far = 110.0
+
+[node name="OutlinePass" type="MeshInstance3D" parent="MapCamera"]
+position = Vector3(0, 0, -1)
+extra_cull_margin = 5.0
+mesh = SubResource("OutlineQuad")
+material_override = SubResource("OutlineMaterial")
+cast_shadow = 0
+gi_mode = 0
+
+[node name="OuterOcean" type="MeshInstance3D" parent="."]
+visible = false
+position = Vector3(0, -0.021, 0)
+mesh = SubResource("OceanMesh")
+material_override = SubResource("OuterOceanMaterial")
+cast_shadow = 0
+
+[node name="Terrain" type="Node3D" parent="."]
+
+[node name="Land" type="MeshInstance3D" parent="Terrain"]
+material_override = SubResource("GroundMaterial")
+
+[node name="Water" type="MeshInstance3D" parent="Terrain"]
+material_override = SubResource("WaterMaterial")
+cast_shadow = 0
+
+[node name="Rim" type="MeshInstance3D" parent="Terrain"]
+material_override = SubResource("RimMaterial")
+cast_shadow = 0
+
+[node name="Grid" type="MeshInstance3D" parent="Terrain"]
+visible = false
+material_override = SubResource("GridMaterial")
+cast_shadow = 0
+
+[node name="Selection" type="MeshInstance3D" parent="Terrain"]
+material_override = SubResource("SelectionMaterial")
+cast_shadow = 0
+
+[node name="Actor" type="Node3D" parent="."]
+visible = false
+
+[node name="Base" type="MeshInstance3D" parent="Actor"]
+position = Vector3(0, 0.04, 0)
+mesh = SubResource("ActorBase")
+
+[node name="Robe" type="MeshInstance3D" parent="Actor"]
+position = Vector3(0, 0.23, 0)
+mesh = SubResource("ActorRobe")
+
+[node name="Hat" type="MeshInstance3D" parent="Actor"]
+position = Vector3(0, 0.425, 0)
+mesh = SubResource("ActorHat")
+
+[node name="WeekTimer" type="Timer" parent="."]
+wait_time = 1.15
+one_shot = true
+
+[node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="Hud" type="Control" parent="Interface"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = ExtResource("2")
+
+[node name="Heading" type="PanelContainer" parent="Interface/Hud"]
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 240.0
+offset_bottom = 78.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Labels" type="VBoxContainer" parent="Interface/Hud/Heading"]
+mouse_filter = 2
+theme_override_constants/separation = 1
+
+[node name="WorldTitle" type="Label" parent="Interface/Hud/Heading/Labels"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.953, 0.907, 0.747, 1)
+theme_override_font_sizes/font_size = 31
+text = "世界探索"
+
+[node name="Date" type="Label" parent="Interface/Hud/Heading/Labels"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.74, 0.83, 0.77, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="Navigation" type="HBoxContainer" parent="Interface/Hud"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -585.0
+offset_top = 24.0
+offset_right = -26.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Grid" type="CheckButton" parent="Interface/Hud/Navigation"]
+unique_name_in_owner = true
+text = "格线"
+
+[node name="Outline" type="CheckButton" parent="Interface/Hud/Navigation"]
+unique_name_in_owner = true
+button_pressed = true
+text = "描边"
+
+[node name="Mode" type="Button" parent="Interface/Hud/Navigation"]
+unique_name_in_owner = true
+text = "地形样板"
+
+[node name="Scenic" type="Button" parent="Interface/Hud/Navigation"]
+visible = false
+unique_name_in_owner = true
+text = "山门近景"
+
+[node name="Home" type="Button" parent="Interface/Hud/Navigation"]
+unique_name_in_owner = true
+text = "返回首页"
+
+[node name="Details" type="PanelContainer" parent="Interface/Hud"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 26.0
+offset_top = -28.0
+offset_right = 340.0
+offset_bottom = -28.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="PlaceDetails" type="VBoxContainer" parent="Interface/Hud/Details"]
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Place" type="Label" parent="Interface/Hud/Details/PlaceDetails"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.953, 0.907, 0.747, 1)
+theme_override_font_sizes/font_size = 21
+text = "地块"
+autowrap_mode = 2
+
+[node name="Status" type="Label" parent="Interface/Hud/Details/PlaceDetails"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.78, 0.86, 0.79, 1)
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 2
+
+[node name="Travel" type="HBoxContainer" parent="Interface/Hud/Details/PlaceDetails"]
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Move" type="Button" parent="Interface/Hud/Details/PlaceDetails/Travel"]
+unique_name_in_owner = true
+disabled = true
+text = "启程"
+
+[node name="Automatic" type="CheckButton" parent="Interface/Hud/Details/PlaceDetails/Travel"]
+unique_name_in_owner = true
+button_pressed = true
+text = "自动续周"
+
+[node name="CameraControls" type="PanelContainer" parent="Interface/Hud"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -26.0
+offset_top = -26.0
+offset_right = -26.0
+offset_bottom = -26.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Buttons" type="VBoxContainer" parent="Interface/Hud/CameraControls"]
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Shortcuts" type="HBoxContainer" parent="Interface/Hud/CameraControls/Buttons"]
+mouse_filter = 2
+theme_override_constants/separation = 7
+alignment = 2
+
+[node name="ZoomOut" type="Button" parent="Interface/Hud/CameraControls/Buttons/Shortcuts"]
+unique_name_in_owner = true
+text = "−"
+tooltip_text = "缩小"
+
+[node name="ZoomIn" type="Button" parent="Interface/Hud/CameraControls/Buttons/Shortcuts"]
+unique_name_in_owner = true
+text = "+"
+tooltip_text = "放大"
+
+[node name="Reset" type="Button" parent="Interface/Hud/CameraControls/Buttons/Shortcuts"]
+unique_name_in_owner = true
+text = "复位"
+
+[node name="Help" type="Label" parent="Interface/Hud/CameraControls/Buttons"]
+theme_override_colors/font_color = Color(0.76, 0.83, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "右键旋转 · 中键平移 · 滚轮缩放"

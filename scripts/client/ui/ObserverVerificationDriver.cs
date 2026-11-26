@@ -49,11 +49,19 @@ internal sealed class ObserverVerificationDriver
         if (_verifyDir.Length == 0 || _captureBusy || _finishedVerification) return;
         if (_verifyStage > 0 && _runIndex == 0 && _verifyMode == "auto")
         {
-            var cue = _player.ActiveCues.FirstOrDefault(c => !_capturedEffects.Contains(c.Event.Kind.ToString()));
+            if (_player.ActiveCues.Any(c => c.Exchange?.FinishingNpcId != null) && _capturedEffects.Add("FinalDefeat"))
+            {
+                _ = CapturePresentation("FinalDefeat", true);
+                return;
+            }
+            var cue = _player.ActiveCues.FirstOrDefault(c => !_capturedEffects.Contains(c.Event.Kind.ToString()) ||
+                BattlePresentationPlayer.IsDirectStrike(c.Event) && !_capturedEffects.Contains("DirectStrike"));
             if (cue != null)
             {
-                _capturedEffects.Add(cue.Event.Kind.ToString());
-                _ = CapturePresentation(cue.Event.Kind.ToString());
+                string kind = cue.Event.Kind.ToString();
+                bool firstOfKind = _capturedEffects.Add(kind);
+                if (BattlePresentationPlayer.IsDirectStrike(cue.Event)) _capturedEffects.Add("DirectStrike");
+                _ = CapturePresentation(firstOfKind ? kind : "DirectStrike", cue.Exchange != null);
                 return;
             }
         }
@@ -216,40 +224,111 @@ internal sealed class ObserverVerificationDriver
         viewport.PushInput(new InputEventMouseButton { Position = point, GlobalPosition = point, ButtonIndex = MouseButton.Left, Pressed = false }, true);
     }
 
-    private async Task CapturePresentation(string kind)
+    private async Task CapturePresentation(string kind, bool followStage)
     {
         _captureBusy = true;
+        var images = new List<Godot.Image>();
+        bool wasPlaying = false;
+        using var capture = followStage ? new AudioEffectCapture { BufferLength = .5f } : null;
+        var audio = new List<Vector2>();
+        int bus = AudioServer.GetBusIndex("Master");
+        int effectIndex = capture != null && bus >= 0 ? AudioServer.GetBusEffectCount(bus) : -1;
         try
         {
-            var images = new List<Godot.Image>();
+            if (effectIndex >= 0) AudioServer.AddBusEffect(bus, capture!, effectIndex);
             var metadata = new List<string>();
-            for (int frame = 0; frame < 24; frame++)
+            var stage = _layout.Stage;
+            var arena = _canvas.GetNode<TextureRect>("Arena");
+            ulong started = Time.GetTicksUsec(), nextSample = started;
+            long? previousShot = null;
+            while (images.Count < (followStage ? 120 : 24))
             {
                 await ToSignal(RenderingServer.Singleton, RenderingServer.SignalName.FramePostDraw);
+                int available = capture?.GetFramesAvailable() ?? 0;
+                if (available > 0) audio.AddRange(capture!.GetBuffer(available));
+                var shot = followStage ? _player.ActiveCues.FirstOrDefault(c => c.Exchange != null) : null;
+                bool sceneEnded = followStage && (shot == null ||
+                    previousShot.HasValue && previousShot != shot.Event.Sequence && !shot.StartsOnStage);
+                ulong now = Time.GetTicksUsec();
+                if (followStage && !sceneEnded && now < nextSample) continue;
+                // 实战保留整个近景，连续招式延伸到最后的回场。采样上限避免长连招积压图像内存。
+                nextSample = Math.Max(nextSample + 33_333, now);
+                if (shot != null) previousShot = shot.Event.Sequence;
+                int frame = images.Count;
                 images.Add(GetViewport().GetTexture().GetImage());
                 metadata.Add(JsonSerializer.Serialize(new
                 {
-                    frame, tick = _session.CurrentSnapshot.Tick, displayTick = _player.DisplaySnapshot.Tick,
+                    frame, elapsedMs = (now - started) / 1000.0, tick = _session.CurrentSnapshot.Tick, displayTick = _player.DisplaySnapshot.Tick,
                     playing = _session.IsPlaying,
                     scan = _packs.Select((pack, i) => new { side = i, line = pack.ScanLineFraction,
                         core = _session.CurrentSnapshot.Participants.OrderBy(p => p.Team, StringComparer.Ordinal).ElementAt(i).Backpack }),
-                    active = _player.ActiveCues.Select(c => new { c.Event.Sequence, kind = c.Event.Kind.ToString(), c.Progress, c.Event }),
-                    pendingPositions = _layout.Pending.ContentPositions.Select(p => new { x = p.X, y = p.Y }),
+                    active = _player.ActiveCues.Select(c => new { c.Event.Sequence, kind = c.Event.Kind.ToString(), c.Progress,
+                        c.StartsOnStage, c.ContinuesOnStage, c.Event }),
+                    stage = new { zoom = arena.Scale.X, sceneEnded, holding = _player.IsHoldingApproach, holdingImpact = _player.IsHoldingImpact,
+                        backpackOpacity = stage.BackpackOpacity, cardOpacity = stage.ContestCardsOpacity, readoutY = stage.ContestReadoutAt.Y,
+                        sounds = stage.SoundHistory,
+                        actors = Enumerable.Range(0, 2).Select(side =>
+                    {
+                        var foot = stage.FootAt(side);
+                        return new { x = foot.X, y = foot.Y, pose = stage.PoseAt(side),
+                            alpha = stage.AlphaAt(side), height = stage.HeightAt(side) };
+                    }) },
+                    pending = Enumerable.Range(0, 2).Select(side => new
+                    {
+                        card = _layout.Pending.Card(side),
+                        flight = _layout.Pending.Flight(side)?.Progress,
+                        readyAt = stage.ReadyCardBounds(side).GetCenter().X
+                    }),
                     display = _player.DisplaySnapshot
                 }, BattleJson.Options));
+                if (sceneEnded) break;
             }
-            bool wasPlaying = _session.IsPlaying;
+            wasPlaying = _session.IsPlaying;
             _session.Pause();
             for (int frame = 0; frame < images.Count; frame++)
             {
-                images[frame].SavePng(Path.Combine(_verifyDir, $"presentation-{kind}-{frame:D2}.png"));
-                images[frame].Dispose();
+                var error = images[frame].SavePng(Path.Combine(_verifyDir, $"presentation-{kind}-{frame:D2}.png"));
+                if (error != Error.Ok) throw new IOException("战斗连续帧保存失败：" + error);
             }
             File.WriteAllLines(Path.Combine(_verifyDir, $"presentation-{kind}.jsonl"), metadata);
-            if (wasPlaying) _session.Play();
+            if (audio.Count > 0)
+                SavePresentationAudio(audio, Path.Combine(_verifyDir, $"presentation-{kind}.wav"));
         }
-        catch (Exception exception) { _view.ShowFailure(exception); }
-        finally { _captureBusy = false; }
+        catch (Exception exception)
+        {
+            _finishedVerification = true;
+            _view.ShowFailure(exception);
+            GetTree().Quit(1);
+        }
+        finally
+        {
+            if (effectIndex >= 0) AudioServer.RemoveBusEffect(bus, effectIndex);
+            foreach (var image in images) image.Dispose();
+            if (wasPlaying && !_finishedVerification) _session.Play();
+            _captureBusy = false;
+        }
+    }
+
+    private static void SavePresentationAudio(IReadOnlyList<Vector2> samples, string path)
+    {
+        var data = new byte[samples.Count * 4];
+        for (int frame = 0; frame < samples.Count; frame++)
+        {
+            var sample = samples[frame];
+            System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(frame * 4, 2),
+                (short)(Mathf.Clamp(sample.X, -1, 1) * short.MaxValue));
+            System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(data.AsSpan(frame * 4 + 2, 2),
+                (short)(Mathf.Clamp(sample.Y, -1, 1) * short.MaxValue));
+        }
+        using var audio = new AudioStreamWav
+        {
+            Data = data,
+            Stereo = true,
+            MixRate = (int)AudioServer.GetMixRate(),
+            Format = AudioStreamWav.FormatEnum.Format16Bits
+        };
+        var error = audio.SaveToWav(path);
+        if (error != Error.Ok) throw new IOException($"战斗混音保存失败：{error}");
     }
 
     public static async Task CaptureFailure(BattleObserverView view, ObserverBattleLayout layout, string path, string message)

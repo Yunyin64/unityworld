@@ -35,24 +35,28 @@
       "texture": "res://assets/art/cards/card_mu_haste.png",
       "region": null,
       "displayScale": 1.0,
+      "castElement": "Mu",
       "source": "generated"
     },
     "card_huo_burst": {
       "texture": "res://assets/art/cards/card_huo_burst.png",
       "region": null,
       "displayScale": 1.0,
+      "castElement": "Huo",
       "source": "generated"
     },
     "card_shui_freeze": {
       "texture": "res://assets/art/cards/card_shui_freeze.png",
       "region": null,
       "displayScale": 1.0,
+      "castElement": "Shui",
       "source": "generated"
     },
     "card_tu_slow": {
       "texture": "res://assets/art/cards/card_tu_slow.png",
       "region": null,
       "displayScale": 1.0,
+      "castElement": "Tu",
       "source": "generated"
     },
     "card_huo_shot": {

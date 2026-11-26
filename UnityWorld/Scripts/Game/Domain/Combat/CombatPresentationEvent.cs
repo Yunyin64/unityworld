@@ -47,6 +47,8 @@ public sealed record CombatPresentationCard(int Id, string DefineId, string Name
 {
     /// <summary>记录当时的阶段，入场回放可直接显示已激活的被动卡。</summary>
     public CombatCardPhase Phase { get; init; } = CombatCardPhase.Waiting;
+    /// <summary>记录本次战斗所载入的卡牌说明，供拼点近景与回放展示。</summary>
+    public string? Description { get; init; }
 }
 /// <summary>记录一枚灵元从盘面分配给卡牌的变化</summary>
 /// <param name="SourceCell">灵元分配前所在的格</param>

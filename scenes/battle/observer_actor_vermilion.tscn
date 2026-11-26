@@ -1,0 +1,143 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/battle/observer_actor.tscn" id="base"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/vermilion_cultivator_poses.png" id="pyromancer"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/casting_poses.png" id="casting"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_footwork.png" id="footwork"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/vermilion_cultivator_techniques.png" id="vermilion_techniques"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_defeat_poses.png" id="defeat"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_transition_poses.png" id="transition"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_landing_poses.png" id="landing"]
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer"]
+atlas = ExtResource("pyromancer")
+region = Rect2(91, 90, 454, 515)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_strike"]
+atlas = ExtResource("pyromancer")
+region = Rect2(651, 32, 591, 570)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_guard"]
+atlas = ExtResource("pyromancer")
+region = Rect2(120, 640, 420, 541)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_recoil"]
+atlas = ExtResource("pyromancer")
+region = Rect2(688, 682, 573, 499)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_cast"]
+atlas = ExtResource("casting")
+region = Rect2(1328, 6, 626, 711)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_advance"]
+atlas = ExtResource("footwork")
+region = Rect2(945, 41, 506, 438)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_withdraw"]
+atlas = ExtResource("footwork")
+region = Rect2(970, 532, 442, 470)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_slash"]
+atlas = ExtResource("vermilion_techniques")
+region = Rect2(27, 12, 605, 586)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_smash"]
+atlas = ExtResource("vermilion_techniques")
+region = Rect2(739, 34, 523, 564)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_shot"]
+atlas = ExtResource("vermilion_techniques")
+region = Rect2(30, 600, 562, 582)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_evade"]
+atlas = ExtResource("vermilion_techniques")
+region = Rect2(679, 664, 579, 518)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_defeat"]
+atlas = ExtResource("defeat")
+region = Rect2(999, 122, 706, 724)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_windup"]
+atlas = ExtResource("transition")
+region = Rect2(63, 582, 514, 595)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_follow"]
+atlas = ExtResource("transition")
+region = Rect2(605, 626, 693, 549)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_brace"]
+atlas = ExtResource("landing")
+region = Rect2(194, 585, 481, 387)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_pyromancer_land"]
+atlas = ExtResource("landing")
+region = Rect2(920, 542, 330, 445)
+filter_clip = true
+
+[node name="VermilionCultivator" instance=ExtResource("base")]
+offset_right = 219.0
+offset_bottom = 184.0
+Strike = SubResource("Texture_pyromancer_strike")
+Guard = SubResource("Texture_pyromancer_guard")
+Recoil = SubResource("Texture_pyromancer_recoil")
+Cast = SubResource("Texture_pyromancer_cast")
+Advance = SubResource("Texture_pyromancer_advance")
+Withdraw = SubResource("Texture_pyromancer_withdraw")
+Slash = SubResource("Texture_pyromancer_slash")
+Smash = SubResource("Texture_pyromancer_smash")
+Shot = SubResource("Texture_pyromancer_shot")
+Evade = SubResource("Texture_pyromancer_evade")
+Kneel = SubResource("Texture_pyromancer_defeat")
+Windup = SubResource("Texture_pyromancer_windup")
+FollowThrough = SubResource("Texture_pyromancer_follow")
+Brace = SubResource("Texture_pyromancer_brace")
+Land = SubResource("Texture_pyromancer_land")
+
+[node name="Image" parent="." index="0"]
+offset_right = 219.0
+offset_bottom = 184.0
+texture = SubResource("Texture_pyromancer")
+
+[node name="HeadAnchor" parent="." index="1"]
+position = Vector2(105, 19)
+
+[node name="Name" parent="." index="2"]
+offset_left = -9.0
+offset_top = 194.0
+offset_right = 201.0
+offset_bottom = 222.0
+text = "苏灵儿"
+
+[node name="BuffScroll" parent="." index="3"]
+offset_left = -49.0
+offset_top = 230.0
+offset_right = 241.0
+offset_bottom = 268.0
+
+[node name="Status" parent="." index="4"]
+offset_left = -49.0
+offset_top = 230.0
+offset_right = 241.0
+offset_bottom = 262.0

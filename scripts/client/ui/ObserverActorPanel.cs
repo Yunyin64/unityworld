@@ -9,8 +9,8 @@ namespace Xianxia.Client.UI;
 internal sealed class ObserverActorPanel
 {
     private readonly Label _name, _actorName, _status;
-    private readonly Control _actor;
-    private readonly float _originalTop, _buffTop, _statusTop;
+    private readonly ObserverDuelActor _actor;
+    private readonly float _buffTop, _statusTop;
     public float PreferredLeft { get; }
     public Vector2 ActorSize { get; }
     private readonly HBoxContainer _buffList;
@@ -21,15 +21,16 @@ internal sealed class ObserverActorPanel
     private readonly Dictionary<BuffKey, (Label Label, BuffSnapshot Buff)> _buffRows = new();
     private IReadOnlyList<BuffSnapshot> _buffs = System.Array.Empty<BuffSnapshot>();
     public Marker2D HeadAnchor { get; }
+    internal TextureRect Image { get; }
 
-    public ObserverActorPanel(Control actor, Control stats)
+    public ObserverActorPanel(ObserverDuelActor actor, Control stats)
     {
         _actor = actor;
         PreferredLeft = actor.OffsetLeft;
-        _originalTop = actor.OffsetTop;
         ActorSize = actor.Size;
         _name = stats.GetNode<Label>("Name");
         _actorName = actor.GetNode<Label>("Name");
+        Image = actor.GetNode<TextureRect>("Image");
         HeadAnchor = actor.GetNode<Marker2D>("HeadAnchor");
         _status = actor.GetNode<Label>("Status");
         _buffScroll = actor.GetNode<ScrollContainer>("BuffScroll");
@@ -42,19 +43,18 @@ internal sealed class ObserverActorPanel
         _buffScroll.Visible = false;
     }
 
+    internal Texture2D? TextureFor(ObserverDuelStage.Pose pose) => _actor.TextureFor(pose, Image.Texture);
+
     /// <summary>保留人物本身大小，只在两列背包挤近时挪动人物和状态条。</summary>
-    public void Arrange(float left, float? top, bool staggerStatus)
+    public void Arrange(float left, bool staggerStatus)
     {
         _actor.OffsetLeft = left;
         _actor.OffsetRight = left + ActorSize.X;
-        _actor.AnchorTop = _actor.AnchorBottom = top.HasValue ? 0 : 1;
-        _actor.OffsetTop = top ?? _originalTop;
-        _actor.OffsetBottom = _actor.OffsetTop + ActorSize.Y;
         _buffScroll.Position = new Vector2(_buffScroll.Position.X, _buffTop + (staggerStatus ? 40 : 0));
         _status.Position = new Vector2(_status.Position.X, _statusTop + (staggerStatus ? 40 : 0));
     }
 
-    public void Submit(NpcSnapshot npc)
+    public void Submit(NpcSnapshot npc, bool playingDefeat = false)
     {
         string name = string.IsNullOrWhiteSpace(npc.Name) ? $"角色 {npc.Id}" : npc.Name;
         _name.Text = _actorName.Text = name;
@@ -64,7 +64,8 @@ internal sealed class ObserverActorPanel
         _values[2].Text = Amount(npc.Sp, npc.SpMax);
         _values[3].Text = npc.Shield.ToString();
         foreach (var label in _values) label.TooltipText = npc.StatReadError ?? "当前值 / 当前上限；SP 为占用 / 角色上限，护盾无虚构上限。";
-        _status.Text = npc.Buffs.Count != 0 || npc.Status == "Active" ? "" : npc.Status == "Defeated" ? "已败退" : npc.Status;
+        _status.Text = npc.Buffs.Count != 0 || npc.Status == "Active" || playingDefeat && npc.Status == "Defeated"
+            ? "" : npc.Status == "Defeated" ? "已败退" : npc.Status;
         _status.Visible = _status.Text.Length != 0;
 
         // 保留每个实例的命中控件，暂停时光标不动也能在状态移除当帧关闭详情。
@@ -108,6 +109,12 @@ internal sealed class ObserverActorPanel
             row.Label.Text = $"{BuffName(buff)}×{buff.Stacks}";
             if (row.Label.GetViewport().GuiGetHoveredControl() == row.Label) ShowBuff(key);
         }
+    }
+
+    internal void SetStageLabelOpacity(float alpha)
+    {
+        _actor.Modulate = new Color(Colors.White, alpha);
+        _actor.Visible = alpha > .01f;
     }
 
     private void ShowBuff(BuffKey key)

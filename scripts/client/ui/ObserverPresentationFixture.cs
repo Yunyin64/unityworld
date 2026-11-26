@@ -100,6 +100,68 @@ internal sealed class ObserverPresentationFixture
                 Fact(CombatPresentationKind.DamageResolved, 1, null, damage: new(null, null, 1, 100, 80, 20, 0, "Physical", "None")),
                 Fact(CombatPresentationKind.DamageResolved, 1, null, damage: new(null, null, 1, 80, 68, 12, 0, "Physical", "None")));
             await Capture("07-parallel-popups", 90);
+
+            var sourceNpc = _snapshot.Participants[1];
+            var beforeShot = Change(_snapshot, 2, n => n with { Shield = 8 });
+            Advance(Change(beforeShot, 1, n => n with { Hp = 51 }),
+                Fact(CombatPresentationKind.DamageResolved, 1, enemy, action: 1003,
+                    damage: new(sourceNpc.Id, Copy(enemy), 1, 68, 51, 17, 0, "Zhan", "Jin")));
+            await Capture("08-direct-strike", 144);
+
+            Advance(Change(_snapshot, 2, n => n with { Shield = 0 }),
+                Fact(CombatPresentationKind.DamageResolved, 2, water, action: 1004,
+                    damage: new(1, Copy(water), 2, sourceNpc.Hp, sourceNpc.Hp, 0, 8, "SheJi", "Shui")));
+            await Capture("09-shielded-shot", 144);
+
+            var fire = enemy with { DefineId = "card_huo_burst", Name = "爆燃" };
+            Advance(_snapshot,
+                Fact(CombatPresentationKind.CardApplied, 1, water, effectId: 3010, applied: new("Apply", false)),
+                Fact(CombatPresentationKind.CardApplied, 2, fire, effectId: 3011, applied: new("Apply", false)));
+            await Capture("10-active-casts", 90);
+
+            var chained = Change(Change(_snapshot, 2, n => n with { Hp = 14, HpMax = 20 }), 1, n => n with { Hp = 44 });
+            Advance(chained,
+                Fact(CombatPresentationKind.ContestResolved, 1, water, contestId: 2003,
+                    contest: new(leftSide, rightSide with { Value = 13 }, 2, 3)),
+                Fact(CombatPresentationKind.DamageResolved, 1, enemy, contestId: 2003,
+                    damage: new(2, Copy(enemy), 1, 51, 44, 7, 0, "Zhan", "Jin")),
+                Fact(CombatPresentationKind.DamageResolved, 2, water, action: 1005,
+                    damage: new(1, Copy(water), 2, 20, 14, 6, 0, "Ci", "Shui")));
+            await Capture("11-continuous-exchange", 300);
+
+            // 两次换边交锋分别检查左右角色的重击和成功闪身。
+            Advance(_snapshot,
+                Fact(CombatPresentationKind.ContestResolved, 1, water, contestId: 2004,
+                    contest: new(leftSide with { ContestType = "Da", Value = 7 },
+                        rightSide with { ContestType = "Dodge", Value = 10 }, 2, 3)),
+                Fact(CombatPresentationKind.ContestResolved, 1, water, contestId: 2005,
+                    contest: new(leftSide with { ContestType = "Dodge", Value = 9 },
+                        rightSide with { ContestType = "Da", Value = 5 }, 1, 4)));
+            await Capture("12-evade-heavy", 300);
+
+            // 先追到右半场，下一击被闪开，再沿退开的落点反刺。
+            Advance(Change(Change(_snapshot, 2, n => n with { Hp = 9 }), 1, n => n with { Hp = 38 }),
+                Fact(CombatPresentationKind.ContestResolved, 1, water, contestId: 2006,
+                    contest: new(leftSide with { ContestType = "Da", Value = 12 }, rightSide with { Value = 7 }, 1, 5)),
+                Fact(CombatPresentationKind.DamageResolved, 2, water, contestId: 2006,
+                    damage: new(1, Copy(water), 2, 14, 9, 5, 0, "Da", "Shui")),
+                Fact(CombatPresentationKind.ContestResolved, 1, water, contestId: 2007,
+                    contest: new(leftSide with { ContestType = "Zhan", Value = 7 },
+                        rightSide with { ContestType = "Dodge", Value = 10 }, 2, 3)),
+                Fact(CombatPresentationKind.DamageResolved, 1, enemy, action: 1006,
+                    damage: new(2, Copy(enemy), 1, 44, 38, 6, 0, "Ci", "Jin")));
+            await Capture("13-pursuit-counter", 340);
+
+            // 气血仍大于零，核心已确认 SP 超限败退。验证终招后败者保持离场。
+            var terminal = Change(_snapshot, 1, n => n with { Hp = 34, Sp = n.SpMax!.Value + 1, Status = "Defeated" });
+            var result = new BattleResultSnapshot("AllDefeated", terminal.Participants[1].Team, _tick + 1,
+                terminal.Participants.Select(n => new CombatantResultSnapshot(n.Id, n.Team, n.Status)).ToArray());
+            Advance(terminal with { IsFinished = true, Result = result },
+                Fact(CombatPresentationKind.ContestResolved, 1, water, contestId: 2008, contest: new(leftSide, rightSide, 2, 2)),
+                Fact(CombatPresentationKind.DamageResolved, 1, enemy, contestId: 2008,
+                    damage: new(2, Copy(enemy), 1, 38, 34, 4, 0, "Zhan", "Jin")));
+            await Capture("14-defeat", 190);
+
             File.WriteAllText(Path.Combine(_directory, "fixture-result.json"), JsonSerializer.Serialize(new
             {
                 purpose = "Constructed value-only presentation fixture, not real battle evidence",
@@ -136,8 +198,32 @@ internal sealed class ObserverPresentationFixture
             records.Add(JsonSerializer.Serialize(new
             {
                 frame, display = _player.DisplaySnapshot,
-                active = _player.ActiveCues.Select(c => new { c.Event, c.Progress }),
-                pending = _layout.Pending.ContentPositions.Select(p => new { x = p.X, y = p.Y })
+                active = _player.ActiveCues.Select(c => new { c.Event, c.Progress, c.StartsOnStage, c.ContinuesOnStage }),
+                pending = Enumerable.Range(0, 2).Select(side => new
+                {
+                    card = _layout.Pending.Card(side),
+                    flight = _layout.Pending.Flight(side)?.Progress,
+                    readyAt = _layout.Stage.ReadyCardBounds(side).GetCenter().X
+                }),
+                stage = new
+                {
+                    zoom = _layout.Canvas.GetNode<ObserverArena>("Arena").Scale.X,
+                    cloudFrame = _layout.Canvas.GetNode<ObserverArena>("Arena").CloudFrame,
+                    cloudOffset = _layout.Canvas.GetNode<ObserverArena>("Arena").CloudOffset,
+                    mountainOffset = _layout.Canvas.GetNode<ObserverArena>("Arena").MountainOffset,
+                    holding = _player.IsHoldingApproach,
+                    holdingImpact = _player.IsHoldingImpact,
+                    backpackOpacity = _layout.Stage.BackpackOpacity,
+                    cardOpacity = _layout.Stage.ContestCardsOpacity,
+                    sounds = _layout.Stage.SoundHistory,
+                    readoutY = _layout.Stage.ContestReadoutAt.Y,
+                    actors = Enumerable.Range(0, 2).Select(side =>
+                    {
+                        var foot = _layout.Stage.FootAt(side);
+                        return new { x = foot.X, y = foot.Y, pose = _layout.Stage.PoseAt(side),
+                            alpha = _layout.Stage.AlphaAt(side), height = _layout.Stage.HeightAt(side) };
+                    })
+                }
             }, BattleJson.Options));
             settledFrames = _player.IsIdle ? settledFrames + 1 : 0;
             if (settledFrames >= 10) break;

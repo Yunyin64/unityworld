@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/ui/ObserverArena.cs" id="arena"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/moon_gate_arena_wide.png" id="stage"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/moon_gate_stage_matte.png" id="stage_matte"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/moon_gate_sky_plate.png" id="sky"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/moon_gate_mountain_panorama.png" id="mountains"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/moon_gate_original_cloud_matte.png" id="cloud_matte"]
+[ext_resource type="Shader" path="res://assets/presentation/observer_arena_sky.gdshader" id="sky_shader"]
+[ext_resource type="Shader" path="res://assets/presentation/observer_arena_panorama.gdshader" id="mountain_shader"]
+[ext_resource type="Shader" path="res://assets/presentation/observer_arena_stage_alpha.gdshader" id="stage_shader"]
+
+[sub_resource type="ShaderMaterial" id="SkyMaterial"]
+shader = ExtResource("sky_shader")
+shader_parameter/cloud_matte = ExtResource("cloud_matte")
+
+[sub_resource type="ShaderMaterial" id="MountainsMaterial"]
+shader = ExtResource("mountain_shader")
+
+[sub_resource type="ShaderMaterial" id="StageMaterial"]
+shader = ExtResource("stage_shader")
+shader_parameter/stage_matte = ExtResource("stage_matte")
+
+[node name="Arena" type="TextureRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("arena")
+
+[node name="Sky" type="TextureRect" parent="."]
+material = SubResource("SkyMaterial")
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("sky")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Mountains" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("MountainsMaterial")
+anchor_top = 0.282
+anchor_right = 1.0
+anchor_bottom = 0.675
+mouse_filter = 2
+texture = ExtResource("mountains")
+expand_mode = 1
+
+[node name="Stage" type="TextureRect" parent="."]
+material = SubResource("StageMaterial")
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("stage")
+expand_mode = 1
+stretch_mode = 6

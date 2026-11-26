@@ -13,6 +13,10 @@ public static partial class PresentationPlayerChecks
         checks.Test(UnrelatedCardsAnimateInParallel);
         checks.Test(HistoricalCollisionPreservesReplacement);
         checks.Test(DrawAndDirectHitUseActualParticipants);
+        checks.Test(DuelCameraDoesNotBlockIndependentDamage);
+        checks.Test(ContestDamageStartsAtContact);
+        checks.Test(ApproachHoldFreezesOnlyPresentationTime);
+        checks.Test(ChainedDuelCanChangeTempo);
         checks.Test(DuplicateFramesSettleOnlyOnce);
         checks.Test(InvalidFramesRecoverFromCompleteSnapshot);
         checks.Test(InvalidEventSequencesAreRejected);
@@ -21,6 +25,7 @@ public static partial class PresentationPlayerChecks
         checks.Test(EmptyFramesDoNotConsumeQueueCapacity);
         checks.Test(AnimationTogglePreservesConsumptionCursor);
         checks.Test(TerminalSnapshotWaitsForFinalAnimation);
+        checks.Test(FinishingHitUsesConfirmedDefeat);
         checks.Test(ResetRejectsRetiredSessionFrames);
         checks.Test(ResetInsideCallbacksIsSafe);
         checks.Test(LargeDeltaMatchesSmallStepsWithoutMutatingInput);

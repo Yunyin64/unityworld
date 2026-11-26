@@ -29,9 +29,9 @@ anchor_left = 0.16
 anchor_right = 0.16
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_top = -159
+offset_top = -190
 offset_right = 340
-offset_bottom = 159
+offset_bottom = 190
 grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="Menu"]
@@ -51,10 +51,15 @@ text = "测试首页"
 
 [node name="Rule" type="HSeparator" parent="Menu/Margin/Entries"]
 
+[node name="Map3D" type="Button" parent="Menu/Margin/Entries"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+text = "3D 世界探索"
+
 [node name="MapTest" type="Button" parent="Menu/Margin/Entries"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
-text = "地图测试"
+text = "2D 地图测试"
 
 [node name="TemplateEditor" type="Button" parent="Menu/Margin/Entries"]
 unique_name_in_owner = true

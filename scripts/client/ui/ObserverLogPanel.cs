@@ -64,9 +64,11 @@ internal sealed class ObserverLogPanel
     private string Compact(BattleRecord record)
     {
         string text = $"T{record.Tick} · {record.Text.Replace('\n', ' ').Replace('\r', ' ')}";
-        var font = _compact.GetThemeDefaultFont();
-        if (font.GetStringSize(text, fontSize: 15).X <= 512) return text;
-        while (text.Length > 0 && font.GetStringSize(text + "…", fontSize: 15).X > 512) text = text[..^1];
+        var font = _compact.GetThemeFont("normal_font");
+        int size = _compact.GetThemeFontSize("normal_font_size");
+        float width = _compact.Size.X - 28;
+        if (font.GetStringSize(text, fontSize: size).X <= width) return text;
+        while (text.Length > 0 && font.GetStringSize(text + "…", fontSize: size).X > width) text = text[..^1];
         return text + "…";
     }
 }

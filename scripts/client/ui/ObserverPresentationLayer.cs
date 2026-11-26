@@ -32,6 +32,8 @@ public partial class ObserverPresentationLayer : Control
             var flashes = owned.Where(c => c.Event.CardUsed != null && c.Event.Card != null)
                 .Select(c => new KeyValuePair<int, float>(c.Event.Card!.Id, MathF.Sin((float)c.Progress * MathF.PI)));
             var hidden = owned.Where(c => c.Event.CardAdded != null && c.Event.Card != null).Select(c => c.Event.Card!.Id);
+            if (_layout.Pending.Card(i) is { } pending)
+                hidden = hidden.Append(pending.CardId);
             _layout.Packs[i].SetEffects(flashes, hidden);
         }
         QueueRedraw();
@@ -40,25 +42,44 @@ public partial class ObserverPresentationLayer : Control
     public override void _Draw()
     {
         if (_layout == null) return;
+        float backpackOpacity = _layout.Stage.BackpackOpacity;
+        if (backpackOpacity > .01f)
+        {
+            foreach (var cue in _cues)
+            {
+                if (cue.Event.ManaAssigned != null) DrawMana(cue, backpackOpacity);
+                if (cue.Event.CardAdded != null) DrawAddedCard(cue, backpackOpacity);
+            }
+        }
+        for (int side = 0; side < _layout.Packs.Length; side++)
+        {
+            if (_layout.Pending.Flight(side) is { } flight && _layout.Pending.Card(side) is { } prepared)
+                DrawPreparedFlight(side, flight, prepared);
+        }
+        // 同一击产生入包卡片时，结算数值始终在飞入的卡片上方。
         foreach (var cue in _cues)
-        {
-            if (cue.Event.ManaAssigned != null) DrawMana(cue);
-            if (cue.Event.CardAdded != null) DrawAddedCard(cue);
-            if (cue.Event.Damage != null) DrawDamage(cue);
             if (cue.Event.Applied != null) DrawApplied(cue);
-        }
-        float flash = _layout.Pending.CollisionFlash;
-        if (flash > 0)
-        {
-            var at = From(_layout.Pending.CollisionAnchor, Vector2.Zero);
-            DrawCircle(at, 26 + 16 * (1 - flash), new Color(1, 0.94f, 0.67f, flash * 0.22f));
-            DrawLine(at - new Vector2(0, 34), at + new Vector2(0, 34), new Color(1, 1, 0.9f, flash), 4);
-            DrawLine(at - new Vector2(21, 20), at + new Vector2(21, 20), new Color(1, 0.94f, 0.7f, flash), 3);
-            DrawLine(at - new Vector2(21, -20), at + new Vector2(21, -20), new Color(1, 0.94f, 0.7f, flash), 3);
-        }
+        foreach (var cue in _cues)
+            if (cue.Event.Damage != null) DrawDamage(cue);
     }
 
-    private void DrawMana(PresentationCue cue)
+    private void DrawPreparedFlight(int side, PresentationCue cue, PendingSnapshot prepared)
+    {
+        var layout = _layout!;
+        var pack = layout.Packs[side];
+        var stage = layout.Stage;
+        var toLayer = GetGlobalTransform().AffineInverse();
+        var cells = cue.Event.Card!.Cells.Select(cell => new CellSnapshot(cell.X, cell.Y)).ToArray();
+        var from = (toLayer * pack.GetGlobalTransform()) * pack.CardBounds(cells);
+        var to = (toLayer * stage.GetGlobalTransform()) * stage.ReadyCardBounds(side);
+        float progress = Ease(cue.Progress);
+        var center = from.GetCenter().Lerp(to.GetCenter(), progress);
+        center.Y -= MathF.Sin(progress * Mathf.Pi) * Math.Min(72, from.GetCenter().DistanceTo(to.GetCenter()) * .21f);
+        var size = from.Size.Lerp(to.Size, progress);
+        stage.DrawPreparedCard(this, prepared, new Rect2(center - size / 2, size), 1);
+    }
+
+    private void DrawMana(PresentationCue cue, float opacity)
     {
         var fact = cue.Event;
         var mana = fact.ManaAssigned!;
@@ -71,17 +92,17 @@ public partial class ObserverPresentationLayer : Control
         float t = Ease(Mathf.Clamp((p - 0.12f) / 0.78f, 0, 1));
         var at = start.Lerp(end, t) + new Vector2(0, -MathF.Sin(t * MathF.PI) * Math.Min(36, start.DistanceTo(end) * 0.2f));
         var color = ObserverArtCatalog.ElementColor(mana.Element);
-        DrawCircle(start, 12 + p * 12, new Color(color, Math.Max(0, 1 - p * 4) * 0.65f));
-        DrawCircle(at, 18, new Color(color, 0.16f));
-        DrawLine(at, at.Lerp(start, 0.14f), new Color(color, 0.45f), 4);
+        DrawCircle(start, 12 + p * 12, new Color(color, Math.Max(0, 1 - p * 4) * 0.65f * opacity));
+        DrawCircle(at, 18, new Color(color, 0.16f * opacity));
+        DrawLine(at, at.Lerp(start, 0.14f), new Color(color, 0.45f * opacity), 4);
         var texture = _layout!.Art.Mana(mana.Element);
         float size = p < 0.88f ? 30 : Mathf.Lerp(30, 14, (p - 0.88f) / 0.12f);
-        if (texture != null) DrawTextureRect(texture, new Rect2(at - Vector2.One * size / 2, Vector2.One * size), false);
-        else DrawCircle(at, size / 3, color);
-        if (p > 0.8f) DrawArc(end, 12 + (p - 0.8f) * 70, 0, Mathf.Tau, 24, new Color(color, (1 - p) * 4), 2);
+        if (texture != null) DrawTextureRect(texture, new Rect2(at - Vector2.One * size / 2, Vector2.One * size), false, new Color(Colors.White, opacity));
+        else DrawCircle(at, size / 3, new Color(color, opacity));
+        if (p > 0.8f) DrawArc(end, 12 + (p - 0.8f) * 70, 0, Mathf.Tau, 24, new Color(color, (1 - p) * 4 * opacity), 2);
     }
 
-    private void DrawAddedCard(PresentationCue cue)
+    private void DrawAddedCard(PresentationCue cue, float opacity)
     {
         var fact = cue.Event;
         var pack = Pack(fact.NpcId);
@@ -93,12 +114,18 @@ public partial class ObserverPresentationLayer : Control
         var packToLayer = GetGlobalTransform().AffineInverse() * pack.GetGlobalTransform();
         var targetBounds = packToLayer * pack.CardBounds(card.Cells);
         var targetCenter = targetBounds.GetCenter();
-        var start = From(_layout!.Actors[side].HeadAnchor, Vector2.Zero) + new Vector2(((int)(fact.Sequence % 3) - 1) * 38, 68);
+        var stage = _layout!.Stage;
+        // 入包反馈从靠近储物阵的下方离开，命中数字留在人身边。
+        float lane = ((int)(fact.Sequence % 3) - 1) * 31;
+        bool fromStage = stage.IsFighting;
+        var start = fromStage
+            ? From(stage, stage.FootAt(side) + new Vector2((side == 0 ? -1 : 1) * 54 + lane, 20))
+            : From(stage, stage.HeadAt(side)) + new Vector2(lane, 68);
         float p = (float)cue.Progress;
         float travel = Ease(Mathf.Clamp((p - 0.23f) / 0.65f, 0, 1));
-        var center = start.Lerp(targetCenter, travel) + new Vector2(0, -MathF.Sin(travel * MathF.PI) * 55);
-        float scale = Mathf.Lerp(1.45f, 1, travel);
-        float alpha = Mathf.Clamp(p / 0.12f, 0, 1);
+        var center = start.Lerp(targetCenter, travel) + new Vector2(0, -MathF.Sin(travel * MathF.PI) * (fromStage ? 10 : 55));
+        float scale = Mathf.Lerp(fromStage ? .69f : 1.45f, 1, travel);
+        float alpha = Mathf.Clamp(p / 0.12f, 0, 1) * opacity;
         var bounds = new Rect2(center - targetBounds.Size * scale / 2, targetBounds.Size * scale);
         // 入包时也换算实际格子的大小；设计者缩放整块背包后，飞行卡与最终卡面连续衔接。
         var cells = pack.CardCells(card.Cells).Select(c => packToLayer * c)
@@ -112,14 +139,46 @@ public partial class ObserverPresentationLayer : Control
         if (damage.HpDamage <= 0 && damage.ShieldAbsorbed <= 0) return;
         int side = Side(damage.TargetNpcId);
         if (side < 0) return;
-        string text = damage.HpDamage > 0 ? damage.HpDamage.ToString() : "吸收";
         float p = (float)cue.Progress;
-        float pop = p < 0.16f ? 1 + MathF.Sin(p / 0.16f * MathF.PI) * 0.3f : 1;
+        bool direct = BattlePresentationPlayer.IsDirectStrike(cue.Event);
+        if (direct && p < BattlePresentationPlayer.StrikeContact) return;
+        if (direct) p = (p - BattlePresentationPlayer.StrikeContact) / (1 - BattlePresentationPlayer.StrikeContact);
+        var stage = _layout!.Stage;
+        if (!direct && stage.HoldsDamage(cue.Event)) p = .027f;
+        bool heavy = ObserverDuelStage.HeavyHit(damage);
+        float pop = p < .18f ? 1 + MathF.Sin(p / .18f * MathF.PI) * (heavy ? .42f : .29f) : 1;
         int lane = _textLanes.GetValueOrDefault((cue.Generation, cue.Event.Sequence));
-        // 两列留足描边与放大宽度，避免并发的 20 和 12 视觉连成 2012。
-        var at = From(_layout!.Actors[side].HeadAnchor, Vector2.Zero) + new Vector2(lane % 2 == 0 ? -50 : 50, 22 + (lane / 2) * 38 - p * 21);
-        var color = damage.HpDamage > 0 ? new Color("ff8778") : new Color("9de7ff");
-        FloatingText(text, at, (int)(34 * pop), color, Fade(p), 4);
+        // 命中数字跟随当前受击位置。回场时降低透明度，避免数字跟着人物突然跳回。
+        float fade = (direct ? Math.Max(.83f * (1 - p), Fade(p)) : Fade(p)) *
+            (direct ? 1 - Ease(Mathf.Clamp((cue.Progress - .78f) / (ObserverDuelStage.ReturnJump - .78f), 0, 1))
+                : stage.IsReturning ? .44f : 1);
+        float spread = stage.IsFighting ? (side == 0 ? -1 : 1) * (stage.HeightAt(side) * .43f + 18 * p) : -55;
+        // 拼点牌在角色肩线上方。伤害字从外侧胸口往上飘，避开脸和卡面。
+        float baseline = stage.IsFighting ? stage.HeightAt(side) * .42f : 32;
+        var at = stage.HeadAt(side) + new Vector2(lane % 2 == 0 ? spread : -spread, baseline + (lane / 2) * 54 - p * 27);
+        if (damage.HpDamage > 0)
+            StageText($"−{damage.HpDamage}", at, (int)((heavy ? 46 : 37) * pop), new Color(heavy ? "ffd2aa" : "ffad98"), fade, heavy ? 8 : 6);
+        if (damage.ShieldAbsorbed > 0)
+        {
+            float y = damage.HpDamage > 0 ? 23 : 0;
+            StageText($"护盾 −{damage.ShieldAbsorbed}", at + new Vector2(0, y), 21, new Color("b4ebff"), fade, 4);
+        }
+    }
+
+    private void StageText(string text, Vector2 at, int size, Color color, float alpha, int outline)
+    {
+        var stage = _layout!.Stage;
+        var limits = stage.TextLimits;
+        float width = GetThemeDefaultFont().GetStringSize(text, fontSize: size).X;
+        float maxWidth = (limits.Y - limits.X) * .46f;
+        if (width > maxWidth)
+        {
+            size = Math.Max(12, (int)(size * maxWidth / width));
+            width = GetThemeDefaultFont().GetStringSize(text, fontSize: size).X;
+        }
+        float margin = Math.Min(width / 2 + outline, (limits.Y - limits.X) / 2);
+        at.X = Mathf.Clamp(at.X, limits.X + margin, limits.Y - margin);
+        FloatingText(text, From(stage, at), size, color, alpha, outline);
     }
 
     private void DrawApplied(PresentationCue cue)
@@ -129,8 +188,29 @@ public partial class ObserverPresentationLayer : Control
         if (side < 0) return;
         float p = (float)cue.Progress;
         int lane = _textLanes.GetValueOrDefault((cue.Generation, cue.Event.Sequence));
-        var at = From(_layout!.Actors[side].HeadAnchor, Vector2.Zero) + new Vector2(0, -25 - lane * 24 - p * 10);
-        FloatingText(ObserverArtCatalog.CardName(cue.Event.Card.Name, cue.Event.Card.DefineId) + " · 生效", at, 21, new Color("fff0b4"), Fade(p), 3);
+        var stage = _layout!.Stage;
+        float textY = stage.IsFighting ? 27 : -18;
+        if (_layout!.Art.CastElement(cue.Event) is { } element)
+        {
+            if (p < ObserverDuelStage.CastRelease) return;
+            p = (p - ObserverDuelStage.CastRelease) / (1 - ObserverDuelStage.CastRelease);
+            var actual = stage.HeadAt(side) + new Vector2(0, textY - lane * 24 - p * 11);
+            StageText(ObserverArtCatalog.CardName(cue.Event.Card.Name, cue.Event.Card.DefineId) + " · 生效",
+                actual, 21, ObserverArtCatalog.ElementColor(element).Lerp(Colors.White, .43f), Fade(p), 3);
+            return;
+        }
+        if (stage.IsFighting)
+        {
+            var limits = stage.TextLimits;
+            var foot = stage.FootAt(side);
+            float x = Mathf.Lerp(limits.X, limits.Y, side == 0 ? .24f : .76f);
+            StageText(ObserverArtCatalog.CardName(cue.Event.Card.Name, cue.Event.Card.DefineId) + " · 生效",
+                new Vector2(x, foot.Y + 24 + lane * 19), 16, new Color("e2ce9c"), Fade(p) * .82f, 3);
+            return;
+        }
+        var at = stage.HeadAt(side) + new Vector2(0, textY - lane * 24 - p * 10);
+        StageText(ObserverArtCatalog.CardName(cue.Event.Card.Name, cue.Event.Card.DefineId) + " · 生效",
+            at, 21, new Color("fff0b4"), Fade(p), 3);
     }
 
     private void FloatingText(string text, Vector2 at, int size, Color color, float alpha, int outline)

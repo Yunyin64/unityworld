@@ -163,15 +163,18 @@ public static partial class PresentationPlayerChecks
     {
         var player = Start();
         player.Submit(Frame(Snapshot(1), 0, new[] { Contest(1) }));
+        double duration = player.ActiveCues.Single().Duration;
         player.Update(.1);
         var next = Change(Snapshot(2), 10, n => n with { Pending = Pending(Card(102)) });
         player.Submit(Frame(next, 1, new[] { PendingFact(2, 10, Card(102), true) with { Tick = 2 } }));
         checks.Check(player.DisplaySnapshot.Tick == 2 && player.DisplaySnapshot.Participants[0].Pending?.CardId == 101,
             "only occupied slot retains historical collision while new Tick is visible");
-        player.Update(.16);
-        checks.Check(player.DisplaySnapshot.Participants[0].Pending?.CardId == 102 && player.IsIdle,
-            "old collision completion releases slot to newer pending card");
-        checks.Same(next, player.DisplaySnapshot, "cross Tick collision cannot clear replacement slot");
+        player.Update(duration - .1 + .001);
+        checks.Check(player.DisplaySnapshot.Participants[0].Pending?.CardId == 102 &&
+            player.ActiveCues.Single().Event.Pending?.Entered == true,
+            "old collision completion releases the newer pending card's flight");
+        checks.Drain(player);
+        checks.Same(next, player.DisplaySnapshot, "cross Tick collision cannot clear the replacement card");
     }
 
     // 新 Tick 已移除卡牌时，迟到的插入动画不能让它复活。

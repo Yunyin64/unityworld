@@ -1,0 +1,141 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
+[ext_resource type="Script" path="res://scripts/client/ui/ObserverContestCard.cs" id="card"]
+[ext_resource type="Texture2D" path="res://assets/art/cards/card_jin_slash.png" id="preview"]
+
+[sub_resource type="StyleBoxFlat" id="Face"]
+bg_color = Color(0.062745, 0.12549, 0.172549, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.380392, 0.466667, 0.529412, 0.89)
+
+[sub_resource type="StyleBoxFlat" id="Illustration"]
+bg_color = Color(0.12549, 0.192157, 0.235294, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.92549, 0.831373, 0.52549, 0.42)
+
+[node name="ContestCard" type="Control"]
+offset_right = 322.0
+offset_bottom = 132.0
+mouse_filter = 2
+theme = ExtResource("theme")
+script = ExtResource("card")
+
+[node name="Shadow" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 5.0
+offset_right = 2.0
+offset_bottom = 5.0
+mouse_filter = 2
+color = Color(0.031373, 0.058824, 0.086275, 0.5)
+
+[node name="Face" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Face")
+
+[node name="LeftSpine" type="ColorRect" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 9.0
+offset_bottom = -9.0
+mouse_filter = 2
+color = Color(0.549, 0.89, 0.8, 0.60)
+
+[node name="RightSpine" type="ColorRect" parent="."]
+visible = false
+anchor_bottom = 1.0
+offset_top = 9.0
+offset_right = 2.0
+offset_bottom = -9.0
+mouse_filter = 2
+color = Color(0.9647, 0.67, 0.4745, 0.60)
+
+[node name="Illustration" type="Panel" parent="."]
+anchor_right = 0.264
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 10.0
+offset_bottom = -10.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Illustration")
+
+[node name="Picture" type="TextureRect" parent="Illustration"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+mouse_filter = 2
+texture = ExtResource("preview")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Readout" type="Control" parent="."]
+anchor_left = 0.264
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 21.0
+offset_right = -11.0
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Readout"]
+anchor_right = 1.0
+offset_top = 4.0
+offset_bottom = 34.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.949, 0.91, 0.82, 1)
+theme_override_font_sizes/font_size = 22
+clip_text = true
+text_overrun_behavior = 3
+text = "金锋斩"
+
+[node name="Description" type="Label" parent="Readout"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 34.0
+offset_bottom = -32.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.7686, 0.8157, 0.8039, 1)
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+vertical_alignment = 0
+max_lines_visible = 3
+clip_text = true
+text_overrun_behavior = 3
+text = "发起2点金系斩击拼点"
+
+[node name="TypeIcon" type="Control" parent="Readout"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -28.0
+offset_right = 21.0
+offset_bottom = -6.0
+mouse_filter = 2
+
+[node name="Points" type="Label" parent="Readout"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -34.0
+offset_bottom = -1.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.9137, 0.9373, 0.9255, 1)
+theme_override_font_sizes/font_size = 28
+clip_text = true
+text = "2"

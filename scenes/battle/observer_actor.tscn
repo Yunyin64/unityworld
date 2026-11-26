@@ -1,0 +1,68 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
+
+[ext_resource type="Script" path="res://scripts/client/ui/ObserverDuelActor.cs" id="actor"]
+
+[node name="Actor" type="Control"]
+offset_right = 230.0
+offset_bottom = 221.0
+mouse_filter = 2
+theme = ExtResource("theme")
+script = ExtResource("actor")
+
+[node name="Image" type="TextureRect" parent="."]
+offset_right = 230.0
+offset_bottom = 221.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeadAnchor" type="Marker2D" parent="."]
+position = Vector2(112, 26)
+
+[node name="Name" type="Label" parent="."]
+offset_left = 2.0
+offset_top = 222.0
+offset_right = 212.0
+offset_bottom = 250.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 20
+text = "这里显示七个字"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+theme_override_colors/font_outline_color = Color(0.22745, 0.27451, 0.23137, 1)
+theme_override_constants/outline_size = 3
+
+[node name="BuffScroll" type="ScrollContainer" parent="."]
+offset_left = -38.0
+offset_top = 258.0
+offset_right = 252.0
+offset_bottom = 296.0
+mouse_filter = 1
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="Buffs" type="HBoxContainer" parent="BuffScroll"]
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="Status" type="Label" parent="."]
+offset_left = -38.0
+offset_top = 258.0
+offset_right = 252.0
+offset_bottom = 290.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.9098, 0.8902, 0.80784, 1)
+theme_override_font_sizes/font_size = 15
+text = "状态名称×2"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+clip_text = true

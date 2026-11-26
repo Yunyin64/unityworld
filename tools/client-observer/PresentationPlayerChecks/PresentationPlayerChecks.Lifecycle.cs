@@ -38,6 +38,29 @@ public static partial class PresentationPlayerChecks
         checks.Check(stable == BattleJson.SerializeSnapshot(player.DisplaySnapshot), "paused terminal display remains stable");
     }
 
+    private static void FinishingHitUsesConfirmedDefeat(CheckContext checks)
+    {
+        var damage = Damage(2).Damage! with { HpBefore = 32, HpAfter = 12, DamageType = "Zhan" };
+        var initial = Change(Snapshot(0), damage.TargetNpcId, n => n with { Hp = 32, Status = "Active" });
+        var player = Start(initial);
+        var battle = Change(initial with { Tick = 1 }, damage.TargetNpcId, n => n with { Hp = 12, Sp = 26, Status = "Defeated" });
+        var result = new BattleResultSnapshot("AllDefeated", battle.Participants[0].Team, 1,
+            battle.Participants.Select(n => new CombatantResultSnapshot(n.Id, n.Team, n.Status)).ToArray());
+        var terminal = battle with { IsFinished = true, Result = result };
+        var facts = new[] { Contest(1), Damage(2) with { ContestId = 700, Damage = damage } };
+        player.Submit(Frame(terminal, 0, facts));
+        checks.Check(player.ActiveCues.Single().Exchange?.FinishingNpcId == damage.TargetNpcId && player.DepartedNpcId == null,
+            "positive health can end a duel when the terminal result confirms a defeated target");
+        checks.Drain(player);
+        checks.Check(player.DepartedNpcId == damage.TargetNpcId, "the defeated actor stays departed after the final shot");
+        checks.Same(terminal, player.DisplaySnapshot, "the finishing shot retains the original terminal values");
+        player.Reset();
+        checks.Check(player.DepartedNpcId == null, "a restarted presentation clears the departed actor");
+        var ongoing = Start(initial);
+        ongoing.Submit(Frame(battle, 0, facts));
+        checks.Check(ongoing.ActiveCues.Single().Exchange?.FinishingNpcId == null, "an unfinished battle keeps ordinary contact");
+    }
+
     // 重置取消旧代，迟到的旧会话帧不能复活或覆盖新会话。
     private static void ResetRejectsRetiredSessionFrames(CheckContext checks)
     {

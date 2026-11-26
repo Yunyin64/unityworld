@@ -1,4 +1,6 @@
 #nullable enable
+using UnityWorld.Game.Data;
+
 namespace UnityWorld.Game.Domain.Combat;
 
 public partial class CombatScene
@@ -57,7 +59,11 @@ public partial class CombatScene
         PresentationCopy(card.GetManaCost().OrderBy(p => p.Key.ToString()).Select(p => new PresentationManaCost(p.Key.ToString(), p.Value))),
         PresentationCopy(card.AssignedElements.Select(e => e.ToString())),
         PresentationCopy(card.Owner?.Backpack.GetCardCells(card.Id).Select(c => new PresentationCell(c.X, c.Y)) ?? Array.Empty<PresentationCell>()),
-        PresentationCopy(card.BaseData.Shape.Select(c => new PresentationCell(c.X, c.Y)))) { Phase = card.Phase };
+        PresentationCopy(card.BaseData.Shape.Select(c => new PresentationCell(c.X, c.Y))))
+    {
+        Phase = card.Phase,
+        Description = CardDefineMgr.Instance?.Get(card.DefineId)?.Desc
+    };
     /// <summary>读取当前效果作用域或继承的回放来源</summary>
     internal PresentationOrigin? CapturePresentationOrigin() => !PresentationRecordingEnabled ? null :
         _presentationScopes.TryPeek(out var scope) ? scope.Origin : _presentationOrigin;

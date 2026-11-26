@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using UnityWorld.Game.Domain.Combat;
 
 namespace Xianxia.Client.UI;
 
@@ -10,18 +11,25 @@ public sealed class ObserverArtCatalog
 {
     private readonly Dictionary<string, Texture2D> _cards = new();
     private readonly Dictionary<string, Texture2D> _mana = new();
+    private readonly Dictionary<string, string> _casts = new();
     private readonly HashSet<string> _missing = new();
     private readonly HashSet<string> _transposed = new();
 
     /// <summary>加载客户端映射，错误只影响图片，不影响模拟。</summary>
     public ObserverArtCatalog()
     {
-        Load("res://assets/presentation/card_visuals.json", "cards", _cards, _transposed);
+        Load("res://assets/presentation/card_visuals.json", "cards", _cards, _transposed, _casts);
         Load("res://assets/presentation/mana_visuals.json", "elements", _mana, null);
     }
 
     internal static string CardName(string? name, string? defineId) =>
         !string.IsNullOrWhiteSpace(name) ? name : !string.IsNullOrWhiteSpace(defineId) ? defineId : "卡牌名称缺失";
+
+    internal static string ContestName(string kind) => kind switch
+    {
+        "Zhan" => "斩击", "Da" => "打击", "Ci" => "刺击", "SheJi" => "射击",
+        "Shield" => "护盾", "Block" => "格挡", "Dodge" => "闪避", _ => kind
+    };
 
     /// <summary>返回卡图，缺图返回空并保留文字回退。</summary>
     public Texture2D? Card(string id) => Find(_cards, "card", id);
@@ -31,6 +39,10 @@ public sealed class ObserverArtCatalog
 
     /// <summary>返回灵元图标，未知元素返回空。</summary>
     public Texture2D? Mana(string id) => Find(_mana, "mana", id);
+
+    // 每张卡单独选择施法表现。已有拼点和被动触发沿用自己的演出。
+    internal string? CastElement(CombatPresentationEvent fact) =>
+        fact is { ContestId: null, Applied.IsPassive: false, Card: { } card } ? _casts.GetValueOrDefault(card.DefineId) : null;
 
     /// <summary>元素形色提示，名称仍由 UI 显示。</summary>
     public static Color ElementColor(string element) => element switch
@@ -56,7 +68,8 @@ public sealed class ObserverArtCatalog
         return null;
     }
 
-    private static void Load(string path, string key, Dictionary<string, Texture2D> target, HashSet<string>? transposed)
+    private static void Load(string path, string key, Dictionary<string, Texture2D> target, HashSet<string>? transposed,
+        Dictionary<string, string>? casts = null)
     {
         if (!Godot.FileAccess.FileExists(path))
         {
@@ -69,6 +82,9 @@ public sealed class ObserverArtCatalog
             foreach (var property in doc.RootElement.GetProperty(key).EnumerateObject())
             {
                 var item = property.Value;
+                if (casts != null && item.TryGetProperty("castElement", out var cast) && cast.ValueKind == JsonValueKind.String &&
+                    cast.GetString() is { Length: > 0 } element)
+                    casts[property.Name] = element;
                 if (!item.TryGetProperty("texture", out var texturePath) || texturePath.ValueKind != JsonValueKind.String) continue;
                 var resourcePath = texturePath.GetString()!;
                 if (!ResourceLoader.Exists(resourcePath)) continue;

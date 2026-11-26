@@ -9,12 +9,14 @@ using UnityWorld.Game.World;
 
 namespace Xianxia.Client;
 
-public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration, TestHome, ObserverWorker }
+public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration, TestHome, ObserverWorker, Exploration3D }
 
 /// <summary>Godot 宿主：加载核心 DLL，驱动世界并在退出时释放资源。</summary>
 public partial class GameBootstrap : Node
 {
     public const string ExplorationScene = "res://scenes/exploration/exploration_view.tscn";
+    /// <summary>独立的三维探索场景。</summary>
+    public const string Exploration3DScene = "res://scenes/exploration/exploration_world_3d.tscn";
     public const string HomeScene = "res://scenes/home/test_home.tscn";
     public const string TemplateScene = "res://scenes/templates/character_template_editor.tscn";
     private static GameBootstrap? _instance;
@@ -38,12 +40,14 @@ public partial class GameBootstrap : Node
             a.StartsWith("--observer-case=", StringComparison.Ordinal) || a.StartsWith("--observer-case-input=", StringComparison.Ordinal));
         bool world = userArgs.Contains("--world");
         bool exploration = userArgs.Contains("--exploration");
+        bool exploration3D = userArgs.Contains("--exploration-3d");
         // 显式模式只允许一个世界所有者；原有烟测始终优先处理。
-        if ((editor ? 1 : 0) + (observer ? 1 : 0) + (world ? 1 : 0) + (exploration ? 1 : 0) > 1)
+        if ((editor ? 1 : 0) + (observer ? 1 : 0) + (world ? 1 : 0) + (exploration ? 1 : 0) + (exploration3D ? 1 : 0) > 1)
             throw new InvalidOperationException("不能同时指定编辑器、观察器、探索或世界宿主模式。");
         if (editor) return ClientHostMode.TemplateEditor;
         if (observer) return ClientHostMode.Observer;
         if (exploration) return ClientHostMode.Exploration;
+        if (exploration3D) return ClientHostMode.Exploration3D;
         if (world) return ClientHostMode.World;
         string? requestedScene = engineArgs.LastOrDefault(a => a.EndsWith(".tscn", StringComparison.OrdinalIgnoreCase));
         string? scene = !string.IsNullOrWhiteSpace(requestedScene) ? requestedScene
@@ -54,6 +58,8 @@ public partial class GameBootstrap : Node
             return ClientHostMode.Observer;
         if (string.Equals(Path.GetFileName(scene), "exploration_view.tscn", StringComparison.OrdinalIgnoreCase))
             return ClientHostMode.Exploration;
+        if (string.Equals(Path.GetFileName(scene), Path.GetFileName(Exploration3DScene), StringComparison.OrdinalIgnoreCase))
+            return ClientHostMode.Exploration3D;
         if (Path.GetFileName(scene) is "test_home.tscn" or "battle_window_check.tscn") return ClientHostMode.TestHome;
         return ClientHostMode.World;
     }
@@ -117,6 +123,7 @@ public partial class GameBootstrap : Node
         {
             ClientHostMode.TestHome => HomeScene,
             ClientHostMode.Exploration => ExplorationScene,
+            ClientHostMode.Exploration3D => Exploration3DScene,
             ClientHostMode.TemplateEditor => TemplateScene,
             ClientHostMode.Observer => BattleWindows.BattleLauncher.ObserverScene,
             _ => throw new ArgumentOutOfRangeException(nameof(target))

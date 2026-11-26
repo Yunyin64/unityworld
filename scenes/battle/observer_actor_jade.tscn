@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/battle/observer_actor.tscn" id="base"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/jade_swordsman_poses.png" id="swordsman"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/casting_poses.png" id="casting"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_footwork.png" id="footwork"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/jade_swordsman_techniques.png" id="jade_techniques"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_defeat_poses.png" id="defeat"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_transition_poses.png" id="transition"]
+
+[ext_resource type="Texture2D" path="res://assets/art/battle/duel_landing_poses.png" id="landing"]
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman"]
+atlas = ExtResource("swordsman")
+region = Rect2(156, 16, 330, 462)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_strike"]
+atlas = ExtResource("swordsman")
+region = Rect2(785, 55, 705, 425)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_guard"]
+atlas = ExtResource("swordsman")
+region = Rect2(163, 486, 344, 532)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_recoil"]
+atlas = ExtResource("swordsman")
+region = Rect2(801, 540, 531, 478)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_cast"]
+atlas = ExtResource("casting")
+region = Rect2(251, 8, 545, 710)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_advance"]
+atlas = ExtResource("footwork")
+region = Rect2(88, 44, 451, 436)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_withdraw"]
+atlas = ExtResource("footwork")
+region = Rect2(100, 543, 460, 459)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_slash"]
+atlas = ExtResource("jade_techniques")
+region = Rect2(119, 12, 547, 472)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_smash"]
+atlas = ExtResource("jade_techniques")
+region = Rect2(841, 42, 538, 439)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_shot"]
+atlas = ExtResource("jade_techniques")
+region = Rect2(157, 507, 419, 504)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_evade"]
+atlas = ExtResource("jade_techniques")
+region = Rect2(780, 580, 589, 427)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_defeat"]
+atlas = ExtResource("defeat")
+region = Rect2(64, 102, 705, 743)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_windup"]
+atlas = ExtResource("transition")
+region = Rect2(13, 17, 571, 531)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_follow"]
+atlas = ExtResource("transition")
+region = Rect2(710, 72, 565, 479)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_brace"]
+atlas = ExtResource("landing")
+region = Rect2(216, 102, 424, 369)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="Texture_swordsman_land"]
+atlas = ExtResource("landing")
+region = Rect2(914, 37, 320, 436)
+filter_clip = true
+
+[node name="JadeSwordsman" instance=ExtResource("base")]
+Strike = SubResource("Texture_swordsman_strike")
+Guard = SubResource("Texture_swordsman_guard")
+Recoil = SubResource("Texture_swordsman_recoil")
+Cast = SubResource("Texture_swordsman_cast")
+Advance = SubResource("Texture_swordsman_advance")
+Withdraw = SubResource("Texture_swordsman_withdraw")
+Slash = SubResource("Texture_swordsman_slash")
+Smash = SubResource("Texture_swordsman_smash")
+Shot = SubResource("Texture_swordsman_shot")
+Evade = SubResource("Texture_swordsman_evade")
+Kneel = SubResource("Texture_swordsman_defeat")
+Windup = SubResource("Texture_swordsman_windup")
+FollowThrough = SubResource("Texture_swordsman_follow")
+Brace = SubResource("Texture_swordsman_brace")
+Land = SubResource("Texture_swordsman_land")
+
+[node name="Image" parent="." index="0"]
+texture = SubResource("Texture_swordsman")
+
+[node name="Name" parent="." index="2"]
+text = "李铁柱"

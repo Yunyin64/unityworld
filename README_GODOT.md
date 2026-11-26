@@ -4,7 +4,7 @@
 
 ## 测试首页与可视布局
 
-用 Godot .NET 打开仓库根的 `project.godot`，按 **F5** 进入测试首页。点「地图测试」或「角色模板编辑器」会在当前窗口打开相应工具，点工具里的「返回首页」可以继续测试另一项。地图返回会结束本次行程；模板有未保存修改时可以保存、放弃或取消。
+用 Godot .NET 打开仓库根的 `project.godot`，按 **F5** 进入测试首页。可以选择「3D 世界探索」「2D 地图测试」或「角色模板编辑器」。点工具里的「返回首页」可以继续测试另一项。地图返回会结束本次行程，模板有未保存修改时可以保存、放弃或取消。
 
 主游戏窗口、独立试战窗口和重开后的观察器默认以 **1920×1080** 打开。首页的「界面缩放」可选 75%、100%、125%、150%；各工具也可用 **Ctrl + 加号**（或等号）、**Ctrl + 减号**调整，**Ctrl + 0** 恢复 100%。设置自动保存，新开的窗口沿用该倍率。
 
@@ -16,9 +16,10 @@
 
 | 场景 | 可以直接调整的区域 |
 | --- | --- |
-| [地图测试](scenes/exploration/exploration_view.tscn) | 地图、人物名牌、日期、地点详情、缩放和行程操作 |
+| [3D 世界探索](scenes/exploration/exploration_world_3d.tscn) | 立体地图、环境光、镜头、地点详情和行程操作 |
+| [2D 地图测试](scenes/exploration/exploration_view.tscn) | 地图、人物名牌、日期、地点详情、缩放和行程操作 |
 | [角色模板编辑器](scenes/templates/character_template_editor.tscn) | 模板库、背包装配、卡库、详情和试战按钮 |
-| [战斗观察器](scenes/battle/battle_observer.tscn) | 两侧背包、人物、Buff、待发槽、播放控制和战报 |
+| [战斗观察器](scenes/battle/battle_observer.tscn) | 两侧储物阵、人物、Buff、待发飞牌、播放控制和战报 |
 | [卡牌详情](scenes/ui/CardTip.tscn) · [Buff 详情](scenes/ui/BuffTip.tscn) | 供各窗口悬浮层实例化的图片、标题、文本和宽度 |
 
 角色模板编辑器的主场景负责摆放各区域。修改区域内部布局时，直接打开 [模板库](scenes/templates/template_library.tscn)、[背包装配区](scenes/templates/template_loadout.tscn) 或 [卡库](scenes/templates/template_card_library.tscn)。例如，卡库的搜索框和关键词列表都在卡库子场景里。
@@ -27,7 +28,40 @@
 
 动态栏位在编辑器中显示容量样文，如「这里显示七个字」。正式内容由 C# 绑定。移动背包请选中背包面板或它的子场景，卡面绘制、拖放和悬浮会使用它的新位置。卡牌和 Buff 的排版分别在各自的提示场景中调整。
 
-## 探索试玩
+## 3D 世界探索
+
+从首页打开「3D 世界探索」，也可以在编辑器里打开 [三维探索场景](scenes/exploration/exploration_world_3d.tscn) 后按 F6。左键选择地块，合法邻格可以再点一次或点「启程」。右键拖动旋转，中键拖动平移，滚轮缩放。真实世界使用当前探索视野、日期及逐周行程。
+
+「地形样板」打开一张 357 格的海陆组合，可切换格线，点选任一格查看邻近地形。「山门近景」切到同一张地图上的透视镜头，可看暖色侧光、栖霞山门的岩石台基和瓦坡，以及山谷里的体积雾。「返回全景」恢复正交地图。样板期间真实行程暂停。
+
+### 相邻地形怎么接
+
+| 位置 | 建模规则 | 样板例子 |
+| --- | --- | --- |
+| 格心 | 地形标签、海拔和水文控制起伏、底色与植被密度 | 平原保留开阔地，雪山形成显著主峰 |
+| 两格之间 | 共享格边顶点并向两侧格心插值。邻山抬高接缝，水岸按地面与水面交线裁剪 | 两山之间保留山脊。滨海平地压低成浅滩，邻海的陡坡保留岩面 |
+| 三格共角 | 三个格心共同计算顶点和法线 | 山地、林地、海岸交会时，坡面与水线在同一处收口 |
+| 林缘与河道 | 植被密度随邻域渐变，河道沿核心记录的相连水文边成形 | 树木从密林渐稀，河道跨格后接到河口 |
+
+逻辑格继续用现有轴坐标与距离。三维画面按六边形生成三角网格，绘制时合批，选格时从镜头对实际陆地与水面三角形求交。最外圈使用一圈邻格来算接缝。移动后，重叠的地块可从相同位置重新生成相同网格。
+
+《文明 VII》环境美术提到他们参考了微缩场景，并在高处读图和近处分辨材质之间取舍。参考图里的跨格山脊与自然海岸可以用共享边、角及岸线裁剪实现，公开教程也给出了这类连接的构造。当前实现来源于这些通用做法和项目的实际地图结构。 [Firaxis 环境美术访谈](https://www.hookedgamers.com/features/2024/10/23/the_art_of_civilization_vii_-_an_interview.html) · [六边形坡面与三格共角](https://catlikecoding.com/unity/tutorials/hex-map/part-3/) · [海岸网格和浪花](https://catlikecoding.com/unity/tutorials/hex-map/part-8/)
+
+岩壁用三平面投影和物理材质贴图，针叶与阔叶沿立体枝条分布。Forward+ 用于水面屏幕空间反射、接触阴影和近景体积雾。样板里的建筑体量、山道、远山背景和灯光为本项目制作。贴图的原始资产和处理方式见 [3D 探索素材来源](assets/art/exploration/terrain3d/SOURCES.md)。 [Godot 的屏幕空间效果](https://docs.godotengine.org/en/stable/tutorials/3d/environment_and_post_processing.html) · [Godot 的体积雾着色器](https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/fog_shader.html)
+
+### 描边
+
+右上角「描边」控制效果。独立视口用同一套作画相机和网格输出山体、树冠、建筑等类别，屏幕合成结合主视口深度识别遮挡轮廓，用法线识别表面折线。因此可单独为檐口和台阶保留短线，也可把相互叠住的树叶收成较轻的树冠轮廓。远山的笔触随距离淡出。 [屏幕空间几何边缘](https://developer.nvidia.com/gpugems/gpugems2/part-ii-shading-lighting-and-shadows/chapter-15-blueprint-rendering-and-sketchy) · [Epic 的对象遮罩](https://dev.epicgames.com/documentation/unreal-engine/post-process-materials-in-unreal-engine?lang=en-US)
+
+「MapCamera / OutlinePass」的 ShaderMaterial 里可分别调山体、建筑和植被的目标线宽。900 像素画高下默认是 3.35、1.85、0.78 像素。轮廓粗细随类别、美术设置与画面尺度变化，内部折线使用单独的强度。分类缓冲会复用叶片的透明裁切和风动，关闭描边也会停止绘制分类缓冲。 [《罪恶装备 Xrd》美术技术分享](https://media.gdcvault.com/gdc2015/presentations/Motomura_Junya_GuiltyGearXrd.pdf) · [稀疏线条如何传达形体](https://gfx.cs.princeton.edu/pubs/DeCarlo_2003_SCF/)
+
+### Tile 覆盖
+
+开发种子 12345 的真实位面生成了目录里的 26 种 Tile。已逐项检查它们能转换为显示参数，并验证同坐标换类型、改海拔和邻格变成水域会使新快照触发重建。真实探索在读取结算快照后更新地形。
+
+地形样板使用了其中 10 种定义。真实地图按标签、颜色、海拔、温度和水文组合模型。绝界长城还使用通用地表，竹海与雨林仍共用通用树型，河道侧翼按中心线生成窄水道。26 种 Tile 的独立造型及完整水文范围需要单独验收。
+
+## 2D 探索试玩
 
 用 Godot .NET 打开项目，选中 [exploration_view.tscn](scenes/exploration/exploration_view.tscn) 后按 **F6**。命令行也可从仓库根目录启动：
 
@@ -73,7 +107,7 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer
 
 属性区显示气血 当前/上限、灵力 当前/上限、SP 占用/角色上限，以及护盾当前值。上限通过核心只读投影取得，不修改原属性缓存；SP 上限不是背包格数。不可用上限显示 ? 并提供诊断。HP 归零后加伤口并恢复 HP 是核心行为，失败以核心结果为准。
 
-光线扫过的受光与真实点亮分开：核心按 Tick 提交终态快照和有序表现事实，客户端据此播放源格灵元飞入、分段底色点亮、通用新卡入包、待发槽内容对撞、头顶伤害和“卡名 · 生效”。卡面不再显示点亮 x/x，悬停仍可查看。待发槽底框与背包卡不移动；伤害来自实际扣血记录。正常结束会播完末步表现，再停留供查看或重开。
+核心按 Tick 提交终态快照和有序表现事实，客户端据此播放灵元飞入、点亮、新卡入包、待发飞牌和头顶结算。待发卡从储物阵的实际占格飞到人物身后，拼点时沿角色外侧展开。伤害来自实际扣血记录。正常结束会播完末步表现，再停留供查看或重开。
 
 ## 会话日志
 

@@ -81,9 +81,13 @@ public static partial class PresentationPlayerChecks
         checks.Check(player.DisplaySnapshot.Participants[0].Pending?.CardId == 101 &&
               player.DisplaySnapshot.Participants[1].Pending?.CardId == 201,
             "same Tick removed slots reappear as actual historical collision pair");
-        checks.Check(player.ActiveCues.Single().Event.Kind == CombatPresentationKind.ContestResolved, "one real contest cue");
+        checks.Check(player.ActiveCues.Count == 2 && player.ActiveCues.All(c => c.Event.Pending?.Entered == true),
+            "each card flies from its own backpack before the shared contest");
         player.Update(.1);
         checks.Check(player.DisplaySnapshot.Participants[0].Pending?.CardId == 101, "replacement does not overwrite unfinished collision");
+        player.Update(BattlePresentationPlayer.PendingFlightSeconds - .1 + .001);
+        checks.Check(player.ActiveCues.Single().Event.Kind == CombatPresentationKind.ContestResolved,
+            "the contest begins once the two actual entries have arrived");
         checks.Drain(player);
         checks.Same(end, player.DisplaySnapshot, "new pending card survives old collision completion");
     }
@@ -102,6 +106,84 @@ public static partial class PresentationPlayerChecks
         checks.Check(straight.ActiveCues.All(c => c.Event.Kind != CombatPresentationKind.ContestResolved), "direct hit invents no collision");
         checks.Check(straight.DisplaySnapshot.Participants[1].Pending == null, "direct hit invents no opponent slot");
         checks.Drain(straight);
+    }
+
+    private static void DuelCameraDoesNotBlockIndependentDamage(CheckContext checks)
+    {
+        var player = Start();
+        var direct = Damage(1) with { ActionId = 91, Damage = Damage(1).Damage! with { DamageType = "Zhan" } };
+        var nextStrike = direct with { Sequence = 3, ActionId = 92 };
+        var background = Damage(2) with { ActionId = 91, EffectId = 200 };
+        DuelExchange? previousExchange = null;
+        player.CueStarted += cue => { if (cue.Event.Sequence == 3) previousExchange = cue.PreviousExchange; };
+        player.Submit(Frame(Snapshot(1), 0, new[] { direct, background, nextStrike }));
+        checks.Check(player.ActiveCues.Select(c => c.Event.Sequence).SequenceEqual(new long[] { 1, 2 }),
+            "camera serializes direct strikes but leaves unrelated damage cues active");
+        checks.Check(player.ActiveCues[0].ContinuesOnStage, "immediate next strike keeps actors on stage at the end of the shot");
+        checks.Drain(player);
+        checks.Check(player.CompletedCueCount == 3 && previousExchange?.Fact == direct,
+            "next strike inherits the previous strike facts and all cues settle");
+    }
+
+    private static void ContestDamageStartsAtContact(CheckContext checks)
+    {
+        var player = Start();
+        player.Submit(Frame(Snapshot(1), 0, new[] { Contest(1), Damage(2) with { ContestId = 700 } }));
+        var contest = player.ActiveCues.Single();
+        checks.Check(contest.Exchange?.ContestInjuryTarget == Damage(2).Damage!.TargetNpcId,
+            "contest keeps the injury target through the end of the shot even after damage text expires");
+        double contact = contest.ContactTime;
+        player.Update(contact - .001);
+        checks.Check(player.ActiveCues.Count == 1, "contest damage is held until blade contact");
+        player.Update(.002);
+        checks.Check(player.ActiveCues.Count == 2 && player.ActiveCues.Any(c => c.Event.Damage != null),
+            "linked damage begins during the contest shot");
+        checks.Drain(player);
+    }
+
+    private static void ApproachHoldFreezesOnlyPresentationTime(CheckContext checks)
+    {
+        var player = Start();
+        player.Submit(Frame(Snapshot(1), 0, new[] { Contest(1) }));
+        var cue = player.ActiveCues.Single();
+        double stopAt = cue.MotionDuration * cue.ApproachProgress;
+        player.Update(stopAt + .012);
+        checks.Check(player.IsHoldingApproach && Math.Abs(cue.Progress - cue.ApproachProgress) < .0001,
+            "a frame crossing the stop starts the pause at the exact approach pose");
+        player.Submit(Frame(Snapshot(2), 1));
+        player.Update(.06);
+        checks.Check(player.DisplaySnapshot.Tick == 2 && Math.Abs(cue.Progress - cue.ApproachProgress) < .0001,
+            "new logical Tick arrives while presentation progress stays frozen");
+        player.Update(.04);
+        checks.Check(!player.IsHoldingApproach && cue.Progress > cue.ApproachProgress && cue.Progress < cue.ContactProgress,
+            "the remaining display time resumes toward contact");
+        player.Update(cue.ContactTime - stopAt - .112 + .022);
+        checks.Check(player.IsHoldingImpact && Math.Abs(cue.Progress - cue.ImpactProgress) < .0001,
+            "the reaction pose holds at the contact before recoil starts");
+        player.Update(.095);
+        checks.Check(!player.IsHoldingImpact && cue.Progress > cue.ImpactProgress,
+            "the held reaction releases into separation");
+        checks.Drain(player);
+    }
+
+    private static void ChainedDuelCanChangeTempo(CheckContext checks)
+    {
+        var player = Start();
+        var basis = Contest(1).Contest!;
+        var smash = Contest(1) with { Contest = basis with { Left = basis.Left with { ContestType = "Da" }, WinnerNpcId = basis.Left.NpcId } };
+        var dodge = Contest(2) with { ContestId = 701,
+            Contest = basis with { Right = basis.Right with { ContestType = "Dodge" }, WinnerNpcId = basis.Right.NpcId } };
+        var counter = Damage(3) with { ActionId = 92, Damage = Damage(3).Damage! with { DamageType = "Ci" } };
+        var shots = new List<PresentationCue>();
+        player.CueStarted += cue => shots.Add(cue);
+        player.Submit(Frame(Snapshot(1), 0, new[] { smash, dodge, counter }));
+        checks.Drain(player);
+        checks.Check(shots.Count == 3 && shots[0].ContinuesOnStage && shots[1].ContinuesOnStage && !shots[2].ContinuesOnStage,
+            "only the final shot disengages, even across dissimilar techniques");
+        checks.Check(shots[2].PreviousExchange == shots[1].Exchange && shots[2].Exchange?.ApproachHistory.SequenceEqual(new[] { dodge, smash }) == true,
+            "counter retains the first exchange's pressure through the dodge");
+        checks.Check(shots[0].Duration > shots[1].Duration / .66,
+            "a winning heavy attack leaves more time to recover than a successful dodge");
     }
 
     // 大步长与小步长保持同样的回调顺序和结果，且不修改输入。
