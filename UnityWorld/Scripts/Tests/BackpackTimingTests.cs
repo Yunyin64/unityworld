@@ -36,7 +36,7 @@ namespace UnityWorld.Tests
             for (int i = 0; i < cost.Value; i++)
             {
                 var cell = npc.Backpack.EmptyCells()[0];
-                npc.Backpack.PlaceMana(cell, cost.Key);
+                npc.Backpack.PlaceMana(cell, cost.Key.Equals(ElementType.None) ? ElementType.Jin : cost.Key);
                 Check(npc.Backpack.TryAssign(cell, card), "点亮布置成功");
             }
         }
@@ -159,16 +159,19 @@ namespace UnityWorld.Tests
         {
             var a = NewNpc();
             var b = NewNpc();
-            Card PlaceThrust(int row)
+            var shortSword = EquipDefineMgr.Instance.Get("short_sword");
+            Card PlaceSlash(int row, int spareColumn)
             {
-                var weapon = a.GainEquip("card_fabao_jian", "short_sword");
+                var weapon = a.GainEquip("card_fabao_jian", shortSword.ID);
                 a.EquipFaBao(weapon.Id);
-                var form = a.GetAllCards().Single(c => c.ParentCardId == weapon.Id && c.DefineId == "card_form_jian_ci");
-                a.PlaceBackpackCardInternal(form.Id, 1, row);
-                return form;
+                var forms = a.GetAllCards().Where(c => c.Id != weapon.Id && c.ParentCardId == weapon.Id).ToArray();
+                var slash = forms.Single(c => c.DefineId == "card_form_zhan");
+                a.PlaceBackpackCardInternal(slash.Id, 1, row);
+                a.PlaceBackpackCardInternal(forms.Single(c => c.DefineId == "card_form_jie").Id, spareColumn, 4);
+                return slash;
             }
-            var first = PlaceThrust(0);
-            var second = PlaceThrust(3);
+            var first = PlaceSlash(0, 1);
+            var second = PlaceSlash(3, 2);
             var block = BackpackModelTests.Place(b, "bp_guard", 1, 1);
             var scene = Scene(a, b);
             var owner = scene.GetCombatants()[a.Id];
@@ -183,7 +186,7 @@ namespace UnityWorld.Tests
             {
                 owner.RemoveCombatCard(card);
                 owner.DealFieldChange();
-                // 用不匹配的灵元占住更早的空格，让同一战斗实例在后面的行重新进包。
+                // 占住更早的空格，让同一战斗实例在后面的行重新进包。
                 foreach (var cell in owner.Backpack.EmptyCells().Where(c => c.Y < row).ToArray())
                     owner.Backpack.PlaceMana(cell, ElementType.Huo);
                 owner.AddCombatCard(card);
@@ -207,7 +210,7 @@ namespace UnityWorld.Tests
             Light(owner, other);
             To(40);
             Check(other.UseCount == 1 && owner.PendingSlot?.SourceCard.Id == second.Id &&
-                owner.PendingSlot.ContestValue == 2 && card.ParentCardId != other.ParentCardId,
+                owner.PendingSlot.ContestValue == shortSword.AttackBase && card.ParentCardId != other.ParentCardId,
                 "另一把短剑的同名招式拥有独立次数且取自己的攻击");
             To(80);
             Check(owner.Backpack.Round == 2 && card.UseCount == 2, "本方下一轮恢复一次招式次数");

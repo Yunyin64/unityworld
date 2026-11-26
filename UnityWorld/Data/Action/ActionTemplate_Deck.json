@@ -14,22 +14,5 @@
       { "Name": "Exact", "Type": "Bool", "Value": [true, false], "Score": [0, 1] }
     ],
     "LuaTemplate": "RemoveRandomWound(ctx, \"{Domain}\", {Size}, {Exact})"
-  },
-  {
-    "ID": "action_displace",
-    "APIType": "Action",
-    "Status": "Pending",
-    "StatusReason": "旧版列表的首位、末位和随机位置已停用。背包四向滑移使用 action_slide_card。",
-    "DisplayName": "位移卡牌",
-    "Desc": "将{DoMain}目标卡牌位移至{Position}",
-    "FuncName": "Displace",
-    "Tags": ["控制", "卡组"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "DoMain", "Type": "String", "Value": ["Self", "Random", "Other", "Adjacent", "AboveOne", "AboveAll", "BelowOne", "BelowAll", "All", "TargetAll", "TargetRandom"], "Score": [1, 2, 2, 3, 2, 3, 2, 3, 4, 5, 4] },
-      { "Name": "Position", "Type": "String", "Value": ["First", "Last", "Random"], "Score": [1, 1, 0] }
-    ],
-    "LuaTemplate": "Displace(ctx, \"{DoMain}\", \"{Position}\")"
   }
 ]

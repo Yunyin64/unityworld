@@ -82,9 +82,12 @@ public static class TemplateEditorValidationChecks
         var wu = catalog.GetNpc("test_npc_a")!;
         var realDefinitions = new TestDefinitions(catalog);
         var real = TemplateEditorValidator.Validate(wu, realDefinitions);
-        Check(real.IsValid && real.OccupiedSp == 12 && real.SpMax == 12, "正式武修预检与后端装配同为 12/12 SP");
-        wu.InitCardPlacements.RemoveAt(wu.InitCardPlacements.Count - 1);
-        Check(TemplateEditorValidator.Validate(wu, realDefinitions).Issues.Any(i => i.Code == "equip.form-missing" && i.PlacementIndex == 3),
+        int expectedSp = wu.InitCardPlacements.Sum(placement => catalog.GetCard(placement.Key)!.Size);
+        Check(real.IsValid && real.OccupiedSp == expectedSp && real.SpMax == wu.InitStat["ShenShi"], "正式武修预检读取配置占格和神识");
+        var swordIndex = wu.InitEquip.Single(entry => entry.EquipID == "long_sword").PlacementIndex;
+        int formIndex = wu.InitCardPlacements.FindIndex(placement => placement.ParentPlacementIndex == swordIndex);
+        wu.InitCardPlacements.RemoveAt(formIndex);
+        Check(TemplateEditorValidator.Validate(wu, realDefinitions).Issues.Any(i => i.Code == "equip.form-missing" && i.PlacementIndex == swordIndex),
             "缺少招式时定位长剑装配条目");
         Console.WriteLine($"TEMPLATE_EDITOR_VALIDATION_OK assertions={assertions}");
     }

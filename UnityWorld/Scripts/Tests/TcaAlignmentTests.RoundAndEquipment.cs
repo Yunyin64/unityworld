@@ -111,10 +111,12 @@ public static partial class TcaAlignmentTests
                 new() { Key = "jin_fa", Value = new(3, 3) },
                 new() { Key = "card_fabao_jian", Value = new(1, 4) },
                 new() { Key = "card_fabao_jian", Value = new(4, 4) },
-                new() { Key = "card_form_jian_ci", Value = new(1, 1), ParentPlacementIndex = 2 },
-                new() { Key = "card_form_jian_zhan", Value = new(2, 1), ParentPlacementIndex = 2 },
-                new() { Key = "card_form_jian_ci", Value = new(4, 1), ParentPlacementIndex = 3 },
-                new() { Key = "card_form_jian_zhan", Value = new(5, 1), ParentPlacementIndex = 3 }
+                new() { Key = "card_form_ci", Value = new(1, 1), ParentPlacementIndex = 2 },
+                new() { Key = "card_form_zhan", Value = new(2, 1), ParentPlacementIndex = 2 },
+                new() { Key = "card_form_ge", Value = new(1, 2), ParentPlacementIndex = 2 },
+                new() { Key = "card_form_ci", Value = new(4, 1), ParentPlacementIndex = 3 },
+                new() { Key = "card_form_zhan", Value = new(5, 1), ParentPlacementIndex = 3 },
+                new() { Key = "card_form_ge", Value = new(4, 2), ParentPlacementIndex = 3 }
             ]
         });
         var b = BackpackModelTests.CreateNpc();
@@ -124,6 +126,8 @@ public static partial class TcaAlignmentTests
             a.Stats.SetBase("Affinity" + element, element == "Jin" ? 1 : 0);
 
         var swords = a.GetAllCards().Where(card => card.DefineId == "card_fabao_jian").ToArray();
+        var weapon = EquipDefineMgr.Instance.Get("long_sword");
+        var raisedAttack = weapon.AttackBase + 2;
 
         swords[0].BaseData.ManaCost = new() { [ElementType.Mu] = 1, [ElementType.Huo] = 1, [ElementType.Tu] = 1 };
         swords[1].BaseData.ManaCost = new() { [ElementType.None] = 1 };
@@ -134,8 +138,8 @@ public static partial class TcaAlignmentTests
             scene.PreStart();
             var owner = scene.GetCombatants()[a.Id];
             var swordCard = owner.GetField().Single(card => card.Id == swords[0].Id);
-            var thrust = owner.GetField().Single(card => card.ParentCardId == swords[0].Id && card.DefineId == "card_form_jian_ci");
-            var otherThrust = owner.GetField().Single(card => card.ParentCardId == swords[1].Id && card.DefineId == "card_form_jian_ci");
+            var thrust = owner.GetField().Single(card => card.ParentCardId == swords[0].Id && card.DefineId == "card_form_ci");
+            var otherThrust = owner.GetField().Single(card => card.ParentCardId == swords[1].Id && card.DefineId == "card_form_ci");
             var ctx = new APIContext { Caster = owner, SourceCard = thrust, Scene = scene };
             using var change = lua.GetFunction("ChangeEquipmentStat");
             using var affinity = lua.GetFunction("ChangeAffinity");
@@ -158,39 +162,41 @@ public static partial class TcaAlignmentTests
             Check(thrust.GetEquipData().GetStringValue("Element") == "Tu" &&
                 otherThrust.GetEquipData().GetStringValue("Element") == "None", "同一招式按绑定实例的配置费用取五行");
             var equip = swordCard.GetEquip();
-            Check(equip.Attack == 6 && equip.Defend == 2 && equip.Speed == 5.5f
-                && thrust.GetEquipData().GetValue("Attack", 0) == 6
-                && otherThrust.GetEquipData().GetValue("Attack", 0) == 4
-                && swords[0].GetEquip().Attack == 4, "攻防速只改指定装备实例和它绑定的招式");
+            Check(equip.Attack == raisedAttack && equip.Defend == weapon.DefendBase - 1 && equip.Speed == weapon.SpeedBase + 0.5f
+                && thrust.GetEquipData().GetValue("Attack", 0) == raisedAttack
+                && otherThrust.GetEquipData().GetValue("Attack", 0) == weapon.AttackBase
+                && swords[0].GetEquip().Attack == weapon.AttackBase, "攻防速只改指定装备实例和它绑定的招式");
             var secondBattle = CombatNpc.CreateCombatNpc(a);
             secondBattle.InitDeck();
-            Check(secondBattle.GetField().Single(card => card.Id == swordCard.Id).GetEquip().Attack == 4,
+            Check(secondBattle.GetField().Single(card => card.Id == swordCard.Id).GetEquip().Attack == weapon.AttackBase,
                 "同一个 NPC 的另一场战斗装备数值独立");
 
+            // 亲和验证留下的木灵元也能点亮通用招式，先清掉以隔离拼点样例。
+            owner.Backpack.RemoveMana(int.MaxValue, null, scene.Soul);
             var cell = owner.Backpack.EmptyCells()[0];
             owner.Backpack.PlaceMana(cell, ElementType.Jin);
             Check(owner.Backpack.TryAssign(cell, thrust), "为真实剑刺点亮");
             for (int i = 0; i < 10; i++) scene.Tick();
-            Check(owner.PendingSlot?.SourceCard == thrust && owner.PendingSlot.ContestValue == 6,
+            Check(owner.PendingSlot?.SourceCard == thrust && owner.PendingSlot.ContestValue == raisedAttack,
                 "真实剑刺 Lua 用修改后的装备攻击构造拼点");
             Check(owner.PendingSlot.Element.Equals(ElementType.Tu) &&
                 new DamageInfo(owner.PendingSlot).ElementType.Equals(ElementType.Tu), "受生终点从装备传入真实剑刺拼点及伤害");
             change.Call(ctx, "Self", "Attack", 1, 1);
-            Check(thrust.GetEquipData().GetValue("Attack", 0) == 7 && owner.PendingSlot.ContestValue == 6,
+            Check(thrust.GetEquipData().GetValue("Attack", 0) == raisedAttack + 1 && owner.PendingSlot.ContestValue == raisedAttack,
                 "已构造待发不随装备数值倒改");
             for (int i = 10; i < 50; i++) scene.Tick();
             Check(owner.Backpack.Round == 2 && owner.GetAffinity().Jin == 1 && owner.GetAffinity().Mu == 0
-                && thrust.GetEquipData().GetValue("Attack", 0) == 6, "亲和及装备修正按各自期限到期");
+                && thrust.GetEquipData().GetValue("Attack", 0) == raisedAttack, "亲和及装备修正按各自期限到期");
             owner.Backpack.Charge(50);
             scene.Tick();
-            Check(owner.Backpack.Round == 3 && thrust.GetEquipData().GetValue("Attack", 0) == 4, "装备持续两轮后恢复底值");
+            Check(owner.Backpack.Round == 3 && thrust.GetEquipData().GetValue("Attack", 0) == weapon.AttackBase, "装备持续两轮后恢复底值");
             a.UnassignCard(swords[0].Id);
             var parentOffField = CombatNpc.CreateCombatNpc(a);
             parentOffField.InitDeck();
             Check(parentOffField.GetField().All(card => card.Id != swords[0].Id) &&
-                parentOffField.GetField().Single(card => card.Id == thrust.Id).GetEquipData().GetValue("Attack", 0) == 4,
+                parentOffField.GetField().Single(card => card.Id == thrust.Id).GetEquipData().GetValue("Attack", 0) == weapon.AttackBase,
                 "仍装备但未上场的父卡为招式提供同场快照");
-            VerifyBoundDefenseContest(lua, a, b, swords);
+            VerifyBoundDefenseContest(a, b, swords);
             VerifyBoundElements(a, b, swords[1]);
         }
         finally
@@ -220,7 +226,7 @@ public static partial class TcaAlignmentTests
                 scene.PreStart();
                 scene.Start();
                 var owner = scene.GetCombatants()[a.Id];
-                var form = owner.GetField().Single(c => c.ParentCardId == sword.Id && c.DefineId == "card_form_jian_ci");
+                var form = owner.GetField().Single(c => c.ParentCardId == sword.Id && c.DefineId == "card_form_ci");
                 void Charge(CombatCard card, ElementType element)
                 {
                     var cell = owner.Backpack.EmptyCells()[0];
@@ -238,7 +244,7 @@ public static partial class TcaAlignmentTests
         }
     }
 
-    private static void VerifyBoundDefenseContest(Lua lua, Npc a, Npc b, Card[] swords)
+    private static void VerifyBoundDefenseContest(Npc a, Npc b, Card[] swords)
     {
         swords[0].GetEquip().Defend = 2;
         swords[1].GetEquip().Defend = 3;
@@ -251,22 +257,14 @@ public static partial class TcaAlignmentTests
                 scene.PreStart();
                 scene.Start();
                 var owner = scene.GetCombatants()[a.Id];
-                var form = owner.GetField().Single(c => c.ParentCardId == sword.Id && c.DefineId == "card_form_jian_ci");
-                var script = (LuaTable)lua.DoString("""
-                    return { Contest = function(self, ctx)
-                        Defend(ctx, "Block", self.m_Self:GetEquipData():GetObject("Defend"))
-                    end }
-                    """)[0];
-                form.env = script;
-                form.env["m_Self"] = form;
-                form.LuaHooks = LuaMgr.ScanLuaHooks(script);
+                var form = owner.GetField().Single(c => c.ParentCardId == sword.Id && c.DefineId == "card_form_ge");
                 owner.Backpack.RemoveMana(int.MaxValue, null, scene.Soul);
                 var cell = owner.Backpack.EmptyCells()[0];
                 owner.Backpack.PlaceMana(cell, ElementType.Jin);
                 Check(owner.Backpack.TryAssign(cell, form), "为独立防御样例点亮绑定招式");
-                for (int i = 0; i < 10; i++) scene.Tick();
+                for (int i = 0; i < 20; i++) scene.Tick();
                 Check(owner.PendingSlot?.SourceCard == form && owner.PendingSlot.ContestType == ContestType.Block
-                    && owner.PendingSlot.FinalValue == sword.GetEquip().Defend, "同一格招式读取各自装备的防御点数");
+                    && owner.PendingSlot.FinalValue == sword.GetEquip().Defend, "两张格分别读取各自装备的防御点数");
             }
             finally { scene.Cleanup(); }
         }

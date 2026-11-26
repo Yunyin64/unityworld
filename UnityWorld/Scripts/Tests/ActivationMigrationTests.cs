@@ -43,7 +43,7 @@ namespace UnityWorld.Tests
             for (int i = 0; i < cost.Value; i++)
             {
                 var cell = card.Owner.Backpack.EmptyCells()[0];
-                card.Owner.Backpack.PlaceMana(cell, cost.Key);
+                card.Owner.Backpack.PlaceMana(cell, cost.Key.Equals(ElementType.None) ? ElementType.Jin : cost.Key);
                 Check(card.Owner.Backpack.TryAssign(cell, card), "主动卡可蓄灵");
             }
         }
@@ -190,19 +190,22 @@ namespace UnityWorld.Tests
             var a = NewNpc();
             var b = NewNpc();
             var equipment = a.GainEquip("card_fabao_jian", "long_sword");
+            var weapon = EquipDefineMgr.Instance.Get("long_sword");
             a.EquipFaBao(equipment.Id);
             a.PlaceBackpackCardInternal(equipment.Id, 1, 0);
-            var thrust = a.GetAllCards().Single(c => c.ParentCardId == equipment.Id && c.DefineId == "card_form_jian_ci");
-            var slash = a.GetAllCards().Single(c => c.ParentCardId == equipment.Id && c.DefineId == "card_form_jian_zhan");
+            var forms = a.GetAllCards().Where(c => c.Id != equipment.Id && c.ParentCardId == equipment.Id).ToArray();
+            var thrust = forms.Single(c => c.DefineId == "card_form_ci");
+            var slash = forms.Single(c => c.DefineId == "card_form_zhan");
             a.PlaceBackpackCardInternal(thrust.Id, 1, 3);
             a.PlaceBackpackCardInternal(slash.Id, 1, 4);
+            a.PlaceBackpackCardInternal(forms.Single(c => c.DefineId == "card_form_ge").Id, 3, 4);
             var slashes = new[] { Place(a, "bp_attack", 1, 1), Place(a, "bp_attack", 1, 2) };
             var guards = Enumerable.Range(1, 4).Select(row => Place(b, "bp_guard", 1, row)).ToArray();
             var scene = Scene(a, b);
             var sword = Find(scene, a, equipment);
             var thrustCard = Find(scene, a, thrust);
             var slashCard = Find(scene, a, slash);
-            Check(thrustCard.GetEquipData().GetValue("Attack", 0) == 4 && thrustCard.GetEquipData().GetValue("Defend", 0) == 3,
+            Check(thrustCard.GetEquipData().GetValue("Attack", 0) == weapon.AttackBase && thrustCard.GetEquipData().GetValue("Defend", 0) == weapon.DefendBase,
                 "父法宝未激活时已绑定的招式可读真实攻防");
             foreach (var card in slashes.Select(c => Find(scene, a, c)).Concat(guards.Select(c => Find(scene, b, c))).Append(sword).Append(thrustCard).Append(slashCard))
                 Light(card);
@@ -212,16 +215,16 @@ namespace UnityWorld.Tests
             To(scene, 10);
             Check(sword.Phase == CombatCardPhase.Active && sword.UseCount == 1 && sword.LitCount == 0 && sword.Owner.PendingSlot == null,
                 "长剑满灵扫到末格开启被动，不产生拼点");
-            Check(thrustCard.GetEquipData().GetValue("Attack", 0) == 4 && thrustCard.GetEquipData().GetValue("Defend", 0) == 3,
+            Check(thrustCard.GetEquipData().GetValue("Attack", 0) == weapon.AttackBase && thrustCard.GetEquipData().GetValue("Defend", 0) == weapon.DefendBase,
                 "长剑激活后绑定招式仍读取同一份装备攻防");
             To(scene, 30);
-            var hit = new ContestData { SourceCard = thrustCard, ContestType = ContestType.Ci, ContestValue = 4, Element = ElementType.Jin };
+            var hit = new ContestData { SourceCard = thrustCard, ContestType = ContestType.Ci, ContestValue = weapon.AttackBase, Element = ElementType.Jin };
             sword.Owner.Straight(hit);
-            Check(hit.ContestValue == 4, "直击保留装备原点数");
+            Check(hit.ContestValue == weapon.AttackBase, "直击保留装备原点数");
             To(scene, 50);
             var values = scene.ReadPresentationEvents().Where(e => e.Contest != null)
                 .Select(e => e.Contest.Left.NpcId == a.Id ? e.Contest.Left.Value : e.Contest.Right.Value).ToArray();
-            Check(values.SequenceEqual(new[] { 6, 6, 5, 4 }), "两次斩击获胜只存一份加值，下一次实际招式对拼使用一次");
+            Check(values.SequenceEqual(new[] { 6, 6, weapon.AttackBase + 1, weapon.AttackBase }), "两次斩击获胜只存一份加值，下一次实际招式对拼使用一次");
             Check(thrustCard.UseCount == 1 && slashCard.UseCount == 1, "剑刺和剑斩分别发动");
             var victory = new APIContext { Caster = sword.Owner, SourceCard = slashCard };
             victory.Set("WinnerTypeName", "Zhan");
@@ -285,11 +288,13 @@ namespace UnityWorld.Tests
             var artifact = PassiveArtifact(a, 2, 0);
             var weapon = a.GainEquip("card_fabao_jian", "short_sword");
             a.EquipFaBao(weapon.Id);
-            var thrust = a.GetAllCards().Single(c => c.ParentCardId == weapon.Id && c.DefineId == "card_form_jian_ci");
-            a.PlaceBackpackCardInternal(thrust.Id, 3, 0);
+            var forms = a.GetAllCards().Where(c => c.Id != weapon.Id && c.ParentCardId == weapon.Id).ToArray();
+            var slash = forms.Single(c => c.DefineId == "card_form_zhan");
+            a.PlaceBackpackCardInternal(slash.Id, 3, 0);
+            a.PlaceBackpackCardInternal(forms.Single(c => c.DefineId == "card_form_jie").Id, 1, 4);
             var scene = Scene(a, b);
             var fabao = Find(scene, a, artifact);
-            var form = Find(scene, a, thrust);
+            var form = Find(scene, a, slash);
             var left = Find(scene, a, spell);
             Light(fabao);
             Light(form);

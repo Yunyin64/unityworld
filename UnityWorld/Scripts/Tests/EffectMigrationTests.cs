@@ -38,7 +38,7 @@ namespace UnityWorld.Tests
                 for (int i = 0; i < count; i++)
                 {
                     var cell = npc.Backpack.EmptyCells()[0];
-                    npc.Backpack.PlaceMana(cell, element);
+                    npc.Backpack.PlaceMana(cell, element.Equals(ElementType.None) ? ElementType.Jin : element);
                     Check(npc.Backpack.TryAssign(cell, card), "真实元素点亮");
                 }
         }
@@ -232,17 +232,19 @@ namespace UnityWorld.Tests
                 scene.Cleanup();
             }
 
-            var expected = new (string Form, string Weapon, ContestType Type, int Attack)[]
+            // 基础武器招式用通用灵元，怪物爪招仍按自己的定义用金灵元。
+            var expected = new (string Form, string Weapon, ContestType Type, ElementType Mana)[]
             {
-                ("card_form_jian_zhan", "long_sword", ContestType.Zhan, 4),
-                ("card_form_jian_ci", "long_sword", ContestType.Ci, 4),
-                ("card_form_jian_qi", "great_sword", ContestType.SheJi, 8),
-                ("card_form_strike", "monster_claw", ContestType.Ci, 2)
+                ("card_form_zhan", "long_sword", ContestType.Zhan, ElementType.None),
+                ("card_form_ci", "long_sword", ContestType.Ci, ElementType.None),
+                ("card_form_za", "great_sword", ContestType.Da, ElementType.None),
+                ("card_form_strike", "monster_claw", ContestType.Ci, ElementType.Jin)
             };
-            foreach (var (formId, weaponId, type, attack) in expected)
+            foreach (var (formId, weaponId, type, mana) in expected)
             {
                 var a = Npc(); var b = Npc();
                 var equipment = a.GainEquip("card_fabao_jian", weaponId);
+                var attack = EquipDefineMgr.Instance.Get(weaponId).AttackBase;
                 a.EquipFaBao(equipment.Id);
                 var forms = a.GetAllCards().Where(c => c.Id != equipment.Id && c.ParentCardId == equipment.Id).ToArray();
                 var selected = forms.Single(c => c.DefineId == formId);
@@ -252,8 +254,9 @@ namespace UnityWorld.Tests
                 var scene = Scene(a, b);
                 var owner = scene.GetCombatants()[a.Id];
                 var card = owner.GetField().Single(c => c.Id == selected.Id);
-                Check(card.GetSize() == 1 && card.GetManaCost().Count == 1 && card.GetManaCost()[ElementType.Jin] == 1,
-                    formId + "首批招式一格一金");
+                var cost = card.GetManaCost();
+                Check(card.GetSize() == 1 && cost.Count == 1 && cost.TryGetValue(mana, out int amount) && amount == 1,
+                    formId + "一格招式需要一份指定灵元");
                 Light(owner, card);
                 while (scene.CurrentTick < 10 && !scene.IsFinished) scene.Tick();
                 Check(owner.PendingSlot?.SourceCard == card && owner.PendingSlot.ContestValue == attack && owner.PendingSlot.ContestType == type,
@@ -263,8 +266,6 @@ namespace UnityWorld.Tests
                 Console.WriteLine($"MIGRATED_FORM_OK id={formId} weapon={weaponId} type={type} attack={attack}");
                 scene.Cleanup();
             }
-            Check(all.Count(c => c.Keywords.Contains("ZhaoShi") && c.CompatibilityStatus == "Unmigrated") == 11,
-                "其余十一张招式仍维持未迁移");
         }
     }
 }

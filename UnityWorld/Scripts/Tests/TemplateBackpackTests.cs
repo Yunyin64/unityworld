@@ -267,17 +267,22 @@ namespace UnityWorld.Tests
             {
                 var npc = NpcMgr.Instance.Assemble(definition);
                 var layout = npc.ValidateBackpackLayout();
-                Check(layout.Width == 5 && layout.Height == 5, definition.ID + "默认5x5");
-                Check(npc.GetBackpackCardPosition(npc.GetCombatCardSnapshot().MainGongFaCardId.Value) == new BackpackPosition(3, 3), definition.ID + "主功法中心");
+                var expectedLayout = CultivationDefineMgr.Instance.Get(definition.MainGongFaId).GetBackpackDefinition(1);
+                Check(layout.Width == expectedLayout.Width && layout.Height == expectedLayout.Height &&
+                    layout.GetValidCells().ToHashSet().SetEquals(expectedLayout.GetValidCells()), definition.ID + "装配空间符合主功法配置");
                 Check(npc.GetAllCards().Count == definition.InitCardPlacements.Count && npc.GetReserveIds().Count == 0, definition.ID + "仅显式卡上场");
                 var combat = CombatNpc.CreateCombatNpc(npc); combat.InitDeck();
+                Check(combat.Backpack.Width == expectedLayout.Width && combat.Backpack.Height == expectedLayout.Height &&
+                    combat.Backpack.GetCardCells(combat.Backpack.MainCardId).ToHashSet().SetEquals(expectedLayout.MainCardCells),
+                    definition.ID + "战斗空间和主功法占格符合配置");
                 Check(combat.GetField().Count == definition.InitCardPlacements.Count, definition.ID + "无需辅助布置的真实战斗快照");
                 if (definition.ID == "test_npc_a")
                 {
                     var sword = combat.GetField().Single(c => c.DefineId == "card_fabao_jian");
                     var forms = combat.GetField().Where(c => c.Id != sword.Id && c.ParentCardId == sword.Id).ToArray();
-                    Check(npc.GetFieldSize() == 13 && npc.GetSpMax() == 13 && combat.GetField().Count == 10 && forms.Length == 3,
-                        "武修十张卡入包，三招都归长剑，SP 13/13");
+                    var requiredForms = EquipDefineMgr.Instance.Get("long_sword").FormListBase;
+                    Check(forms.Select(c => c.DefineId).OrderBy(id => id, StringComparer.Ordinal)
+                        .SequenceEqual(requiredForms.OrderBy(id => id, StringComparer.Ordinal)), "示例武修的长剑招式全部绑定到同一装备实例");
                 }
                 var free = combat.Backpack.EmptyCells().ToHashSet();
                 Check(free.Any(c => free.Contains(new(c.X + 1, c.Y))), definition.ID + "保留完整两格伤口位置");

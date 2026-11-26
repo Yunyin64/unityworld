@@ -24,25 +24,30 @@ Check(!session.Refresh(Path.Combine(output, "missing")) && ReferenceEquals(previ
 
 var draft = TemplateDraft.New(catalog, NpcTypes.NpcType.Human, "personal_roundtrip");
 draft.NpcFields.DisplayName = "绑定往返样例";
+draft.NpcFields.InitStat["ShenShi"] = 11; // 主功法 1 格，两把长剑各 2 格，六张招式各 1 格。
 Check(draft.TryAddCard(catalog, "jin_fa", null, out _), "功法添加失败。");
 Check(draft.SetMainCard(catalog, draft.Entries[0].EntryId, out _), "主功法选择失败。"); draft.Entries[0].GongFaProgress = 25;
 Check(draft.TryAddCard(catalog, "card_fabao_jian", new(1, 1), out _), "第一把剑添加失败。");
 var firstSword = draft.Entries.Last(); firstSword.EquipDefineId = "long_sword";
 Check(draft.TryAddCard(catalog, "card_fabao_jian", new(3, 1), out _), "第二把剑添加失败。");
 var secondSword = draft.Entries.Last(); secondSword.EquipDefineId = "long_sword";
-Check(draft.TryAddCard(catalog, "card_form_jian_ci", new(1, 2), out _), "第一把剑的剑刺添加失败。");
+Check(draft.TryAddCard(catalog, "card_form_ci", new(1, 2), out _), "第一把剑的刺添加失败。");
 var child = draft.Entries.Last(); child.ParentEntryId = firstSword.EntryId;
-Check(draft.TryAddCard(catalog, "card_form_jian_zhan", new(2, 2), out _), "第一把剑的剑斩添加失败。");
+Check(draft.TryAddCard(catalog, "card_form_zhan", new(2, 2), out _), "第一把剑的斩添加失败。");
 draft.Entries.Last().ParentEntryId = firstSword.EntryId;
-Check(draft.TryAddCard(catalog, "card_form_jian_ci", new(3, 2), out _), "第二把剑的剑刺添加失败。");
+Check(draft.TryAddCard(catalog, "card_form_ge", new(1, 3), out _), "第一把剑的格添加失败。");
+draft.Entries.Last().ParentEntryId = firstSword.EntryId;
+Check(draft.TryAddCard(catalog, "card_form_ci", new(3, 2), out _), "第二把剑的刺添加失败。");
 draft.Entries.Last().ParentEntryId = secondSword.EntryId;
-Check(draft.TryAddCard(catalog, "card_form_jian_zhan", new(4, 2), out _), "第二把剑的剑斩添加失败。");
+Check(draft.TryAddCard(catalog, "card_form_zhan", new(4, 2), out _), "第二把剑的斩添加失败。");
+draft.Entries.Last().ParentEntryId = secondSword.EntryId;
+Check(draft.TryAddCard(catalog, "card_form_ge", new(4, 3), out _), "第二把剑的格添加失败。");
 draft.Entries.Last().ParentEntryId = secondSword.EntryId;
 Check(!draft.TryMoveCard(catalog, firstSword.EntryId, new(5, 1), out _) && firstSword.Position == new BackpackPosition(1, 1), "非法移动改变位置。");
 draft.Entries.Reverse();
 var report = TemplateDocumentConverter.Validate(draft, catalog);
 Check(report.IsValid, string.Join(";", report.Issues.Select(i => i.Message)));
-Check(report.Template.HpMax == 20 && report.Template.MpMax == 30 && report.Template.SpMax == 10, "默认属性预览错误。");
+Check(report.Template.HpMax == 20 && report.Template.MpMax == 30 && report.Template.OccupiedSp == 11 && report.Template.SpMax == 11, "属性或装备占格预览错误。");
 var store = new TemplateDraftStore(output, Path.Combine(root, "Data"));
 string savedPath = store.Save(draft); draft.MarkDirty(); store.Save(draft);
 Check(!draft.Dirty && File.Exists(savedPath + ".bak"), "保存未更新状态/保留备份。");
@@ -51,7 +56,7 @@ Check(loaded.Entries.Single(e => e.EntryId == child.EntryId).ParentEntryId == fi
 string exported = store.Export(loaded, catalog);
 var imported = TemplateDraftStore.ImportText(File.ReadAllText(exported)).Single().Draft!;
 var restored = TemplateDocumentConverter.ToDefinition(imported);
-int childIndex = restored.InitCardPlacements.FindIndex(p => p.Key == "card_form_jian_ci" && p.Value == new BackpackPosition(1, 2));
+int childIndex = restored.InitCardPlacements.FindIndex(p => p.Key == "card_form_ci" && p.Value == new BackpackPosition(1, 2));
 var parent = restored.InitCardPlacements[restored.InitCardPlacements[childIndex].ParentPlacementIndex!.Value - 1];
 Check(parent.Key == "card_fabao_jian" && parent.Value == new BackpackPosition(1, 1), "标准导出/导入串父绑定。");
 Check(restored.InitEquip.Count == 2 && restored.InitGongFa.Single().CurrentPoint == 25, "重复绑定或进度丢失。");

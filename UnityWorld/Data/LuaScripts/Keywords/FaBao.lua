@@ -1,4 +1,6 @@
 -- 法宝通过末格扫描开启或续期被动。卡脚本定义激活期内的实际效果。
+-- 法宝的效果都必须是“激活时，每当xxxxTrigger时，（可能有condition）触发XXXaction”，不能是“当激活时就XXXX”
+-- 法宝本质是一种，激活开关的被动触发器，不是一种以激活为开关的主动效果
 local FaBao = {}
 
 local function inEffect(phase)

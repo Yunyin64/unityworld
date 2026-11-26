@@ -3,7 +3,7 @@
     "ID": "ManaDrawCost",
     "DisplayName": "灵元抽取数",
     "Type": "Npc",
-    "DefaultValue": 5,
+    "DefaultValue": 3,
     "MinValue": 0,
     "MaxValue": 9999,
     "DisplayFormat": "Integer",

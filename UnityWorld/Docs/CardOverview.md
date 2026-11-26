@@ -2,20 +2,7 @@
 
 ## FormBase
 
-- **剑斩|card_form_jian_zhan**｜基础剑招，造成3点<武器>斩伤｜Size1 CD5 ZhaoShi｜灵耗:无
-- **剑刺|card_form_jian_ci**｜基础剑招，造成3点<武器>刺伤｜Size1 CD4.5 ZhaoShi｜灵耗:无
-- **剑气|card_form_jian_qi**｜基础剑招，造成3点<武器>射伤｜Size1 CD5.5 ZhaoShi｜灵耗:无
-- **刀斩|card_form_dao_zhan**｜基础刀招，造成4点<武器>斩伤｜Size1 CD6 ZhaoShi｜灵耗:无
-- **刀气|card_form_dao_qi**｜基础刀招，造成4点<武器>射伤｜Size1 CD6.5 ZhaoShi｜灵耗:无
-- **刀打|card_form_dao_da**｜基础刀招，造成3点<武器>打伤｜Size1 CD5.5 ZhaoShi｜灵耗:无
-- **拳打|card_form_quan_da**｜基础拳招，造成2点<武器>打伤｜Size1 CD4 ZhaoShi｜灵耗:无
-- **拳风|card_form_quan_feng**｜基础拳招，造成2点<武器>射伤｜Size1 CD4.5 ZhaoShi｜灵耗:无
-- **刺拳|card_form_ci_quan**｜基础拳招，造成2点<武器>刺伤｜Size1 CD3.5 ZhaoShi｜灵耗:无
-- **枪刺|card_form_qiang_ci**｜基础枪招，造成4点<武器>刺伤｜Size1 CD6 ZhaoShi｜灵耗:无
-- **枪扫|card_form_qiang_sao**｜基础枪招，造成3点<武器>斩伤｜Size1 CD5 ZhaoShi｜灵耗:无
-- **枪砸|card_form_qiang_za**｜基础枪招，造成4点<武器>打伤｜Size1 CD7 ZhaoShi｜灵耗:无
-- **拳挡|card_fist_block**｜格挡<武器>点｜Size1 CD3 ZhaoShi｜灵耗:无
-- **刀挡|card_blade_block**｜格挡<武器>点｜Size1 CD4 ZhaoShi｜灵耗:无
+招式的 ID、占格和灵耗见[现行招式定义](../Data/Card/FormBase.json)。各装备自带的招式见[装备定义](../Data/Equip/Equip_Template.json)的 `FormListBase`。
 
 ## HuoCardBase
 
