@@ -46,7 +46,7 @@
   {
     "ID": "card_huo_burst",
     "DisplayName": "爆燃",
-    "Desc": "己方背包充能10个基准Tick进度，不受加减速倍率影响",
+    "Desc": "立刻推进己方背包两行的扫描进度",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 100,

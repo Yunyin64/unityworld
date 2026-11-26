@@ -412,178 +412,52 @@
     "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"{BuffId}\", {Stacks}, -1)"
   },
   {
-    "ID": "action_self_heal_boost",
+    "ID": "action_adjust_heal",
     "APIType": "Action",
-    "DisplayName": "给自己持续治疗提高",
-    "Desc": "自己每次施加的治疗量提高{Stacks}点，首次施加期限为{Duration}",
+    "DisplayName": "治疗量调整",
+    "Desc": "{Purpose}{Stacks}点（有效期为{Lifetime}）",
     "FuncName": "AddNpcBuff",
     "Tags": ["Buff", "治疗"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 4,
     "ParamDefs": [
+      { "Name": "Purpose", "Type": "String", "Value": ["提高自己施加的治疗量", "降低对手受到的治疗量"], "Score": [0, 0] },
       { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
-      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+      { "Name": "Lifetime", "Type": "String", "Value": ["下一次", "本场", "30 Tick", "60 Tick", "90 Tick"], "Score": [0, 3, 1, 2, 3] }
     ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_HealOut_Changed\", {Stacks}, {Duration})"
+    "LuaTemplate": "AddNpcBuff(ctx, (\"{Purpose}\" == \"提高自己施加的治疗量\" and \"Self\" or \"Target\"), (\"{Purpose}\" == \"提高自己施加的治疗量\" and \"All_HealOut_Changed\" or \"All_HealIn_Changed\") .. (\"{Lifetime}\" == \"下一次\" and \"_Once\" or \"\"), (\"{Purpose}\" == \"提高自己施加的治疗量\" and {Stacks} or -{Stacks}), tonumber((\"{Lifetime}\"):match(\"^%d+\")) or -1)"
   },
   {
-    "ID": "action_self_heal_boost_once",
+    "ID": "action_adjust_shield_gain",
     "APIType": "Action",
-    "DisplayName": "给自己单次治疗提高",
-    "Desc": "自己首次施加的治疗量提高{Stacks}点",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "治疗"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_HealOut_Changed_Once\", {Stacks}, -1)"
-  },
-  {
-    "ID": "action_target_heal_received_weaken",
-    "APIType": "Action",
-    "DisplayName": "给对手持续受疗降低",
-    "Desc": "对手每次接受的治疗量降低{Stacks}点，首次施加期限为{Duration}",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "治疗"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
-      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_HealIn_Changed\", -{Stacks}, {Duration})"
-  },
-  {
-    "ID": "action_target_heal_received_weaken_once",
-    "APIType": "Action",
-    "DisplayName": "给对手单次受疗降低",
-    "Desc": "对手首次接受的治疗量降低{Stacks}点",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "治疗"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_HealIn_Changed_Once\", -{Stacks}, -1)"
-  },
-  {
-    "ID": "action_self_shield_gain_boost",
-    "APIType": "Action",
-    "DisplayName": "给自己持续灵盾获得量提高",
-    "Desc": "自己每次灵盾获得量提高{Stacks}点，首次施加期限为{Duration}",
+    "DisplayName": "灵盾获得量调整",
+    "Desc": "{Purpose}{Stacks}点（有效期为{Lifetime}）",
     "FuncName": "AddNpcBuff",
     "Tags": ["Buff", "灵盾"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 4,
     "ParamDefs": [
+      { "Name": "Purpose", "Type": "String", "Value": ["提高自己的灵盾获得量", "降低对手的灵盾获得量"], "Score": [0, 0] },
       { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
-      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+      { "Name": "Lifetime", "Type": "String", "Value": ["下一次", "本场", "30 Tick", "60 Tick", "90 Tick"], "Score": [0, 3, 1, 2, 3] }
     ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_ShieldGain_Changed\", {Stacks}, {Duration})"
+    "LuaTemplate": "AddNpcBuff(ctx, (\"{Purpose}\" == \"提高自己的灵盾获得量\" and \"Self\" or \"Target\"), \"All_ShieldGain_Changed\" .. (\"{Lifetime}\" == \"下一次\" and \"_Once\" or \"\"), (\"{Purpose}\" == \"提高自己的灵盾获得量\" and {Stacks} or -{Stacks}), tonumber((\"{Lifetime}\"):match(\"^%d+\")) or -1)"
   },
   {
-    "ID": "action_self_shield_gain_boost_once",
+    "ID": "action_adjust_mp_recovery",
     "APIType": "Action",
-    "DisplayName": "给自己单次灵盾获得量提高",
-    "Desc": "自己首次灵盾获得量提高{Stacks}点",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "灵盾"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_ShieldGain_Changed_Once\", {Stacks}, -1)"
-  },
-  {
-    "ID": "action_target_shield_gain_weaken",
-    "APIType": "Action",
-    "DisplayName": "给对手持续灵盾获得量降低",
-    "Desc": "对手每次灵盾获得量降低{Stacks}点，首次施加期限为{Duration}",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "灵盾"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
-      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_ShieldGain_Changed\", -{Stacks}, {Duration})"
-  },
-  {
-    "ID": "action_target_shield_gain_weaken_once",
-    "APIType": "Action",
-    "DisplayName": "给对手单次灵盾获得量降低",
-    "Desc": "对手首次灵盾获得量降低{Stacks}点",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "灵盾"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_ShieldGain_Changed_Once\", -{Stacks}, -1)"
-  },
-  {
-    "ID": "action_self_mp_recovery_boost",
-    "APIType": "Action",
-    "DisplayName": "给自己持续MP 回复量提高",
-    "Desc": "自己每次MP 回复量提高{Stacks}点，首次施加期限为{Duration}",
+    "DisplayName": "MP 回复量调整",
+    "Desc": "{Purpose}{Stacks}点（有效期为{Lifetime}）",
     "FuncName": "AddNpcBuff",
     "Tags": ["Buff", "MP"],
     "ConflictTags": [],
-    "Weight": 1,
+    "Weight": 4,
     "ParamDefs": [
+      { "Name": "Purpose", "Type": "String", "Value": ["提高自己的直接 MP 回复量", "降低对手的直接 MP 回复量"], "Score": [0, 0] },
       { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
-      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
+      { "Name": "Lifetime", "Type": "String", "Value": ["下一次", "本场", "30 Tick", "60 Tick", "90 Tick"], "Score": [0, 3, 1, 2, 3] }
     ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_MpRecovery_Changed\", {Stacks}, {Duration})"
-  },
-  {
-    "ID": "action_self_mp_recovery_boost_once",
-    "APIType": "Action",
-    "DisplayName": "给自己单次MP 回复量提高",
-    "Desc": "自己首次MP 回复量提高{Stacks}点",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "MP"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Self\", \"All_MpRecovery_Changed_Once\", {Stacks}, -1)"
-  },
-  {
-    "ID": "action_target_mp_recovery_weaken",
-    "APIType": "Action",
-    "DisplayName": "给对手持续MP 回复量降低",
-    "Desc": "对手每次MP 回复量降低{Stacks}点，首次施加期限为{Duration}",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "MP"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] },
-      { "Name": "Duration", "Type": "Float", "Value": [-1, 30, 60, 90], "Score": [3, 1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_MpRecovery_Changed\", -{Stacks}, {Duration})"
-  },
-  {
-    "ID": "action_target_mp_recovery_weaken_once",
-    "APIType": "Action",
-    "DisplayName": "给对手单次MP 回复量降低",
-    "Desc": "对手首次MP 回复量降低{Stacks}点",
-    "FuncName": "AddNpcBuff",
-    "Tags": ["Buff", "MP"],
-    "ConflictTags": [],
-    "Weight": 1,
-    "ParamDefs": [
-      { "Name": "Stacks", "Type": "Int", "Value": [1, 2, 3], "Score": [1, 2, 3] }
-    ],
-    "LuaTemplate": "AddNpcBuff(ctx, \"Target\", \"All_MpRecovery_Changed_Once\", -{Stacks}, -1)"
+    "LuaTemplate": "AddNpcBuff(ctx, (\"{Purpose}\" == \"提高自己的直接 MP 回复量\" and \"Self\" or \"Target\"), \"All_MpRecovery_Changed\" .. (\"{Lifetime}\" == \"下一次\" and \"_Once\" or \"\"), (\"{Purpose}\" == \"提高自己的直接 MP 回复量\" and {Stacks} or -{Stacks}), tonumber((\"{Lifetime}\"):match(\"^%d+\")) or -1)"
   },
   {
     "ID": "action_add_stat_buff",

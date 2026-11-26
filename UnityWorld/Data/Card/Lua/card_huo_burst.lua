@@ -1,6 +1,6 @@
--- 己方背包增加10个基准Tick进度，不受加减速缩放。
+-- 爆燃。按默认行距增加两行扫描进度。
 local card = setmetatable({}, { __index = CardBase })
 function card:Apply(ctx)
-    Charge(ctx, "Self", 10)
+    Charge(ctx, "Self", 20)
 end
 return card

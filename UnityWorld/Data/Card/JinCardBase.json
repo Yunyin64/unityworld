@@ -25,22 +25,24 @@
   {
     "ID": "card_jin_charge",
     "DisplayName": "加速",
-    "Desc": "己方背包充能10个基准Tick（旧空费用待定，未迁移禁用）",
+    "Desc": "己方背包以双倍速度扫描，持续1秒",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
     "Keywords": [
       "FaShu"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 1
+    },
     "Tags": [
       "金",
       "辅助",
-      "充能"
+      "加速"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_jin_heavy_slash",
