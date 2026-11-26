@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from benchmark import DEFAULT_LIMIT, HERE, read_json, summarize, validate_plan, write_json
+from benchmark import DEFAULT_LIMIT, HERE, METRICS, item_labels, read_json, summarize, validate_plan, write_json
 
 
 class BenchmarkTests(unittest.TestCase):
@@ -32,12 +32,17 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(DEFAULT_LIMIT, 1000)
         sample = {"id": "damageOut_50", "side": "subject", "metric": "damageOutHp", "at": 50}
         first = {"id": "firstWoundTick", "side": "subject", "metric": "firstWoundTick"}
-        validate_plan([sample, first])
+        card = {"id": "use", "side": "subject", "metric": "cardUses", "at": "finish", "cardId": "card_form_da"}
+        validate_plan([sample, first, card])
+        self.assertEqual(item_labels([card], METRICS, {"card_form_da": "打 | 重击\n试装"})["use"],
+                         "待测方，终局，卡牌「打 \\| 重击 试装」的累计发动次数")
+        self.assertEqual(item_labels([card], METRICS)["use"], "待测方，终局，所选卡牌的累计发动次数")
         for bad in ([sample, sample], [dict(sample, at=-1)], [dict(sample, at=2**31)],
                     [dict(sample, at=0.5)], [dict(sample, at=True)], [dict(sample, at="50")],
                     [dict(sample, id="seed")], [dict(sample, side="other")],
                     [dict(sample, metric="unknown")], [dict(first, at=50)],
-                    [first, dict(first, id="another")]):
+                    [first, dict(first, id="another")], [dict(sample, cardId="card_form_da")],
+                    [dict(card, cardId=None)], [dict(card, cardId="")], [dict(card, cardId="bad|ID")]):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 validate_plan(bad)
 
@@ -84,6 +89,32 @@ class BenchmarkTests(unittest.TestCase):
             self.assertIn("| paid | 待测方，第 50 Tick，发动卡牌实付的各色灵元，合计 | 1 | 0 | 17 |", report)
             self.assertIn("| paid | 待测方，第 50 Tick，发动卡牌实付的各色灵元，fire | 1 | 0 | 17 |", report)
             self.assertIn("| FinsihTick | 战斗结束 Tick | 66.24 | 75 | 0 |", report)
+
+    def test_rebuild_batch_without_individual_markdown(self):
+        plan = [{"id": "damage", "side": "subject", "metric": "damageOutHp", "at": 50}]
+        rows = {
+            1: {"damage": "0", "FinsihTick": "50", "Finishreson": "TurnLimitReached"},
+            2: {"damage": None, "FinsihTick": "25", "Finishreson": "AllDefeated"},
+            3: {"damage": None, "FinsihTick": "10", "Finishreson": "Error"},
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            manifest = directory / "manifest.json"
+            write_json(manifest, {"formatVersion": 3, "subject": "a", "opponent": "b", "plan": plan,
+                                  "seeds": list(rows), "errors": {"3": "failed"}})
+            self.assertFalse(summarize(manifest, rows))
+            markdown_path = directory / "summary.md"
+            summary_path = directory / "summary.json"
+            self.assertEqual(list(directory.glob("*.md")), [markdown_path])
+            markdown = markdown_path.read_bytes()
+            summary = summary_path.read_bytes()
+            self.assertIn("| damage | 待测方，第 50 Tick，累计对敌扣血 | 0 | 0 | 1 |",
+                          markdown.decode("utf-8").splitlines())
+            self.assertIn("`AllDefeated` 1 场，`TurnLimitReached` 1 场", markdown.decode("utf-8"))
+            self.assertEqual(read_json(summary_path)["samples"][2]["rows"], rows[3])
+            self.assertFalse(summarize(manifest))
+            self.assertEqual(markdown_path.read_bytes(), markdown)
+            self.assertEqual(summary_path.read_bytes(), summary)
 
 
 if __name__ == "__main__":

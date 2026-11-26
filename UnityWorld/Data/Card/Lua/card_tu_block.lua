@@ -1,6 +1,5 @@
 -- ══════════════════════════════════════════════════════════════
--- 格挡
--- 土系格挡4点
+-- 格挡。发起4点格，胜出奖励由 JSON 配置的 Block 关键词结算。
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -8,7 +7,7 @@ local card = setmetatable({}, { __index = CardBase })
 card.CardData = {
     Size = 1,
     Cooldown = 3,
-    ManaCost = {},
+    ManaCost = { Tu = 1 },
 }
 
 card.Keywords = {}

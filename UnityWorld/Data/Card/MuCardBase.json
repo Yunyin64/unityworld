@@ -1,13 +1,14 @@
 [
   {
     "ID": "card_mu_stab",
-    "DisplayName": "刺击",
-    "Desc": "木系刺击，造成4点木刺伤害",
+    "DisplayName": "木突刺",
+    "Desc": "发起4点木系刺击拼点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Ci"
     ],
     "ManaCost": {
       "Mu": 1
@@ -17,29 +18,31 @@
       "刺",
       "攻击"
     ],
-    "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_mu_convert",
     "DisplayName": "转化",
-    "Desc": "将至多1个任意灵元转化回蓝条MP",
+    "Desc": "回收己方格上至多1个任意元素的未分配灵元，转为等量MP",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 120,
     "Keywords": [
       "FaShu"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Mu": 1
+    },
     "Tags": [
       "木",
       "辅助",
       "转化"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_mu_haste",
@@ -66,7 +69,7 @@
   {
     "ID": "card_mu_vulnerable",
     "DisplayName": "易伤",
-    "Desc": "给敌方施加1层易伤，下次受到伤害时额外承受伤害",
+    "Desc": "敌方下一次承受的伤害提高1点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
@@ -82,13 +85,13 @@
       "易伤"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_mu_heal_wound",
     "DisplayName": "疗愈",
-    "Desc": "移除己方随机一张Size为1的伤势卡",
+    "Desc": "随机移除己方一张恰好占1格的伤势卡",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 150,
@@ -104,7 +107,7 @@
       "疗伤"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   }
 ]

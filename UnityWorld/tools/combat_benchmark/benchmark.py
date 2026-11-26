@@ -1,4 +1,4 @@
-"""独立进程驱动单场后端，按 Markdown 原始读数汇总同批构筑。"""
+"""独立进程驱动单场后端，汇总同批构筑的测量结果。"""
 import argparse
 import hashlib
 import json
@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import uuid
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from statistics import mean, median
@@ -43,13 +44,21 @@ METRICS = {
 FIRST = {"firstWoundTick", "firstHpLossTick", "firstCardUseTick"}
 
 
-def item_labels(plan, dictionary):
+def item_labels(plan, dictionary, card_names=None):
     labels = FIXED_LABELS.copy()
+    card_names = card_names or {}
     for item in plan:
         side = "待测方" if item["side"] == "subject" else "对手"
         at = item.get("at")
         timing = "" if at is None else ("终局，" if at == "finish" else f"第 {at} Tick，")
-        labels[item["id"]] = f"{side}，{timing}{dictionary[item['metric']][1]}"
+        description = dictionary[item["metric"]][1]
+        if "cardId" in item:
+            name = (card_names.get(item["cardId"]) or "").strip()
+            # 显示名可以含标点或换行，保留 Markdown 表格的列结构。
+            name = " ".join(name.splitlines()).replace("\\", "\\\\").replace("|", "\\|")
+            card = f"卡牌「{name}」" if name else "所选卡牌"
+            description = f"{card}的累计发动次数"
+        labels[item["id"]] = f"{side}，{timing}{description}"
     return labels
 
 
@@ -87,6 +96,12 @@ def validate_plan(plan):
         keys.add(key)
         if side not in ("subject", "opponent") or metric not in METRICS:
             raise ValueError(f"{key} 的观察方或指标无效：{side}, {metric}")
+        if "cardId" in item:
+            card_id = item["cardId"]
+            if metric != "cardUses" or not isinstance(card_id, str) or not card_id.strip() or any(
+                char in card_id for char in "|\r\n"
+            ):
+                raise ValueError(f"{key} 仅可在 cardUses 上指定有效的卡牌 ID")
         if metric in FIRST:
             if "at" in item or (side, metric) in first_events:
                 raise ValueError(f"{key} 必须是该角色唯一的首次事件且不指定 at")
@@ -140,29 +155,45 @@ def summary_row(key, description, values, null_count):
     return f"| {key} | {description} | {average} | {middle} | {null_count} |"
 
 
-def summarize(manifest_path):
+def read_markdown_sample(path):
+    if not path.exists():
+        return {}
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if lines[:2] != ["| 条目ID | 值 |", "| --- | --- |"]:
+        raise ValueError(f"快照表头无效：{path}")
+    rows = {}
+    for line in lines[2:]:
+        key, value = line.removeprefix("| ").removesuffix(" |").split(" | ", 1)
+        # ID 的合法字符不含全角括号，旧报告可能在 ID 后附有说明。
+        key = key.partition("（")[0]
+        if key in rows:
+            raise ValueError(f"重复的快照键 {key}：{path}")
+        rows[key] = None if value == "null" else value
+    return rows
+
+
+def summarize(manifest_path, batch_rows=None):
     manifest = read_json(manifest_path)
     labels = manifest.get("labels") or item_labels(manifest["plan"], manifest.get("metricDictionary", METRICS))
     directory = manifest_path.parent
+    summary_path = directory / "summary.json"
+    if batch_rows is None and manifest.get("formatVersion", 0) >= 3:
+        batch_rows = {entry["seed"]: entry["rows"] for entry in read_json(summary_path)["samples"]}
+
     samples = []
     for seed in manifest["seeds"]:
-        path = directory / f"seed-{seed}.md"
         error = manifest["errors"].get(str(seed))
-        rows = {}
-        if path.exists():
-            lines = path.read_text(encoding="utf-8").splitlines()
-            if lines[:2] != ["| 条目ID | 值 |", "| --- | --- |"]:
-                raise ValueError(f"快照表头无效：{path}")
-            for line in lines[2:]:
-                key, value = line.removeprefix("| ").removesuffix(" |").split(" | ", 1)
-                # ID 的合法字符不含全角括号，兼容早期只有 ID 的两列快照。
-                key = key.partition("（")[0]
-                if key in rows:
-                    raise ValueError(f"重复的快照键 {key}：{path}")
-                rows[key] = value
+        file = None
+        if batch_rows is None:
+            path = directory / f"seed-{seed}.md"
+            rows = read_markdown_sample(path)
+            if rows:
+                file = path.name
+        else:
+            rows = batch_rows[seed]
         if not error and (not rows or rows.get("Finishreson") == "Error"):
             error = "缺少有效结算"
-        samples.append((seed, path.name if rows else None, rows, error))
+        samples.append((seed, file, rows, error))
 
     failed = sum(bool(sample[3]) for sample in samples)
     successful = len(samples) - failed
@@ -170,9 +201,15 @@ def summarize(manifest_path):
         "# 战斗批次汇总", "",
         f"待测方 `{manifest['subject']}`，对手 `{manifest['opponent']}`。"
         f"共 {len(samples)} 场，成功 {successful} 场，失败 {failed} 场。", "",
+    ]
+    end_reasons = Counter(rows["Finishreson"] for _, _, rows, error in samples if not error)
+    if end_reasons:
+        reasons = "，".join(f"`{reason}` {count} 场" for reason, count in sorted(end_reasons.items()))
+        markdown.extend([f"按结束原因统计，{reasons}。", ""])
+    markdown.extend([
         "| 条目ID | 描述 | 平均数 | 中位数 | null个数 |",
         "| --- | --- | ---: | ---: | ---: |",
-    ]
+    ])
     metrics = {}
     for item in manifest["plan"]:
         key, metric = item["id"], item["metric"]
@@ -186,11 +223,11 @@ def summarize(manifest_path):
             if type(at) is int and int(rows["FinsihTick"]) < at:
                 continue
             reached += 1
-            if rows[key] != "null":
+            if rows[key] is not None:
                 values.append(json.loads(rows[key]))
         entry = {"planned": len(samples), "failed": failed, "reached": reached,
                  "endedEarlier": len(samples) - failed - reached}
-        # 成功局中，未到采样点和首次事件未发生都对应单场表中的 null。
+        # 成功局中，未到采样点和首次事件未发生都记为 null。
         null_count = successful - len(values)
         if metric == "manaSpentByElement":
             elements = sorted({e for paid in values for e in paid})
@@ -207,23 +244,26 @@ def summarize(manifest_path):
         if metric in FIRST:
             entry.update(occurred=len(values), denominator=reached,
                          rate=len(values) / reached if reached else None)
-            # 定点比较只纳入到达该 Tick 的成功局；首次事件仍然只在 Markdown 写一次。
+            # 定点比较只纳入到达该 Tick 的成功局。首次事件在汇报中只列一行。
             entry["byTick"] = {}
             for tick in sorted({m["at"] for m in manifest["plan"] if type(m.get("at")) is int}):
                 eligible = [rows[key] for _, _, rows, error in samples
                             if not error and int(rows["FinsihTick"]) >= tick]
-                observed = [int(value) for value in eligible if value != "null" and int(value) <= tick]
+                observed = [int(value) for value in eligible if value is not None and int(value) <= tick]
                 entry["byTick"][str(tick)] = {"occurred": len(observed), "denominator": len(eligible),
                                               "rate": len(observed) / len(eligible) if eligible else None,
                                               "distribution": distribution(observed)}
         metrics[key] = entry
-    report = {"manifest": manifest_path.name, "metrics": metrics, "samples": [
-        {"seed": seed, "file": file, "error": error, "end": rows.get("Finishreson")}
-        for seed, file, rows, error in samples]}
+    report = {"manifest": manifest_path.name, "metrics": metrics, "samples": []}
+    for seed, file, rows, error in samples:
+        entry = {"seed": seed, "file": file, "error": error, "end": rows.get("Finishreson")}
+        if batch_rows is not None:
+            entry["rows"] = rows
+        report["samples"].append(entry)
     finish_ticks = [int(rows["FinsihTick"]) for _, _, rows, error in samples if not error]
     markdown.append(summary_row("FinsihTick", labels["FinsihTick"], finish_ticks, 0))
     markdown.extend(["", "仅统计成功场次。平均数和中位数取有读数的场次，保留至多两位小数。"])
-    write_json(directory / "summary.json", report)
+    write_json(summary_path, report)
     write_text(directory / "summary.md", "\n".join(markdown) + "\n")
     return failed == 0
 
@@ -257,17 +297,22 @@ def run(args):
         hashes = versions(frozen, binary.parent, frozen / fixture.name)
         if hashes != versions(ROOT, BIN, fixture) or read_json(args.plan) != plan:
             raise ValueError("冻结输入期间数据版本发生变化")
-        catalog = subprocess.run(["dotnet", str(binary), "--combat-benchmark-catalog", str(frozen)],
-                                 capture_output=True, encoding="utf-8")
+        catalog_command = ["dotnet", str(binary), "--combat-benchmark-catalog", str(frozen)]
+        include_card_names = any("cardId" in item for item in plan)
+        if include_card_names:
+            catalog_command.append("--card-names")
+        catalog = subprocess.run(catalog_command, capture_output=True, encoding="utf-8")
         if catalog.returncode:
-            raise ValueError(f"读取角色目录失败：{catalog.stderr}")
-        templates = json.loads(catalog.stdout)
-        manifest = {"formatVersion": 2, "metricsVersion": 2,
+            raise ValueError(f"读取基准目录失败：{catalog.stderr}")
+        definitions = json.loads(catalog.stdout)
+        templates = definitions["templates"] if include_card_names else definitions
+        card_names = definitions["cardNames"] if include_card_names else {}
+        manifest = {"formatVersion": 3, "metricsVersion": 2,
                     "subject": resolve_template(templates, args.subject, False),
                     "opponent": resolve_template(templates, args.opponent, True),
                     "worldSeed": args.world_seed, "seeds": seeds, "limit": args.limit, "plan": plan,
                     "order": ["subject", "opponent"], "hashes": hashes,
-                    "metricDictionary": METRICS, "labels": item_labels(plan, METRICS), "errors": {}}
+                    "metricDictionary": METRICS, "labels": item_labels(plan, METRICS, card_names), "errors": {}}
         manifest["dummyOverrides"] = {"ManaDrawCost": 0} if manifest["opponent"] == "training_dummy" else {}
         manifest_path = directory / "manifest.json"
         write_json(manifest_path, manifest)
@@ -275,23 +320,29 @@ def run(args):
         print(f"基准批次 {directory}", flush=True)
 
         def sample(seed):
+            path = frozen / f"seed-{seed}.json"
             command = ["dotnet", str(binary), "--combat-benchmark-sample", str(frozen),
-                       str(frozen / "manifest.json"), str(frozen / fixture.name), str(seed), str(directory / f"seed-{seed}.md")]
+                       str(frozen / "manifest.json"), str(frozen / fixture.name), str(seed), str(path), "--json"]
             completed = subprocess.run(command, capture_output=True, encoding="utf-8", errors="replace")
+            error = None
             if completed.returncode:
-                return seed, completed.stderr.strip() or f"退出码 {completed.returncode}"
-            return seed, None
+                error = completed.stderr.strip() or f"退出码 {completed.returncode}"
+            try:
+                return seed, read_json(path) if path.is_file() else {}, error
+            except (OSError, ValueError) as exc:
+                return seed, {}, error or f"读取单场读数失败：{exc}"
 
+        batch_rows = {}
         with ThreadPoolExecutor(max_workers=min(4, os.cpu_count() or 1)) as workers:
-            for seed, error in workers.map(sample, seeds):
+            for seed, rows, error in workers.map(sample, seeds):
+                batch_rows[seed] = rows
                 if error:
                     manifest["errors"][str(seed)] = error
         if hashes != versions(ROOT, BIN, fixture) or read_json(args.plan) != plan:
             manifest["inputChanged"] = True
         write_json(manifest_path, manifest)
-    success = summarize(manifest_path)
+    success = summarize(manifest_path, batch_rows)
     print(f"汇报 {directory / 'summary.md'}")
-    print(f"汇总 {directory / 'summary.json'}")
     if manifest.get("inputChanged"):
         raise ValueError("批次运行期间工作区输入已变化，报告仅对应冻结版本")
     return success
@@ -306,7 +357,7 @@ if __name__ == "__main__":
     parser.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
     parser.add_argument("--plan", type=Path, default=HERE / "dummy-baseline.json")
     parser.add_argument("--output", type=Path, default=ROOT / "Reports/CombatBenchmarks")
-    parser.add_argument("--summarize", type=Path, help="仅从批次清单及 Markdown 重建汇总")
+    parser.add_argument("--summarize", type=Path, help="从批次清单和已保存的读数重建汇总")
     options = parser.parse_args()
     try:
         success = summarize(options.summarize) if options.summarize else run(options)

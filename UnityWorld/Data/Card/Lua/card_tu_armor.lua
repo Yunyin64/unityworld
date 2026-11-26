@@ -1,6 +1,5 @@
 -- ══════════════════════════════════════════════════════════════
--- 土盾
--- 给自身添加1层护甲，受到伤害时先减去护甲值
+-- 土盾。获得1点护甲，减免下一次来自敌方的伤害。
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -17,7 +16,7 @@ card.Keywords = {}
 --end
 
 function card:Apply(ctx)
-    AddNpcBuff(ctx, "Self", "buff_armor", 1,-1)
+    AddArmor(ctx, "Self", 1)
 end
 
 --function card:Tick(ctx)

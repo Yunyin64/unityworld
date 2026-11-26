@@ -11,15 +11,28 @@ using UnityWorld.Game.World;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-// 基准批次先用正式定义加载器解析模板 ID 和显示名，包括 Mod 提供的配置。
-if (args.Length == 2 && args[0] == "--combat-benchmark-catalog")
+// 基准批次先用正式定义加载器解析模板和卡牌显示名，包括 Mod 提供的配置。
+if (args.Length is 2 or 3 && args[0] == "--combat-benchmark-catalog"
+    && (args.Length == 2 || args[2] == "--card-names"))
 {
     UnityWorld.Core.LogMgr.MinLevel = UnityWorld.Core.LogLevel.Error;
     var logger = new UnityWorld.Core.LogMgr(0);
     logger.Init();
-    var templates = new NpcDefineMgr(Path.Combine(args[1], "Data", "Npc"));
-    templates.Load();
-    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(templates.GetAll().Select(npc => new { npc.ID, npc.DisplayName })));
+    var dataDir = Path.Combine(args[1], "Data");
+    var npcDefines = new NpcDefineMgr(Path.Combine(dataDir, "Npc"));
+    npcDefines.Load();
+    var templates = npcDefines.GetAll().Select(npc => new { npc.ID, npc.DisplayName });
+    if (args.Length == 3)
+    {
+        var cards = new CardDefineMgr(Path.Combine(dataDir, "Card"));
+        cards.Load();
+        var cardNames = cards.GetAll().ToDictionary(card => card.ID, card => card.DisplayName);
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new { templates, cardNames }));
+    }
+    else
+    {
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(templates));
+    }
     Environment.ExitCode = UnityWorld.Core.LogMgr.History.Count == 0 ? 0 : 1;
     logger.End();
     return;

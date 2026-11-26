@@ -100,14 +100,14 @@ internal static class CombatBenchmarkChecks
             }
             finally { scene.Cleanup(); }
             ArtifactPayments(dummy);
-            OfflineExport();
+            OfflineExport(dummy.ID);
             Console.WriteLine("COMBAT_BENCHMARK_CHECKS_OK");
         }
         finally { WorldMgr.End(); }
     }
 
     // 以相同八行输入分别开关诊断链；输出必须逐字节一致。
-    private static void OfflineExport()
+    private static void OfflineExport(string opponentId)
     {
         var folder = Directory.CreateTempSubdirectory("combat-snapshot-check-").FullName;
         var logger = LogMgr.Instance;
@@ -121,8 +121,9 @@ internal static class CombatBenchmarkChecks
             var rows = logger.OfflineSnapshot;
             rows.Clear();
             rows.Add("seed", "1");
-            rows.Add("NpcA", "roster_qu_ze");
-            rows.Add("NpcB", "training_dummy");
+            var subjectId = nameof(CombatBenchmarkChecks);
+            rows.Add("NpcA", subjectId);
+            rows.Add("NpcB", opponentId);
             rows.Add("damageOut_50", "12");
             rows.Add("damageOut_100", null);
             rows.Add("firstWoundTick", "75");
@@ -139,8 +140,8 @@ internal static class CombatBenchmarkChecks
                 logger.ExportOfflineSnapshot(path);
                 Check(LogMgr.History.Count == historyCount && callbacks.Count == callbackCount, "快照进入诊断通道");
                 Check(File.ReadAllLines(path).SequenceEqual(new[] {
-                    "| 条目ID | 值 |", "| --- | --- |", "| seed | 1 |", "| NpcA | roster_qu_ze |",
-                    "| NpcB | training_dummy |", "| damageOut_50 | 12 |", "| damageOut_100 | null |",
+                    "| 条目ID | 值 |", "| --- | --- |", "| seed | 1 |", $"| NpcA | {subjectId} |",
+                    $"| NpcB | {opponentId} |", "| damageOut_50 | 12 |", "| damageOut_100 | null |",
                     "| firstWoundTick | 75 |", "| FinsihTick | 75 |", "| Finishreson | AllDefeated |" }), "八行报告格式");
             }
             Check(output.ToString().Contains("ordinary-diagnostic") && !output.ToString().Contains("damageOut_50"),
@@ -172,9 +173,19 @@ internal static class CombatBenchmarkChecks
     private static void ArtifactPayments(NpcDefine dummy)
     {
         var b = NpcMgr.Instance.Assemble(dummy);
-        dummy.InitCardPlacements.Add(new InitCardPlacement { Key = "roster_awl_charm", Value = new BackpackPosition(1, 1) });
         var a = NpcMgr.Instance.Assemble(dummy);
         a.Stats.AddModifier("ManaDrawCost", StatModifier.Override(0, "check"));
+        // 自检法宝只需要法宝规则和一枚金灵，直接构造并摆入背包。
+        var artifactCard = CardMgr.Instance.InstantiateFromDefine(new CardDefine
+        {
+            ID = nameof(CombatBenchmarkChecks) + "_" + nameof(ArtifactPayments),
+            Size = 1,
+            Keywords = ["FaBao"],
+            ManaCost = new() { [nameof(ElementType.Jin)] = 1 },
+            ProducesContest = false
+        });
+        a.GainCard(artifactCard);
+        a.PlaceBackpackCard(artifactCard.Id, 1, 1);
         var scene = new CombatScene();
         scene.Init(2, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 60);
         try
@@ -193,7 +204,7 @@ internal static class CombatBenchmarkChecks
             scene.PreStart();
             scene.Start();
             var owner = scene.GetCombatants()[a.Id];
-            var artifact = owner.GetField().Single(card => card.DefineId == "roster_awl_charm");
+            var artifact = owner.GetField().Single(card => card.Id == artifactCard.Id);
             for (int charge = 0; charge < 2; charge++)
             {
                 var cell = owner.Backpack.EmptyCells()[0];

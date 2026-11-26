@@ -2,7 +2,7 @@
   {
     "ID": "card_huo_shot",
     "DisplayName": "射击",
-    "Desc": "火系射击，造成5点火射伤害",
+    "Desc": "发起5点火系射击拼点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 60,
@@ -68,24 +68,25 @@
   {
     "ID": "card_huo_spear",
     "DisplayName": "火枪",
-    "Desc": "火系刺击，造成8点火刺伤害",
+    "Desc": "发起8点火系刺击拼点",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 150,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Ci"
     ],
     "ManaCost": {
-      "Huo": 1
+      "Huo": 2
     },
     "Tags": [
       "火",
       "刺",
       "攻击"
     ],
-    "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_huo_self_burn",
@@ -133,21 +134,23 @@
   {
     "ID": "card_huo_incinerate",
     "DisplayName": "焚烧",
-    "Desc": "转化1点木灵元回蓝1",
+    "Desc": "回收己方格上至多1个未分配的木灵元，转为等量MP",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 40,
     "Keywords": [
       "FaShu"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Huo": 1
+    },
     "Tags": [
       "火",
       "辅助",
       "转化"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   }
 ]

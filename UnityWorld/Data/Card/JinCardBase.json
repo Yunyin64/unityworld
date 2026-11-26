@@ -1,8 +1,8 @@
 [
   {
     "ID": "card_jin_slash",
-    "DisplayName": "斩击",
-    "Desc": "金系斩击，造成2点金斩伤害",
+    "DisplayName": "金锋斩",
+    "Desc": "发起2点金系斩击拼点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 20,
@@ -45,7 +45,7 @@
   {
     "ID": "card_jin_heavy_slash",
     "DisplayName": "重斩",
-    "Desc": "金系重斩，造成6点金斩伤害",
+    "Desc": "发起6点金系斩击拼点",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 40,
@@ -89,26 +89,28 @@
   {
     "ID": "card_jin_armor_break",
     "DisplayName": "破甲",
-    "Desc": "消除对方5点护盾值",
+    "Desc": "消除敌方至多5点灵盾",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 50,
     "Keywords": [
       "FaShu"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 2
+    },
     "Tags": [
       "金",
       "破甲"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_jin_armor",
     "DisplayName": "金甲",
-    "Desc": "展开12点金系护盾",
+    "Desc": "发起12点防御拼点（挡）",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 80,
@@ -130,12 +132,13 @@
   {
     "ID": "card_jin_needle",
     "DisplayName": "金针",
-    "Desc": "1点金刺，击中本体则下次manaCost减1",
+    "Desc": "发起1点金系刺击拼点。本场每次该刺击实际扣除敌方生命，本卡之后发起的金系刺击拼点提高1点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 20,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Ci"
     ],
     "ManaCost": {
       "Jin": 1
@@ -146,7 +149,7 @@
       "攻击"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Deprecated",
-    "CompatibilityReason": "依赖已废弃ManaAdj_Jin；保留脚本并禁止装配和调用。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   }
 ]

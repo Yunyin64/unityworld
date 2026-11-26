@@ -2,7 +2,7 @@
   {
     "ID": "card_shui_heal",
     "DisplayName": "回复",
-    "Desc": "回复2点HP",
+    "Desc": "己方回复2点HP",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
@@ -17,13 +17,13 @@
       "治疗"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_shui_shield",
     "DisplayName": "水盾",
-    "Desc": "展开水系6点护盾",
+    "Desc": "己方获得6点灵盾",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 50,
@@ -39,8 +39,8 @@
       "盾"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_shui_freeze",

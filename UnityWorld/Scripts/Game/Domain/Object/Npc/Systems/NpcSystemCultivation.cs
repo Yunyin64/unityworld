@@ -64,6 +64,14 @@ namespace UnityWorld.Game.Domain
             data.PracticeData.CurrentRealmLevel = context.GetValue("InitCultivationLevel", 0);
             Register(npc, data);
 
+            
+            data.Affinity = new ElementalAffinity(npc.Soul);
+            npc.Stats.SetBase("AffinityJin", data.Affinity.Jin);
+            npc.Stats.SetBase("AffinityMu", data.Affinity.Mu);
+            npc.Stats.SetBase("AffinityShui", data.Affinity.Shui);
+            npc.Stats.SetBase("AffinityHuo", data.Affinity.Huo);
+            npc.Stats.SetBase("AffinityTu", data.Affinity.Tu);
+
             // InitStat 写入（来自 NpcDefine 或外部预设）
             var initStat = context.Get<Dictionary<string, int>>("InitStat");
             if (initStat != null)
@@ -82,12 +90,6 @@ namespace UnityWorld.Game.Domain
                 }
             }
 
-            data.Affinity = new ElementalAffinity(npc.Soul);
-            npc.Stats.SetBase("AffinityJin", data.Affinity.Jin);
-            npc.Stats.SetBase("AffinityMu", data.Affinity.Mu);
-            npc.Stats.SetBase("AffinityShui", data.Affinity.Shui);
-            npc.Stats.SetBase("AffinityHuo", data.Affinity.Huo);
-            npc.Stats.SetBase("AffinityTu", data.Affinity.Tu);
 
         }
 

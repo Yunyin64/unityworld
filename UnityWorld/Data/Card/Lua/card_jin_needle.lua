@@ -1,9 +1,10 @@
 -- ══════════════════════════════════════════════════════════════
 -- 金针
--- 1点金刺，击中本体则下次manaCost减1
+-- 金刺初始1点。每次实际扣除敌方生命后，本场后续金刺的拼点提高1点。
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
+local stabValue = 1
 
 card.CardData = {
     Size = 1,
@@ -14,13 +15,12 @@ card.CardData = {
 card.Keywords = {}
 
 function card:Contest(ctx)
-    Attack(ctx, "Jin", "Ci", 1)
+    Attack(ctx, "Jin", "Ci", stabValue)
 end
 
-function card:Apply(ctx)
-    -- 拼点赢了 → 自身下次金元素消耗 -1（永久叠加）
-    local self_card = ctx.SourceCard
-    AddCardStatBuff(ctx, self_card, "ManaAdj_Jin", -1)
+function card:OnDamage(ctx)
+    if ctx.SourceCard ~= self.m_Self or ctx.Caster.Team == self.m_Owner.Team then return end
+    stabValue = stabValue + 1
 end
 
 

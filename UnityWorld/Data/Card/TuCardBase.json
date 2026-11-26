@@ -1,13 +1,14 @@
 [
   {
     "ID": "card_tu_strike",
-    "DisplayName": "打击",
-    "Desc": "土系打击，造成3点土打伤害",
+    "DisplayName": "土玄打",
+    "Desc": "发起3点土系打击拼点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Da"
     ],
     "ManaCost": {
       "Tu": 1
@@ -17,29 +18,32 @@
       "打",
       "攻击"
     ],
-    "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua效果缺失，本次未为该特殊内容设计替代效果。"
+    "ProducesContest": true,
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_tu_block",
     "DisplayName": "格挡",
-    "Desc": "土系格挡4点",
+    "Desc": "发起4点防御拼点（格），赢过攻击时按差值提高己方下一次攻击拼点",
     "Rarity": 0,
     "Size": 1,
     "Cooldown": 30,
     "Keywords": [
-      "FaShu"
+      "FaShu",
+      "Block"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Tu": 1
+    },
     "Tags": [
       "土",
       "防御",
       "格挡"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_tu_slow",
@@ -66,7 +70,7 @@
   {
     "ID": "card_tu_armor",
     "DisplayName": "土盾",
-    "Desc": "给自身添加1层护甲，受到伤害时先减去护甲值",
+    "Desc": "己方获得1点护甲，减免下一次来自敌方的伤害",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 50,
@@ -82,8 +86,8 @@
       "护甲"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "原Lua依赖不存在的buff_armor，护甲特殊效果尚未迁移。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_tu_stun",

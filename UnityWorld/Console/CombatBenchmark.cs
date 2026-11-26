@@ -17,6 +17,7 @@ internal sealed class CombatBenchmark : IEventListener, IDisposable
     private readonly JsonElement[] plan;
     private readonly Dictionary<int, Dictionary<string, long>> totals = new();
     private readonly Dictionary<int, Dictionary<string, long>> paidElements = new();
+    private readonly Dictionary<(int NpcId, string CardId), long> cardUses = new();
     private int presentationCount;
 
     internal CombatBenchmark(CombatScene scene, int subjectId, int opponentId, JsonElement[] plan)
@@ -87,6 +88,12 @@ internal sealed class CombatBenchmark : IEventListener, IDisposable
                 // 一次扫描提交算一次发动，零费用卡与法宝续期也计入。
                 values.TryAdd("firstCardUseTick", entry.Tick);
                 values["cardUses"] = values.GetValueOrDefault("cardUses") + 1;
+                // 同名卡按定义 ID 区分，同一定义的多个实例一起计数。
+                if (entry.Card is { } card)
+                {
+                    var key = (entry.NpcId, card.DefineId);
+                    cardUses[key] = cardUses.GetValueOrDefault(key) + 1;
+                }
                 values["manaSpent"] = values.GetValueOrDefault("manaSpent") + payment.Before.Count;
                 foreach (var element in payment.Before)
                     paidElements[entry.NpcId][element] = paidElements[entry.NpcId].GetValueOrDefault(element) + 1;
@@ -115,16 +122,20 @@ internal sealed class CombatBenchmark : IEventListener, IDisposable
                 "shield" => npc.ShieldValue.ToString(CultureInfo.InvariantCulture),
                 "spUsed" => npc.GetSp().ToString(CultureInfo.InvariantCulture),
                 "manaSpentByElement" => JsonSerializer.Serialize(paidElements[npc.Id]),
+                "cardUses" when item.TryGetProperty("cardId", out var cardId)
+                    => cardUses.GetValueOrDefault((npc.Id, cardId.GetString())).ToString(CultureInfo.InvariantCulture),
                 "firstHpLossTick" or "firstWoundTick" or "firstCardUseTick" when !values.ContainsKey(metric) => null,
                 _ => values.GetValueOrDefault(metric).ToString(CultureInfo.InvariantCulture)
             };
         }
     }
 
-    /// <summary>批次入口为每个种子启动一次此命令。正常或可控异常都尝试导出本局两列表。</summary>
+    /// <summary>批次入口为每个种子启动一次此命令，返回本局读数供汇总或单独导出。</summary>
     internal static int Run(string[] args)
     {
-        if (args.Length != 6) throw new ArgumentException("需要项目路径、清单、木桩模板、种子和 Markdown 路径。");
+        bool writeJson = args.Length == 7 && args[6] == "--json";
+        if (args.Length != 6 && !writeJson)
+            throw new ArgumentException("需要项目路径、清单、木桩模板、种子和输出路径，可附加 --json。");
         using var manifest = JsonDocument.Parse(File.ReadAllText(args[2]));
         var config = manifest.RootElement;
         var seed = int.Parse(args[4], CultureInfo.InvariantCulture);
@@ -178,7 +189,13 @@ internal sealed class CombatBenchmark : IEventListener, IDisposable
             {
                 snapshot.Add("FinsihTick", scene.CurrentTick.ToString(CultureInfo.InvariantCulture));
                 snapshot.Add("Finishreson", reason);
-                LogMgr.Instance.ExportOfflineSnapshot(args[5], labels);
+                if (writeJson)
+                {
+                    using var output = File.Open(args[5], FileMode.CreateNew);
+                    JsonSerializer.Serialize(output, snapshot);
+                }
+                else
+                    LogMgr.Instance.ExportOfflineSnapshot(args[5], labels);
             }
             return 0;
         }

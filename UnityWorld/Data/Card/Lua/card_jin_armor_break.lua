@@ -1,6 +1,5 @@
 -- ══════════════════════════════════════════════════════════════
--- 破甲
--- 消除对方5点护盾值
+-- 破甲。消除敌方至多5点灵盾。
 -- ══════════════════════════════════════════════════════════════
 
 local card = setmetatable({}, { __index = CardBase })
@@ -8,7 +7,7 @@ local card = setmetatable({}, { __index = CardBase })
 card.CardData = {
     Size = 2,
     Cooldown = 5,
-    ManaCost = {},
+    ManaCost = { Jin = 2 },
 }
 
 card.Keywords = {}
