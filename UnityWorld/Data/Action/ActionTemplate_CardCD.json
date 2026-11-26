@@ -58,5 +58,20 @@
       { "Name": "DurationTicks", "Type": "Int", "Value": [10, 20, 30], "Score": [1, 2, 3] }
     ],
     "LuaTemplate": "Haste(ctx, \"{Domain}\", {DurationTicks})"
+  },
+  {
+    "ID": "action_stun",
+    "APIType": "Action",
+    "DisplayName": "眩晕",
+    "Desc": "使{Domain}背包眩晕{DurationTicks} Tick。眩晕期间停止自然推进，仍可通过充能扫描",
+    "FuncName": "Stun",
+    "Tags": ["控制", "眩晕"],
+    "ConflictTags": [],
+    "Weight": 1,
+    "ParamDefs": [
+      { "Name": "Domain", "Type": "String", "Value": ["Self", "Target"], "Score": [1, 1] },
+      { "Name": "DurationTicks", "Type": "Int", "Value": [5], "Score": [1] }
+    ],
+    "LuaTemplate": "Stun(ctx, \"{Domain}\", {DurationTicks})"
   }
 ]

@@ -235,7 +235,7 @@ namespace UnityWorld.Tests
                 ("SP不足", d => d.InitStat["ShenShi"] = 2),
                 ("SP超空间", d => d.InitStat["ShenShi"] = 26),
                 ("混用旧卡组", d => d.InitCardDeck = ["card_jin_slash"]),
-                ("旧机制卡", d => d.InitCardPlacements[1].Key = "card_shui_displace"),
+                ("待定卡", d => d.InitCardPlacements[1].Key = "card_tu_stun"),
                 ("绑定歧义", d => d.InitEquip.Add(new() { CardID = "card_jin_slash", EquipID = "long_sword" })),
                 ("绑定序号错误", d => d.InitEquip.Add(new() { CardID = "card_jin_slash", EquipID = "long_sword", PlacementIndex = 1 })),
                 ("绑定成功后布局失败", d => { d.InitEquip.Add(new() { CardID = "card_jin_slash", EquipID = "long_sword", PlacementIndex = 2 }); d.InitCardPlacements[2].Value = new(1, 1); })

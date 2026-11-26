@@ -97,6 +97,17 @@ namespace UnityWorld.Game.Domain
             return ctx;
         }
 
+        /// <summary>使目标背包眩晕，停止自然推进，仍可通过充能扫描。</summary>
+        [APIFunc("Stun", APIType.Action, "使背包眩晕，停止自然推进，仍可通过充能扫描", Scope.CombatCard, "Domain:String", "DurationTicks:Int")]
+        public static APIContext Stun(APIContext ctx)
+        {
+            int ticks = ctx.GetValue("DurationTicks", 0);
+            if (ctx.Caster == null || ticks <= 0) return ctx;
+            foreach (var npc in TimeTargets(ctx))
+                npc.Backpack.AddStun(ticks);
+            return ctx;
+        }
+
         /// <summary>校验属性受支持后向目标卡添加属性修正</summary>
         [APIFunc("AddCardStatBuff", APIType.Action, "给目标卡牌添加永久属性修正；Min/Max/ManaAdj已废弃禁用", Scope.CombatCard, "Domain:String", "StatId:String", "Value:Float")]
         public static APIContext AddCardStatBuff(APIContext ctx)

@@ -75,6 +75,16 @@ Haste = function(ctx, Domain, DurationTicks)
     API:Execute("Haste", ctx)
 end
 
+--- 使背包眩晕，停止自然推进，仍可通过充能扫描
+--- @param ctx APIContext
+--- @param Domain string
+--- @param DurationTicks number
+Stun = function(ctx, Domain, DurationTicks)
+    ctx:Set("Domain", Domain)
+    ctx:Set("DurationTicks", tonumber(DurationTicks))
+    API:Execute("Stun", ctx)
+end
+
 --- 给目标卡牌添加永久属性修正
 --- @param ctx APIContext
 --- @param Domain string

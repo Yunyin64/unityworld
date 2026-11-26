@@ -21,7 +21,7 @@
     "APIType": "Action",
     "DisplayName": "法宝供能",
     "Desc": "{Domain}每轮开始随机为法宝补{Amount}个{Element}灵元，持续{Rounds}轮，0轮表示本场",
-    "FuncName": "AddArtifactPower",
+    "FuncName": "AddNpcBuff",
     "Tags": [],
     "ConflictTags": [],
     "Weight": 2,
@@ -31,6 +31,6 @@
       { "Name": "Amount", "Type": "Int", "Value": [1, 2, 3, 4], "Score": [0, 0, 0, 0] },
       { "Name": "Rounds", "Type": "Int", "Value": [0, 1, 2, 3], "Score": [0, 0, 0, 0] }
     ],
-    "LuaTemplate": "AddArtifactPower(ctx, \"{Domain}\", \"{Element}\", {Amount}, {Rounds})"
+    "LuaTemplate": "AddNpcBuff(ctx, \"{Domain}\", \"ArtifactPower_{Element}\", {Amount}, -1, {Rounds})"
   }
 ]

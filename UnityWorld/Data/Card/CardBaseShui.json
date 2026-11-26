@@ -89,7 +89,7 @@
   {
     "ID": "card_shui_displace",
     "DisplayName": "流动",
-    "Desc": "将敌方最上方的卡牌移到最下方，打乱对手节奏",
+    "Desc": "随机选一张能下滑的敌方卡牌，使其向下滑至障碍或边界前",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 100,
@@ -105,7 +105,7 @@
       "位移"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Pending",
-    "CompatibilityReason": "Displace属于待定神修背包操作，保留并禁用。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   }
 ]

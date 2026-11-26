@@ -11,6 +11,9 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>本场战斗的随机数数据。</summary>
         public SoulData Soul { get; private set; }
 
+        /// <summary>从场景随机数取一个从零开始的候选索引。</summary>
+        public int RandomIndex(int count) => Soul.Random(0, count);
+
         /// <summary>本场战斗允许推进的最大 Tick 数。</summary>
         public int MaxTicks { get; private set; } = 100;
 

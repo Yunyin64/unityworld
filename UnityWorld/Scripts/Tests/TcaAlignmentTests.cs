@@ -16,6 +16,7 @@ public static partial class TcaAlignmentTests
         _assertions = 0;
         var dataDir = Path.GetDirectoryName(CardDefineMgr.Instance.DataDir)!;
         using var lua = new Lua();
+        lua.State.Encoding = System.Text.Encoding.UTF8;
         lua["API"] = APIMgr.Instance;
         lua["templateCard"] = new CombatCard();
         lua["templateNpc"] = new CombatNpc(0);
@@ -39,6 +40,7 @@ public static partial class TcaAlignmentTests
             var owner = scene.GetCombatants()[a.Id];
             var opponent = scene.GetCombatants()[b.Id];
             VerifyValueBuffActions(lua, owner, opponent);
+            VerifyResourceBuffActions(lua, owner, opponent);
             VerifySelectors(lua, owner, opponent);
             VerifyResourceSettlement(lua, owner, opponent);
             VerifyHealingBuffs(lua, owner, opponent);

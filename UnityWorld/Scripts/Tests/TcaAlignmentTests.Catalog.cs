@@ -78,13 +78,7 @@ public static partial class TcaAlignmentTests
             ("action_self_damage_boost", owner, 1, "DamageOut", damage),
             ("action_target_damage_weaken", opponent, -1, "DamageOut", damage),
             ("action_self_damage_resist", owner, -1, "DamageIn", damage),
-            ("action_target_damage_vulnerability", opponent, 1, "DamageIn", damage),
-            ("action_self_heal_boost", owner, 1, "HealOut", ["All"]),
-            ("action_target_heal_received_weaken", opponent, -1, "HealIn", ["All"]),
-            ("action_self_shield_gain_boost", owner, 1, "ShieldGain", ["All"]),
-            ("action_target_shield_gain_weaken", opponent, -1, "ShieldGain", ["All"]),
-            ("action_self_mp_recovery_boost", owner, 1, "MpRecovery", ["All"]),
-            ("action_target_mp_recovery_weaken", opponent, -1, "MpRecovery", ["All"])
+            ("action_target_damage_vulnerability", opponent, 1, "DamageIn", damage)
         };
 
         foreach (var (prefix, target, sign, stage, ranges) in cases)
@@ -133,6 +127,54 @@ public static partial class TcaAlignmentTests
         }
     }
 
+    private static void VerifyResourceBuffActions(Lua lua, CombatNpc owner, CombatNpc opponent)
+    {
+        var cases = new (string Id, string SelfStage, string TargetStage)[]
+        {
+            ("action_adjust_heal", "HealOut", "HealIn"),
+            ("action_adjust_shield_gain", "ShieldGain", "ShieldGain"),
+            ("action_adjust_mp_recovery", "MpRecovery", "MpRecovery")
+        };
+        var lifetimes = new (string Name, int Duration)[]
+        {
+            ("下一次", -1), ("本场", -1), ("30 Tick", 30), ("60 Tick", 60), ("90 Tick", 90)
+        };
+        foreach (var (id, selfStage, targetStage) in cases)
+        {
+            var action = ActionDefineMgr.Instance.Get(id);
+            Check(action?.FuncName == "AddNpcBuff" && action.Weight == 4, id + " 使用通用施加接口和合计权重");
+            var purposes = action!.ParamDefs.Single(param => param.Name == "Purpose").Value;
+            var amounts = action.ParamDefs.Single(param => param.Name == "Stacks").Value;
+            var durations = action.ParamDefs.Single(param => param.Name == "Lifetime").Value;
+            Check(purposes.Count == 2 && amounts.Select(value => value.GetInt32()).SequenceEqual([1, 2, 3])
+                && durations.Select(value => value.GetString()).SequenceEqual(lifetimes.Select(period => period.Name)),
+                id + " 覆盖两种用途、三个点数和五种有效期");
+
+            foreach (var (purpose, target, stage, sign) in new[]
+            {
+                (purposes[0].GetString(), owner, selfStage, 1),
+                (purposes[1].GetString(), opponent, targetStage, -1)
+            })
+            foreach (var amount in amounts)
+            foreach (var (lifetime, duration) in lifetimes)
+            {
+                var other = target == owner ? opponent : owner;
+                var buffId = $"All_{stage}_Changed" + (lifetime == "下一次" ? "_Once" : "");
+                var template = action.LuaTemplate
+                    .Replace("{Purpose}", purpose)
+                    .Replace("{Stacks}", amount.GetRawText())
+                    .Replace("{Lifetime}", lifetime);
+                lua["sampleContext"] = new APIContext { Caster = owner, Scene = owner.Scene };
+                lua.DoString("local ctx = sampleContext\n" + template);
+                var modifier = target.GetAllModifiers().SingleOrDefault(mod => mod.DefineId == buffId);
+                Check(modifier?.CurrentStack == sign * amount.GetInt32() && modifier.Duration == duration
+                    && modifier.HasHook("Modify" + stage) && other.GetAllModifiers().All(mod => mod.DefineId != buffId),
+                    $"{id} {purpose} {amount} {lifetime} 实际挂载正确");
+                target.RemoveModifier(buffId);
+            }
+        }
+    }
+
     private static HashSet<string> VerifyJsonCatalog(IEnumerable<string> files, IEnumerable<string> loadedIds)
     {
         var ids = new HashSet<string>(StringComparer.Ordinal);
@@ -175,13 +217,19 @@ public static partial class TcaAlignmentTests
         Check(api != null, id + " 已注册 API");
         var input = api!.ParamsList.Where(param => param.Name != "Result").ToArray();
         var args = template[(template.IndexOf(',') + 1)..^1].Split(',').Select(arg => arg.Trim()).ToArray();
-        Check(args.Length == input.Length, id + " 参数个数匹配");
+        Check(args.Length >= input.Count(param => !param.IsOptional) && args.Length <= input.Length, id + " 参数个数匹配");
         for (int i = 0; i < args.Length; i++)
         {
             var placeholder = Regex.Match(args[i], @"^-?""?\{(\w+)\}""?$");
             if (!placeholder.Success) continue; // 固定元素、布尔字面量及空字符串来源 ID。
             var parameter = parameters.SingleOrDefault(p => p.Name == placeholder.Groups[1].Value);
-            Check(parameter != null && parameter.Name == input[i].Name && parameter.Type == input[i].Type, id + " 参数 " + input[i].Name);
+            var sourceName = id == "action_add_artifact_power" ? input[i].Name switch
+            {
+                "Stacks" => "Amount",
+                "DurationRounds" => "Rounds",
+                _ => input[i].Name
+            } : input[i].Name;
+            Check(parameter != null && parameter.Name == sourceName && parameter.Type == input[i].Type, id + " 参数 " + input[i].Name);
             Check(parameter!.Value.All(value => parameter.Type switch
             {
                 "String" => value.ValueKind == JsonValueKind.String && !string.IsNullOrEmpty(value.GetString()),
@@ -192,12 +240,19 @@ public static partial class TcaAlignmentTests
             template = template.Replace("{" + parameter.Name + "}", value.ValueKind == JsonValueKind.String
                 ? value.GetString()! : value.GetRawText(), StringComparison.Ordinal);
         }
+        // 表达式模板的用途和期限也需要展开，实际挂载由战斗回归核对。
+        foreach (var parameter in parameters)
+        {
+            var value = parameter.Value.First();
+            template = template.Replace("{" + parameter.Name + "}", value.ValueKind == JsonValueKind.String
+                ? value.GetString()! : value.GetRawText(), StringComparison.Ordinal);
+        }
         var ctx = new APIContext();
         if (template.Contains("ctx.SourceCard", StringComparison.Ordinal))
             ctx.SourceCard = (CombatCard)lua["templateCard"];
         lua["sampleContext"] = ctx;
         lua.DoString("local ctx = sampleContext\nlocal self = {m_Self = templateCard, m_Owner = templateNpc}\n" + template);
-        foreach (var param in input)
+        foreach (var param in input.Take(args.Length))
             Check(ctx.GetObject(param.Name) != null, id + " Lua 包装传递 " + param.Name);
     }
 }

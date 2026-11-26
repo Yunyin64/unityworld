@@ -29,7 +29,7 @@ namespace UnityWorld.Game.Domain
             var amount = ctx.GetValue("Amount", 0);
             var rounds = ctx.GetValue("Rounds", 0);
             foreach (var target in APIMgr.Instance.GetTargetNpc(ctx.GetStringValue("Domain"), ctx))
-                target.AddArtifactPower(ElementType.GetElementType(element), amount, rounds);
+                target.AddRoundModifier($"ArtifactPower_{element}", amount, rounds);
             return ctx;
         }
 

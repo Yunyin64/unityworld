@@ -20,13 +20,13 @@
 | 灵盾获得量调整 | `Self`，正层，`All_ShieldGain_Changed` | `Target`，负层，`All_ShieldGain_Changed` |
 | MP 回复量调整 | `Self`，正层，`All_MpRecovery_Changed` | `Target`，负层，`All_MpRecovery_Changed` |
 
-共用一个 Lua 参数转换入口，根据上表调用 `AddNpcBuff`。选「下一次」时用对应的 `_Once`，传 `Duration = -1` 等待首次匹配。选「本场」时用持续版和 `-1`。选 30、60、90 时用持续版和对应 Tick 值。同 ID 的后续施加遵循现有叠层和首次期限规则。例如自己获得灵盾的基础量为 3，持续版正 2 层有效时获得 5 点，到期后获得 3 点。 [治疗 Buff](../../../Data/Modifier/CombatModifierDefines/Heal_Changed.json) · [资源 Buff](../../../Data/Modifier/CombatModifierDefines/Resource_Changed.json)
+三条 JSON 模板按上表展开参数，直接生成 `AddNpcBuff` 调用。选「下一次」时用对应的 `_Once`，传 `Duration = -1` 等待首次匹配。选「本场」时用持续版和 `-1`。选 30、60、90 时用持续版和对应 Tick 值。同 ID 的后续施加遵循现有叠层和首次期限规则。例如自己获得灵盾的基础量为 3，持续版正 2 层有效时获得 5 点，到期后获得 3 点。 [治疗 Buff](../../../Data/Modifier/CombatModifierDefines/Heal_Changed.json) · [资源 Buff](../../../Data/Modifier/CombatModifierDefines/Resource_Changed.json)
 
 独立开放目标、正负和 Buff ID 会让目录出现额外组合，例如给自己挂受疗削弱。直接复用原十二个选择也能避免这类组合，但需要策划在目录先决定效果的完整变体。用途联动保留原选择范围，查找入口时只需先选结算类型。
 
 ### 法宝供能由持有者的 Buff 执行
 
-继续使用现有 `ArtifactPower_None` 与五行定义，每个定义加载同一套供能 Lua 逻辑。公开 Lua 包装将 `Element` 映射到定义，以 `Amount` 为层数，经通用 Buff 施加入口挂到 `Domain`。通用入口按现有 `AddRoundModifier` 路径接收可选的轮期限，未传轮数的调用仍按原来的 `Duration` 处理 Tick。相同定义且同一到期轮可叠层，期限不同分别到期。旧的底层派发名仅兼容转发到 Lua 包装。
+继续使用现有 `ArtifactPower_None` 与五行定义，每个定义加载同一套供能 Lua 逻辑。目录模板将 `Element` 映射到定义，以 `Amount` 为层数，通过 `AddNpcBuff` 挂到 `Domain`。可选的 `DurationRounds` 沿用 `AddRoundModifier`。省略时，`Duration` 按 Tick 计。相同定义且同一到期轮可叠层，期限不同分别到期。兼容入口 `AddArtifactPower` 也施加同一个按轮 Modifier。
 
 ```text
 公开 OnRoundStart 派发完毕
@@ -50,4 +50,4 @@ Lua 负责筛选场上主关键词为法宝的卡、区分指定色和通用缺�
 
 ## Migration Plan
 
-先让三条新模板、旧数据映射和预览能够产出等价 Lua，再切换可选目录。旧 ID 映射见增量规格，源配置或草稿可按需迁移。供能在同一次切换中接入 Buff 回调并撤下轮首专用结算，避免同一轮重复充入。发布前分别走公开 Lua 包装和旧派发名验证，两条路径应产生相同状态。
+先让三条新模板、旧数据映射和预览能够产出等价 Lua，再切换可选目录。配卡转换脚本从旧动作的 `Params` 读取已经选择的点数与期限，按旧 ID 迁移到等价用途和参数。供能在同一次切换中接入 Buff 回调并撤下轮首专用结算，避免同一轮重复充入。发布前分别展开新 Action 模板和调用旧 Lua 入口，确认两条路径产生相同状态。

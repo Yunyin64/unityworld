@@ -208,8 +208,9 @@ namespace UnityWorld.Game.Domain
 
         // ── Buff 类 ──────────────────────────────────────────
 
-        /// <summary>给目标NPC添加Buff。参数：Domain(String), BuffId(String), Stacks(Int), Duration(Float)</summary>
-        [APIFunc("AddNpcBuff", APIType.Action, "给目标NPC添加Buff", Scope.CombatNpc, "Domain:String", "BuffId:String", "Stacks:Int", "Duration:Float")]
+        /// <summary>给目标 NPC 添加 Buff，可选按持有者轮次到期。</summary>
+        [APIFunc("AddNpcBuff", APIType.Action, "给目标NPC添加Buff", Scope.CombatNpc,
+            "Domain:String", "BuffId:String", "Stacks:Int", "Duration:Float", "?DurationRounds:Int")]
         public static void AddNpcBuff(APIContext ctx)
         {
             var caster = ctx.Caster;
@@ -219,12 +220,16 @@ namespace UnityWorld.Game.Domain
             string buffId = ctx.GetValue("BuffId", "");
             int stacks = ctx.GetValue("Stacks", 1);
             float duration = ctx.GetValue("Duration", -1f);
+            int? rounds = ctx.GetObject("DurationRounds") == null ? null : ctx.GetValue("DurationRounds", -1);
+            // Lua 包装仅写入显式提供的可选参数，避免同一上下文后续施加沿用此次轮数。
+            if (rounds.HasValue) ctx.Set<int?>("DurationRounds", null);
 
             if (string.IsNullOrEmpty(buffId)) return;
 
             foreach (var npc in ctx.NpcTargets)
             {
-                npc.AddModifier(buffId, stacks, duration);
+                if (rounds.HasValue) npc.AddRoundModifier(buffId, stacks, rounds.Value);
+                else npc.AddModifier(buffId, stacks, duration);
             }
         }
 

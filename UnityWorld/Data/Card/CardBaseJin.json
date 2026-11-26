@@ -70,14 +70,17 @@
   {
     "ID": "card_jin_whirlwind",
     "DisplayName": "回旋斩",
-    "Desc": "3点物理斩击，每触发一次攻击卡为自己充能1s",
+    "Desc": "发起3点金系斩击。每当你发动攻击，为己方背包充能1 Tick",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 80,
     "Keywords": [
       "FaShu"
     ],
-    "ManaCost": {},
+    "ManaCost": {
+      "Jin": 1,
+      "None": 1
+    },
     "Tags": [
       "金",
       "斩",
@@ -85,8 +88,8 @@
       "充能"
     ],
     "ProducesContest": true,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "旧主动费用为空，无法从已确认规则推导点亮元素，不改成免费或任意灵元。"
+    "CompatibilityStatus": "Migrated",
+    "CompatibilityReason": ""
   },
   {
     "ID": "card_jin_armor_break",

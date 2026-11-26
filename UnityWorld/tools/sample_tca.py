@@ -130,9 +130,19 @@ def parameter_options(entry):
     return options
 
 
+def pick_lifetime(rng, choices):
+    # 单次和持续原本是等权模板，合并后先取时机，再取持续版的具体期限。
+    sustained = [choice for choice in choices if choice != "下一次"]
+    groups = ([["下一次"]] if "下一次" in choices else []) + ([sustained] if sustained else [])
+    return rng.choice(rng.choice(groups))
+
+
 def draw_parameters(rng, entry):
     # 先抽模板。参数选项增加不会抬高模板的权重。
-    return {name: rng.choice(values) for name, values in parameter_options(entry).items()}
+    return {
+        name: pick_lifetime(rng, values) if name == "Lifetime" else rng.choice(values)
+        for name, values in parameter_options(entry).items()
+    }
 
 
 def render_entry(entry, values, card_anchor=False):
@@ -217,7 +227,7 @@ def render_entry(entry, values, card_anchor=False):
             description = duration + "，使{Domain}下一次{Kind}实际对拼的拼点{Delta}"
         if values["CardDomain"] != "Any":
             description += "，来源仅限{CardDomain}"
-    if entry.get("funcname") == "AddNpcBuff":
+    if entry.get("funcname") == "AddNpcBuff" and "Duration" in values:
         display_values["Duration"] = "本场" if values["Duration"] < 0 else "X Tick"
     if values.get("StatId") == "HpMax":
         description = "{Domain}生命上限提高 X 点"
@@ -287,7 +297,7 @@ def action_fits(event, condition, action, params, selection):
             return False
         if domain == "Selected" and BLOCKED_SLIDE.get(f"Grid{anchor_direction}") == direction:
             return False
-    if func == "AddArtifactPower" and params["Rounds"] == 1 and event != "OnRoundStart":
+    if action["id"] == "action_add_artifact_power" and params["Rounds"] == 1 and event != "OnRoundStart":
         return False
     if event == "OnRoundEnd":
         if func == "AddFortification" or params.get("Rounds") == 1:
@@ -354,7 +364,11 @@ def draw_compatible(rng, triggers, conditions, actions, count):
         condition, variants = draw_pool(rng, condition_pool, 1, event + " 的 C")[0]
         picked, pool, available_params = rng.choice(variants)
         action = draw_pool(rng, pool, 1, event + " / " + condition["id"] + " 的 A")[0]
-        yield trigger, condition, action, picked, rng.choice(available_params[action["id"]])
+        params = available_params[action["id"]]
+        if "Lifetime" in params[0]:
+            lifetime = pick_lifetime(rng, list(dict.fromkeys(values["Lifetime"] for values in params)))
+            params = [values for values in params if values["Lifetime"] == lifetime]
+        yield trigger, condition, action, picked, rng.choice(params)
 
 
 def compatible_actions(trigger, condition, selection, action_options):

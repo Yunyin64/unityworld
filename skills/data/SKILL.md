@@ -61,7 +61,7 @@ list-files
 ```
 返回示例：
 ```json
-{"workspace":"F:\\Openclaw\\UnityWorld\\Data\\Card","count":10,"files":["FaBao","FormBase","GongFaBase","HuoCardBase","Item_Monster","JinCardBase","MuCardBase","ShuiCardBase","TuCardBase","Wound"]}
+{"workspace":"F:\\Openclaw\\UnityWorld\\Data\\Card","count":10,"files":["FaBao","FormBase","GongFaBase","CardBaseHuo","Item_Monster","CardBaseJin","CardBaseMu","CardBaseShui","CardBaseTu","Wound"]}
 ```
 有未保存文件时额外返回 `"dirty":["FaBao","FormBase"]`。
 

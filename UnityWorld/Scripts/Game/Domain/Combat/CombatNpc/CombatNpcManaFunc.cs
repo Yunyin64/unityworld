@@ -13,47 +13,6 @@ namespace UnityWorld.Game.Domain.Combat
             AddRoundModifier($"Affinity_{element}_{sign}", (int)Math.Min(int.MaxValue, Math.Abs((long)delta)), rounds);
         }
 
-        /// <summary>登记指定轮数的法宝元素供能</summary>
-        internal void AddArtifactPower(ElementType element, int amount, int rounds)
-        {
-            AddRoundModifier($"ArtifactPower_{element.Kind}", amount, rounds);
-        }
-
-        /// <summary>按卡牌编号顺序向场上法宝提供灵元</summary>
-        private void PowerArtifacts()
-        {
-            var supplies = GetAllModifiers().Where(modifier => modifier.DefineId.StartsWith("ArtifactPower_", StringComparison.Ordinal)).ToArray();
-            if (supplies.Length == 0) return;
-            var artifacts = Field.Where(card => card.BaseData.MainKeyword == CardMainKeyword.FaBao)
-                .OrderBy(card => card.Id).ToArray();
-            foreach (var supply in supplies)
-            {
-                var supplyElement = ElementType.GetElementType(supply.DefineId["ArtifactPower_".Length..]);
-                for (int i = 0; i < supply.CurrentStack; i++)
-                {
-                    // 先补指定色。随机先选法宝，再选它可接收的颜色。
-                    var options = artifacts.SelectMany(card =>
-                    {
-                        IEnumerable<ElementType> colors = supplyElement.Equals(ElementType.None)
-                            ? card.GetManaCost().Keys.Concat(ElementType.GeneratingCycle).Distinct()
-                            : new[] { supplyElement };
-                        return colors.OrderBy(e => e.ToString(), StringComparer.Ordinal)
-                            .Where(card.CanAcceptMana)
-                            .Select(e => (Card: card, Element: e, NeedsColor: card.NeedsSpecificMana(e)));
-                    }).ToArray();
-                    if (options.Length == 0) break;
-                    bool hasSpecificCost = options.Any(o => o.NeedsColor);
-                    var candidates = options.Where(o => o.NeedsColor == hasSpecificCost).GroupBy(o => o.Card).ToArray();
-                    var group = candidates[Scene.Soul.Random(0, candidates.Length)].ToArray();
-                    var selected = group[Scene.Soul.Random(0, group.Length)];
-                    var element = selected.Element;
-                    if (!selected.Card.TryReceiveMana(element)) continue;
-                    Scene.MarkPresentationEffect();
-                    selected.Card.DispatchManaCharged(element);
-                }
-            }
-        }
-
         internal const string ManaExhaustionWoundId = "card_wound_mana_exhaustion";
 
         /// <summary>开场/本方轮末补灵入口，不再自带独立 CD。</summary>

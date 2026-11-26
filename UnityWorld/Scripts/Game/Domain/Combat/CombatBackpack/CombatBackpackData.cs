@@ -47,6 +47,8 @@ namespace UnityWorld.Game.Domain.Combat
         public int HasteTicks { get; private set; }
         /// <summary>减速剩余真实战斗 Tick，与加速独立计时。</summary>
         public int SlowTicks { get; private set; }
+        /// <summary>眩晕剩余真实战斗 Tick，期间背包不自然推进。</summary>
+        public int StunTicks { get; private set; }
         /// <summary>盘面各格灵元的只读视图</summary>
         public IReadOnlyDictionary<BackpackCell, ElementType> Mana { get; }
         /// <summary>各卡牌占格的只读视图</summary>

@@ -316,6 +316,15 @@ public static partial class TcaAlignmentTests
         foreach (var card in cards) card.BaseData.Keywords = ["FaBao"];
         cards[0].BaseData.ManaCost = new() { [ElementType.Huo] = 1 };
         using var power = lua.GetFunction("AddArtifactPower");
+        using var add = lua.GetFunction("AddNpcBuff");
+        var action = ActionDefineMgr.Instance.Get("action_add_artifact_power")!;
+        void ApplyPower(APIContext ctx, string element, int amount, int rounds)
+        {
+            var template = action.LuaTemplate.Replace("{Domain}", "Self").Replace("{Element}", element)
+                .Replace("{Amount}", amount.ToString()).Replace("{Rounds}", rounds.ToString());
+            lua["sampleContext"] = ctx;
+            lua.DoString("local ctx = sampleContext\n" + template);
+        }
 
         (int Fire, int Metal) RunPower(string element, int amount, bool verifyNextRound)
         {
@@ -326,7 +335,7 @@ public static partial class TcaAlignmentTests
                 scene.PreStart();
                 var npc = scene.GetCombatants()[a.Id];
                 var ctx = new APIContext { Caster = npc, Scene = scene };
-                power.Call(ctx, "Self", element, amount, 0);
+                ApplyPower(ctx, element, amount, 0);
                 scene.Start();
                 var artifacts = cards.Select(card => npc.GetField().Single(current => current.Id == card.Id)).ToArray();
                 var first = (artifacts[0].LitCount, artifacts[1].LitCount);
@@ -353,5 +362,93 @@ public static partial class TcaAlignmentTests
         var first = RunPower("None", 1, false);
         Check(first == RunPower("None", 1, false) && first.Fire + first.Metal == 1,
             "同种子通用供能重复选择同一个合法候选");
+
+        cards[1].BaseData.ManaCost = new() { [ElementType.None] = 1 };
+        var roundScene = new CombatScene();
+        roundScene.Init(7354, [(a, CombatTeam.TeamA), (b, CombatTeam.TeamB)], 200);
+        string[] events = ["OnRoundStart", "OnManaCharged", "OnBaseManaDraw"];
+        var order = new List<string>();
+        var charges = new List<(int CardId, string Element)>();
+        roundScene.PreStart();
+        var owner = roundScene.GetCombatants()[a.Id];
+        var other = roundScene.GetCombatants()[b.Id];
+        var shared = new APIContext { Caster = owner, Scene = roundScene };
+
+        var listener = new DelegateEventListener((name, _, args) =>
+        {
+            if (args is not APIContext ctx || ctx.Caster != owner) return;
+            order.Add(name);
+            if (name == "OnManaCharged")
+                charges.Add((ctx.SourceCard.Id, ctx.GetStringValue("ChargedElement")));
+            if (name == "OnRoundStart" && owner.Backpack.Round == 1)
+                power.Call(shared, "Self", "Huo", 1, 1);
+        });
+        foreach (var name in events)
+            EventMgr.Instance.RegisterEvent("tca-artifact-power", name, ScopeKey.Global, listener);
+        try
+        {
+            ApplyPower(shared, "Huo", 1, 1);
+            ApplyPower(shared, "Huo", 1, 2);
+            add.Call(shared, "Self", "Ci_Changed", 1, 30);
+            var timed = owner.GetAllModifiers().Single(mod => mod.DefineId == "Ci_Changed");
+            Check(timed.Duration == 30 && timed.RemainingRounds == null,
+                "同一上下文后续不带轮期限的施加仍按 Tick 到期");
+
+            roundScene.Start();
+            var supplies = owner.GetAllModifiers().Where(mod => mod.DefineId == "ArtifactPower_Huo").ToArray();
+            Check(supplies.Select(mod => (mod.CurrentStack, mod.RemainingRounds)).SequenceEqual([(2, (int?)1), (1, (int?)2)]),
+                "模板和旧调用同到期轮叠层，不同到期轮分别计时");
+            Check(order.SequenceEqual(["OnRoundStart", "OnManaCharged", "OnManaCharged", "OnBaseManaDraw"])
+                && charges.SequenceEqual([(cards[0].Id, "Huo"), (cards[1].Id, "Huo")]),
+                "同轮首监听施加的供能赶上当次结算，先补指定火再补通用缺口，最后基础补灵");
+
+            ApplyPower(shared, "None", 1, 2);
+            owner.RemoveModifier("ArtifactPower_None");
+            order.Clear();
+            charges.Clear();
+            owner.Backpack.Charge(50);
+            roundScene.Tick();
+            Check(owner.Backpack.Round == 2 && other.Backpack.Round == 1
+                && charges.SequenceEqual([(cards[0].Id, "Huo")]),
+                "持有者独立换轮，只结算仍有效的火供能，主动移除的供能不结算");
+
+            charges.Clear();
+            owner.Backpack.Charge(50);
+            roundScene.Tick();
+            Check(owner.Backpack.Round == 3 && charges.Count == 0
+                && owner.GetAllModifiers().All(mod => !mod.DefineId.StartsWith("ArtifactPower_", StringComparison.Ordinal)),
+                "轮期限结束后不再供能");
+
+            var heal = ActionDefineMgr.Instance.Get("action_adjust_heal")!;
+            var healTemplate = heal.LuaTemplate.Replace("{Purpose}", "降低对手受到的治疗量")
+                .Replace("{Stacks}", "2").Replace("{Lifetime}", "下一次");
+            lua["sampleContext"] = shared;
+            lua.DoString("local ctx = sampleContext\n" + healTemplate);
+            other.ApplyDamage(new DamageInfo(owner, null, other, 10));
+            var hp = other.GetHp();
+            other.ApplyHeal(5);
+            Check(other.GetHp() == hp + 3, "配卡生成的单次受疗削弱在首次治疗生效");
+            other.ApplyHeal(5);
+            Check(other.GetHp() == hp + 8, "同一场对战第二次治疗不再扣点");
+
+            var shield = ActionDefineMgr.Instance.Get("action_adjust_shield_gain")!;
+            var shieldTemplate = shield.LuaTemplate.Replace("{Purpose}", "提高自己的灵盾获得量")
+                .Replace("{Stacks}", "2").Replace("{Lifetime}", "30 Tick");
+            lua.DoString("local ctx = sampleContext\n" + shieldTemplate);
+            var shieldValue = owner.ShieldValue;
+            owner.ChangeShield(3);
+            Check(owner.ShieldValue == shieldValue + 5, "配卡生成的持续获盾调整在期限内生效");
+            for (int i = 0; i < 30; i++) roundScene.Tick();
+            shieldValue = owner.ShieldValue;
+            owner.ChangeShield(3);
+            Check(owner.ShieldValue == shieldValue + 3, "战斗推进 30 Tick 后获盾调整到期");
+
+            while (!roundScene.IsFinished) roundScene.Tick();
+        }
+        finally
+        {
+            foreach (var name in events) EventMgr.Instance.RemoveEvent(name, ScopeKey.Global, listener);
+            roundScene.Cleanup();
+        }
     }
 }

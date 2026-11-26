@@ -1,5 +1,7 @@
 # 战斗观察快照规格增量
 
+冻结迁移暂缓，保留规格草案。
+
 ## ADDED Requirements
 
 ### Requirement: 卡牌快照同步当前卡牌状态

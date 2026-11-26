@@ -1,5 +1,7 @@
 # 战斗状态效果规格增量
 
+冻结迁移暂缓，保留规格草案。
+
 ## MODIFIED Requirements
 
 ### Requirement: 冻结在下一次完整扫描后解除

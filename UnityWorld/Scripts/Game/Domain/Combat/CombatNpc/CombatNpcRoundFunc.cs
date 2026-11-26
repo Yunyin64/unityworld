@@ -2,11 +2,13 @@ namespace UnityWorld.Game.Domain.Combat
 {
     public partial class CombatNpc
     {
-        /// <summary>派发轮首事件，为法宝供能并抽取灵元</summary>
+        /// <summary>派发轮首事件，执行状态轮首回调并抽取灵元</summary>
         internal void BeginBackpackRound(bool opening = false)
         {
             DispatchRoundEvent("OnRoundStart");
-            PowerArtifacts();
+            var ctx = new APIContext { Caster = this, Scene = Scene };
+            ctx.Set("Round", Backpack.Round);
+            ModifyHook("RoundStart", ctx);
             DoManaDraw(opening);
         }
 

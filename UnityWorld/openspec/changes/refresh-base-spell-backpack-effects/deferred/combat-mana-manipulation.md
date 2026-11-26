@@ -1,5 +1,7 @@
 # 灵元操作规格增量
 
+旧版回旋斩方案，保留供参考。
+
 ## MODIFIED Requirements
 
 ### Requirement: 区分充入和支付的实际灵元

@@ -39,6 +39,40 @@ TRIGGER_TO_HOOK = {
 KEYWORD_EFFECTS = {"kw_initial": "Initial", "kw_weapon": "Weapon"}
 
 
+# 合并前的目录 ID 只用于读取旧配卡。新用途按 JSON 中的顺序取值。
+RESOURCE_BUFF_ACTIONS = {
+    "action_adjust_heal": ("action_self_heal_boost", "action_target_heal_received_weaken"),
+    "action_adjust_shield_gain": ("action_self_shield_gain_boost", "action_target_shield_gain_weaken"),
+    "action_adjust_mp_recovery": ("action_self_mp_recovery_boost", "action_target_mp_recovery_weaken"),
+}
+LEGACY_RESOURCE_BUFF_ACTIONS = {
+    old_id + suffix: (new_id, purpose_index, bool(suffix))
+    for new_id, legacy_ids in RESOURCE_BUFF_ACTIONS.items()
+    for purpose_index, old_id in enumerate(legacy_ids)
+    for suffix in ("", "_once")
+}
+
+
+def render_resource_buff(action_id, action, actions_idx):
+    params = action.get("Params", [])
+    if action_id in LEGACY_RESOURCE_BUFF_ACTIONS:
+        action_id, purpose_index, once = LEGACY_RESOURCE_BUFF_ACTIONS[action_id]
+        template = actions_idx[action_id]
+        purposes = next(param["Value"] for param in template["ParamDefs"] if param["Name"] == "Purpose")
+        if len(params) != (1 if once else 2):
+            raise ValueError("旧动作缺少点数或持续期限")
+        lifetime = "下一次" if once else "本场" if params[1] == -1 else f"{params[1]:g} Tick"
+        params = [purposes[purpose_index], params[0], lifetime]
+    else:
+        template = action
+
+    definitions = template["ParamDefs"]
+    if len(params) != len(definitions) or any(value not in definition["Value"] for definition, value in zip(definitions, params)):
+        raise ValueError("数值修正动作缺少有效的用途、点数或期限")
+    values = {definition["Name"]: value for definition, value in zip(definitions, params)}
+    return template["LuaTemplate"].format_map(values), template["Desc"].format_map(values)
+
+
 def load_all_json(directory: Path, pattern="*.json") -> list:
     """加载目录下所有 JSON 文件，返回合并的列表"""
     items = []
@@ -83,8 +117,8 @@ def generate_lua_for_card(card: dict, effects_idx: dict, actions_idx: dict) -> s
         return None  # 已经是空的（如 whirlwind 已手动处理）
 
     keywords = []
-    on_use_actions = []  # (func_name, params, desc)
-    passive_hooks = {}   # hook_name -> [(func_name, params, desc)]
+    on_use_actions = []  # (call, desc)
+    passive_hooks = {}   # hook_name -> [(call, desc)]
 
     for eff_id in effect_ids:
         # 处理 Keyword
@@ -115,7 +149,15 @@ def generate_lua_for_card(card: dict, effects_idx: dict, actions_idx: dict) -> s
                 print(f"  [WARN] {card_id}: Action '{act_id}' 无 FuncName，跳过")
                 continue
 
-            entry = (func_name, params, act_desc)
+            if act_id in LEGACY_RESOURCE_BUFF_ACTIONS or act_id in RESOURCE_BUFF_ACTIONS:
+                try:
+                    entry = render_resource_buff(act_id, act, actions_idx)
+                except (KeyError, ValueError) as exc:
+                    print(f"  [WARN] {card_id}: Action '{act_id}' {exc}，跳过")
+                    continue
+            else:
+                lua_params = format_params_for_lua(func_name, params)
+                entry = (f"{func_name}(ctx, {lua_params})", act_desc)
             if hook_name == "OnUse":
                 on_use_actions.append(entry)
             else:
@@ -142,11 +184,10 @@ def generate_lua_for_card(card: dict, effects_idx: dict, actions_idx: dict) -> s
     if on_use_actions:
         lines.append("-- 使用时")
         lines.append("function CombatCard:OnUse(ctx)")
-        for func_name, params, act_desc in on_use_actions:
-            lua_params = format_params_for_lua(func_name, params)
+        for call, act_desc in on_use_actions:
             if act_desc:
                 lines.append(f"    -- {act_desc}")
-            lines.append(f"    {func_name}(ctx, {lua_params})")
+            lines.append(f"    {call}")
         lines.append("end")
 
     # Passive hooks
@@ -154,11 +195,10 @@ def generate_lua_for_card(card: dict, effects_idx: dict, actions_idx: dict) -> s
         lines.append("")
         lines.append(f"-- 被动：{hook_name}")
         lines.append(f"function CombatCard:{hook_name}(ctx)")
-        for func_name, params, act_desc in actions:
-            lua_params = format_params_for_lua(func_name, params)
+        for call, act_desc in actions:
             if act_desc:
                 lines.append(f"    -- {act_desc}")
-            lines.append(f"    {func_name}(ctx, {lua_params})")
+            lines.append(f"    {call}")
         lines.append("end")
 
     lines.append("")

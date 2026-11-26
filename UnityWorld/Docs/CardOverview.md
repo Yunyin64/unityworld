@@ -4,7 +4,7 @@
 
 招式的 ID、占格和灵耗见[现行招式定义](../Data/Card/FormBase.json)。各装备自带的招式见[装备定义](../Data/Equip/Equip_Template.json)的 `FormListBase`。
 
-## HuoCardBase
+## CardBaseHuo
 
 - **射击|card_huo_shot**｜火系射击，造成5点火射伤害｜Size1 CD6 FaShu｜灵耗:Huo1
 - **回灵|card_huo_drain**｜立刻抽取3点MP转化为灵元｜Size1 CD5 FaShu｜灵耗:Huo1
@@ -14,7 +14,7 @@
 - **烈焰斩|card_huo_flame_slash**｜4点火斩，击中本体则施加1燃烧｜Size1 CD5 FaShu｜灵耗:Huo1
 - **焚烧|card_huo_incinerate**｜转化1点木灵元回蓝1｜Size1 CD4 FaShu｜灵耗:无
 
-## JinCardBase
+## CardBaseJin
 
 - **斩击|card_jin_slash**｜金系斩击，造成2点金斩伤害｜Size1 CD2 FaShu｜灵耗:Jin1
 - **加速|card_jin_charge**｜充能上方卡牌，使其CD减少1 tick｜Size1 CD5 FaShu｜灵耗:无
@@ -24,7 +24,7 @@
 - **金甲|card_jin_armor**｜展开12点金系护盾｜Size1 CD8 FaShu｜灵耗:Jin2
 - **金针|card_jin_needle**｜1点金刺，击中本体则下次manaCost减1｜Size1 CD2 FaShu｜灵耗:Jin1
 
-## MuCardBase
+## CardBaseMu
 
 - **刺击|card_mu_stab**｜木系刺击，造成4点木刺伤害｜Size1 CD4 FaShu｜灵耗:Mu1
 - **转化|card_mu_convert**｜将至多1个任意灵元转化回蓝条MP｜Size1 CD12 FaShu｜灵耗:无
@@ -32,7 +32,7 @@
 - **易伤|card_mu_vulnerable**｜给敌方施加1层易伤，下次受到伤害时额外承受伤害｜Size1 CD4 FaShu｜灵耗:Mu1
 - **疗愈|card_mu_heal_wound**｜移除己方随机一张Size为1的伤势卡｜Size2 CD15 FaShu｜灵耗:Mu2
 
-## ShuiCardBase
+## CardBaseShui
 
 - **回复|card_shui_heal**｜回复2点HP｜Size1 CD3 FaShu｜灵耗:Shui1
 - **水盾|card_shui_shield**｜展开水系6点护盾｜Size1 CD5 FaShu｜灵耗:Shui1
@@ -40,7 +40,7 @@
 - **虚弱|card_shui_weakness**｜给敌方施加1层虚弱，下次出手拼点数值降低｜Size1 CD4 FaShu｜灵耗:Shui1
 - **流动|card_shui_displace**｜将敌方最上方的卡牌移到最下方，打乱对手节奏｜Size2 CD10 FaShu｜灵耗:Shui2
 
-## TuCardBase
+## CardBaseTu
 
 - **打击|card_tu_strike**｜土系打击，造成3点土打伤害｜Size1 CD3 FaShu｜灵耗:Tu1
 - **格挡|card_tu_block**｜土系格挡4点｜Size1 CD3 FaShu｜灵耗:无

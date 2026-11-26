@@ -18,6 +18,14 @@ namespace UnityWorld.Game.Domain.Combat
             if (ticks > 0) { SlowTicks = checked(SlowTicks + ticks); PresentationOwner?.Scene?.MarkPresentationEffect(); }
         }
 
+        /// <summary>使背包停止自然推进，重复眩晕取较长的剩余时长。</summary>
+        public void AddStun(int ticks)
+        {
+            if (ticks <= StunTicks) return;
+            StunTicks = ticks;
+            PresentationOwner?.Scene?.MarkPresentationEffect();
+        }
+
         /// <summary>充能增加正常速度折算的进度，不应用速度倍率或消耗持续时间。</summary>
         public void Charge(double baselineTicks)
         {
@@ -28,7 +36,8 @@ namespace UnityWorld.Game.Domain.Combat
         /// <summary>真实 Tick 开始时调用一次；随后新加的速度效果从下个自然 Tick 生效。</summary>
         public void AdvanceNaturalTick()
         {
-            _scanProgress += (HasteTicks > 0 ? 2m : 1m) * (SlowTicks > 0 ? 0.5m : 1m);
+            if (StunTicks > 0) StunTicks--;
+            else _scanProgress += (HasteTicks > 0 ? 2m : 1m) * (SlowTicks > 0 ? 0.5m : 1m);
             if (HasteTicks > 0) HasteTicks--;
             if (SlowTicks > 0) SlowTicks--;
         }

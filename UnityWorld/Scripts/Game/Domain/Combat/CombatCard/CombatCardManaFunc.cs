@@ -15,7 +15,7 @@ namespace UnityWorld.Game.Domain.Combat
         public int LitCount => _assignedMana.Count;
 
         /// <summary>当前蓄灵还缺指定颜色。</summary>
-        internal bool NeedsSpecificMana(ElementType element) =>
+        public bool NeedsSpecificMana(ElementType element) =>
             element.Kind != BaseElementType.None
             && _assignedMana.Count(e => e.Equals(element)) < GetManaCost().GetValueOrDefault(element);
 
@@ -62,6 +62,21 @@ namespace UnityWorld.Game.Domain.Combat
             if (!CanAcceptMana(element)) return false;
             _assignedMana.Add(element);
             RefreshChargePhase();
+            return true;
+        }
+
+        /// <summary>列出当前可接收的元素，按元素名排序。</summary>
+        public List<ElementType> GetChargeableManaElements() =>
+            GetManaCost().Keys.Concat(ElementType.GeneratingCycle).Distinct()
+                .OrderBy(element => element.ToString(), StringComparer.Ordinal)
+                .Where(CanAcceptMana).ToList();
+
+        /// <summary>提交一枚由效果提供的灵元，并在写入后广播充入事件。</summary>
+        public bool TryChargeMana(ElementType element)
+        {
+            if (!TryReceiveMana(element)) return false;
+            Scene.MarkPresentationEffect();
+            DispatchManaCharged(element);
             return true;
         }
 

@@ -106,11 +106,13 @@ end
 --- @param BuffId string
 --- @param Stacks number
 --- @param Duration number
-AddNpcBuff = function(ctx, Domain, BuffId, Stacks, Duration)
+--- @param DurationRounds number (optional)
+AddNpcBuff = function(ctx, Domain, BuffId, Stacks, Duration, DurationRounds)
     ctx:Set("Domain", Domain)
     ctx:Set("BuffId", BuffId)
     ctx:Set("Stacks", tonumber(Stacks))
     ctx:Set("Duration", tonumber(Duration))
+    if DurationRounds ~= nil then ctx:Set("DurationRounds", tonumber(DurationRounds)) end
     API:Execute("AddNpcBuff", ctx)
 end
 

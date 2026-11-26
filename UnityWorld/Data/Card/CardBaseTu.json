@@ -92,7 +92,7 @@
   {
     "ID": "card_tu_stun",
     "DisplayName": "眩晕",
-    "Desc": "给敌方施加眩晕0.5秒，眩晕期间敌方所有卡CD停止推进",
+    "Desc": "使敌方背包眩晕0.5秒，期间停止自然推进，仍可通过充能扫描",
     "Rarity": 0,
     "Size": 2,
     "Cooldown": 80,
@@ -108,7 +108,7 @@
       "眩晕"
     ],
     "ProducesContest": false,
-    "CompatibilityStatus": "Unmigrated",
-    "CompatibilityReason": "眩晕停止旧CD的语义未迁移。"
+    "CompatibilityStatus": "Pending",
+    "CompatibilityReason": "正式装配费用待定。"
   }
 ]
