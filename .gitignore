@@ -49,6 +49,14 @@
 !/scripts/
 !/scripts/client/
 !/scripts/client/**
+!/third_party/
+!/third_party/.gdignore
+!/third_party/spine-csharp/
+!/third_party/spine-csharp/**/
+!/third_party/spine-csharp/**/*.cs
+!/third_party/spine-csharp/Spine.Runtime.csproj
+!/third_party/spine-csharp/LICENSE
+!/third_party/spine-csharp/UPSTREAM.md
 !/scenes/
 !/scenes/**
 !/assets/
@@ -63,6 +71,9 @@
 !/tools/
 !/tools/client-observer/
 !/tools/client-observer/**
+!/tools/spine/
+!/tools/spine/build_duel_rigs.py
+!/tools/spine/duel_reference_parts.json
 
 # 开发资料统一位于 UnityWorld/Docs；迁入的本机资料沿用原忽略范围。
 /UnityWorld/Docs/.gdignore

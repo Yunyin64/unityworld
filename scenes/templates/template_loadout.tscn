@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateLoadoutPanel.cs" id="Loadout"]
 [ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateBackpackView.cs" id="Backpack"]
 [ext_resource type="Theme" path="res://scenes/templates/editor_theme.tres" id="Theme"]
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateSpinePreview.cs" id="SpinePreview"]
+[ext_resource type="Script" path="res://scripts/client/ui/templates/TemplateAppearancePanel.cs" id="AppearancePanel"]
 
 [sub_resource type="StyleBoxFlat" id="PreviewBox"]
 bg_color = Color(0.4627, 0.4353, 0.3373, 0.5647)
@@ -269,9 +271,9 @@ unique_name_in_owner = true
 layout_mode = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -372.0
+offset_left = -432.0
 offset_top = 65.0
-offset_right = -48.0
+offset_right = -152.0
 offset_bottom = 105.0
 theme_override_font_sizes/font_size = 23
 text = "这里显示七个字"
@@ -285,9 +287,9 @@ unique_name_in_owner = true
 layout_mode = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -356.0
+offset_left = -432.0
 offset_top = 98.0
-offset_right = -56.0
+offset_right = -152.0
 offset_bottom = 320.0
 mouse_filter = 2
 expand_mode = 1
@@ -300,6 +302,76 @@ anchor_bottom = 1.0
 mouse_filter = 2
 border_color = Color(0.43, 0.44, 0.35, 0.8)
 border_width = 2.0
+
+[node name="SpinePreview" type="Control" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -432.0
+offset_top = 93.0
+offset_right = -152.0
+offset_bottom = 322.0
+mouse_filter = 2
+script = ExtResource("SpinePreview")
+
+[node name="Appearance" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -148.0
+offset_top = 66.0
+offset_right = -21.0
+offset_bottom = 322.0
+theme_override_constants/separation = 6
+script = ExtResource("AppearancePanel")
+
+[node name="Heading" type="Label" parent="Appearance"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "人物外观"
+
+[node name="Part" type="OptionButton" parent="Appearance"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 33)
+
+[node name="Variant" type="OptionButton" parent="Appearance"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 33)
+
+[node name="DyeRow" type="HBoxContainer" parent="Appearance"]
+layout_mode = 2
+
+[node name="Dye" type="ColorPickerButton" parent="Appearance/DyeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(44, 29)
+tooltip_text = "部件染色"
+
+[node name="Clear" type="Button" parent="Appearance/DyeRow"]
+layout_mode = 2
+text = "原色"
+
+[node name="Roll" type="Button" parent="Appearance"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
+text = "随机组装"
+
+[node name="Copy" type="Button" parent="Appearance"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
+text = "复制后换装"
+
+[node name="DemoLabel" type="Label" parent="Appearance"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "动作预览"
+
+[node name="Demo" type="OptionButton" parent="Appearance"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
 
 [node name="UnplacedScroll" type="ScrollContainer" parent="."]
 unique_name_in_owner = true

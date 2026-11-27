@@ -1,7 +1,9 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xianxia.Client.Battle;
+using Xianxia.Client.Templates;
 
 namespace Xianxia.Client.UI;
 
@@ -31,6 +33,7 @@ internal sealed class ObserverBattleLayout
     private readonly Control _packsArea, _duel, _logView, _footerLog, _fieldLog, _header, _historyPaper;
     private readonly Control _history;
     private readonly Vector2 _headerSize, _paperSize;
+    private BattleCase? _appearanceCase;
 
     public ObserverBattleLayout(Control host, Action play, Action pause, Action step, Action restart)
     {
@@ -131,7 +134,7 @@ internal sealed class ObserverBattleLayout
     private static Rect2 BoundsIn(Control parent, Control control) =>
         (parent.GetGlobalTransform().AffineInverse() * control.GetGlobalTransform()) * new Rect2(Vector2.Zero, control.Size);
 
-    public void Submit(IBattleObserverState session, BattlePresentationPlayer player, string directory)
+    public void Submit(IBattleObserverState session, BattlePresentationPlayer player, string directory, string dataRoot)
     {
         var snapshot = player.DisplaySnapshot;
         var latest = session.CurrentSnapshot;
@@ -139,6 +142,7 @@ internal sealed class ObserverBattleLayout
         _info.TooltipText = session.Case.ToJson();
         _cases.SetItemText(0, string.IsNullOrWhiteSpace(session.Case.Name) ? session.Case.Id : session.Case.Name);
         var participants = snapshot.Participants.OrderBy(p => p.Team, StringComparer.Ordinal).ToArray();
+        if (!ReferenceEquals(_appearanceCase, session.Case)) LoadAppearances(session.Case, dataRoot);
         for (int i = 0; i < Math.Min(2, participants.Length); i++)
         {
             var npc = participants[i];
@@ -151,7 +155,7 @@ internal sealed class ObserverBattleLayout
             Packs[i].Submit(npc, latest.TicksPerRow, session.IsPlaying, scan);
         }
         Pending.Submit(participants, player.ActiveCues);
-        Stage.Submit(participants, player);
+        Stage.Submit(participants, player, session.IsPlaying);
         foreach (var actor in Actors) actor.SetStageLabelOpacity(Stage.BackpackOpacity);
         Effects.Submit(participants, player.ActiveCues);
         Log.Submit(session.Records);
@@ -164,5 +168,25 @@ internal sealed class ObserverBattleLayout
         Play.Disabled = !session.CanAdvance || session.IsPlaying;
         Pause.Disabled = !session.CanAdvance || !session.IsPlaying;
         Step.Disabled = !session.CanAdvance || session.IsPlaying;
+    }
+
+    private void LoadAppearances(BattleCase input, string dataRoot)
+    {
+        _appearanceCase = input;
+        var looks = new Dictionary<string, BattleActorLook?>(StringComparer.Ordinal);
+        TemplateCatalog? catalog = null;
+        try
+        {
+            if (input.Participants.Any(p => p.Appearance == null && p.Definition == null))
+                catalog = TemplateCatalog.Load(dataRoot);
+        }
+        catch (Exception error) { GD.PushWarning("无法读取项目人物外观来源。" + error.Message); }
+        foreach (var participant in input.Participants)
+        {
+            var definition = participant.Definition ?? catalog?.GetNpc(participant.TemplateId);
+            var look = definition == null ? participant.Appearance : DuelWardrobe.For(definition, participant.TemplateId, participant.Appearance);
+            looks[participant.Team] = look;
+        }
+        Stage.SetAppearances(looks);
     }
 }

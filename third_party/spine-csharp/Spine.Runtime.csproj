@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>spine-csharp</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+  </ItemGroup>
+</Project>

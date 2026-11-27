@@ -109,6 +109,7 @@ public sealed class BattlePresentationPlayer
     public long StartedCueCount { get; private set; }
     public long CompletedCueCount { get; private set; }
     internal int? DepartedNpcId { get; private set; }
+    internal double PresentationSeconds => _elapsed;
     internal bool IsHoldingApproach => _active.Any(cue => cue.IsHoldingApproach);
     internal bool IsHoldingImpact => _active.Any(cue => cue.IsHoldingImpact);
     public event Action<PresentationCue>? CueStarted;

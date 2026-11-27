@@ -49,7 +49,7 @@ public partial class TemplateEditorView
         var visualOptions=new OptionButton{Disabled=_readOnly};
         visualOptions.AddItem("仅显示名称");visualOptions.AddItem("已有 · 玉剑修士");visualOptions.AddItem("已有 · 赤衣修士");
         visualOptions.Select(visual=="jade_swordsman"?1:visual=="crimson_cultivator"?2:0);
-        Row(_details,"外观",visualOptions);
+        Row(_details,"头像",visualOptions);
         visualOptions.ItemSelected+=i=>{if(CanChange(target)){string key=i==1?"jade_swordsman":i==2?"crimson_cultivator":"none";target.Presentation.ActorVisualKey=key;target.Presentation.PortraitKey=key;DraftEdited(target);}};
         FlowButton(_details,"扩展字段 / 当前支持状态",()=>ShowExtendedFields(target),false,30);
         if(target.UnresolvedBindings.Count>0)

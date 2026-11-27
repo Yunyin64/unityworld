@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
+using Xianxia.Client.Battle;
 using Xianxia.Client.Templates;
 using static Xianxia.Client.UI.Templates.TemplateEditorWidgets;
 
@@ -102,6 +103,13 @@ public partial class TemplateEditorView : Control
         _loadout.RemoveRequested += RemoveEntry;
         _loadout.MoveRequested += MoveCard;
         _loadout.AddRequested += AddCard;
+        _loadout.CopyForAppearanceRequested += CopyTemplate;
+        _loadout.AppearanceRequested += look =>
+        {
+            if (_draft is not { } draft || !CanChange(draft)) return;
+            draft.Presentation.Appearance = look;
+            DraftEdited(draft);
+        };
 
         GetNode<Button>("%ReturnHome").Pressed += () => ConfirmLeave(() => GameBootstrap.OpenHome());
         GetNode<Button>("%DefaultBattle").Pressed += OpenDefaultBattle;
@@ -165,8 +173,12 @@ public partial class TemplateEditorView : Control
     private void RefreshPreview()
     {
         var actorTexture = _draft == null ? null : _skin.Actor(EffectiveVisual(_draft));
-        _loadout.SetPreview(Catalog, _draft, _readOnly, _selectedEntryId, _problemCells, actorTexture);
+        _loadout.SetPreview(Catalog, _draft, _readOnly, _selectedEntryId, _problemCells, actorTexture,
+            _draft == null ? null : AppearanceFor(_draft));
     }
+
+    private static BattleActorLook? AppearanceFor(TemplateDraft draft) =>
+        DuelWardrobe.For(draft.NpcFields, draft.SourceTemplateId, draft.Presentation.Appearance);
 
     private void UpdateSummary()
     {

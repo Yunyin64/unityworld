@@ -28,11 +28,11 @@ public static class TemplateTrialService
 {
     /// <summary>Call only after the draft converter has rejected unresolved bindings and library ID conflicts.</summary>
     public static BattleCase Freeze(TemplateCatalog catalog, NpcDefine self, BattleParticipant opponent,
-        TemplateTrialSettings? settings = null, string selfSnapshotId = "")
+        TemplateTrialSettings? settings = null, string selfSnapshotId = "", BattleActorLook? appearance = null)
     {
         settings ??= new();
         catalog.AssertDiskUnchanged();
-        var selfParticipant = BattleParticipant.FromSnapshot(self, "TeamA", selfSnapshotId);
+        var selfParticipant = BattleParticipant.FromSnapshot(self, "TeamA", selfSnapshotId) with { Appearance = appearance };
         var input = new BattleCase
         {
             Id = "template-trial-" + Guid.NewGuid().ToString("N"),

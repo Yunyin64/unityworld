@@ -1,0 +1,19 @@
+{
+  "Groups": [
+    {"Id":"hair","Label":"头发","Dyeable":true,"Options":[{"Id":"jade","Label":"束发墨髻"},{"Id":"ink","Label":"斜分短发"},{"Id":"cinnabar","Label":"绛带高马尾"},{"Id":"braid","Label":"侧束长辫"}]},
+    {"Id":"face","Label":"脸型","Dyeable":true,"Options":[{"Id":"angular","Label":"棱角脸"},{"Id":"soft","Label":"圆润脸"},{"Id":"slender","Label":"白皙尖脸"},{"Id":"bronze","Label":"暖棕圆脸"},{"Id":"freckled","Label":"雀斑方脸"},{"Id":"blush","Label":"红晕心形脸"}]},
+    {"Id":"eyes","Label":"眼睛","Dyeable":true,"Options":[{"Id":"jade","Label":"凌厉墨瞳"},{"Id":"ink","Label":"沉灰瞳"},{"Id":"cinnabar","Label":"挑梢棕瞳"},{"Id":"violet","Label":"冷灰蓝瞳"},{"Id":"hazel","Label":"琥珀瞳"}]},
+    {"Id":"brows","Label":"眉毛","Dyeable":true,"Options":[{"Id":"stern","Label":"凌厉"},{"Id":"even","Label":"舒展"},{"Id":"arched","Label":"细弯"},{"Id":"worried","Label":"忧眉"}]},
+    {"Id":"accessory","Label":"配饰","Dyeable":true,"Options":[{"Id":"none","Label":"无"},{"Id":"diadem","Label":"青玉云髻饰"},{"Id":"ribbon","Label":"朱绳发结"},{"Id":"butterfly","Label":"暗绛蝴蝶结"},{"Id":"pin","Label":"青珠髻钗"}]},
+    {"Id":"mouth","Label":"嘴巴","Dyeable":true,"Options":[{"Id":"calm","Label":"平静"},{"Id":"smile","Label":"微笑"},{"Id":"grit","Label":"咬牙"},{"Id":"gasp","Label":"张口"}]},
+    {"Id":"robe","Label":"衣服","Dyeable":true,"Options":[{"Id":"jade","Label":"灰蓝披肩白衣"},{"Id":"cinnabar","Label":"朱红交领衣"},{"Id":"indigo","Label":"靛蓝武服"},{"Id":"violet","Label":"梅紫短袍"}]},
+    {"Id":"pants","Label":"裤子","Dyeable":true,"Options":[{"Id":"charcoal","Label":"墨褶裤"},{"Id":"ash","Label":"石灰束裤"}]},
+    {"Id":"boots","Label":"鞋子","Dyeable":true,"Options":[{"Id":"dark","Label":"灰黑绑腿靴"},{"Id":"violet","Label":"米白裹腿鞋"}]},
+    {"Id":"weapon","Label":"手持物","Dyeable":true,"Options":[{"Id":"none","Label":"空手"},{"Id":"sword","Label":"玉剑"},{"Id":"talisman","Label":"朱穗木符"},{"Id":"spear","Label":"铁头短枪"},{"Id":"fan","Label":"素骨折扇"},{"Id":"bronze","Label":"铜纹法佩"},{"Id":"saber","Label":"乌铁弯刀"}]},
+    {"Id":"stance","Label":"默认站姿","Dyeable":false,"Options":[{"Id":"Ready","Label":"迎敌"},{"Id":"ReadyCentered","Label":"中架"},{"Id":"ReadyLow","Label":"低架"}]}
+  ],
+  "Presets": {
+    "test_npc_a": {"hair":"jade","face":"angular","eyes":"jade","brows":"stern","accessory":"diadem","mouth":"calm","robe":"jade","pants":"charcoal","boots":"dark","weapon":"sword","stance":"Ready"},
+    "test_npc_b": {"hair":"cinnabar","face":"soft","eyes":"cinnabar","brows":"stern","accessory":"ribbon","mouth":"calm","robe":"cinnabar","pants":"charcoal","boots":"violet","weapon":"talisman","stance":"Ready"}
+  }
+}

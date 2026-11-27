@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
+using Xianxia.Client.Battle;
 
 namespace Xianxia.Client.Templates;
 
@@ -21,6 +22,9 @@ public sealed class TemplatePresentation
 {
     public string PortraitKey { get; set; } = "";
     public string ActorVisualKey { get; set; } = "";
+    /// <summary>个人草稿的拼装外观，旧草稿使用同一套客户端生成规则。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public BattleActorLook? Appearance { get; set; }
 }
 public sealed class UnresolvedTemplateBinding
 {

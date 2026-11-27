@@ -38,28 +38,28 @@
   },
   "actors": {
     "jade_swordsman": {
-      "texture": "res://assets/art/characters/jade_swordsman.png",
-      "region": [58, 157, 1183, 991],
+      "texture": "res://assets/art/battle/duel_transition_poses.png",
+      "region": [13, 17, 571, 531],
       "displayScale": 1.0,
       "source": "reused"
     },
     "crimson_cultivator": {
-      "texture": "res://assets/art/characters/crimson_cultivator.png",
-      "region": [44, 78, 1201, 1118],
+      "texture": "res://assets/art/battle/duel_transition_poses.png",
+      "region": [63, 582, 514, 595],
       "displayScale": 1.0,
       "source": "reused"
     }
   },
   "portraits": {
     "jade_swordsman": {
-      "texture": "res://assets/art/characters/jade_swordsman.png",
-      "region": [450, 260, 480, 445],
+      "texture": "res://assets/art/battle/duel_transition_poses.png",
+      "region": [264, 20, 175, 175],
       "displayScale": 1.0,
       "source": "reused"
     },
     "crimson_cultivator": {
-      "texture": "res://assets/art/characters/crimson_cultivator.png",
-      "region": [205, 200, 500, 460],
+      "texture": "res://assets/art/battle/duel_transition_poses.png",
+      "region": [217, 633, 195, 171],
       "displayScale": 1.0,
       "source": "reused"
     }

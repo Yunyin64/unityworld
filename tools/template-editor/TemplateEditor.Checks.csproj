@@ -6,5 +6,6 @@
   <ItemGroup>
     <ProjectReference Include="../../UnityWorld/UnityWorld.csproj" />
     <Compile Include="../../scripts/client/templates/*.cs" Exclude="../../scripts/client/templates/TemplateTrial*.cs" Link="Templates/%(Filename)%(Extension)" />
+    <Compile Include="../../scripts/client/battle/BattleActorLook.cs" Link="Templates/BattleActorLook.cs" />
   </ItemGroup>
 </Project>

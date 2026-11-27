@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
+using Xianxia.Client.Battle;
 using Xianxia.Client.Templates;
 using static Xianxia.Client.UI.Templates.TemplateEditorWidgets;
 
@@ -16,6 +17,8 @@ public partial class TemplateLoadoutPanel : Panel
     private TemplateBackpackView _backpack = null!;
     private Label _summary = null!, _actorName = null!;
     private TextureRect _actor = null!;
+    private TemplateSpinePreview _spine = null!;
+    private TemplateAppearancePanel _appearance = null!;
     private VBoxContainer _unplaced = null!;
 
     public event Action<string>? MainRequested;
@@ -24,6 +27,8 @@ public partial class TemplateLoadoutPanel : Panel
     public event Action<string>? RemoveRequested;
     public event Action<string, int, int>? MoveRequested;
     public event Action<string, int, int>? AddRequested;
+    internal event Action<BattleActorLook>? AppearanceRequested;
+    internal event Action? CopyForAppearanceRequested;
 
     public override void _Ready()
     {
@@ -32,6 +37,11 @@ public partial class TemplateLoadoutPanel : Panel
         _summary = GetNode<Label>("%PackSummary");
         _actorName = GetNode<Label>("%ActorName");
         _actor = GetNode<TextureRect>("%ActorImage");
+        _spine = GetNode<TemplateSpinePreview>("%SpinePreview");
+        _appearance = GetNode<TemplateAppearancePanel>("%Appearance");
+        _appearance.Changed += look => AppearanceRequested?.Invoke(look);
+        _appearance.DemoSelected += _spine.Preview;
+        _appearance.CopyRequested += () => CopyForAppearanceRequested?.Invoke();
         _unplaced = GetNode<VBoxContainer>("%UnplacedEntries");
 
         // 网格、画像框等样例由场景组标记，美术可重命名或删除它们。实际背包按运行数据绘制。
@@ -71,10 +81,13 @@ public partial class TemplateLoadoutPanel : Panel
     }
 
     public void SetPreview(TemplateCatalog catalog, TemplateDraft? draft, bool readOnly,
-        string? selectedEntryId, IReadOnlyList<BackpackPosition> problemCells, Texture2D? actorTexture)
+        string? selectedEntryId, IReadOnlyList<BackpackPosition> problemCells, Texture2D? actorTexture,
+        BattleActorLook? look)
     {
         _backpack.Configure(catalog, draft, readOnly, selectedEntryId, problemCells);
         _actor.Texture = draft == null ? null : actorTexture;
+        _actor.Visible = !_spine.SetLook(look);
+        _appearance.Bind(_spine.Visible ? look : null, readOnly);
         _actorName.Text = draft == null ? "选择一个模板" : DefinitionName(draft.NpcFields);
         Clear(_unplaced);
         if (draft == null) return;

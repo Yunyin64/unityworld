@@ -86,6 +86,14 @@ godot --path . res://scenes/exploration/exploration_view.tscn -- --exploration
 
 观察器使用原控制台默认案例 `console-basic-template`：世界和战斗种子均为 12345，依次装配 `test_npc_a`、`test_npc_b`，上限 5000 Tick。双方真实背包为 5×5，角色数值、格上灵元、卡片点亮、冻结、待发和战报均来自核心模拟。人物立绘仅为客户端展示形象。
 
+### 人物外观
+
+模板编辑器的人像右侧可以选部位、换款式、染色、恢复原色，也可以随机组装和预览动作。项目模板可直接预览动作，点「复制后换装」建立个人草稿。人物骨架随模板性别切换。草稿把外观存到 `Presentation.Appearance`，发起试战时将双方外观带入该次输入，重开时读取同一份输入。正式模板导出继续使用原有 NPC 定义格式。
+
+默认男角采用墨髻、玉剑和灰蓝披肩，女角采用绛带高马尾、朱衣和木符。默认部件从 `duel_transition_poses.png` 的两张备招原画拆出。男女骨架、图集和部件目录位于 [Spine 人物资源](assets/art/battle/spine/)。战斗舞台继续决定进退、镜头、命中停顿和特效时点，Spine 4.2 时间线据此驱动人物姿态。两套骨架共用皮肤部件，新款式可用相同插槽名和独立部件 ID 加入目录。非人形模板沿用原展示。
+
+可在 Spine 4.2 中用 Texture Unpacker 拆出 `duel_parts.atlas` 的图片，再用 Import Data 导入 `duel_male.json` 或 `duel_female.json`，并将 Images 路径指向拆图目录。[Spine 官方导入说明](https://esotericsoftware.com/blog/Importing-skeleton-data)
+
 ## 运行与操作
 
 在仓库根目录执行：
@@ -171,7 +179,7 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--
 | `UnityWorld/Docs/art/observer-evidence/` | 本次结构化验证摘要、源码边界与复核记录 |
 | `.local-verification/battle-observer/` | 本机完整运行日志、逐 Tick 大文件和画面证据 |
 
-缺图时保留卡名/元素名和真实布局，不隐藏卡或停止战斗。首批范围为 15 张新增图片 + 1 张长剑复用；生成、落盘、加载和格内可读性分别记在台账中，其余 17 种已迁移卡及其他旧卡没有获得自动生成许可。人物仍是静态单帧，蓝白扫描和受光由客户端绘制，并不代表完整角色动作帧已具备。
+缺图时保留卡名、元素名和真实布局。首批范围为 15 张新增图片和 1 张复用长剑。生成、落盘、加载和格内可读性分别记在台账中。原人物姿态贴图仍供非人形模板及资源回退使用。
 
 ## 当前验证与保留事项
 

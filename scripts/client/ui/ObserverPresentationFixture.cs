@@ -220,7 +220,7 @@ internal sealed class ObserverPresentationFixture
                     actors = Enumerable.Range(0, 2).Select(side =>
                     {
                         var foot = _layout.Stage.FootAt(side);
-                        return new { x = foot.X, y = foot.Y, pose = _layout.Stage.PoseAt(side),
+                        return new { x = foot.X, y = foot.Y, pose = _layout.Stage.PoseAt(side), spine = _layout.Stage.UsesSpineAt(side),
                             alpha = _layout.Stage.AlphaAt(side), height = _layout.Stage.HeightAt(side) };
                     })
                 }
@@ -281,12 +281,12 @@ internal sealed class ObserverPresentationFixture
             new[] { new ElementAmount("Jin", 1), new ElementAmount("Mu", 1), new ElementAmount("Shui", 1) }, frozen: true);
         var three = MakeCard(103, "card_shui_freeze", "三格水卡", new[] { new CellSnapshot(0, 3), new CellSnapshot(1, 3), new CellSnapshot(2, 3) }, new[] { new ElementAmount("Shui", 3) }) with { AssignedElements = new[] { "Shui" } };
         var main = MakeCard(104, "jin_fa", "无蓄灵", new[] { new CellSnapshot(4, 4) }, Array.Empty<ElementAmount>()) with { IsMain = true };
-        var left = new NpcSnapshot(1, "测试甲", "A", "Active", 80, 24, 7, 18, null, null, null, pack, new[] { water, mixed, three, main }, Array.Empty<BuffSnapshot>(), null)
+        var left = new NpcSnapshot(1, "测试甲", "TeamA", "Active", 80, 24, 7, 18, null, null, null, pack, new[] { water, mixed, three, main }, Array.Empty<BuffSnapshot>(), null)
             { HpMax = 100, MpMax = 30, SpMax = 12 };
         var enemy = MakeCard(201, "card_jin_slash", "金刃", new[] { new CellSnapshot(0, 1) }, new[] { new ElementAmount("Jin", 1) });
         // 长剑跨两格：验收图像在 x=2 的内部格界连续，保留相邻空格与外部间距。
         var sword = MakeCard(202, "card_fabao_jian", "连贯长剑", new[] { new CellSnapshot(1, 3), new CellSnapshot(2, 3) }, new[] { new ElementAmount("Jin", 2) });
-        var right = new NpcSnapshot(2, "测试乙", "B", "Active", 0, 0, 3, 0, null, null, null, pack with { Mana = Array.Empty<ManaSnapshot>() }, new[] { enemy, sword }, Array.Empty<BuffSnapshot>(), null)
+        var right = new NpcSnapshot(2, "测试乙", "TeamB", "Active", 0, 0, 3, 0, null, null, null, pack with { Mana = Array.Empty<ManaSnapshot>() }, new[] { enemy, sword }, Array.Empty<BuffSnapshot>(), null)
             { HpMax = 0, MpMax = 0, SpMax = 9 };
         return new BattleSnapshot(0, 0, 10, false, new[] { left, right }, null, null);
     }

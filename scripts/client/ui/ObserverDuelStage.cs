@@ -19,6 +19,7 @@ public partial class ObserverDuelStage : Control
     internal enum Pose { Ready, Strike, Guard, Recoil, Cast, Advance, Withdraw, Slash, Smash, Shot, Evade, Kneel, Departed, Windup, FollowThrough, Brace, Land }
     private readonly record struct ActorFrame(Vector2 Foot, Vector2 Home, Vector2 Departure, float Height,
         Pose Pose, float Alpha, float Tilt, Color Tint);
+    private readonly record struct PoseClock(PresentationCue? Cue, Pose Pose, float Since);
     private readonly record struct StageSpace(Vector2 Left, Vector2 Right, float Min, float Width, float Unit)
     {
         internal float Center => Min + Width / 2;
@@ -42,6 +43,13 @@ public partial class ObserverDuelStage : Control
 
     private static readonly Color[] Ink = { new("8ce3cc"), new("f6ab79") };
     private readonly ActorFrame[] _actors = new ActorFrame[2];
+    private readonly DuelSpineActor?[] _spineActors = new DuelSpineActor?[2];
+    private readonly string?[] _spineTeams = new string?[2];
+    private readonly PoseClock[] _poseClocks = new PoseClock[2];
+    private readonly float[] _poseSeconds = new float[2];
+    private IReadOnlyDictionary<string, BattleActorLook?> _looks = new Dictionary<string, BattleActorLook?>();
+    private float _idleSeconds;
+    private int _poseGeneration = -1;
     private readonly (PresentationCue? Cue, string? Element)[] _casts = new (PresentationCue?, string?)[2];
     private IReadOnlyList<NpcSnapshot> _participants = Array.Empty<NpcSnapshot>();
     private IReadOnlyList<PresentationCue> _cues = Array.Empty<PresentationCue>();
@@ -87,9 +95,33 @@ public partial class ObserverDuelStage : Control
         ConfigureAudio();
     }
 
-    internal void Submit(IReadOnlyList<NpcSnapshot> participants, BattlePresentationPlayer player)
+    internal void SetAppearances(IReadOnlyDictionary<string, BattleActorLook?> looks)
+    {
+        _looks = looks;
+        Array.Clear(_spineTeams);
+        Array.Clear(_spineActors);
+    }
+
+    internal void Submit(IReadOnlyList<NpcSnapshot> participants, BattlePresentationPlayer player, bool isPlaying)
     {
         _participants = participants;
+        for (int side = 0; side < participants.Count && side < _actors.Length; side++)
+        {
+            string team = participants[side].Team;
+            if (_spineTeams[side] == team) continue;
+            _spineTeams[side] = team;
+            _spineActors[side] = null;
+            if (_looks.GetValueOrDefault(team) is not { } look) continue;
+            _spineActors[side] = DuelSpineActor.Create(look.Rig);
+            _spineActors[side]?.Equip(look);
+        }
+        if (_poseGeneration != player.Generation)
+        {
+            _poseGeneration = player.Generation;
+            _idleSeconds = 0;
+            Array.Clear(_poseClocks);
+        }
+        if (isPlaying && player.AnimationsEnabled) _idleSeconds = (float)(player.PresentationSeconds % 2.4);
         _cues = player.ActiveCues;
         _settledResult = player.DisplaySnapshot.IsFinished ? player.DisplaySnapshot.Result : null;
         _departedNpcId = player.DepartedNpcId;
@@ -281,6 +313,7 @@ public partial class ObserverDuelStage : Control
                 _casts[side] = default;
             }
             _actors[side] = new ActorFrame(foot + framing, home + framing, departure + framing, height, pose, alpha, tilt, tint);
+            _poseSeconds[side] = PoseSeconds(side, pose);
         }
         if (contest != null)
         {
@@ -302,11 +335,30 @@ public partial class ObserverDuelStage : Control
         QueueRedraw();
     }
 
+    private float PoseSeconds(int side, Pose pose)
+    {
+        if (pose == Pose.Ready) return _idleSeconds;
+        var cue = _shot ?? _casts[side].Cue;
+        if (cue == null) return 0;
+        float motionTime = cue.Progress * (float)cue.MotionDuration;
+        var clock = _poseClocks[side];
+        if (clock.Cue != cue || clock.Pose != pose)
+            _poseClocks[side] = clock = new(cue, pose, motionTime);
+
+        // The impact key must line up with the existing hit stop, including held approach/release frames.
+        if (_shot != null && pose is Pose.Strike or Pose.Slash or Pose.Smash or Pose.Shot)
+            return Math.Max(0, (pose == Pose.Shot ? .08f : .10f) + (cue.Progress - cue.ContactProgress) * (float)cue.MotionDuration);
+        if (_shot == null && pose == Pose.Shot)
+            return .08f + (cue.Progress - CastRelease) * (float)cue.MotionDuration;
+        return Math.Max(0, motionTime - clock.Since);
+    }
+
     internal Vector2 HeadAt(int side) => _actors[side].Foot - new Vector2(0, _actors[side].Height * .89f);
     internal Vector2 FootAt(int side) => _actors[side].Foot;
     internal string PoseAt(int side) => _actors[side].Pose.ToString();
     internal float AlphaAt(int side) => _actors[side].Alpha;
     internal float HeightAt(int side) => _actors[side].Height;
+    internal bool UsesSpineAt(int side) => _spineActors[side] != null;
 
     private float ExchangeCenter(DuelExchange? exchange, StageSpace space)
     {
@@ -467,23 +519,29 @@ public partial class ObserverDuelStage : Control
     private void DrawActor(int side)
     {
         var actor = _actors[side];
-        var texture = _layout!.Actors[side].TextureFor(actor.Pose);
-        if (texture == null || texture.GetHeight() == 0 || actor.Alpha <= 0) return;
+        var spine = _spineActors[side];
+        var texture = spine == null ? _layout!.Actors[side].TextureFor(actor.Pose) : null;
+        if (actor.Alpha <= 0 || spine == null && (texture == null || texture.GetHeight() == 0)) return;
         DrawSetTransform(actor.Foot + new Vector2(0, 2), 0, new Vector2(1, .20f));
         for (int i = 0; i < 3; i++)
             DrawCircle(Vector2.Zero, actor.Height * (.28f - i * .055f), new Color("020812", actor.Alpha * .22f), true, -1, true);
         if (actor.Pose is Pose.Recoil or Pose.Brace) DrawSkid(actor.Foot, side == 0 ? -1 : 1);
-        float width = actor.Height * texture.GetWidth() / texture.GetHeight();
+        float width = texture == null ? 0 : actor.Height * texture.GetWidth() / texture.GetHeight();
         float origin = actor.Pose == Pose.Strike ? side == 0 ? .35f : .65f : .5f;
         var rect = new Rect2(-width * origin, -actor.Height, width, actor.Height);
+        spine?.Sample(actor.Pose.ToString(), _poseSeconds[side]);
         if (_shot != null && (actor.Pose is Pose.Strike or Pose.Slash or Pose.Smash) && _shot.Progress < .51f)
         {
             float tail = Smooth(_shot.Progress, .17f, .25f) * (1 - Smooth(_shot.Progress, .37f, .51f));
             DrawSetTransform(actor.Foot + new Vector2(side == 0 ? -26 : 26, 3) * _unit);
-            DrawTextureRect(texture, rect, false, new Color(Ink[side], tail * .23f));
+            var color = new Color(Ink[side], tail * .23f);
+            if (spine != null) spine.Draw(this, actor.Height, side == 1, color);
+            else DrawTextureRect(texture!, rect, false, color);
         }
         DrawSetTransform(actor.Foot, actor.Tilt);
-        DrawTextureRect(texture, rect, false, new Color(actor.Tint, actor.Alpha));
+        var tint = new Color(actor.Tint, actor.Alpha);
+        if (spine != null) spine.Draw(this, actor.Height, side == 1, tint);
+        else DrawTextureRect(texture!, rect, false, tint);
         DrawSetTransform(Vector2.Zero);
     }
 }

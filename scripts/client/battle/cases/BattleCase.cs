@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 using UnityWorld.Game.Domain.Combat;
@@ -20,8 +21,15 @@ public sealed record BattleParticipant(string TemplateId, string Team)
     public NpcDefine? Definition { get; init; }
     public string DefinitionHash { get; init; } = "";
     public string SnapshotId { get; init; } = "";
+    /// <summary>可选的客户端换装结果，随原案例一同重开。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public BattleActorLook? Appearance { get; init; }
 
-    public BattleParticipant Copy() => this with { Definition = Definition == null ? null : BattleTemplateSnapshot.Copy(Definition) };
+    public BattleParticipant Copy() => this with
+    {
+        Definition = Definition == null ? null : BattleTemplateSnapshot.Copy(Definition),
+        Appearance = Appearance?.Copy()
+    };
 
     public static BattleParticipant FromSnapshot(NpcDefine definition, string team, string snapshotId = "")
     {

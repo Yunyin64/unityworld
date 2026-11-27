@@ -85,6 +85,7 @@ public partial class TemplateEditorView
             string id = TemplateDocumentConverter.UniqueId(type == NpcTypes.NpcType.Human ? "my_character" : "my_monster", AllTemplateIds());
             _draft = TemplateDraft.New(Catalog, type, id);
             _draft.NpcFields.DisplayName = type == NpcTypes.NpcType.Human ? "新人物" : "新怪物";
+            _draft.Presentation.Appearance = AppearanceFor(_draft);
             _personal.Add(_draft); _readOnly = false; _selectedEntryId = null; _selectedCardId = null;
             _notice = "新建草稿：选择主功法后，可从卡牌库拖入卡牌。";
             Revalidate(); RefreshEditor();
@@ -104,6 +105,7 @@ public partial class TemplateEditorView
                 var copy = TemplateDocumentConverter.Copy(_draft, id);
                 copy.Source = _readOnly ? "ProjectCopy" : "PersonalCopy";
                 copy.NpcFields.DisplayName = DisplayTemplateName(_draft) + " 副本";
+                copy.Presentation.Appearance = AppearanceFor(_draft);
                 _draft = copy; _personal.Add(copy); _readOnly = false;
                 _selectedEntryId = null; _selectedCardId = null;
                 _notice = "已建立独立个人草稿，保存后可再次打开。";
@@ -260,8 +262,8 @@ public partial class TemplateEditorView
             if (_opponentKey.StartsWith("project:", StringComparison.Ordinal))
             {
                 string id = _opponentKey[8..];
-                if (Catalog.GetNpc(id) == null) throw new InvalidDataException("所选项目对手已不存在，请重新选择。");
-                opponent = new BattleParticipant(id, "TeamB");
+                var definition = Catalog.GetNpc(id) ?? throw new InvalidDataException("所选项目对手已不存在，请重新选择。");
+                opponent = new BattleParticipant(id, "TeamB") { Appearance = DuelWardrobe.For(definition, id) };
             }
             else if (_opponentKey.StartsWith("draft:", StringComparison.Ordinal))
             {
@@ -270,10 +272,12 @@ public partial class TemplateEditorView
                     ?? throw new InvalidDataException("所选个人对手已不存在。");
                 var report = TemplateDocumentConverter.Validate(other, Catalog, ConflictingTemplateIds(other));
                 if (!report.IsValid) throw new InvalidDataException("对手草稿存在阻塞问题：" + string.Join("；", report.Issues.Where(i => i.Severity == TemplateIssueSeverity.Error).Select(i => i.Message)));
-                opponent = BattleParticipant.FromSnapshot(TemplateDocumentConverter.ToDefinition(other), "TeamB", other.DraftId);
+                opponent = BattleParticipant.FromSnapshot(TemplateDocumentConverter.ToDefinition(other), "TeamB", other.DraftId)
+                    with { Appearance = AppearanceFor(other) };
             }
             else throw new InvalidDataException("请选择试战对手。");
-            var input = TemplateTrialService.Freeze(Catalog, TemplateDocumentConverter.ToDefinition(_draft), opponent, _trialSettings, _draft.DraftId);
+            var input = TemplateTrialService.Freeze(Catalog, TemplateDocumentConverter.ToDefinition(_draft), opponent, _trialSettings, _draft.DraftId,
+                AppearanceFor(_draft));
             var launch = BattleLauncher.OpenBattle(input, BattleWindowMode.NewWindow);
             ShowNotice($"已启动原战斗观察界面（进程 {launch.ProcessId}），编辑草稿保留。输入：{launch.InputPath}");
         }

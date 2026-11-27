@@ -86,11 +86,11 @@ public partial class BattleObserverView : Control
         if (_source != null)
         {
             if (_remote != null && _replacement == null && _viewError == null)
-                _layout?.Submit(_remote, _player, _remote.Directory);
+                _layout?.Submit(_remote, _player, _remote.Directory, _dataRoot!);
             return;
         }
         if (_layout == null || _output == null) return;
-        _layout.Submit(_session, _player, _output.SessionDirectory);
+        _layout.Submit(_session, _player, _output.SessionDirectory, _dataRoot!);
         _output.AppendRecords(_session);
     }
 

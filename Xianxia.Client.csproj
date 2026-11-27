@@ -11,5 +11,6 @@
     <!-- 后端通过独立 DLL 引用，不重复编译后端源码。 -->
     <Compile Include="scripts/client/**/*.cs" />
     <ProjectReference Include="UnityWorld/UnityWorld.csproj" />
+    <ProjectReference Include="third_party/spine-csharp/Spine.Runtime.csproj" />
   </ItemGroup>
 </Project>
