@@ -5,6 +5,7 @@ uniform sampler2D foliage : source_color, filter_linear_mipmap_anisotropic, repe
 uniform float wind_strength = 0.034;
 uniform float alpha_cut = 0.30;
 uniform bool outline_profile_capture = false;
+instance uniform bool ink_mode = false;
 varying float height_fraction;
 varying float leaf_light;
 
@@ -35,4 +36,11 @@ void fragment() {
     ROUGHNESS = mix(0.92, 0.67, height_fraction);
     SPECULAR = 0.22;
     AO = 0.65 + height_fraction * 0.32;
+    if (ink_mode && !outline_profile_capture) {
+        float lightness = dot(leaf.rgb, vec3(0.22, 0.70, 0.08));
+        float wash = smoothstep(0.05, 0.50, lightness * (0.6 + 0.4 * height_fraction));
+        ALBEDO = vec3(0.0);
+        EMISSION = mix(vec3(0.028, 0.060, 0.045), vec3(0.41, 0.49, 0.36), wash);
+        SPECULAR = 0.0;
+    }
 }

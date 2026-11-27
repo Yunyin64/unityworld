@@ -12,6 +12,11 @@
 [ext_resource type="Texture2D" path="res://assets/art/exploration/terrain3d/litter_color.webp" id="10"]
 [ext_resource type="Shader" path="res://assets/presentation/exploration_sky_3d.gdshader" id="11"]
 [ext_resource type="Shader" path="res://assets/presentation/exploration_outline_3d.gdshader" id="12"]
+[ext_resource type="Shader" path="res://assets/presentation/exploration_ink_paper.gdshader" id="13"]
+[ext_resource type="Shader" path="res://assets/presentation/exploration_ink_wet_3d.gdshader" id="14"]
+
+[sub_resource type="ShaderMaterial" id="InkPaperMaterial"]
+shader = ExtResource("13")
 
 [sub_resource type="ShaderMaterial" id="SkyMaterial"]
 shader = ExtResource("11")
@@ -74,6 +79,10 @@ shader_parameter/outer_ocean = true
 resource_local_to_scene = true
 render_priority = 100
 shader = ExtResource("12")
+
+[sub_resource type="ShaderMaterial" id="WetInkMaterial"]
+render_priority = 80
+shader = ExtResource("14")
 
 [sub_resource type="QuadMesh" id="OutlineQuad"]
 size = Vector2(2, 2)
@@ -175,6 +184,15 @@ material_override = SubResource("OutlineMaterial")
 cast_shadow = 0
 gi_mode = 0
 
+[node name="WetInkPass" type="MeshInstance3D" parent="MapCamera"]
+visible = false
+position = Vector3(0, 0, -1)
+extra_cull_margin = 5.0
+mesh = SubResource("OutlineQuad")
+material_override = SubResource("WetInkMaterial")
+cast_shadow = 0
+gi_mode = 0
+
 [node name="OuterOcean" type="MeshInstance3D" parent="."]
 visible = false
 position = Vector3(0, -0.021, 0)
@@ -225,6 +243,15 @@ one_shot = true
 
 [node name="Interface" type="CanvasLayer" parent="."]
 
+[node name="InkPaper" type="ColorRect" parent="Interface"]
+visible = false
+material = SubResource("InkPaperMaterial")
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="Hud" type="Control" parent="Interface"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -257,7 +284,7 @@ theme_override_font_sizes/font_size = 15
 [node name="Navigation" type="HBoxContainer" parent="Interface/Hud"]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -585.0
+offset_left = -700.0
 offset_top = 24.0
 offset_right = -26.0
 grow_horizontal = 0
@@ -273,6 +300,11 @@ text = "格线"
 unique_name_in_owner = true
 button_pressed = true
 text = "描边"
+
+[node name="InkMode" type="CheckButton" parent="Interface/Hud/Navigation"]
+unique_name_in_owner = true
+text = "水墨模式"
+tooltip_text = "切换水墨画面"
 
 [node name="Mode" type="Button" parent="Interface/Hud/Navigation"]
 unique_name_in_owner = true

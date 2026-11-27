@@ -20,10 +20,15 @@ public partial class GameBootstrap : Node
     public const string HomeScene = "res://scenes/home/test_home.tscn";
     public const string TemplateScene = "res://scenes/templates/character_template_editor.tscn";
     private static GameBootstrap? _instance;
+    private readonly ClientAssetPool _assetInstances = new();
     private bool _changingScene;
     private bool _running;
     private bool _ownsWorld;
     public static ClientHostMode CurrentMode { get; private set; }
+
+    /// <summary>随 Autoload 宿主常驻，在当前 Godot 进程内跨场景共享。</summary>
+    internal static ClientAssetPool AssetInstances => (_instance ?? throw new InvalidOperationException("Godot 宿主尚未初始化。"))
+        ._assetInstances;
 
     // 各世界宿主共用数据根目录规则；Godot 可从内存加载程序集，无法依赖 Assembly.Location。
     internal static string ResolveDataRoot() => OS.HasFeature("editor")
@@ -150,12 +155,13 @@ public partial class GameBootstrap : Node
         if (_running) WorldMgr.Tick((float)delta);
     }
 
-    /// <summary>释放当前宿主持有的核心状态。</summary>
+    /// <summary>释放当前宿主持有的核心状态和客户端实例缓存。</summary>
     public override void _ExitTree()
     {
         GetTree().SceneChanged -= FinishNavigation;
         _instance = null;
         _running = false;
+        _assetInstances.Dispose();
         if (_ownsWorld) WorldMgr.End();
         _ownsWorld = false;
     }

@@ -43,7 +43,7 @@ public partial class ObserverDuelStage : Control
 
     private static readonly Color[] Ink = { new("8ce3cc"), new("f6ab79") };
     private readonly ActorFrame[] _actors = new ActorFrame[2];
-    private readonly DuelSpineActor?[] _spineActors = new DuelSpineActor?[2];
+    private readonly ClientAssetPool.Lease<DuelSpineActor>?[] _spineActors = new ClientAssetPool.Lease<DuelSpineActor>?[2];
     private readonly string?[] _spineTeams = new string?[2];
     private readonly PoseClock[] _poseClocks = new PoseClock[2];
     private readonly float[] _poseSeconds = new float[2];
@@ -98,22 +98,38 @@ public partial class ObserverDuelStage : Control
     internal void SetAppearances(IReadOnlyDictionary<string, BattleActorLook?> looks)
     {
         _looks = looks;
+        ReleaseActors();
+    }
+
+    /// <summary>退出舞台时归还正在展示的演员。</summary>
+    public override void _ExitTree() => ReleaseActors();
+
+    private void ReleaseActors()
+    {
         Array.Clear(_spineTeams);
-        Array.Clear(_spineActors);
+        for (int side = 0; side < _spineActors.Length; side++)
+            ReleaseActor(side);
+    }
+
+    private void ReleaseActor(int side)
+    {
+        var actor = _spineActors[side];
+        _spineActors[side] = null;
+        actor?.Dispose();
     }
 
     internal void Submit(IReadOnlyList<NpcSnapshot> participants, BattlePresentationPlayer player, bool isPlaying)
     {
         _participants = participants;
-        for (int side = 0; side < participants.Count && side < _actors.Length; side++)
+        for (int side = 0; side < _spineActors.Length; side++)
         {
-            string team = participants[side].Team;
+            string? team = side < participants.Count ? participants[side].Team : null;
             if (_spineTeams[side] == team) continue;
             _spineTeams[side] = team;
-            _spineActors[side] = null;
-            if (_looks.GetValueOrDefault(team) is not { } look) continue;
-            _spineActors[side] = DuelSpineActor.Create(look.Rig);
-            _spineActors[side]?.Equip(look);
+            ReleaseActor(side);
+            if (team == null || _looks.GetValueOrDefault(team) is not { } look) continue;
+            _spineActors[side] = DuelSpineActor.Rent(look.Rig);
+            _spineActors[side]?.Instance.Equip(look);
         }
         if (_poseGeneration != player.Generation)
         {
@@ -519,7 +535,7 @@ public partial class ObserverDuelStage : Control
     private void DrawActor(int side)
     {
         var actor = _actors[side];
-        var spine = _spineActors[side];
+        var spine = _spineActors[side]?.Instance;
         var texture = spine == null ? _layout!.Actors[side].TextureFor(actor.Pose) : null;
         if (actor.Alpha <= 0 || spine == null && (texture == null || texture.GetHeight() == 0)) return;
         DrawSetTransform(actor.Foot + new Vector2(0, 2), 0, new Vector2(1, .20f));

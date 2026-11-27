@@ -1,0 +1,82 @@
+{
+  "kind": "generic brush opacity masks and paper/flow noise; not object albedo",
+  "author": "David Revoy (Deevad)",
+  "license": "CC0-1.0",
+  "sourcePage": "https://www.davidrevoy.com/article953/krita-brushes-2023-01-bundle",
+  "download": "https://www.peppercarrot.com/extras/resources/deevad-bundle_23-01.zip",
+  "downloadSHA256": "93f50eaf1013e02c6cfac6b6913e4455ccc5fb18b2f757b76409fa6b634f046c",
+  "atlasGrid": [
+    4,
+    2
+  ],
+  "tips": [
+    {
+      "slot": 0,
+      "file": "brushes/deevad-painterly-brush-tip_2023C.png",
+      "rotation": 90,
+      "mirror": false,
+      "gain": 1.1479068385391622,
+      "sourceSHA256": "4365092543812d41e5c17df06213472a4b42430b903789871b23edc43e983713"
+    },
+    {
+      "slot": 1,
+      "file": "brushes/deevad-painterly-brush-tip_2023C.png",
+      "rotation": 270,
+      "mirror": false,
+      "gain": 1.147906908664569,
+      "sourceSHA256": "4365092543812d41e5c17df06213472a4b42430b903789871b23edc43e983713"
+    },
+    {
+      "slot": 2,
+      "file": "brushes/deevad-painterly-brush-tip_2023C.png",
+      "rotation": 90,
+      "mirror": true,
+      "gain": 1.1479068385391622,
+      "sourceSHA256": "4365092543812d41e5c17df06213472a4b42430b903789871b23edc43e983713"
+    },
+    {
+      "slot": 3,
+      "file": "brushes/deevad-painterly-brush-tip_2023C.png",
+      "rotation": 270,
+      "mirror": true,
+      "gain": 1.147906908664569,
+      "sourceSHA256": "4365092543812d41e5c17df06213472a4b42430b903789871b23edc43e983713"
+    },
+    {
+      "slot": 4,
+      "file": "brushes/square_rough_lightgrey.png",
+      "rotation": 0,
+      "mirror": false,
+      "gain": 1.167111838123566,
+      "sourceSHA256": "4be4e7464997ba1b944645ff96d53655b62843403af8b0b88d96d3aba4d30569"
+    },
+    {
+      "slot": 5,
+      "file": "brushes/square_rough_lightgrey.png",
+      "rotation": 90,
+      "mirror": false,
+      "gain": 1.1670866116301206,
+      "sourceSHA256": "4be4e7464997ba1b944645ff96d53655b62843403af8b0b88d96d3aba4d30569"
+    },
+    {
+      "slot": 6,
+      "file": "brushes/square_rough_lightgrey.png",
+      "rotation": 180,
+      "mirror": true,
+      "gain": 1.167111838123566,
+      "sourceSHA256": "4be4e7464997ba1b944645ff96d53655b62843403af8b0b88d96d3aba4d30569"
+    },
+    {
+      "slot": 7,
+      "file": "brushes/square_rough_lightgrey.png",
+      "rotation": 270,
+      "mirror": true,
+      "gain": 1.1670866116301206,
+      "sourceSHA256": "4be4e7464997ba1b944645ff96d53655b62843403af8b0b88d96d3aba4d30569"
+    }
+  ],
+  "paperSource": "patterns/4-paper-soft-grain_testtweak2.png",
+  "paperSHA256": "e59920eb9e234657fb54d8430679bb7a69f82c116c849db2ac79ad67469c25d1",
+  "flowVectorNoise": "deterministic generated tileable value noise, seed 230118",
+  "referenceArtworkOrOldMaterialInputs": false
+}

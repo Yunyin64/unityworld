@@ -41,7 +41,17 @@ internal sealed class DuelSpineActor
     private DuelSpineActor(SkeletonData data) => _skeleton = new(data);
     internal string Rig { get; private init; } = "";
 
-    internal static DuelSpineActor? Create(string rig)
+    internal static string ResolveRig(string rig) => rig == "female" ? "female" : "male";
+
+    internal static ClientAssetPool.Lease<DuelSpineActor>? Rent(string rig)
+    {
+        rig = ResolveRig(rig);
+        return GameBootstrap.AssetInstances.Rent(RigPath(rig), () => Create(rig), static actor => actor.ResetForPool());
+    }
+
+    private static string RigPath(string rig) => DuelWardrobe.Directory + "duel_" + rig + ".json";
+
+    private static DuelSpineActor? Create(string rig)
     {
         var data = Assets.Value;
         if (data == null) return null;
@@ -58,7 +68,7 @@ internal sealed class DuelSpineActor
             SkeletonData Read(string rig)
             {
                 var skeleton = reader.ReadSkeletonData(new StringReader(
-                    FileAccess.GetFileAsString(DuelWardrobe.Directory + "duel_" + rig + ".json")));
+                    FileAccess.GetFileAsString(RigPath(rig))));
                 if (skeleton.FindAnimation("Ready") == null) throw new InvalidDataException($"骨架 {rig} 缺少待机动画。");
                 return skeleton;
             }
@@ -69,6 +79,14 @@ internal sealed class DuelSpineActor
             GD.PushWarning("Spine 人物素材无法读取，改用场景原立绘。" + error.Message);
             return null;
         }
+    }
+
+    private void ResetForPool()
+    {
+        _look = null;
+        _dyed.Clear();
+        _skeleton.Skin = null;
+        _skeleton.SetToSetupPose();
     }
 
     internal void Equip(BattleActorLook look)

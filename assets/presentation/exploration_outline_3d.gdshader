@@ -1,6 +1,8 @@
 shader_type spatial;
 render_mode unshaded, fog_disabled, cull_disabled, depth_test_disabled, depth_draw_never;
 
+#include "res://assets/presentation/exploration_ink_noise.gdshaderinc"
+
 uniform sampler2D scene_depth : hint_depth_texture, filter_nearest, repeat_disable;
 uniform sampler2D scene_normal : hint_normal_roughness_texture, filter_nearest, repeat_disable;
 uniform sampler2D outline_profiles : filter_nearest, repeat_disable;
@@ -9,6 +11,7 @@ uniform float mountain_width_px : hint_range(1.0, 6.0, 0.05) = 3.35;
 uniform float building_width_px : hint_range(0.5, 4.0, 0.05) = 1.85;
 uniform float foliage_width_px : hint_range(0.0, 2.5, 0.05) = 0.78;
 uniform float overall_weight : hint_range(0.25, 1.75, 0.05) = 1.0;
+uniform bool ink_mode = false;
 
 // 屏幕像素轴和对角线共同处理，避免只在横竖边上稳定。
 const vec2 axes[4] = { vec2(1, 0), vec2(0, 1), vec2(0.707107, 0.707107), vec2(-0.707107, 0.707107) };
@@ -30,6 +33,13 @@ int profile_at(vec2 uv) {
 }
 
 Stroke profile_stroke(int profile) {
+    if (ink_mode) {
+        if (profile == 1) return Stroke(2.15, 0.40, 0.15, vec3(0.031, 0.048, 0.035));
+        if (profile == 2) return Stroke(0.85, 0.48, 0.0, vec3(0.012, 0.025, 0.009));
+        if (profile == 3) return Stroke(1.75, 0.72, 0.26, vec3(0.016, 0.012, 0.007));
+        if (profile == 4) return Stroke(1.05, 0.37, 0.13, vec3(0.025, 0.035, 0.025));
+        if (profile == 5) return Stroke(0.0, 0.0, 0.0, vec3(0.0));
+    }
     if (profile == 1) return Stroke(mountain_width_px, 0.87, 0.36, vec3(0.0));
     if (profile == 2) return Stroke(foliage_width_px, 0.62, 0.0, vec3(0.003, 0.010, 0.003));
     if (profile == 3) return Stroke(building_width_px, 0.86, 0.54, vec3(0.007, 0.003, 0.001));
@@ -134,12 +144,15 @@ void fragment() {
     float pixel = 2.0 / (VIEWPORT_SIZE.y * abs(PROJECTION_MATRIX[1][1]));
     float world_px = pixel * (perspective ? center : 1.0);
     vec2 texel = 1.0 / VIEWPORT_SIZE;
+    vec3 stroke_ink = ink_mode ? vec3(0.033, 0.045, 0.034) : ink.rgb;
+    float fibers = ink_mode ? 0.49 + 0.51 * smoothstep(0.20, 0.68,
+        ink_noise(FRAGCOORD.xy * vec2(0.21, 0.47))) : 1.0;
 
     if (profile == 0) {
         // 草丛也写入 ID 缓冲的深度，只有空背景接受山体和建筑的外侧覆盖。
         if (raw > 0.000001) discard;
-        ALBEDO = ink.rgb;
-        ALPHA = edge_coverage(SCREEN_UV, texel, center, pixel, perspective, INV_PROJECTION_MATRIX) * ink.a;
+        ALBEDO = stroke_ink;
+        ALPHA = edge_coverage(SCREEN_UV, texel, center, pixel, perspective, INV_PROJECTION_MATRIX) * ink.a * fibers;
     } else {
         Stroke stroke = profile_stroke(profile);
         if (stroke.silhouette_width <= 0.0) discard;
@@ -171,8 +184,8 @@ void fragment() {
         float fill = 0.0;
         if ((profile == 1 || profile == 3 || profile == 5) && contour < 0.40)
             fill = edge_coverage(SCREEN_UV, texel, center, pixel, perspective, INV_PROJECTION_MATRIX);
-        ALBEDO = ink.rgb + stroke.tint;
+        ALBEDO = stroke_ink + stroke.tint;
         float inside = max(contour * stroke.silhouette_opacity, crease * stroke.crease_opacity);
-        ALPHA = max(inside * atmosphere * foliage_distance, fill) * ink.a;
+        ALPHA = max(inside * atmosphere * foliage_distance, fill) * ink.a * fibers;
     }
 }

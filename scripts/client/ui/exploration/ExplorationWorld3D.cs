@@ -18,6 +18,8 @@ public partial class ExplorationWorld3D : Node3D
     private Node3D _scenery = null!;
     private Camera3D _camera = null!;
     private ExplorationOutline3D _outline = null!;
+    private ExplorationInkMode _inkMode = null!;
+    private ExplorationInkDragon? _inkDragon;
     private DirectionalLight3D _sun = null!;
     private Godot.Environment _environment = null!;
     private Node3D? _mist;
@@ -46,7 +48,8 @@ public partial class ExplorationWorld3D : Node3D
         _sun = GetNode<DirectionalLight3D>("Sun");
         _sunAngle = _sun.RotationDegrees;
         _sunColor = _sun.LightColor;
-        _environment = GetNode<WorldEnvironment>("WorldEnvironment").Environment;
+        var worldEnvironment = GetNode<WorldEnvironment>("WorldEnvironment");
+        _environment = worldEnvironment.Environment;
         _fogNear = _environment.FogDepthBegin;
         _fogFar = _environment.FogDepthEnd;
         _fogDensity = _environment.FogDensity;
@@ -88,6 +91,10 @@ public partial class ExplorationWorld3D : Node3D
         _outline.TrackTree(_actor, OutlineProfile.Figure);
         _outline.SetEnabled(outlineToggle.ButtonPressed);
         outlineToggle.Toggled += _outline.SetEnabled;
+        _inkMode = new ExplorationInkMode(worldEnvironment, GetNode<ColorRect>("Interface/InkPaper"),
+            GetNode<MeshInstance3D>("MapCamera/WetInkPass"), (ShaderMaterial)outline.MaterialOverride,
+            _land, _water, _outerOcean, _rim);
+        GetNode<CheckButton>("%InkMode").Toggled += SetInkMode;
         _automatic.Toggled += OnAutomaticChanged;
         _move.Pressed += Act;
         _mode.Pressed += () => ShowMap(!_sample);
@@ -141,6 +148,8 @@ public partial class ExplorationWorld3D : Node3D
         _scenery = ExplorationTerrainProps.Build(source, _surface);
         _terrain.AddChild(_scenery);
         _outline.TrackTree(_scenery, OutlineProfile.Building);
+        _inkMode.SetScenery(_scenery);
+        UpdateInkDragon();
         ShowSelection();
         GD.Print($"[Exploration3D] map={(_sample ? "sample" : "world")} tiles={source.Visible.Count} " +
             $"land_triangles={_mesh.LandTriangles} water_triangles={_mesh.WaterTriangles}");
@@ -322,6 +331,7 @@ public partial class ExplorationWorld3D : Node3D
 
     private void SetScenicLighting(bool enabled)
     {
+        _inkMode.SetScenic(enabled);
         _environment.BackgroundMode = enabled ? Godot.Environment.BGMode.Sky : Godot.Environment.BGMode.Color;
         _environment.VolumetricFogEnabled = enabled;
         _environment.FogSkyAffect = enabled ? 0f : 1f;
@@ -348,6 +358,7 @@ public partial class ExplorationWorld3D : Node3D
             _backdrop = ExplorationScenicBackdrop.Build(_land.MaterialOverride);
             AddChild(_backdrop);
             _outline.Track(_backdrop, OutlineProfile.Mountain);
+            _inkMode.SetBackdrop(_backdrop);
         }
         _backdrop.Show();
         var fog = new ShaderMaterial { Shader = GD.Load<Shader>("res://assets/presentation/exploration_mist_3d.gdshader") };
@@ -370,15 +381,43 @@ public partial class ExplorationWorld3D : Node3D
         AddChild(_mist);
     }
 
+    private void SetInkMode(bool enabled)
+    {
+        _inkMode.SetEnabled(enabled);
+        UpdateInkDragon();
+        if (_surface != null) PlaceCamera();
+    }
+
+    private void UpdateInkDragon()
+    {
+        if (!_inkMode.Enabled || _source?.Gate is not TileId gate || _surface == null)
+        {
+            _inkDragon?.SetFlying(false);
+            return;
+        }
+        if (_inkDragon == null)
+        {
+            _inkDragon = new ExplorationInkDragon { Name = "GateInkDragon" };
+            AddChild(_inkDragon);
+        }
+        var point = ExplorationTerrainSurface.Center(gate);
+        _inkDragon.Position = ExplorationTerrainSurface.At(point, _surface.Sample(point).Ground);
+        _inkDragon.SetFlying(true);
+    }
+
     private void PlaceCamera()
     {
         var horizontal = new Vector3(Mathf.Sin(_yaw), 0f, Mathf.Cos(_yaw));
         var direction = horizontal * Mathf.Cos(_pitch) + Vector3.Up * Mathf.Sin(_pitch);
+        // 水墨近景给盘旋的龙留出屋脊上方的画幅，仍围绕同一座山门。
+        bool inkScenic = _scenicView && _inkMode.Enabled;
+        var focus = inkScenic ? _focus + Vector3.Up * 1.06f : _focus;
+        float distance = _scenicView ? _zoom * (inkScenic ? 1.23f : 1f) : 36f;
         _camera.Projection = _scenicView ? Camera3D.ProjectionType.Perspective : Camera3D.ProjectionType.Orthogonal;
         _camera.Far = _scenicView ? 285f : 110f;
-        _camera.Position = _focus + direction * (_scenicView ? _zoom : 36f);
-        _camera.LookAt(_focus, Vector3.Up);
-        if (_scenicView) _camera.Fov = 43f;
+        _camera.Position = focus + direction * distance;
+        _camera.LookAt(focus, Vector3.Up);
+        if (_scenicView) _camera.Fov = inkScenic ? 49f : 43f;
         else _camera.Size = _zoom;
     }
 

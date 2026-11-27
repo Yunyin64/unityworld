@@ -6,22 +6,33 @@ namespace Xianxia.Client.UI.Templates;
 /// <summary>模板编辑与战斗舞台复用同一套 Spine 皮肤和动作。</summary>
 public partial class TemplateSpinePreview : Control
 {
-    private DuelSpineActor? _actor;
+    private ClientAssetPool.Lease<DuelSpineActor>? _actor;
     private string _pose = "Ready";
     private float _seconds;
 
     internal bool SetLook(BattleActorLook? look)
     {
-        if (look == null) _actor = null;
-        else
+        string? rig = look == null ? null : DuelSpineActor.ResolveRig(look.Rig);
+        if (_actor?.Instance.Rig != rig)
         {
-            if (_actor?.Rig != look.Rig) _actor = DuelSpineActor.Create(look.Rig);
-            _actor?.Equip(look);
+            ReleaseActor();
+            if (rig != null) _actor = DuelSpineActor.Rent(rig);
         }
+        if (look != null) _actor?.Instance.Equip(look);
         Visible = _actor != null;
         SetProcess(Visible);
         QueueRedraw();
         return Visible;
+    }
+
+    /// <summary>切换场景时把预览演员交还给全局池。</summary>
+    public override void _ExitTree() => ReleaseActor();
+
+    private void ReleaseActor()
+    {
+        var actor = _actor;
+        _actor = null;
+        actor?.Dispose();
     }
 
     internal void Preview(string pose)
@@ -40,7 +51,7 @@ public partial class TemplateSpinePreview : Control
     /// <summary>在编辑器留出的立绘位置绘制人物及脚下阴影。</summary>
     public override void _Draw()
     {
-        if (_actor == null) return;
+        if (_actor?.Instance is not { } actor) return;
         float height = Mathf.Min(Size.Y * .90f, Size.X * .75f);
         var foot = new Vector2(Size.X * .53f, Size.Y * .92f - 4);
         DrawSetTransform(foot, 0, new Vector2(1, .18f));
@@ -48,8 +59,8 @@ public partial class TemplateSpinePreview : Control
             DrawCircle(Vector2.Zero, height * (.37f - i * .058f), new Color("2e2a20", .085f), true, -1, true);
         DrawSetTransform(foot);
         float cycle = _seconds % 1.25f;
-        _actor.Sample(_pose != "Ready" && cycle < .68f ? _pose : "Ready", _pose == "Ready" ? _seconds % 2.4f : cycle);
-        _actor.Draw(this, height, false, Colors.White);
+        actor.Sample(_pose != "Ready" && cycle < .68f ? _pose : "Ready", _pose == "Ready" ? _seconds % 2.4f : cycle);
+        actor.Draw(this, height, false, Colors.White);
         DrawSetTransform(Vector2.Zero);
     }
 }
