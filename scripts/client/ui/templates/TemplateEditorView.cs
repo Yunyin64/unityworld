@@ -104,10 +104,17 @@ public partial class TemplateEditorView : Control
         _loadout.MoveRequested += MoveCard;
         _loadout.AddRequested += AddCard;
         _loadout.CopyForAppearanceRequested += CopyTemplate;
-        _loadout.AppearanceRequested += look =>
+        _loadout.AppearanceRequested += (slot, look) =>
         {
             if (_draft is not { } draft || !CanChange(draft)) return;
-            draft.Presentation.Appearance = look;
+            var configured = look.ToConfiguration(look.Rig);
+            if (slot == null) draft.NpcFields.Appearance = configured;
+            else
+            {
+                draft.NpcFields.Appearance ??= new(StringComparer.OrdinalIgnoreCase);
+                string key = draft.NpcFields.Appearance.Keys.FirstOrDefault(key => key.Equals(slot, StringComparison.OrdinalIgnoreCase)) ?? slot;
+                draft.NpcFields.Appearance[key] = configured[slot];
+            }
             DraftEdited(draft);
         };
 
@@ -178,7 +185,7 @@ public partial class TemplateEditorView : Control
     }
 
     private static BattleActorLook? AppearanceFor(TemplateDraft draft) =>
-        DuelWardrobe.For(draft.NpcFields, draft.SourceTemplateId, draft.Presentation.Appearance);
+        DuelWardrobe.For(draft.NpcFields, draft.DraftId);
 
     private void UpdateSummary()
     {

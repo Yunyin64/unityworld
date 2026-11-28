@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Linq;
+using UnityWorld.Game.Data;
 using Xianxia.Client.Battle;
 
 namespace Xianxia.Client.UI.Templates;
@@ -16,9 +17,10 @@ public partial class TemplateAppearancePanel : VBoxContainer
     private ColorPickerButton _dye = null!;
     private Button _clearDye = null!, _roll = null!, _copy = null!;
     private BattleActorLook? _look;
+    private DuelWardrobe.Group[] groups = [];
     private bool _readOnly;
 
-    internal event Action<BattleActorLook>? Changed;
+    internal event Action<string?, BattleActorLook>? Changed;
     internal event Action<string>? DemoSelected;
     internal event Action? CopyRequested;
 
@@ -32,48 +34,55 @@ public partial class TemplateAppearancePanel : VBoxContainer
         _demo = GetNode<OptionButton>("Demo");
         _roll = GetNode<Button>("Roll");
         _copy = GetNode<Button>("Copy");
-        foreach (var group in DuelWardrobe.Groups) _group.AddItem(group.Label);
         foreach (var demo in Demos) _demo.AddItem(demo.Label);
-        _group.Select(0);
         _demo.Select(0);
         _group.ItemSelected += _ => RefreshOptions();
-        _variant.ItemSelected += index => Change(part => part with { Id = SelectedGroup.Options[(int)index].Id });
+        _variant.ItemSelected += index => Change(part =>
+        {
+            var option = SelectedGroup.Options[(int)index];
+            return new(option.Address, option.Dyeable ? part.Dye : null, option.SourceId);
+        });
         _demo.ItemSelected += index => DemoSelected?.Invoke(Demos[(int)index].Clip);
-        _dye.ColorChanged += color => Change(part => part with { Dye = color.ToHtml(false) });
+        _dye.ColorChanged += color => Change(part => part with { Dye = "#" + color.ToHtml(false) });
         _dye.GetPicker().EditAlpha = false;
         _clearDye.Pressed += () => Change(part => part with { Dye = null });
         _roll.Pressed += () =>
         {
-            if (!_readOnly && _look != null)
-                Changed?.Invoke(DuelWardrobe.Generate(_look.Rig, DuelWardrobe.StableSeed(Guid.NewGuid().ToString("N"))));
+            if (!_readOnly && _look != null &&
+                DuelWardrobe.Generate(_look.Rig, NpcAppearanceCatalog.StableSeed(Guid.NewGuid().ToString("N"))) is { } look)
+                Changed?.Invoke(null, look);
         };
         _copy.Pressed += () => CopyRequested?.Invoke();
         Hide();
     }
 
-    private DuelWardrobe.Group SelectedGroup => DuelWardrobe.Groups[_group.Selected];
+    private DuelWardrobe.Group SelectedGroup => groups[_group.Selected];
 
     internal void Bind(BattleActorLook? look, bool readOnly)
     {
         _look = look;
         _readOnly = readOnly;
-        Visible = look != null;
-        if (look != null) RefreshOptions();
+        string? active = _group.Selected >= 0 && _group.Selected < groups.Length ? SelectedGroup.Id : null;
+        groups = look == null ? [] : DuelWardrobe.Groups(look.Rig);
+        _group.Clear();
+        foreach (var group in groups) _group.AddItem(group.Label);
+        Visible = look != null && groups.Length > 0;
+        if (!Visible) return;
+        _group.Select(Math.Max(0, Array.FindIndex(groups, group => group.Id == active)));
+        RefreshOptions();
     }
 
     private void RefreshOptions()
     {
-        if (_look == null) return;
+        if (_look == null || _group.Selected < 0) return;
         var group = SelectedGroup;
         var part = _look.Parts[group.Id];
-        if (_variant.ItemCount != group.Options.Length || _variant.GetItemText(0) != group.Options[0].Label)
-        {
-            _variant.Clear();
-            foreach (var option in group.Options) _variant.AddItem(option.Label);
-        }
-        _variant.Select(Array.FindIndex(group.Options, option => option.Id == part.Id));
+        _variant.Clear();
+        foreach (var option in group.Options) _variant.AddItem(option.Label);
+        int selected = Array.FindIndex(group.Options, option => option.Address == part.Id);
+        _variant.Select(selected);
         _variant.Disabled = _readOnly;
-        _dye.Disabled = _readOnly || !group.Dyeable || part.Id == "none";
+        _dye.Disabled = _readOnly || selected < 0 || !group.Options[selected].Dyeable;
         _clearDye.Disabled = _dye.Disabled || string.IsNullOrEmpty(part.Dye);
         _dye.Color = part.Dye is { } hex && Color.HtmlIsValid(hex) ? Color.FromHtml(hex) : Colors.White;
         _roll.Visible = !_readOnly;
@@ -82,10 +91,10 @@ public partial class TemplateAppearancePanel : VBoxContainer
 
     private void Change(Func<BattleActorPart, BattleActorPart> edit)
     {
-        if (_readOnly || _look == null) return;
+        if (_readOnly || _look == null || _group.Selected < 0) return;
         string group = SelectedGroup.Id;
         var previous = _look.Parts[group];
         var next = edit(previous);
-        if (next != previous) Changed?.Invoke(_look.WithPart(group, next));
+        if (next != previous) Changed?.Invoke(group, _look.WithPart(group, next));
     }
 }

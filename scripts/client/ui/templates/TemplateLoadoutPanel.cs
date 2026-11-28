@@ -27,7 +27,7 @@ public partial class TemplateLoadoutPanel : Panel
     public event Action<string>? RemoveRequested;
     public event Action<string, int, int>? MoveRequested;
     public event Action<string, int, int>? AddRequested;
-    internal event Action<BattleActorLook>? AppearanceRequested;
+    internal event Action<string?, BattleActorLook>? AppearanceRequested;
     internal event Action? CopyForAppearanceRequested;
 
     public override void _Ready()
@@ -39,7 +39,7 @@ public partial class TemplateLoadoutPanel : Panel
         _actor = GetNode<TextureRect>("%ActorImage");
         _spine = GetNode<TemplateSpinePreview>("%SpinePreview");
         _appearance = GetNode<TemplateAppearancePanel>("%Appearance");
-        _appearance.Changed += look => AppearanceRequested?.Invoke(look);
+        _appearance.Changed += (slot, look) => AppearanceRequested?.Invoke(slot, look);
         _appearance.DemoSelected += _spine.Preview;
         _appearance.CopyRequested += () => CopyForAppearanceRequested?.Invoke();
         _unplaced = GetNode<VBoxContainer>("%UnplacedEntries");

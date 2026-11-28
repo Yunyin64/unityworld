@@ -25,6 +25,8 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
     private readonly Dictionary<string, TemplateSource> _sources = new(StringComparer.Ordinal);
     public string DataRoot { get; }
     public string DataFingerprint { get; private set; } = "";
+    /// <summary>与这次成功加载的 NPC 模板对应的外观目录。</summary>
+    public NpcAppearanceCatalog Appearance { get; private set; } = NpcAppearanceCatalog.Default;
     private TemplateCatalog(string root) { DataRoot = Path.GetFullPath(root); }
     public IReadOnlyList<NpcDefine> Npcs => Copies(_npcs);
     public IReadOnlyList<CardDefine> Cards => Copies(_cards);
@@ -45,9 +47,10 @@ public sealed class TemplateCatalog : ITemplateEditorDefinitions
     public IEnumerable<StatDefine> GetStats() => Stats;
     public TemplateSource? GetSource(string kind, string id) => _sources.GetValueOrDefault(kind + ":" + id);
 
-    public static TemplateCatalog Load(string dataRoot)
+    public static TemplateCatalog Load(string dataRoot, NpcAppearanceCatalog? appearance = null)
     {
         var catalog = new TemplateCatalog(dataRoot);
+        catalog.Appearance = appearance ?? NpcAppearanceCatalog.Default;
         string before = Fingerprint(catalog.DataRoot);
         catalog.Read("Npc", catalog._npcs);
         catalog.Read("Shape", catalog._shapes, optional: true);
@@ -117,9 +120,9 @@ public sealed class TemplateCatalogSession
 {
     public TemplateCatalog? Current { get; private set; }
     public string? LastError { get; private set; }
-    public bool Refresh(string dataRoot)
+    public bool Refresh(string dataRoot, NpcAppearanceCatalog? appearance = null)
     {
-        try { var next = TemplateCatalog.Load(dataRoot); Current = next; LastError = null; return true; }
+        try { var next = TemplateCatalog.Load(dataRoot, appearance); Current = next; LastError = null; return true; }
         catch (Exception ex) { LastError = ex.Message; return false; }
     }
 }

@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "red_cliff", "DisplayName": "丹霞山", "Description": "开发样例：丹霞山代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["山类"], "Color": "#b47a5c", "Symbol": "丹",
+    "Tags": ["山类"], "Color": "#b47a5c", "Symbol": "丹", "AssetRef": "atlas:red_cliff",
     "InitialAura": {"Jin": 1.6, "Mu": 0.6, "Shui": 0.7, "Huo": 1.5, "Tu": 1.7}, "AllowFill": true, "FillWeight": 3,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

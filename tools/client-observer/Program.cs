@@ -14,6 +14,16 @@ try
     }
     string Option(string name, string fallback = "") => args.FirstOrDefault(a => a.StartsWith(name + "=", StringComparison.Ordinal))?[(name.Length + 1)..] ?? fallback;
     var root = Path.GetFullPath(Option("--root", Path.Combine(AppContext.BaseDirectory, "../../../../../")));
+    if (Option("--npc-appearance-check-input") is { Length: > 0 } appearanceInput)
+    {
+        NpcAppearanceChecks.WriteObservation(root, appearanceInput, Option("--npc-appearance-check-report"));
+        return 0;
+    }
+    if (args.Contains("--check-npc-appearance"))
+    {
+        NpcAppearanceChecks.Run(root);
+        return 0;
+    }
     var inputPath = Option("--case-input");
     var input = inputPath.Length == 0
         ? BattleCaseCatalog.Load(Path.Combine(root, "assets/testing/battle_cases.json"), Option("--case-id", "console-basic-template"))

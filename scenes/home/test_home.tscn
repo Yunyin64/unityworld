@@ -29,9 +29,9 @@ anchor_left = 0.16
 anchor_right = 0.16
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_top = -190
+offset_top = -225
 offset_right = 340
-offset_bottom = 190
+offset_bottom = 225
 grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="Menu"]
@@ -65,6 +65,16 @@ text = "2D 地图测试"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 text = "角色模板编辑器"
+
+[node name="LandmarkEditor" type="Button" parent="Menu/Margin/Entries"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+text = "地标编辑器"
+
+[node name="RegionEditor" type="Button" parent="Menu/Margin/Entries"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+text = "区域模板编辑器"
 
 [node name="ScaleSetting" type="HBoxContainer" parent="Menu/Margin/Entries"]
 theme_override_constants/separation = 10

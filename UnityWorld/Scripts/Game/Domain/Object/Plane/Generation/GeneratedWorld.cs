@@ -86,6 +86,31 @@ public sealed class GeneratedCell
     public int? RegionIndex { get; set; }
     /// <summary>Optional landmark definition planned at this tile.</summary>
     public string LandMarkDefineId { get; set; }
+    /// <summary>主地标是否来自独立创世选址，而非地区布局或绝对坐标。</summary>
+    internal bool HasGeneratedLandMark { get; set; }
+    /// <summary>区域模板中随主地标生成的有序附加定义 ID。</summary>
+    public IReadOnlyList<string> AdditionalLandMarkDefineIds => additionalLandMarks ?? (IReadOnlyList<string>)Array.Empty<string>();
+    private List<string>? additionalLandMarks;
+
+    internal void AddPlannedLandMark(string id)
+    {
+        if (LandMarkDefineId == null) LandMarkDefineId = id;
+        else (additionalLandMarks ??= new()).Add(id);
+    }
+
+    internal void ClearPlannedLandMarks()
+    {
+        LandMarkDefineId = null;
+        additionalLandMarks = null;
+        HasGeneratedLandMark = false;
+    }
+
+    internal IEnumerable<string> PlannedLandMarks()
+    {
+        if (LandMarkDefineId != null) yield return LandMarkDefineId;
+        if (additionalLandMarks == null) yield break;
+        foreach (string id in additionalLandMarks) yield return id;
+    }
     /// <summary>Final local environment after explicitly configured puzzle adjustments.</summary>
     public MapEnvironment Environment { get; set; } = new();
     /// <summary>Water footprint, drainage and directed connections.</summary>

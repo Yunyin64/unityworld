@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "rainforest", "DisplayName": "雨林", "Description": "开发样例：雨林代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["林木", "湿润", "炎热"], "Color": "#285b42", "Symbol": "雨",
+    "Tags": ["林木", "湿润", "炎热"], "Color": "#285b42", "Symbol": "雨", "AssetRef": "atlas:rainforest",
     "InitialAura": {"Jin": 0.6, "Mu": 3, "Shui": 1.8, "Huo": 0.8, "Tu": 0.8}, "AllowFill": true, "FillWeight": 4,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0.5, "Max": 1}, "Temperature": {"Min": 0.55, "Max": 1},

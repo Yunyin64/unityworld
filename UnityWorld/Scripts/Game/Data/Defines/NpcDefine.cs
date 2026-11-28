@@ -1,5 +1,6 @@
 using UnityWorld.Game.Domain;
 using UnityWorld.Core;
+using System.Text.Json.Serialization;
 
 namespace UnityWorld.Game.Data
 {
@@ -51,6 +52,10 @@ namespace UnityWorld.Game.Data
         public NpcTypes.Gender Gender { get; set; } = NpcTypes.Gender.Male;
         /// <summary>NPC 种族</summary>
         public NpcTypes.NpcType NpcType { get; set; } = NpcTypes.NpcType.Human;
+
+        /// <summary>逐槽填写相对资源地址和可选染色，缺项在出生或预览时补全。</summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, string>? Appearance { get; set; }
 
         /// <summary>初始年龄（单位：年）</summary>
         public float InitAge { get; set; } = 18f;

@@ -55,25 +55,39 @@ namespace UnityWorld.Game.Domain
             }
 
             var singletons = new HashSet<string>(landMarks.ReservedSingletons, StringComparer.Ordinal);
+            var authoredOrder = new Dictionary<TileId, int[]>();
             // 按天然或人工阶段准备地标并检查单例冲突
             void PrepareLandmarks(bool isNatural)
             {
                 // 地区附带和独立散布都只提供位置计划，按同一个 IsNatural 阶段创建实际实体。
                 foreach (var cell in world.Cells.Where(c => c.LandMarkDefineId != null))
                 {
-                    var define = catalog.LandMarks[cell.LandMarkDefineId];
-                    if (define.IsNatural != isNatural) continue;
-                    if (define.IsSingleton && !singletons.Add(define.ID)) throw new InvalidDataException($"重复单例地标 {define.ID}");
+                    bool hasGroup = cell.AdditionalLandMarkDefineIds.Count > 0;
+                    if (hasGroup && (!cell.RegionIndex.HasValue || cell.HasForcedLandmark))
+                        throw new InvalidDataException($"地块 {cell.Id} 的多地标必须来自地区模板。");
                     var tile = plane.GetTile(cell.Id);
-                    var phase = isNatural ? LandMarkPlacementPhase.CreationNatural : LandMarkPlacementPhase.Dynamic;
-                    var landmark = landMarks.Prepare(plane, tile, define.ID, phase);
-                    prepared.LandMarks.Add(landmark);
-                    if (cell.RegionIndex.HasValue) regionByIndex[cell.RegionIndex.Value].AddLandMark(landmark.Id);
+                    int index = 0;
+                    foreach (string id in cell.PlannedLandMarks())
+                    {
+                        int slot = index++;
+                        var define = catalog.LandMarks[id];
+                        if (define.IsNatural != isNatural) continue;
+                        if (define.IsSingleton && !singletons.Add(define.ID)) throw new InvalidDataException($"重复单例地标 {define.ID}");
+                        var phase = isNatural ? LandMarkPlacementPhase.CreationNatural : LandMarkPlacementPhase.Dynamic;
+                        var landmark = landMarks.Prepare(plane, tile, define.ID, phase, fromLandMarkGroup: hasGroup);
+                        prepared.LandMarks.Add(landmark);
+                        if (cell.RegionIndex.HasValue) regionByIndex[cell.RegionIndex.Value].AddLandMark(landmark.Id);
+                        if (!hasGroup) continue;
+                        if (!authoredOrder.TryGetValue(cell.Id, out var ids))
+                            authoredOrder.Add(cell.Id, ids = new int[1 + cell.AdditionalLandMarkDefineIds.Count]);
+                        ids[slot] = landmark.Id;
+                    }
                 }
             }
             PrepareLandmarks(isNatural: true);
             prepared.NaturalSnapshot = AuraDaoMgr.PrepareSnapshot(plane);
             PrepareLandmarks(isNatural: false);
+            foreach (var (cell, order) in authoredOrder) plane.GetTile(cell).OrderLandMarks(order);
             plane.GenerationResult = world;
             return prepared;
         }

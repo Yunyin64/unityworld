@@ -1,8 +1,31 @@
 [
   {
-    "SchemaVersion": 2, "ID": "natural_ancient_tree", "DisplayName": "千年古木", "IsNatural": true, "IsSingleton": false,
-    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["林木"], "PlacementExtraTerrains": [],
-    "ModifierDefineIds": ["aura_ancient_forest"], "AuraOffset": {"Jin": 0, "Mu": 4, "Shui": 1, "Huo": 0, "Tu": 0},
-    "Tags": ["开发样例", "自然奇观"]
+    "ID": "natural_ancient_tree",
+    "DisplayName": "千年古木",
+    "ImagePath": "landmarks/natural_ancient_tree.png",
+    "IsNatural": true,
+    "IsSingleton": false,
+    "ModifierDefineIds": [
+      "aura_ancient_forest"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 4,
+      "Shui": 1,
+      "Huo": 0,
+      "Tu": 0
+    },
+    "Tags": [
+      "开发样例",
+      "自然奇观"
+    ],
+    "InitialPlacement": {
+      "PerTileChance": 0.004,
+      "TagConditions": [
+        "林木",
+        "No:寒冷"
+      ],
+      "MinSpacing": 6
+    }
   }
 ]

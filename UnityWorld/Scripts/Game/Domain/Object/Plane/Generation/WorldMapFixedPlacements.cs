@@ -24,13 +24,13 @@ public static partial class WorldMapGenerator
                 plan.Cells.Add((index, pair.Value, def.FixedEnvironment.Copy()));
             }
             var localSingletons = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var pair in def.LandMarkLayout.OrderBy(p => p.Key.dr).ThenBy(p => p.Key.dq))
+            foreach (var (cell, id) in def.LandMarkPlacements())
             {
-                int index = c.Index(origin + new TileId(pair.Key.dq, pair.Key.dr));
-                var landmark = c.Catalog.LandMarks[pair.Value];
-                if (landmark.IsSingleton && (c.Singletons.Contains(pair.Value) || !localSingletons.Add(pair.Value)))
-                    c.Fail("fixed-regions", $"Fixed region {def.ID} repeats singleton {pair.Value}.");
-                plan.Landmarks.Add((index, pair.Value));
+                int index = c.Index(origin + new TileId(cell.dq, cell.dr));
+                var landmark = c.Catalog.LandMarks[id];
+                if (landmark.IsSingleton && (c.Singletons.Contains(id) || !localSingletons.Add(id)))
+                    c.Fail("fixed-regions", $"Fixed region {def.ID} repeats singleton {id}.");
+                plan.Landmarks.Add((index, id));
             }
             CommitRegion(c, plan);
             foreach (var river in def.RiverCells)
@@ -48,7 +48,7 @@ public static partial class WorldMapGenerator
     private static void InstallFixedLandmarks(Context c)
     {
         foreach (var def in c.Catalog.LandMarks.Values.OrderBy(d => d.ID, StringComparer.Ordinal))
-        foreach (var point in def.ForcedPositions.OrderBy(p => p.Row).ThenBy(p => p.Col))
+        foreach (var point in (def.InitialPlacement?.ForcedPositions ?? []).OrderBy(p => p.Row).ThenBy(p => p.Col))
         {
             var cell = c.World.At(point.Col, point.Row);
             if (cell.LandMarkDefineId != null) c.Fail("fixed-landmarks", $"Landmark {def.ID} conflicts at ({point.Col},{point.Row}).");

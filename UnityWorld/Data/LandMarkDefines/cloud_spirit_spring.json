@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "cloud_spirit_spring",
+    "DisplayName": "云涌灵泉",
+    "IsNatural": true,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/cloud_spirit_spring.png",
+    "Tags": [
+      "灵水",
+      "奇观"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 1,
+      "Huo": 0.5,
+      "Tu": 0
+    }
+  }
+]

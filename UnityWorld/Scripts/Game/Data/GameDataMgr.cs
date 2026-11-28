@@ -19,6 +19,8 @@ namespace UnityWorld.Game.Data
         // ── 子管理器 ──────────────────────────────────────────
         private List<IDataMgrBase> _datamgrs  = new();
         public MapCatalog MapCatalog { get; private set; }
+        /// <summary>本世界准备好的 NPC 外观组件目录。</summary>
+        public NpcAppearanceCatalog Appearance { get; private set; } = NpcAppearanceCatalog.Default;
         internal ExploreEncounterData ExploreEncounters { get; private set; }
 
         // ── 初始化 ────────────────────────────────────────────
@@ -43,9 +45,7 @@ namespace UnityWorld.Game.Data
         _datamgrs.Add(new TriggerDefineMgr(Path.Combine(dataDir, "TriggerDefines.json")));
         _datamgrs.Add(new ConditionDefineMgr(Path.Combine(dataDir, "Condition")));
         _datamgrs.Add(new EffectDefineMgr(Path.Combine(dataDir, "EffectDefines.json")));
-        var shapePath = Path.Combine(dataDir, "Shape");
-        var shapes = new ShapeDefineMgr(shapePath);
-        if (Directory.Exists(shapePath)) _datamgrs.Add(shapes);
+        _datamgrs.Add(new ShapeDefineMgr(Path.Combine(dataDir, "Shape")));
         _datamgrs.Add(new CardDefineMgr(Path.Combine(dataDir, "Card")));
         _datamgrs.Add(new ExtraElementMgr(Path.Combine(dataDir, "ExtraElementDefines.json")));
         _datamgrs.Add(new EventDefineMgr(Path.Combine(dataDir, "EventDefines.json")));
@@ -73,11 +73,15 @@ namespace UnityWorld.Game.Data
         /// 统一加载所有数据文件（应在游戏启动时调用一次）
         /// baseDir 默认为程序所在目录（与 Program.cs 同级）
         /// </summary>
-        public static void Initialize(string baseDir = null)
+        public static void Initialize(string baseDir = null, NpcAppearanceCatalog? appearance = null)
         {
             baseDir ??= AppContext.BaseDirectory;
             // 每个宿主重新绑定数据目录，避免首次静态初始化锁定到引擎安装目录。
             var candidate = new GameDataMgr(baseDir);
+            candidate.Appearance = appearance ?? (AssetMgr.Instance is { } assets
+                ? NpcAppearanceCatalog.Load(assets, baseDir) : NpcAppearanceCatalog.Default);
+            foreach (string diagnostic in candidate.Appearance.Diagnostics)
+                LogMgr.Instance?.Warn("[NpcAppearance] {0}", diagnostic);
 
             foreach (var mgr in candidate._datamgrs)
             {

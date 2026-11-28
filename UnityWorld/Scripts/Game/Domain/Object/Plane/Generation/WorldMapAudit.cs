@@ -183,15 +183,23 @@ public static partial class WorldMapGenerator
                     c.Fail("audit", $"Forbidden adjacency {type.ID} / {c.World.Cells[n].TileDefineId} at {cell.Id}.");
             }
             if (cell.LandMarkDefineId != null && !c.Catalog.LandMarks.ContainsKey(cell.LandMarkDefineId)) c.Fail("audit", $"Unknown landmark at {cell.Id}.");
+            if (cell.AdditionalLandMarkDefineIds.Count > 0 && (cell.Source != TileGenerationSource.Region || cell.HasForcedLandmark ||
+                cell.LandMarkDefineId == null || cell.AdditionalLandMarkDefineIds.Any(id => !c.Catalog.LandMarks.ContainsKey(id)) ||
+                cell.PlannedLandMarks().Distinct(StringComparer.Ordinal).Count() != cell.AdditionalLandMarkDefineIds.Count + 1))
+                c.Fail("audit", $"Invalid additional landmarks at {cell.Id}.");
             if (cell.Source == TileGenerationSource.Region && (cell.RegionIndex == null || cell.RegionIndex < 0 || cell.RegionIndex >= c.World.Regions.Count))
                 c.Fail("audit", $"Missing region at {cell.Id}.");
             if (cell.Source != TileGenerationSource.Region && cell.RegionIndex != null) c.Fail("audit", $"Unexpected region at {cell.Id}.");
+            if (cell.HasGeneratedLandMark && (cell.HasForcedLandmark || cell.LandMarkDefineId == null ||
+                cell.AdditionalLandMarkDefineIds.Count != 0 || !AllowsInitialLandmarks(c, cell)))
+                c.Fail("audit", $"Invalid independent landmark at {cell.Id}.");
         }
         foreach (var region in c.World.Regions)
         {
             if (region.Index < 0 || region.Index >= c.World.Regions.Count || !ReferenceEquals(c.World.Regions[region.Index], region))
                 c.Fail("audit", $"Invalid stable region sequence: {region.Index}.");
             var def = c.Catalog.Regions[region.DefineId];
+            var extraLandmarks = def.AdditionalLandMarks?.ToLookup(point => (point.Dq, point.Dr), point => point.LandMarkId);
             var expected = def.TerrainLayout.Keys.Select(k => c.Index(region.Anchor + new TileId(k.dq, k.dr))).ToHashSet();
             if (expected.Contains(-1) || !expected.SetEquals(region.CellIndices) || region.CellIndices.Count != expected.Count)
                 c.Fail("audit", $"Region footprint mismatch: {region.DefineId} #{region.Index}.");
@@ -209,8 +217,11 @@ public static partial class WorldMapGenerator
                         c.Fail("audit", $"Forced region attributes changed: {def.ID} at {cell.Id}.");
                 }
                 string expectedLandmark = def.LandMarkLayout.GetValueOrDefault(kv.Key)
-                    ?? c.Catalog.LandMarks.Values.FirstOrDefault(lm => lm.ForcedPositions.Any(p => p.Col == cell.Col && p.Row == cell.Row))?.ID;
-                if (cell.LandMarkDefineId != expectedLandmark) c.Fail("audit", $"Author landmark changed: {region.DefineId} at {cell.Id}.");
+                    ?? c.Catalog.LandMarks.Values.FirstOrDefault(lm => lm.InitialPlacement?.ForcedPositions.Any(p => p.Col == cell.Col && p.Row == cell.Row) == true)?.ID;
+                if ((cell.HasGeneratedLandMark ? null : cell.LandMarkDefineId) != expectedLandmark)
+                    c.Fail("audit", $"Author landmark changed: {region.DefineId} at {cell.Id}.");
+                if (!cell.AdditionalLandMarkDefineIds.SequenceEqual(extraLandmarks?[kv.Key] ?? Array.Empty<string>()))
+                    c.Fail("audit", $"Author additional landmarks changed: {region.DefineId} at {cell.Id}.");
             }
         }
         foreach (var def in c.Regions.Values)
@@ -229,15 +240,15 @@ public static partial class WorldMapGenerator
                 if (instances[i].Anchor.DistanceTo(instances[j].Anchor) < def.MinSpacing) c.Fail("audit", $"Region spacing violation: {def.ID}.");
         }
         foreach (var def in c.Catalog.LandMarks.Values)
-        foreach (var point in def.ForcedPositions)
+        foreach (var point in def.InitialPlacement?.ForcedPositions ?? [])
         {
             var cell = c.World.At(point.Col, point.Row);
             if (cell.LandMarkDefineId != def.ID || !cell.HasForcedLandmark) c.Fail("audit", $"Forced landmark changed: {def.ID} at {point.Col},{point.Row}.");
         }
         foreach (var cell in c.World.Cells.Where(cell => cell.HasForcedLandmark))
-            if (cell.LandMarkDefineId == null || !c.Catalog.LandMarks[cell.LandMarkDefineId].ForcedPositions.Any(p => p.Col == cell.Col && p.Row == cell.Row))
+            if (cell.LandMarkDefineId == null || c.Catalog.LandMarks[cell.LandMarkDefineId].InitialPlacement?.ForcedPositions.Any(p => p.Col == cell.Col && p.Row == cell.Row) != true)
                 c.Fail("audit", $"Unexpected fixed landmark at {cell.Id}.");
-        foreach (var group in c.World.Cells.Where(x => x.LandMarkDefineId != null).GroupBy(x => x.LandMarkDefineId))
+        foreach (var group in c.World.Cells.Where(x => x.LandMarkDefineId != null).SelectMany(x => x.PlannedLandMarks()).GroupBy(id => id))
             if (c.Catalog.LandMarks[group.Key].IsSingleton && group.Count() > 1) c.Fail("audit", $"Duplicate singleton {group.Key}.");
         AuditWater(c); AuditConnectivity(c); AuditHydrologyMetrics(c);
     }

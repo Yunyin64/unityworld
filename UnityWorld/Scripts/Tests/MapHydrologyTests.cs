@@ -30,7 +30,7 @@ public static class MapHydrologyTests
         {
             Catalog = MapCatalog.Load(root);
             Options = new() { RegionIds = Catalog.Regions.Values.Where(r => lakes ? r.GenerationPhase == "lake" : r.GenerationPhase=="ordinary" && r.ForcedPositions.Count==0).Select(r => r.ID).ToList(),
-                WholeMapAttempts = 1, LandmarkDensity = 0, RegionCoverageTarget = 0 };
+                WholeMapAttempts = 1, RegionCoverageTarget = 0 };
             var type = typeof(WorldMapGenerator).GetNestedType("Context", BindingFlags.NonPublic)!;
             _context = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null,
                 new object[] { Catalog, Options, seed, 0, null }, null)!;
@@ -171,6 +171,16 @@ public static class MapHydrologyTests
         var singleton = new Fixture(root, lakes: true); singleton.Catalog.LandMarks["natural_reed_marsh"].IsSingleton = true;
         Reject(() => singleton.Call("PlaceLakes"), "missing");
         Check(singleton.World.Regions.Count == 0 && singleton.World.Cells.All(c=>c.Source!=TileGenerationSource.Region && c.RegionIndex==null && c.LandMarkDefineId==null), "singleton backtracking restores earlier lakes and provenance");
+        var grouped = new Fixture(root, lakes: true);
+        grouped.Catalog.LandMarks.Add("lake-group-singleton", new() { ID = "lake-group-singleton", IsSingleton = true });
+        foreach (var def in grouped.Catalog.Regions.Values.Where(region => region.GenerationPhase == "lake" && region.LandMarkLayout.Count > 0))
+        {
+            var point = def.LandMarkLayout.Keys.First();
+            def.AdditionalLandMarks = new() { new() { Dq = point.dq, Dr = point.dr, LandMarkId = "lake-group-singleton" } };
+        }
+        Reject(() => grouped.Call("PlaceLakes"), "missing");
+        Check(grouped.World.Regions.Count == 0 && grouped.World.Cells.All(c => c.LandMarkDefineId == null && c.AdditionalLandMarkDefineIds.Count == 0),
+            "附加地标的单例冲突回退各湖模板的全部地标");
         var reserved=new Fixture(root,lakes:true);foreach(var cell in reserved.World.Cells) cell.HasForcedLandmark=true;
         Reject(()=>reserved.Call("PlaceLakes"), "missing");
         Check(reserved.World.Regions.Count==0 && reserved.World.Cells.All(c=>c.HasForcedLandmark && c.TileDefineId==null), "fixed landmark reservations block whole lake atomically");

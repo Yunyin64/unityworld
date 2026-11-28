@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "dry_valley", "DisplayName": "干热河谷", "Description": "开发样例：干热河谷代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["干旱", "炎热"], "Color": "#b29567", "Symbol": "干",
+    "Tags": ["干旱", "炎热"], "Color": "#b29567", "Symbol": "干", "AssetRef": "atlas:dry_valley",
     "InitialAura": {"Jin": 1, "Mu": 0.7, "Shui": 0.5, "Huo": 2, "Tu": 1.5}, "AllowFill": true, "FillWeight": 3,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

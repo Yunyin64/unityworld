@@ -13,7 +13,7 @@ public static class WorldMapExport
 
     /// <summary>规范化地图结构摘要；环境以百万分之一精度表达。</summary>
     public static string StructureHash(GeneratedWorld world)
-        => Hash(JsonSerializer.Serialize(new
+        => HashWithAdditionalLandmarks(JsonSerializer.Serialize(new
         {
             world.GeneratorVersion, world.ConfigHash, world.Parameters, world.Width, world.Height,
             lakes=world.Lakes,
@@ -30,20 +30,33 @@ public static class WorldMapExport
                 r.Index, r.DefineId, r.IsFixed, q = r.Anchor.Q, r = r.Anchor.R,
                 cells = r.CellIndices.OrderBy(x => x).ToArray()
             })
-        }, Json));
+        }, Json), world.Cells);
 
     /// <summary>固定边界摘要不包含种子或可随机的腹地内容。</summary>
     public static string BoundaryHash(GeneratedWorld world)
-        => Hash(JsonSerializer.Serialize(world.Cells.Where(c => c.IsFixed || c.HasForcedLandmark)
+    {
+        var boundary = world.Cells.Where(c => c.IsFixed || c.HasForcedLandmark);
+        return HashWithAdditionalLandmarks(JsonSerializer.Serialize(boundary
             .OrderBy(c => c.Row).ThenBy(c => c.Col).Select(c => new
             {
-                c.Col, c.Row, typeId = c.IsFixed ? c.TileDefineId : null, c.LandMarkDefineId,
+                c.Col, c.Row, typeId = c.IsFixed ? c.TileDefineId : null,
+                LandMarkDefineId = c.HasGeneratedLandMark ? null : c.LandMarkDefineId,
                 elevation=c.IsFixed ? Math.Round(c.Environment.Elevation,6) : (double?)null,
                 moisture=c.IsFixed ? Math.Round(c.Environment.Moisture,6) : (double?)null,
                 temperature=c.IsFixed ? Math.Round(c.Environment.Temperature,6) : (double?)null,
                 blocked = c.IsFixed && c.BlockAllMovement,
                 movement = c.IsFixed ? c.AllowedMovement?.OrderBy(x => x, StringComparer.Ordinal).ToArray() : null
-            }), Json));
+            }), Json), boundary);
+    }
+
+    private static string HashWithAdditionalLandmarks(string json, IEnumerable<GeneratedCell> cells)
+    {
+        var additions = cells.Where(cell => cell.AdditionalLandMarkDefineIds.Count > 0)
+            .OrderBy(cell => cell.Row).ThenBy(cell => cell.Col)
+            .Select(cell => new { cell.Col, cell.Row, cell.AdditionalLandMarkDefineIds }).ToArray();
+        // 没有附加地标的地图沿用旧摘要；有附加地标时计入定义与位置。
+        return Hash(additions.Length == 0 ? json : json + "\n" + JsonSerializer.Serialize(additions, Json));
+    }
 
     /// <summary>每次写入独立目录；最后写成功清单，防止失败被旧文件冒充。</summary>
     public static string Export(GeneratedWorld world, MapCatalog catalog, string outputRoot)
@@ -69,6 +82,7 @@ public static class WorldMapExport
                 c.Col, c.Row, q = c.Id.Q, r = c.Id.R, typeId = c.TileDefineId, source = c.Source.ToString(),
                 c.RegionIndex, c.IsFixed, c.HasForcedLandmark, landmarkId = c.LandMarkDefineId,
                 landmark = c.LandMarkDefineId == null ? null : catalog.LandMarks[c.LandMarkDefineId].DisplayName,
+                additionalLandmarks = c.AdditionalLandMarkDefineIds.Select(id => new { id, name = catalog.LandMarks[id].DisplayName }),
                 elevation = Math.Round(c.Environment.Elevation, 6), moisture = Math.Round(c.Environment.Moisture, 6),
                 temperature = Math.Round(c.Environment.Temperature, 6), c.Water.IncomingMask, c.Water.OutDirection,
                 c.Water.IsSource, c.Water.IsSink, water=c.Water, blockAll = c.BlockAllMovement, movement = c.AllowedMovement,

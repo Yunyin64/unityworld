@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using UnityWorld.Game.Data;
@@ -28,7 +29,9 @@ public sealed class ExplorationSession : IDisposable
         try
         {
             // Initialize 负责清理由它自身初始化失败的部分；只有成功返回后才由本会话负责 End。
-            WorldMgr.Initialize(seed, GameBootstrap.ResolveDataRoot());
+            string dataRoot = GameBootstrap.ResolveDataRoot();
+            WorldMgr.Initialize(seed, dataRoot, preparedAssets: GameBootstrap.Assets.Catalog,
+                preparedAppearance: GameBootstrap.Assets.Appearance(dataRoot));
             session._ownsWorld = true;
             WorldMgr.Start();
             var actor = PlaneMgr.Instance.MainPlane.NpcSystem.Spawn(new BirthContext());
@@ -134,13 +137,38 @@ public sealed class ExplorationSession : IDisposable
     private static ExplorationTile DescribeTile(Plane plane, MapCatalog catalog, Tile tile)
     {
         catalog.Tiles.TryGetValue(tile.TypeId, out var terrain);
-        string regionName = "", landmarkName = "";
+        string regionName = "", landmarkName = "", landmarkImage = "", landmarkDrawType = "Icon";
         if (tile.RegionId is int regionId && RegionMgr.Instance.GetById(regionId) is { } region)
             regionName = catalog.Regions.TryGetValue(region.DefineId, out var regionDefinition) ? regionDefinition.DisplayName : region.DefineId;
         if (tile.LandMarkId is int landmarkId && LandMarkMgr.Instance.GetById(landmarkId) is { } landmark)
-            landmarkName = catalog.LandMarks.TryGetValue(landmark.DefineId, out var landmarkDefinition) ? landmarkDefinition.DisplayName : landmark.DefineId;
+        {
+            landmarkName = landmark.DefineId;
+            if (catalog.LandMarks.TryGetValue(landmark.DefineId, out var definition))
+            {
+                landmarkName = definition.DisplayName;
+                landmarkImage = definition.ImagePath;
+                landmarkDrawType = definition.DrawType;
+            }
+        }
+        List<string>? additionalNames = null;
+        List<string>? additionalImages = null;
+        List<string>? additionalDrawTypes = null;
+        for (int index = 1; index < tile.LandMarkIds.Count; index++)
+        {
+            var additional = LandMarkMgr.Instance.GetById(tile.LandMarkIds[index]);
+            var definition = additional == null ? null : catalog.LandMarks.GetValueOrDefault(additional.DefineId);
+            if (additional != null) (additionalNames ??= new()).Add(definition?.DisplayName ?? additional.DefineId);
+            (additionalImages ??= new()).Add(definition?.ImagePath ?? "");
+            (additionalDrawTypes ??= new()).Add(definition?.DrawType ?? "Icon");
+        }
         return new(tile, string.IsNullOrWhiteSpace(terrain?.DisplayName) ? tile.TypeId : terrain.DisplayName,
-            terrain?.Symbol ?? "", terrain?.Color ?? "#888888", regionName, landmarkName, plane.TileSystem.CanWalk(tile.Id));
+            terrain?.Symbol ?? "", terrain?.Color ?? "#888888", regionName, landmarkName, plane.TileSystem.CanWalk(tile.Id))
+        {
+            LandmarkImage = landmarkImage, LandmarkDrawType = landmarkDrawType, TerrainAssetRef = terrain?.AssetRef ?? "",
+            AdditionalLandmarkNames = additionalNames == null ? Array.Empty<string>() : additionalNames.AsReadOnly(),
+            AdditionalLandmarkImages = additionalImages == null ? Array.Empty<string>() : additionalImages.AsReadOnly(),
+            AdditionalLandmarkDrawTypes = additionalDrawTypes == null ? Array.Empty<string>() : additionalDrawTypes.AsReadOnly()
+        };
     }
 
     private ExplorationSnapshot Refresh(string message, NpcWeekResult? outcome = null)

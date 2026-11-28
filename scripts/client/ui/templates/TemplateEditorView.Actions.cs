@@ -14,6 +14,7 @@ namespace Xianxia.Client.UI.Templates;
 public partial class TemplateEditorView
 {
     private readonly TemplateCatalogSession _catalogSession = new();
+    private string appearanceIdentity = "";
     private TemplateCatalog Catalog => _catalogSession.Current!;
     private TemplateDraftStore _store = null!;
     private List<TemplateDraft> _personal = new();
@@ -32,7 +33,9 @@ public partial class TemplateEditorView
             _dataRoot = OS.HasFeature("editor") ? ProjectSettings.GlobalizePath("res://UnityWorld")
                 : Path.GetDirectoryName(OS.GetExecutablePath()) ?? throw new InvalidOperationException("无法定位玩法数据目录。");
             _store = new(ProjectSettings.GlobalizePath("user://TemplateEditor"), Path.Combine(_dataRoot, "Data"));
-            if (!_catalogSession.Refresh(_dataRoot)) throw new InvalidDataException(_catalogSession.LastError);
+            if (!_catalogSession.Refresh(_dataRoot, GameBootstrap.Assets.Appearance(_dataRoot)))
+                throw new InvalidDataException(_catalogSession.LastError);
+            appearanceIdentity = GameBootstrap.Assets.AppearanceFingerprint(_dataRoot);
             ReloadPersonal();
             string? first = Catalog.GetNpc("test_npc_a")?.ID ?? Catalog.Npcs.FirstOrDefault()?.ID;
             if (first != null) SelectProjectDirect(first);
@@ -85,7 +88,6 @@ public partial class TemplateEditorView
             string id = TemplateDocumentConverter.UniqueId(type == NpcTypes.NpcType.Human ? "my_character" : "my_monster", AllTemplateIds());
             _draft = TemplateDraft.New(Catalog, type, id);
             _draft.NpcFields.DisplayName = type == NpcTypes.NpcType.Human ? "新人物" : "新怪物";
-            _draft.Presentation.Appearance = AppearanceFor(_draft);
             _personal.Add(_draft); _readOnly = false; _selectedEntryId = null; _selectedCardId = null;
             _notice = "新建草稿：选择主功法后，可从卡牌库拖入卡牌。";
             Revalidate(); RefreshEditor();
@@ -105,7 +107,6 @@ public partial class TemplateEditorView
                 var copy = TemplateDocumentConverter.Copy(_draft, id);
                 copy.Source = _readOnly ? "ProjectCopy" : "PersonalCopy";
                 copy.NpcFields.DisplayName = DisplayTemplateName(_draft) + " 副本";
-                copy.Presentation.Appearance = AppearanceFor(_draft);
                 _draft = copy; _personal.Add(copy); _readOnly = false;
                 _selectedEntryId = null; _selectedCardId = null;
                 _notice = "已建立独立个人草稿，保存后可再次打开。";
@@ -134,7 +135,10 @@ public partial class TemplateEditorView
     {
         try
         {
-            if (!_catalogSession.Refresh(_dataRoot)) { ShowNotice("刷新失败，继续使用原目录：" + _catalogSession.LastError); return; }
+            GameBootstrap.ReloadAssets();
+            if (!_catalogSession.Refresh(_dataRoot, GameBootstrap.Assets.Appearance(_dataRoot)))
+            { ShowNotice("刷新失败，继续使用原目录：" + _catalogSession.LastError); return; }
+            appearanceIdentity = GameBootstrap.Assets.AppearanceFingerprint(_dataRoot);
             var changes = _cardLibrary.ReconcileFilters(Catalog.Cards);
             if (_readOnly && _draft != null)
             {
@@ -277,7 +281,7 @@ public partial class TemplateEditorView
             }
             else throw new InvalidDataException("请选择试战对手。");
             var input = TemplateTrialService.Freeze(Catalog, TemplateDocumentConverter.ToDefinition(_draft), opponent, _trialSettings, _draft.DraftId,
-                AppearanceFor(_draft));
+                AppearanceFor(_draft)) with { AppearanceFingerprint = appearanceIdentity };
             var launch = BattleLauncher.OpenBattle(input, BattleWindowMode.NewWindow);
             ShowNotice($"已启动原战斗观察界面（进程 {launch.ProcessId}），编辑草稿保留。输入：{launch.InputPath}");
         }

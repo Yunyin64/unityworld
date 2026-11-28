@@ -30,6 +30,8 @@ namespace UnityWorld.Game.Data
             var ctx = new BirthContext();
             ctx.Set("NpcType", define.NpcType);
             ctx.Set("Gender", define.Gender);
+            ctx.Set("AppearanceTemplate", define.ID);
+            ctx.Set("Appearance", define.Appearance);
             ctx.Set("Surname", define.Surname.Length > 0 ? define.Surname : define.DisplayName);
             ctx.Set("GivenName", define.GivenName);
             ctx.Set("DaoTitle", define.DaoTitle);

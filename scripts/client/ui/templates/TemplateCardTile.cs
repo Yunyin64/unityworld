@@ -57,6 +57,16 @@ public partial class TemplateCardTile : Control
 
     public override void _ExitTree() => DetailTips.Hide(this);
 
+    internal void ResetForPool()
+    {
+        Selected = null;
+        _card = null;
+        _texture = null;
+        _description = "";
+        _transpose = _canDrag = _hovered = _unavailable = false;
+        MouseDefaultCursorShape = CursorShape.Arrow;
+    }
+
     internal static Control DragPreview(string title)
     {
         var panel = new PanelContainer { CustomMinimumSize = new Vector2(120, 38), Modulate = new Color(1, 1, 1, 0.9f) };

@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "sword_practice_ground",
+    "DisplayName": "试剑台",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/sword_practice_ground.png",
+    "Tags": [
+      "宗门",
+      "演武"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

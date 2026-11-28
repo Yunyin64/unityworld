@@ -45,7 +45,9 @@
       "14,8": "mountain"
     },
     "LandMarkLayout": {
-      "0,0": "natural_reed_marsh"
+      "0,0": "natural_reed_marsh",
+      "4,1": "seclusion_cave",
+      "14,6": "spirit_waterfall"
     },
     "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0},
     "AnchorEnvironment": {

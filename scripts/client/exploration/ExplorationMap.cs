@@ -265,6 +265,7 @@ public partial class ExplorationMap : Control
 
     private void Paint()
     {
+        ExplorationArt.ClearLandmarkShaders(_surface);
         var state = _state;
         if (state == null || _art == null) return;
         float edge = GetMapEdgeLength();
@@ -282,6 +283,7 @@ public partial class ExplorationMap : Control
 
     private void PaintRim(Control canvas, ExplorationSnapshot? source, ExplorationSnapshot? other)
     {
+        ExplorationArt.ClearLandmarkShaders(canvas);
         if (source != null && other != null) PaintTiles(canvas, source, other, common: false);
     }
 
@@ -302,7 +304,7 @@ public partial class ExplorationMap : Control
             DrawWater(canvas, item, center, edge, outline);
             Stroke(canvas, outline, GridInk, Math.Max(0.8f, Zoom));
             DrawRegionEdges(canvas, source, item, outline);
-            if (tile.LandMarkId.HasValue) DrawLandmark(canvas, center, edge);
+            if (tile.LandMarkId.HasValue) _art.DrawMapLandmarks(canvas, center, edge, item);
         }
     }
 
@@ -361,16 +363,6 @@ public partial class ExplorationMap : Control
             if (!state.Tiles.TryGetValue(place.Tile.Id.Neighbor(direction), out var neighbor) || neighbor.Tile.RegionId == region) continue;
             canvas.DrawLine(outline[direction], outline[(direction + 1) % 6], new Color("786E48C0"), 1.6f * Zoom, true);
         }
-    }
-
-    private void DrawLandmark(Control canvas, Vector2 center, float edge)
-    {
-        Vector2 location = center + new Vector2(edge * 0.27f, -edge * 0.16f);
-        float size = Math.Max(2f, edge * 0.095f);
-        var points = new[] { location + Vector2.Up * size, location + Vector2.Right * size * 0.8f,
-            location + Vector2.Down * size, location + Vector2.Left * size * 0.8f };
-        canvas.DrawColoredPolygon(points, new Color("F5DC88"));
-        Stroke(canvas, points, new Color("51452B"), Math.Max(0.75f, Zoom));
     }
 
     private void DrawDestination(TileId from, TileId target, float edge)

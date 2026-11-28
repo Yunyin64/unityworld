@@ -152,6 +152,11 @@ internal sealed class ExplorationHud
         string estimateLine = canEstimate ? $"按当前速度预计 {Weeks(MoveBehavior.AdjacentDistance, state.Speed)} 周抵达" : "";
         bool twoLines = region.Length > 0 && canEstimate;
         _context.Text = twoLines ? region + "\n" + estimateLine : region + estimateLine;
+        if (tile.AdditionalLandmarkNames.Count > 0)
+        {
+            string landmarks = "同格地标　" + string.Join("、", tile.AdditionalLandmarkNames);
+            _context.Text = _context.Text.Length > 0 ? landmarks + "\n" + _context.Text : landmarks;
+        }
         _context.Visible = _context.Text.Length > 0;
         _terrain.TooltipText = _terrain.Text;
         _context.TooltipText = _context.Text;

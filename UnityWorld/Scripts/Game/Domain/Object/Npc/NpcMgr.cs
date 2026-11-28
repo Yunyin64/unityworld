@@ -111,13 +111,15 @@ namespace UnityWorld.Game.Domain
         /// 从 NpcDefine 模板直接组装 NPC（无因果，不走 Birth/GlyphMgr）。
         /// 适用于妖兽等模板实体，战斗结束后可直接 Remove。
         /// </summary>
-        public Npc Assemble(NpcDefine define)
+        public Npc Assemble(NpcDefine define, Dictionary<string, string>? appearance = null)
         {
             Npc npc = null;
             try
             {
                 ValidateTemplateGeometry(define);
                 var ctx = NpcDefineMgr.ToBirthContext(define);
+                // 试战的冻结选择只覆盖本次装配，无需改写正式模板。
+                if (appearance != null) ctx.Set("Appearance", appearance);
                 ctx.AssemblySource = NpcAssemblySource.Template;
                 npc = ctx.MainNpc = new Npc(Soul.NewId());
                 InitializeSystems(ctx);

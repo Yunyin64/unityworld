@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "volcano", "DisplayName": "火山", "Description": "开发样例：火山代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["山类", "炎热"], "Color": "#9c5547", "Symbol": "火",
+    "Tags": ["山类", "炎热"], "Color": "#9c5547", "Symbol": "火", "AssetRef": "atlas:volcano",
     "InitialAura": {"Jin": 1, "Mu": 0.1, "Shui": 0.2, "Huo": 4, "Tu": 2}, "AllowFill": false, "FillWeight": 0,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

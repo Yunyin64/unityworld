@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "thunder_bamboo_grove",
+    "DisplayName": "雷纹竹林",
+    "IsNatural": true,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/thunder_bamboo_grove.png",
+    "Tags": [
+      "灵植",
+      "奇观"
+    ],
+    "AuraOffset": {
+      "Jin": 0.5,
+      "Mu": 1,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

@@ -1,7 +1,8 @@
 [
   {
-    "SchemaVersion": 2, "ID": "natural_snow_spring", "DisplayName": "冰川灵泉", "IsNatural": true, "IsSingleton": false,
-    "SpawnWeight": 1, "PlacementTypeIds": [], "PlacementTags": ["寒冷"], "PlacementExtraTerrains": [],
-    "ModifierDefineIds": [], "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 4, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "自然奇观"]
+    "ID": "natural_snow_spring", "DisplayName": "冰川灵泉", "IsNatural": true, "IsSingleton": false, "ModifierDefineIds": [],
+    "ImagePath": "landmarks/natural_snow_spring.png",
+    "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 4, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "自然奇观"],
+    "InitialPlacement": {"MinCount": 2, "TagConditions": ["寒冷"], "MinSpacing": 8, "PerTileChance": 0.003}
   }
 ]

@@ -20,6 +20,7 @@ public partial class ExplorationTileThumbnail : Control
 
     public override void _Draw()
     {
+        ExplorationArt.ClearLandmarkShaders(this);
         if (_tile != null) _art?.DrawThumbnail(this, new Rect2(Vector2.Zero, Size), _tile, _seed, _plane);
     }
 }

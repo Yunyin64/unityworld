@@ -21,6 +21,8 @@ public partial class TestHome : Control
         GetNode<Button>("%MapTest").Pressed += () => GameBootstrap.OpenTool(ClientHostMode.Exploration);
         GetNode<Button>("%Map3D").Pressed += () => GameBootstrap.OpenTool(ClientHostMode.Exploration3D);
         GetNode<Button>("%TemplateEditor").Pressed += () => GameBootstrap.OpenTool(ClientHostMode.TemplateEditor);
+        GetNode<Button>("%LandmarkEditor").Pressed += () => GameBootstrap.OpenTool(ClientHostMode.LandmarkEditor);
+        GetNode<Button>("%RegionEditor").Pressed += () => GameBootstrap.OpenTool(ClientHostMode.RegionEditor);
     }
 
     private void RefreshScale(int percent)

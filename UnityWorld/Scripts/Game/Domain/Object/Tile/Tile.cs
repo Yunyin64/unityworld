@@ -19,8 +19,12 @@ namespace UnityWorld.Game.Domain
         public TileGenerationSource Source { get; internal set; } = TileGenerationSource.Fill;
         /// <summary>该地块所属的地区编号</summary>
         public int? RegionId { get; internal set; }
-        /// <summary>该地块放置的地标编号</summary>
-        public int? LandMarkId { get; internal set; }
+        private List<int>? landMarkIds;
+        private IReadOnlyList<int>? landMarkView;
+        /// <summary>主地标实例编号。旧调用可继续使用。</summary>
+        public int? LandMarkId => landMarkIds is { Count: > 0 } ? landMarkIds[0] : null;
+        /// <summary>该地块的地标实例编号，主地标在前。</summary>
+        public IReadOnlyList<int> LandMarkIds => landMarkView ?? Array.Empty<int>();
         /// <summary>地块是否被强制地区锁定</summary>
         public bool IsFixed { get; internal set; }
         /// <summary>本格是否预留绝对位置地标</summary>
@@ -70,13 +74,43 @@ namespace UnityWorld.Game.Domain
         // ── 修正源管理 ────────────────────────────────────
 
         /// <summary>地理与元气观察副本，不携带活动Modifier引用，也不另造地图摘要类型。</summary>
-        public Tile CopyForObservation() => new(Id, CurrentAura)
+        public Tile CopyForObservation()
         {
-            TypeId = TypeId, Source = Source, RegionId = RegionId, LandMarkId = LandMarkId,
-            IsFixed = IsFixed, HasForcedLandmark = HasForcedLandmark,
-            Environment = Environment.Copy(), Water = Water, BlockAllMovement = BlockAllMovement,
-            AllowedMovement = AllowedMovement == null ? null : Array.AsReadOnly(AllowedMovement.ToArray())
-        };
+            var copy = new Tile(Id, CurrentAura)
+            {
+                TypeId = TypeId, Source = Source, RegionId = RegionId,
+                IsFixed = IsFixed,
+                Environment = Environment.Copy(), Water = Water, BlockAllMovement = BlockAllMovement,
+                AllowedMovement = AllowedMovement == null ? null : Array.AsReadOnly(AllowedMovement.ToArray())
+            };
+            if (landMarkIds != null)
+                foreach (int id in landMarkIds)
+                {
+                    if (LandMarkMgr.Instance?.IsHidden(id) == true) continue;
+                    copy.AddLandMark(id);
+                    if (HasForcedLandmark && id == LandMarkId) copy.HasForcedLandmark = true;
+                }
+            return copy;
+        }
+
+        internal void AddLandMark(int id)
+        {
+            if (landMarkIds == null)
+            {
+                landMarkIds = new();
+                landMarkView = landMarkIds.AsReadOnly();
+            }
+            landMarkIds.Add(id);
+        }
+
+        internal void RemoveLandMark(int id) => landMarkIds?.Remove(id);
+
+        // 实例按元气阶段创建，展示顺序按区域作者配置恢复。
+        internal void OrderLandMarks(int[] ids)
+        {
+            landMarkIds!.Clear();
+            landMarkIds.AddRange(ids);
+        }
 
         /// <summary>向本地块添加一个修正源</summary>
         public void AddModifier(TileModifier modifier)

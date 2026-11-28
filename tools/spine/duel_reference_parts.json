@@ -10,6 +10,11 @@
       "armFront": [397, 220], "elbowFront": [464, 257], "handFront": [516, 278],
       "thighBack": [279, 349], "shinBack": [211, 442], "thighFront": [397, 344], "shinFront": [463, 439]
     },
+    "humanoid": {
+      "Chest": [337, 214], "Neck": [353, 191], "Clavicle_L": [364, 200], "Clavicle_R": [316, 183],
+      "UpperArm_R": [297, 182],
+      "Foot_L": [466, 507], "Foot_R": [185, 508]
+    },
     "soles": {"shinBack": [[123, 540], [209, 540]], "shinFront": [[438, 540], [539, 540]]},
     "skinSample": [375, 145],
     "cuts": {
@@ -46,6 +51,11 @@
       "cloth": [356, 904], "armBack": [391, 815], "elbowBack": [460, 837], "handBack": [464, 770], "weapon": [450, 771],
       "armFront": [277, 822], "elbowFront": [202, 831], "handFront": [143, 834],
       "thighBack": [407, 972], "shinBack": [467, 1070], "thighFront": [266, 972], "shinFront": [188, 1071]
+    },
+    "humanoid": {
+      "Chest": [329, 834], "Neck": [325, 797], "Clavicle_L": [307, 813], "Clavicle_R": [356, 808],
+      "UpperArm_R": [378, 817],
+      "Foot_L": [164, 1131], "Foot_R": [486, 1130]
     },
     "soles": {"shinBack": [[460, 1163], [555, 1163]], "shinFront": [[101, 1163], [180, 1163]]},
     "skinSample": [296, 755],

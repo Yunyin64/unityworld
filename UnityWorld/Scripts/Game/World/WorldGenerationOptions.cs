@@ -38,8 +38,6 @@ public sealed class WorldGenerationOptions
     public int WaterRepairBudget { get; set; } = 64;
     /// <summary>每格每环境轴允许的最大绝对调整量。</summary>
     public double MaxEnvironmentAdjustment { get; set; } = 0.12;
-    /// <summary>仅在空闲 Fill 格进行独立地标散布的密度。</summary>
-    public double LandmarkDensity { get; set; } = 0.003;
     /// <summary>环境参数或硬限制与软偏好，按所属配置应用。</summary>
     public EnvironmentGenerationSettings Environment { get; set; } = new();
     /// <summary>水源、合法终点及可用水文类型配置。</summary>

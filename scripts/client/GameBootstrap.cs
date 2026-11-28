@@ -9,7 +9,7 @@ using UnityWorld.Game.World;
 
 namespace Xianxia.Client;
 
-public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration, TestHome, ObserverWorker, Exploration3D }
+public enum ClientHostMode { World, Observer, TemplateEditor, CoreSmokeTest, Exploration, TestHome, ObserverWorker, Exploration3D, LandmarkEditor, RegionEditor }
 
 /// <summary>Godot 宿主：加载核心 DLL，驱动世界并在退出时释放资源。</summary>
 public partial class GameBootstrap : Node
@@ -19,8 +19,13 @@ public partial class GameBootstrap : Node
     public const string Exploration3DScene = "res://scenes/exploration/exploration_world_3d.tscn";
     public const string HomeScene = "res://scenes/home/test_home.tscn";
     public const string TemplateScene = "res://scenes/templates/character_template_editor.tscn";
+    /// <summary>与角色模板编辑器并列的地标编辑场景。</summary>
+    public const string LandmarkEditorScene = "res://scenes/landmarks/landmark_editor.tscn";
+    /// <summary>独立的区域模板编辑器场景。</summary>
+    public const string RegionEditorScene = "res://scenes/regions/region_editor.tscn";
     private static GameBootstrap? _instance;
     private readonly ClientAssetPool _assetInstances = new();
+    private readonly ClientAssets assets = new();
     private bool _changingScene;
     private bool _running;
     private bool _ownsWorld;
@@ -29,6 +34,14 @@ public partial class GameBootstrap : Node
     /// <summary>随 Autoload 宿主常驻，在当前 Godot 进程内跨场景共享。</summary>
     internal static ClientAssetPool AssetInstances => (_instance ?? throw new InvalidOperationException("Godot 宿主尚未初始化。"))
         ._assetInstances;
+
+    internal static ClientAssets Assets => (_instance ?? throw new InvalidOperationException("Godot 宿主尚未初始化。")).assets;
+
+    internal static void ReloadAssets() => Assets.Preload(
+        ResolveInstallRoot(), OS.GetCmdlineUserArgs());
+
+    internal static string ResolveInstallRoot() => OS.HasFeature("editor") ? ProjectSettings.GlobalizePath("res://")
+        : Path.GetDirectoryName(OS.GetExecutablePath()) ?? throw new InvalidOperationException("无法定位游戏安装目录。");
 
     // 各世界宿主共用数据根目录规则；Godot 可从内存加载程序集，无法依赖 Assembly.Location。
     internal static string ResolveDataRoot() => OS.HasFeature("editor")
@@ -41,15 +54,19 @@ public partial class GameBootstrap : Node
         if (userArgs.Contains("--core-smoke-test")) return ClientHostMode.CoreSmokeTest;
         if (userArgs.Any(a => a.StartsWith("--observer-worker=", StringComparison.Ordinal))) return ClientHostMode.ObserverWorker;
         bool editor = userArgs.Contains("--template-editor") || userArgs.Contains("--character-template-editor");
+        bool landmarks = userArgs.Contains("--landmark-editor");
+        bool regions = userArgs.Contains("--region-editor");
         bool observer = userArgs.Contains("--battle-observer") || userArgs.Any(a =>
             a.StartsWith("--observer-case=", StringComparison.Ordinal) || a.StartsWith("--observer-case-input=", StringComparison.Ordinal));
         bool world = userArgs.Contains("--world");
         bool exploration = userArgs.Contains("--exploration");
         bool exploration3D = userArgs.Contains("--exploration-3d");
         // 显式模式只允许一个世界所有者；原有烟测始终优先处理。
-        if ((editor ? 1 : 0) + (observer ? 1 : 0) + (world ? 1 : 0) + (exploration ? 1 : 0) + (exploration3D ? 1 : 0) > 1)
+        if ((editor ? 1 : 0) + (landmarks ? 1 : 0) + (regions ? 1 : 0) + (observer ? 1 : 0) + (world ? 1 : 0) + (exploration ? 1 : 0) + (exploration3D ? 1 : 0) > 1)
             throw new InvalidOperationException("不能同时指定编辑器、观察器、探索或世界宿主模式。");
         if (editor) return ClientHostMode.TemplateEditor;
+        if (landmarks) return ClientHostMode.LandmarkEditor;
+        if (regions) return ClientHostMode.RegionEditor;
         if (observer) return ClientHostMode.Observer;
         if (exploration) return ClientHostMode.Exploration;
         if (exploration3D) return ClientHostMode.Exploration3D;
@@ -59,6 +76,10 @@ public partial class GameBootstrap : Node
             : !string.IsNullOrWhiteSpace(currentScene) ? currentScene : defaultScene;
         if (scene?.EndsWith("character_template_editor.tscn", StringComparison.OrdinalIgnoreCase) == true)
             return ClientHostMode.TemplateEditor;
+        if (string.Equals(Path.GetFileName(scene), Path.GetFileName(LandmarkEditorScene), StringComparison.OrdinalIgnoreCase))
+            return ClientHostMode.LandmarkEditor;
+        if (string.Equals(Path.GetFileName(scene), Path.GetFileName(RegionEditorScene), StringComparison.OrdinalIgnoreCase))
+            return ClientHostMode.RegionEditor;
         if (scene?.EndsWith("battle_observer.tscn", StringComparison.OrdinalIgnoreCase) == true)
             return ClientHostMode.Observer;
         if (string.Equals(Path.GetFileName(scene), "exploration_view.tscn", StringComparison.OrdinalIgnoreCase))
@@ -76,8 +97,19 @@ public partial class GameBootstrap : Node
         GetTree().SceneChanged += FinishNavigation;
         try
         {
+            ReloadAssets();
             CurrentMode = ResolveHostMode(OS.GetCmdlineUserArgs(), OS.GetCmdlineArgs(),
                 GetTree().CurrentScene?.SceneFilePath, ProjectSettings.GetSetting("application/run/main_scene").AsString());
+            if (CurrentMode == ClientHostMode.TestHome &&
+                UI.ObserverSessionOutput.Argument("--check-npc-appearance-visual=") is { Length: > 0 } appearanceOutput)
+            {
+                _ = UI.NpcAppearanceVisualCheck.Run(GetTree(), appearanceOutput);
+                return;
+            }
+            if (CurrentMode == ClientHostMode.TestHome && OS.GetCmdlineUserArgs().Contains("--check-asset-pipeline"))
+                _ = UI.AssetPipelineCheck.Run(GetTree());
+            if (CurrentMode == ClientHostMode.TestHome && OS.GetCmdlineUserArgs().Contains("--check-landmarks"))
+                _ = UI.Landmarks.LandmarkEditorCheck.Run(GetTree());
             if (CurrentMode != ClientHostMode.World && CurrentMode != ClientHostMode.CoreSmokeTest)
             {
                 SetPhysicsProcess(false);
@@ -93,7 +125,7 @@ public partial class GameBootstrap : Node
             }
             string baseDir = ResolveDataRoot();
             LogMgr.LogFilePath = ProjectSettings.GlobalizePath("user://Logs/game.log");
-            WorldMgr.Initialize(12345, baseDir);
+            WorldMgr.Initialize(12345, baseDir, preparedAssets: Assets.Catalog, preparedAppearance: Assets.Appearance(baseDir));
             _ownsWorld = true;
             WorldMgr.Start();
             _running = true;
@@ -130,6 +162,8 @@ public partial class GameBootstrap : Node
             ClientHostMode.Exploration => ExplorationScene,
             ClientHostMode.Exploration3D => Exploration3DScene,
             ClientHostMode.TemplateEditor => TemplateScene,
+            ClientHostMode.LandmarkEditor => LandmarkEditorScene,
+            ClientHostMode.RegionEditor => RegionEditorScene,
             ClientHostMode.Observer => BattleWindows.BattleLauncher.ObserverScene,
             _ => throw new ArgumentOutOfRangeException(nameof(target))
         };
@@ -162,6 +196,7 @@ public partial class GameBootstrap : Node
         _instance = null;
         _running = false;
         _assetInstances.Dispose();
+        assets.End();
         if (_ownsWorld) WorldMgr.End();
         _ownsWorld = false;
     }

@@ -40,7 +40,8 @@ internal partial class ObserverWorker : Node
             _output = new ObserverSessionOutput();
             _output.Attach(_session);
             _session.PresentationCommitted += OnFrame;
-            _session.Initialize(BattleCase.FromJson(File.ReadAllText(input)), data);
+            _session.Initialize(BattleCase.FromJson(File.ReadAllText(input)), data, GameBootstrap.Assets.Catalog,
+                GameBootstrap.Assets.Appearance(data), GameBootstrap.Assets.AppearanceFingerprint(data));
             _output.SaveInput(_session.Case);
             if (_session.Diagnostic != null) throw new InvalidOperationException(_session.Diagnostic);
             _command = _reader.ReadLineAsync();

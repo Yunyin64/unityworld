@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UnityWorld.Core;
 using UnityWorld.Game.Domain;
 
 namespace UnityWorld.Game.Data;
@@ -12,8 +13,14 @@ public sealed class MapCatalog
     public Dictionary<string, TileDefine> Tiles { get; } = new(StringComparer.Ordinal);
     /// <summary>作者固定地区拼图。</summary>
     public Dictionary<string, RegionDefine> Regions { get; } = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> regionSources = new(StringComparer.Ordinal);
+    /// <summary>区域定义的来源文件，供模板工具更新原有记录。</summary>
+    public IReadOnlyDictionary<string, string> RegionSources => regionSources;
     /// <summary>自然与人工地标定义。</summary>
     public Dictionary<string, LandMarkDefine> LandMarks { get; } = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> landMarkSources = new(StringComparer.Ordinal);
+    /// <summary>地标定义的来源文件，供编辑器写回原记录。</summary>
+    public IReadOnlyDictionary<string, string> LandMarkSources => landMarkSources;
     /// <summary>地标未来每秒速率修正定义。</summary>
     public Dictionary<string, TileModifierDefine> Modifiers { get; } = new(StringComparer.Ordinal);
     /// <summary>代码默认生成参数，不从额外的 Define 文件加载。</summary>
@@ -28,38 +35,67 @@ public sealed class MapCatalog
         WriteIndented = true
     };
     /// <summary>从项目根或 Data 根加载单文件及递归目录，重复和坏配置立即失败。</summary>
-    public static MapCatalog Load(string baseDir)
+    public static MapCatalog Load(string baseDir) => Load(baseDir, null, null);
+
+    /// <summary>用内存中的区域文件试读正式目录。内容为 null 时预检移除此文件。</summary>
+    public static MapCatalog PreviewRegionSource(string baseDir, string sourcePath, string? content)
+        => Load(baseDir, Path.GetFullPath(sourcePath), content);
+
+    private static MapCatalog Load(string baseDir, string? regionSource, string? content)
     {
         var dataDir = File.Exists(Path.Combine(baseDir, "TileDefines.json")) || Directory.Exists(Path.Combine(baseDir, "TileDefines")) ? baseDir : Path.Combine(baseDir, "Data");
         var result = new MapCatalog();
         ReadSources(Path.Combine(dataDir, "TileDefines.json"), result.Tiles);
-        ReadSources(Path.Combine(dataDir, "RegionDefines.json"), result.Regions);
-        ReadSources(Path.Combine(dataDir, "LandMarkDefines.json"), result.LandMarks);
+        var legacyRegions = Path.GetFullPath(Path.Combine(dataDir, "RegionDefines.json"));
+        var regionPaths = SourcePaths(legacyRegions);
+        var pathComparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+        if (regionSource != null)
+        {
+            string relative = Path.GetRelativePath(Path.ChangeExtension(legacyRegions, null), regionSource);
+            if (!pathComparer.Equals(regionSource, legacyRegions) &&
+                (Path.IsPathRooted(relative) || relative == ".." || relative.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+                 !regionSource.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
+                throw new ArgumentException("Preview source must be a RegionDefines JSON file.", nameof(regionSource));
+            regionPaths.RemoveAll(path => pathComparer.Equals(path, regionSource));
+            if (content != null) regionPaths.Add(regionSource);
+        }
+        foreach (var path in regionPaths)
+            Read(path, result.Regions, pathComparer.Equals(path, regionSource) ? content : null, result.regionSources);
+        ReadSources(Path.GetFullPath(Path.Combine(dataDir, "LandMarkDefines.json")), result.LandMarks, result.landMarkSources);
         ReadSources(Path.Combine(dataDir, "TileModifierDefines.json"), result.Modifiers);
         var defaults = WorldGenerationPresets.CreateDefault(result.Regions.Values);
         result.Profiles.Add(defaults.ID, defaults);
         result.Validate();
         return result;
     }
-    private static void ReadSources<T>(string legacyFile, Dictionary<string, T> destination) where T : DefineBase
+    private static void ReadSources<T>(string legacyFile, Dictionary<string, T> destination,
+        Dictionary<string, string>? sources = null) where T : DefineBase
+    {
+        var paths = SourcePaths(legacyFile);
+        if (paths.Count == 0) throw new InvalidDataException($"Map configuration missing: {legacyFile} or {Path.ChangeExtension(legacyFile, null)}");
+        foreach (var path in paths) Read(path, destination, sources: sources);
+    }
+
+    private static List<string> SourcePaths(string legacyFile)
     {
         var directory = Path.Combine(Path.GetDirectoryName(legacyFile)!, Path.GetFileNameWithoutExtension(legacyFile));
         var paths = new List<string>();
         if (File.Exists(legacyFile)) paths.Add(legacyFile);
         if (Directory.Exists(directory)) paths.AddRange(Directory.GetFiles(directory, "*.json", SearchOption.AllDirectories).OrderBy(p => p, StringComparer.Ordinal));
-        if (paths.Count == 0) throw new InvalidDataException($"Map configuration missing: {legacyFile} or {directory}");
-        foreach (var path in paths) Read(path, destination);
+        return paths;
     }
-    private static void Read<T>(string path, Dictionary<string, T> destination) where T : DefineBase
+    private static void Read<T>(string path, Dictionary<string, T> destination, string? content = null,
+        Dictionary<string, string>? sources = null) where T : DefineBase
     {
         try
         {
-            using var doc = JsonDocument.Parse(File.ReadAllText(path));
+            using var doc = JsonDocument.Parse(content ?? File.ReadAllText(path));
             RejectDuplicates(doc.RootElement, Path.GetFileName(path));
             if (doc.RootElement.ValueKind != JsonValueKind.Array) throw new InvalidDataException($"{path}: root must be an array.");
             foreach (var node in doc.RootElement.EnumerateArray())
             {
-                if (typeof(T) != typeof(TileModifierDefine) && (!node.TryGetProperty("SchemaVersion", out var schema) || schema.ValueKind != JsonValueKind.Number || schema.GetInt32() != 2))
+                if (typeof(T) != typeof(TileModifierDefine) && typeof(T) != typeof(LandMarkDefine) &&
+                    (!node.TryGetProperty("SchemaVersion", out var schema) || schema.ValueKind != JsonValueKind.Number || schema.GetInt32() != 2))
                     throw new InvalidDataException($"{path}: explicit SchemaVersion=2 is required; migrate old data first.");
 
             }
@@ -69,6 +105,7 @@ public sealed class MapCatalog
             {
                 if (item == null || string.IsNullOrWhiteSpace(item.ID)) throw new InvalidDataException($"{path}: definition ID is required.");
                 if (!destination.TryAdd(item.ID, item)) throw new InvalidDataException($"{path}: duplicate ID '{item.ID}'.");
+                sources?.Add(item.ID, path);
             }
         }
         catch (Exception ex) when (ex is JsonException || ex is IOException || ex is ArgumentException)
@@ -88,7 +125,15 @@ public sealed class MapCatalog
             }
         }
         else if (node.ValueKind == JsonValueKind.Array)
-        { int index = 0; foreach (var child in node.EnumerateArray()) RejectDuplicates(child, $"{path}[{index++}]"); }
+        {
+            int index = 0;
+            foreach (var child in node.EnumerateArray())
+            {
+                string element = $"{path}[{index++}]";
+                if (child.ValueKind == JsonValueKind.Null) throw new InvalidDataException($"{element}: null configuration is not allowed.");
+                RejectDuplicates(child, element);
+            }
+        }
     }
     /// <summary>完整核对引用、坐标、布局、数值及边界参数，聚合可定位错误。</summary>
     public void Validate() => Validate(null);
@@ -151,14 +196,46 @@ public sealed class MapCatalog
             Aura("TileModifierDefines/" + id + ".AuraData", modifier.AuraData);
             if (!float.IsFinite(modifier.Duration) || (modifier.Duration != -1 && modifier.Duration <= 0)) Error("TileModifierDefines/" + id, "Duration must be -1 or positive");
         }
+        var terrainTags = Tiles.Values.SelectMany(tile => tile.Tags).ToHashSet(StringComparer.Ordinal);
         foreach (var (id, landmark) in LandMarks)
         {
             var p = "LandMarkDefines/" + id;
-            Positions(p + ".ForcedPositions", landmark.ForcedPositions);
-            if (landmark.SchemaVersion != 2) Error(p, "SchemaVersion must be 2");
-            Finite(p + ".SpawnWeight", landmark.SpawnWeight, 0); Aura(p + ".AuraOffset", landmark.AuraOffset);
-            References(p + ".PlacementTypeIds", landmark.PlacementTypeIds, Tiles);
+            if (landmark.ImagePath.Length != 0 &&
+                AssetMgr.NormalizeAddress(landmark.ImagePath)?.EndsWith(".png", StringComparison.OrdinalIgnoreCase) != true)
+                Error(p + ".ImagePath", "expected a PNG address relative to src");
+            if (landmark.DrawType is not ("Icon" or "TerrainMask" or "Shader" or "Atmosphere" or "None"))
+                Error(p + ".DrawType", $"unknown draw type '{landmark.DrawType}'");
+            Aura(p + ".AuraOffset", landmark.AuraOffset);
             References(p + ".ModifierDefineIds", landmark.ModifierDefineIds, Modifiers);
+            if (landmark.InitialPlacement is not { } placement) continue;
+            var sitePath = p + ".InitialPlacement";
+            Positions(sitePath + ".ForcedPositions", placement.ForcedPositions);
+            if (placement.PerTileChance is double chance) Finite(sitePath + ".PerTileChance", chance, 0, 1);
+            if (placement.MinCount is < 0 || placement.MaxCount is < 0 || placement.NeedCount is < 0 || placement.MinSpacing < 0)
+                Error(sitePath, "counts and spacing must be nonnegative");
+            if (placement.MinCount > placement.MaxCount) Error(sitePath + ".MinCount", "exceeds MaxCount");
+            if (placement.NeedCount > placement.MaxCount) Error(sitePath + ".NeedCount", "exceeds MaxCount");
+            if (landmark.IsSingleton && (placement.NeedCount is > 1 || placement.ForcedPositions.Count > 1))
+                Error(sitePath, "singleton cannot guarantee or reserve more than one instance");
+            References(sitePath + ".TerrainConditions", placement.TerrainConditions.Select(WithoutExclusion), Tiles);
+            foreach (var tag in placement.TagConditions.Select(WithoutExclusion))
+                if (string.IsNullOrWhiteSpace(tag) || !terrainTags.Contains(tag))
+                    Error(sitePath + ".TagConditions", $"unknown Tile tag '{tag}'");
+            foreach (var condition in placement.LandMarkConditions)
+            {
+                try
+                {
+                    string target = WorldMapGenerator.ParseLandmarkCondition(condition).Id;
+                    if (!LandMarks.ContainsKey(target) || target == id)
+                        Error(sitePath + ".LandMarkConditions", $"unknown or self-referencing landmark '{target}'");
+                }
+                catch (InvalidDataException ex) { Error(sitePath + ".LandMarkConditions", ex.Message); }
+            }
+        }
+        if (errors.Count == 0)
+        {
+            try { WorldMapGenerator.OrderInitialLandmarks(LandMarks.Values.OrderBy(define => define.ID, StringComparer.Ordinal)); }
+            catch (InvalidDataException ex) { Error("LandMarkDefines", ex.Message); }
         }
         foreach (var (id, region) in Regions)
         {
@@ -213,6 +290,24 @@ public sealed class MapCatalog
             void Footprint(string field, int q, int r)
             { if (!region.TerrainLayout.ContainsKey((q, r))) Error(p + "." + field, $"({q},{r}) outside actual footprint"); }
             foreach (var pair in region.LandMarkLayout) Footprint("LandMarkLayout", pair.Key.dq, pair.Key.dr);
+            if (region.AdditionalLandMarks is { } additionalLandMarks)
+            {
+                var seen = new HashSet<(int Q, int R, string Id)>(region.LandMarkLayout.Select(pair => (pair.Key.dq, pair.Key.dr, pair.Value)));
+                var singletons = region.LandMarkLayout.Values.Where(landmarkId => !string.IsNullOrWhiteSpace(landmarkId) &&
+                    LandMarks.GetValueOrDefault(landmarkId)?.IsSingleton == true)
+                    .ToHashSet(StringComparer.Ordinal);
+                foreach (var entry in additionalLandMarks)
+                {
+                    if (entry == null) { Error(p + ".AdditionalLandMarks", "null placement"); continue; }
+                    string field = $"AdditionalLandMarks[({entry.Dq},{entry.Dr})]";
+                    Footprint(field, entry.Dq, entry.Dr);
+                    if (!region.LandMarkLayout.ContainsKey((entry.Dq, entry.Dr))) Error(p + "." + field, "requires a primary landmark");
+                    if (string.IsNullOrWhiteSpace(entry.LandMarkId) || !LandMarks.TryGetValue(entry.LandMarkId, out var landmark))
+                    { Error(p + "." + field, $"unknown ID '{entry.LandMarkId}'"); continue; }
+                    if (!seen.Add((entry.Dq, entry.Dr, entry.LandMarkId))) Error(p + "." + field, $"duplicate landmark '{entry.LandMarkId}' on cell");
+                    if (landmark.IsSingleton && !singletons.Add(entry.LandMarkId)) Error(p + "." + field, $"duplicate singleton '{entry.LandMarkId}' in region");
+                }
+            }
             foreach (var point in region.KeyEnvironment) { Footprint("KeyEnvironment", point.Dq, point.Dr); Environment(p + ".KeyEnvironment", point.Environment); }
             var adjustmentKeys = new HashSet<(int, int)>();
             foreach (var adjustment in region.EnvironmentAdjustments)
@@ -263,7 +358,7 @@ public sealed class MapCatalog
         {
             var p = "WorldGenerationOptions/" + profile.ID;
             if (profile.Width != 200 || profile.Height != 200) Error(p, "mainland requires 200x200");
-            Finite(p + ".RegionCoverageTarget", profile.RegionCoverageTarget, 0, 1); Finite(p + ".MaxEnvironmentAdjustment", profile.MaxEnvironmentAdjustment, 0, 1); Finite(p + ".LandmarkDensity", profile.LandmarkDensity, 0, 1);
+            Finite(p + ".RegionCoverageTarget", profile.RegionCoverageTarget, 0, 1); Finite(p + ".MaxEnvironmentAdjustment", profile.MaxEnvironmentAdjustment, 0, 1);
             if (profile.WholeMapAttempts <= 0 || profile.RequiredRegionAttempts <= 0 || profile.OptionalRegionAttempts < 0 || profile.RegionBacktrackBudget < 0 || profile.FillBacktrackBudget < 0 || profile.FillRepairBudget < 0 || profile.WaterRepairBudget < 0) Error(p, "invalid generation budget");
             References(p + ".RegionIds", profile.RegionIds, Regions);
             if (profile.RegionIds.Distinct().Count() != profile.RegionIds.Count) Error(p, "duplicate RegionIds");
@@ -307,6 +402,9 @@ public sealed class MapCatalog
         }
         if (errors.Count > 0) throw new InvalidDataException("Map validation failed:\n" + string.Join("\n", errors));
     }
+
+    private static string WithoutExclusion(string value) =>
+        value?.StartsWith("No:", StringComparison.Ordinal) == true ? value[3..] : value;
     /// <summary>每次按当前配置重新计算规范化摘要，供诊断与修改后的夹具使用。</summary>
     public string ComputeConfigHash(WorldGenerationOptions options = null)
     {

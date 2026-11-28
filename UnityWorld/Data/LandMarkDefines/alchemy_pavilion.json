@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "alchemy_pavilion",
+    "DisplayName": "炼丹房",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/alchemy_pavilion.png",
+    "Tags": [
+      "丹道",
+      "工坊"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

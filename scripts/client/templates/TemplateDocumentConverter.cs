@@ -84,6 +84,19 @@ public static class TemplateDocumentConverter
         return copy;
     }
 
+    /// <summary>把旧草稿展示分组转换成明确的插槽。显式的新槽配置优先。</summary>
+    public static void MigrateAppearance(TemplateDraft draft)
+    {
+        if (draft.Presentation.Appearance is not { } previous) return;
+        var definition = draft.NpcFields;
+        string rig = NpcAppearanceCatalog.RigFor(definition.NpcType, definition.Gender, definition.ID, 0);
+        var migrated = previous.ToConfiguration(rig);
+        foreach (var (slot, value) in definition.Appearance ?? new())
+            migrated[slot] = value;
+        definition.Appearance = migrated.Count == 0 ? null : migrated;
+        draft.Presentation.Appearance = null;
+    }
+
     /// <summary>Conversion also supports invalid drafts for diagnostics; callers must validate before export/trial.</summary>
     public static NpcDefine ToDefinition(TemplateDraft draft)
     {
@@ -125,7 +138,12 @@ public static class TemplateDocumentConverter
         foreach (var unresolved in draft.UnresolvedBindings) Error("UnresolvedBinding", unresolved.Reason + "（保留原片段，修复后请显式移除该问题）", unresolved.FieldPath);
         if (otherTemplateIds?.Contains(draft.NpcFields.ID, StringComparer.Ordinal) == true)
             Error("TemplateIdConflict", "模板 ID 与现有模板冲突，请改为唯一 ID。", "ID");
-        return new(TemplateEditorValidator.Validate(ToDefinition(draft), catalog), extra);
+        var definition = ToDefinition(draft);
+        string rig = NpcAppearanceCatalog.RigFor(definition.NpcType, definition.Gender, definition.ID, 0);
+        if (rig.Length > 0 && definition.Appearance is { Count: > 0 })
+            catalog.Appearance.Resolve(rig, definition.Appearance, 0, issue => extra.Add(new("Appearance",
+                issue.Error ? TemplateIssueSeverity.Error : TemplateIssueSeverity.Warning, issue.Message, $"Appearance.{issue.Slot}")));
+        return new(TemplateEditorValidator.Validate(definition, catalog), extra);
     }
 
     public static string UniqueId(string preferred, IEnumerable<string> used)

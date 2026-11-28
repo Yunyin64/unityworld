@@ -14,7 +14,7 @@ public sealed class TileDefine : DefineBase
     public string Color { get; set; } = "#888888";
     /// <summary>诊断图例的短标识。</summary>
     public string Symbol { get; set; } = "";
-    /// <summary>预留美术资源引用，可为空。</summary>
+    /// <summary>地形图片的图集引用（atlas:条目 ID）或相对 src 的 PNG 地址。留空时按 Tile ID 查图集。</summary>
     public string AssetRef { get; set; } = "";
     /// <summary>该类型地块的一次性自然初始元气。</summary>
     public TileAura InitialAura { get; set; } = new();

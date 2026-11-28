@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityWorld.Game.Domain.Combat;
+using UnityWorld.Game.Data;
 using Xianxia.Client.Battle;
 
 namespace Xianxia.Client.UI;
@@ -48,6 +49,7 @@ public partial class ObserverDuelStage : Control
     private readonly PoseClock[] _poseClocks = new PoseClock[2];
     private readonly float[] _poseSeconds = new float[2];
     private IReadOnlyDictionary<string, BattleActorLook?> _looks = new Dictionary<string, BattleActorLook?>();
+    private NpcAppearanceCatalog? wardrobe;
     private float _idleSeconds;
     private int _poseGeneration = -1;
     private readonly (PresentationCue? Cue, string? Element)[] _casts = new (PresentationCue?, string?)[2];
@@ -81,6 +83,7 @@ public partial class ObserverDuelStage : Control
 
     internal void Configure(ObserverBattleLayout layout)
     {
+        TextureFilter = TextureFilterEnum.LinearWithMipmaps;
         _layout = layout;
         _arena = layout.Canvas.GetNode<ObserverArena>("Arena");
         _shade = layout.Canvas.GetNode<ColorRect>("Shade");
@@ -95,9 +98,10 @@ public partial class ObserverDuelStage : Control
         ConfigureAudio();
     }
 
-    internal void SetAppearances(IReadOnlyDictionary<string, BattleActorLook?> looks)
+    internal void SetAppearances(IReadOnlyDictionary<string, BattleActorLook?> looks, NpcAppearanceCatalog catalog)
     {
         _looks = looks;
+        wardrobe = catalog;
         ReleaseActors();
     }
 
@@ -129,7 +133,7 @@ public partial class ObserverDuelStage : Control
             ReleaseActor(side);
             if (team == null || _looks.GetValueOrDefault(team) is not { } look) continue;
             _spineActors[side] = DuelSpineActor.Rent(look.Rig);
-            _spineActors[side]?.Instance.Equip(look);
+            _spineActors[side]?.Instance.Equip(look, wardrobe);
         }
         if (_poseGeneration != player.Generation)
         {

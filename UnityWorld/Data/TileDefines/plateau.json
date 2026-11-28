@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "plateau", "DisplayName": "高原", "Description": "开发样例：高原代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["高地"], "Color": "#b2a47c", "Symbol": "高",
+    "Tags": ["高地"], "Color": "#b2a47c", "Symbol": "高", "AssetRef": "atlas:plateau",
     "InitialAura": {"Jin": 1.4, "Mu": 0.6, "Shui": 0.7, "Huo": 0.8, "Tu": 2}, "AllowFill": true, "FillWeight": 4,
     "Environment": {
       "Elevation": {"Min": 0.35, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

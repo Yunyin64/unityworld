@@ -8,203 +8,295 @@ ref_female_hairRear
 bounds: 243,3,228,218
 ref_male_robeTails
 bounds: 477,3,240,208
+paint_robe_jade
+bounds: 723,3,151,196
+paint_robe_cinnabar
+bounds: 880,3,145,196
+paint_robe_indigo
+bounds: 1031,3,141,196
+paint_robe_violet
+bounds: 1178,3,139,196
+paint_handBack_violet
+bounds: 1323,3,171,196
+paint_shinFront_dark
+bounds: 1500,3,146,196
+paint_pantsBack_dark
+bounds: 1652,3,175,196
+paint_shinBack_dark
+bounds: 1833,3,128,196
+paint_pantsFront_light
+bounds: 3,253,178,196
+paint_shinFront_light
+bounds: 187,253,127,196
+paint_pantsBack_light
+bounds: 320,253,173,196
+paint_shinBack_light
+bounds: 499,253,116,196
+paint_pantsFront_dark
+bounds: 621,253,196,195
+paint_handBack_jade
+bounds: 823,253,196,192
+paint_robeTails_violet
+bounds: 1025,253,196,182
+paint_armBack_indigo
+bounds: 1227,253,196,181
 ref_female_robeTails
-bounds: 723,3,244,178
+bounds: 1429,253,244,178
 back_braid
-bounds: 973,3,119,177
+bounds: 1679,253,119,177
 face_slender
-bounds: 1098,3,170,177
+bounds: 1804,253,170,177
 face_bronze
-bounds: 1274,3,168,177
+bounds: 3,455,168,177
 face_freckled
-bounds: 1448,3,173,177
+bounds: 177,455,173,177
 face_blush
-bounds: 1627,3,162,177
+bounds: 356,455,162,177
 ornament_ribbon
-bounds: 1795,3,135,177
+bounds: 524,455,135,177
 alt_pants_front
-bounds: 3,253,136,177
+bounds: 665,455,136,177
 alt_pants_back
-bounds: 145,253,125,177
+bounds: 807,455,125,177
 alt_boot_dark_front
-bounds: 276,253,173,177
+bounds: 938,455,173,177
 alt_talisman
-bounds: 455,253,56,177
+bounds: 1117,455,56,177
 alt_bronze
-bounds: 517,253,59,177
+bounds: 1179,455,59,177
 alt_eye_hazel
-bounds: 582,253,157,177
+bounds: 1244,455,157,177
 alt_boot_dark_back
-bounds: 745,253,173,177
+bounds: 1407,455,173,177
 alt_boot_violet_front
-bounds: 924,253,177,176
+bounds: 1586,455,177,176
 alt_boot_violet_back
-bounds: 1107,253,177,176
+bounds: 1769,455,177,176
+paint_armFront_jade
+bounds: 3,638,196,167
+paint_armFront_indigo
+bounds: 205,638,196,166
 back_jade
-bounds: 1290,253,177,164
+bounds: 407,638,177,164
 back_ink
-bounds: 1473,253,177,163
+bounds: 590,638,177,163
+paint_robeTails_indigo
+bounds: 773,638,196,163
 ornament_pin
-bounds: 1656,253,177,160
+bounds: 975,638,177,160
 ref_female_weapon
-bounds: 1839,253,80,159
+bounds: 1158,638,80,159
 ref_female_pantsFront
-bounds: 3,436,173,158
+bounds: 1244,638,173,158
+paint_robeTails_cinnabar
+bounds: 1423,638,196,158
+paint_armFront_cinnabar
+bounds: 1625,638,196,157
+paint_robeTails_jade
+bounds: 1827,638,196,156
 tails_jade
-bounds: 182,436,177,155
+bounds: 3,811,177,155
 ref_male_robe
-bounds: 365,436,164,151
+bounds: 186,811,164,151
 ref_male_pantsBack
-bounds: 535,436,139,150
+bounds: 356,811,139,150
 tails_cinnabar
-bounds: 680,436,177,150
+bounds: 501,811,177,150
 alt_fan
-bounds: 863,436,177,150
+bounds: 684,811,177,150
+paint_armBack_cinnabar
+bounds: 867,811,196,150
 hair_cinnabar
-bounds: 1046,436,177,148
+bounds: 1069,811,177,148
+paint_armBack_jade
+bounds: 1252,811,196,148
 ref_female_pantsBack
-bounds: 1229,436,158,146
+bounds: 1454,811,158,146
+paint_cape_cinnabar
+bounds: 1618,811,196,144
 ref_male_weapon
-bounds: 1393,436,172,143
+bounds: 1820,811,172,143
 tails_violet
-bounds: 1571,436,177,143
+bounds: 3,972,177,143
 back_cinnabar
-bounds: 1754,436,177,142
+bounds: 186,972,177,142
+paint_armFront_violet
+bounds: 369,972,196,142
 ref_female_hairFront
-bounds: 3,600,191,141
+bounds: 571,972,191,141
 hair_jade
-bounds: 200,600,177,141
+bounds: 768,972,177,141
 robe_cinnabar
-bounds: 383,600,177,140
+bounds: 951,972,177,140
 robe_indigo
-bounds: 566,600,177,140
+bounds: 1134,972,177,140
 tails_indigo
-bounds: 749,600,177,138
+bounds: 1317,972,177,138
 ref_male_pantsFront
-bounds: 932,600,141,136
+bounds: 1500,972,141,136
+paint_armBack_violet
+bounds: 1647,972,196,136
 hair_braid
-bounds: 1079,600,177,135
+bounds: 1849,972,177,135
 robe_violet
-bounds: 1262,600,177,135
+bounds: 3,1121,177,135
+paint_cape_jade
+bounds: 186,1121,196,134
 hair_ink
-bounds: 1445,600,177,132
+bounds: 388,1121,177,132
 robe_jade
-bounds: 1628,600,177,130
+bounds: 571,1121,177,130
 ornament_butterfly
-bounds: 1811,600,177,127
+bounds: 754,1121,177,127
 ornament_diadem
-bounds: 3,747,146,124
+bounds: 937,1121,146,124
+paint_bootBack_dark
+bounds: 1089,1121,196,123
+paint_handBack_cinnabar
+bounds: 1291,1121,196,122
+paint_bootFront_dark
+bounds: 1493,1121,196,121
+paint_handFront_violet
+bounds: 1695,1121,196,120
+paint_bootBack_light
+bounds: 3,1262,196,120
 ref_female_robe
-bounds: 155,747,180,119
+bounds: 205,1262,180,119
+paint_handBack_indigo
+bounds: 391,1262,196,117
+paint_bootFront_light
+bounds: 593,1262,196,117
+paint_handFront_jade
+bounds: 795,1262,196,116
+paint_handFront_cinnabar
+bounds: 997,1262,196,116
 ref_male_bootBack
-bounds: 341,747,114,114
+bounds: 1199,1262,114,114
 ref_male_bootFront
-bounds: 461,747,125,114
+bounds: 1319,1262,125,114
+paint_handFront_indigo
+bounds: 1450,1262,196,113
 ref_male_hairFront
-bounds: 592,747,154,111
+bounds: 1652,1262,154,111
+paint_elbowBack_jade
+bounds: 1812,1262,196,107
 ref_male_armFront
-bounds: 752,747,136,105
+bounds: 3,1388,136,105
 variant_male_armFront_cinnabar
-bounds: 894,747,136,105
+bounds: 145,1388,136,105
 variant_male_armFront_indigo
-bounds: 1036,747,136,105
+bounds: 287,1388,136,105
 variant_male_armFront_violet
-bounds: 1178,747,136,105
+bounds: 429,1388,136,105
+paint_elbowFront_jade
+bounds: 571,1388,196,105
+paint_elbowBack_cinnabar
+bounds: 773,1388,196,103
 ref_female_bootBack
-bounds: 1320,747,123,102
+bounds: 975,1388,123,102
+paint_elbowBack_indigo
+bounds: 1104,1388,196,102
+paint_elbowFront_indigo
+bounds: 1306,1388,196,102
 ref_female_bootFront
-bounds: 1449,747,123,101
+bounds: 1508,1388,123,101
 ref_female_armFront
-bounds: 1578,747,145,94
+bounds: 1637,1388,145,94
 variant_female_armFront_jade
-bounds: 1729,747,145,94
+bounds: 1788,1388,145,94
 variant_female_armFront_indigo
-bounds: 1880,747,145,94
+bounds: 3,1499,145,94
 variant_female_armFront_violet
-bounds: 3,877,145,94
+bounds: 154,1499,145,94
 ref_female_armBack
-bounds: 154,877,127,93
+bounds: 305,1499,127,93
 variant_female_armBack_jade
-bounds: 287,877,127,93
+bounds: 438,1499,127,93
 variant_female_armBack_indigo
-bounds: 420,877,127,93
+bounds: 571,1499,127,93
 variant_female_armBack_violet
-bounds: 553,877,127,93
+bounds: 704,1499,127,93
+paint_elbowFront_cinnabar
+bounds: 837,1499,196,92
 ref_female_face
-bounds: 686,877,109,90
+bounds: 1039,1499,109,90
+paint_elbowBack_violet
+bounds: 1154,1499,196,89
 ref_male_face
-bounds: 801,877,99,88
+bounds: 1356,1499,99,88
+paint_elbowFront_violet
+bounds: 1461,1499,196,86
 ref_male_armBack
-bounds: 906,877,82,84
+bounds: 1663,1499,82,84
 variant_male_armBack_cinnabar
-bounds: 994,877,82,84
+bounds: 1751,1499,82,84
 variant_male_armBack_indigo
-bounds: 1082,877,82,84
+bounds: 1839,1499,82,84
 variant_male_armBack_violet
-bounds: 1170,877,82,84
+bounds: 1927,1499,82,84
 ref_female_elbowBack
-bounds: 1258,877,55,83
+bounds: 3,1599,55,83
 alt_eye_jade
-bounds: 1319,877,177,75
+bounds: 64,1599,177,75
 alt_eye_ink
-bounds: 1502,877,177,75
+bounds: 247,1599,177,75
 alt_eye_violet
-bounds: 1685,877,177,75
+bounds: 430,1599,177,75
 ref_male_hairRear
-bounds: 1868,877,93,71
+bounds: 613,1599,93,71
 ref_female_handFront
-bounds: 3,977,83,69
+bounds: 712,1599,83,69
 ref_male_handFront
-bounds: 92,977,79,68
+bounds: 801,1599,79,68
 ref_female_neck
-bounds: 177,977,54,64
+bounds: 886,1599,54,64
 ref_female_handBack
-bounds: 237,977,52,61
+bounds: 946,1599,52,61
 ref_female_elbowFront
-bounds: 295,977,91,60
+bounds: 1004,1599,91,60
 ref_male_elbowBack
-bounds: 392,977,63,58
+bounds: 1101,1599,63,58
 ref_male_neck
-bounds: 461,977,48,56
+bounds: 1170,1599,48,56
 ref_male_elbowFront
-bounds: 515,977,76,54
+bounds: 1224,1599,76,54
 ref_male_accessory
-bounds: 597,977,54,52
+bounds: 1306,1599,54,52
 alt_sword
-bounds: 657,977,177,51
+bounds: 1366,1599,177,51
 alt_saber
-bounds: 840,977,177,49
+bounds: 1549,1599,177,49
 ref_male_handBack
-bounds: 1023,977,49,47
+bounds: 1732,1599,49,47
 ref_female_accessory
-bounds: 1078,977,52,43
+bounds: 1787,1599,52,43
 alt_spear
-bounds: 1136,977,177,38
+bounds: 1845,1599,177,38
 ref_female_eyes
-bounds: 1319,977,33,29
+bounds: 3,1688,33,29
 ref_female_brows
-bounds: 1358,977,37,26
+bounds: 42,1688,37,26
 ref_male_brows
-bounds: 1401,977,43,25
+bounds: 85,1688,43,25
 ref_male_eyes
-bounds: 1450,977,40,23
+bounds: 134,1688,40,23
 mouth_gasp
-bounds: 1496,977,53,21
+bounds: 180,1688,53,21
 mouth_grit
-bounds: 1555,977,56,19
+bounds: 239,1688,56,19
 brow_worried
-bounds: 1617,977,51,18
+bounds: 301,1688,51,18
 eye_blink
-bounds: 1674,977,58,17
+bounds: 358,1688,58,17
 brow_arched
-bounds: 1738,977,56,16
+bounds: 422,1688,56,16
 eye_hurt
-bounds: 1800,977,55,14
+bounds: 484,1688,55,14
 mouth_smile
-bounds: 1861,977,54,14
+bounds: 545,1688,54,14
 brow_even
-bounds: 1921,977,55,12
+bounds: 605,1688,55,12
 ref_male_mouth
-bounds: 1982,977,22,11
+bounds: 666,1688,22,11
 ref_female_mouth
-bounds: 2010,977,19,11
+bounds: 694,1688,19,11

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Channels;
@@ -96,8 +97,18 @@ internal sealed class RemoteObserver : IBattleObserverState, IDisposable
                         throw new InvalidDataException("观察器 Tick、会话或版本不一致。");
                     if (!Ready)
                     {
-                        if (packet.Case?.ToJson() != Case.ToJson() || string.IsNullOrEmpty(packet.Directory))
+                        if (packet.Case is not { } assembled || assembled.Participants.Count != Case.Participants.Count ||
+                            string.IsNullOrEmpty(packet.Directory))
                             throw new InvalidDataException("后台观察器未确认本次冻结输入。");
+                        // 子进程只补上实际装配的外观。用原外观替回后，其他冻结字段必须完全一致。
+                        var confirmed = assembled with
+                        {
+                            Participants = Array.AsReadOnly(assembled.Participants.Select((participant, index) =>
+                                participant with { Appearance = Case.Participants[index].Appearance }).ToArray())
+                        };
+                        if (confirmed.ToJson() != Case.ToJson())
+                            throw new InvalidDataException("后台观察器未确认本次冻结输入。");
+                        Case = assembled;
                         Directory = packet.Directory;
                         _session = packet.Session;
                     }

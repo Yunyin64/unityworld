@@ -76,12 +76,13 @@ namespace UnityWorld.Game.World
 
         /// <summary>
         /// 初始化世界（游戏启动时调用）：
-        ///   1. 加载外部数据定义（GameDataMgr）
+        ///   1. 准备资源目录并加载外部数据定义（GameDataMgr）
         ///   2. 初始化全部地图查询、地区、地标及天道依赖
         ///   3. 候选主大陆完成校验、初值与快照后原子发布
         ///   4. 成功后初始化世界时间；任何失败不推进或重置旧时间
         /// </summary>
-        public static void Initialize(int seed = 12345, string baseDir = null, string mapProfileId = "china-inspired-v1")
+        public static void Initialize(int seed = 12345, string baseDir = null, string mapProfileId = "china-inspired-v1",
+            AssetMgr? preparedAssets = null, NpcAppearanceCatalog? preparedAppearance = null)
         {
             if (_domains.Count != 0 || _gameplays.Count != 0)
                 throw new InvalidOperationException("世界已经初始化，请先调用 WorldMgr.End()。");
@@ -97,8 +98,12 @@ namespace UnityWorld.Game.World
                 _domains.Add(new APIMgr());
                 _domains.Add(new EventMgr());
 
-
-                GameDataMgr.Initialize(baseDir);
+                var assets = preparedAssets == null ? new AssetMgr() : new AssetMgr(preparedAssets);
+                _domains.Add(assets);
+                if (preparedAssets == null)
+                    assets.Preload([AssetMgr.FromDirectory("local", Path.Combine(baseDir, "src"))], [".png", ".json", ".atlas"]);
+                assets.Init();
+                GameDataMgr.Initialize(baseDir, preparedAppearance);
                 _gameplays.Add(new GlyphMgr(seed, baseDir));
                 AuraDaoMgr = new AuraDaoMgr(seed);
                 _gameplays.Add(AuraDaoMgr);
@@ -127,7 +132,8 @@ namespace UnityWorld.Game.World
                 _domains.Add(new EquipMgr());
                 _domains.Add(new ItemMgr(seed));
 
-                foreach (var mgr in _domains) mgr.Init();  // 注册依赖，不在 PlaneMgr.Init 中生成主世界。
+                foreach (var mgr in _domains)
+                    if (!ReferenceEquals(mgr, assets)) mgr.Init(); // 资源已在定义前注册。
                 foreach (var mgr in _gameplays) mgr.Init();
                 PlaneMgr.Instance.CreateMainPlane(seed, mapProfileId);
                 // 所有可能失败的加载与地图发布成功之后才建立新世界时间。

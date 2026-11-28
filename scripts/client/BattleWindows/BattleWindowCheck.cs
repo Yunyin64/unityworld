@@ -196,8 +196,10 @@ public partial class BattleWindowCheck : Control
                 return directory != null;
             });
             Check(Visible && GetTree().CurrentScene == this && result.ProcessId != System.Environment.ProcessId, "新窗调用改变来源页。");
-            if (OS.GetName() == "Windows") { child.Refresh(); Check(child.MainWindowHandle != IntPtr.Zero, "新观察窗口不可见。"); }
-            Check(File.ReadAllText(Path.Combine(directory!, "input.json")) == _case.ToJson(), "新窗口案例不一致。");
+            if (OS.GetName() == "Windows" && DisplayServer.GetName() != "headless")
+            { child.Refresh(); Check(child.MainWindowHandle != IntPtr.Zero, "新观察窗口不可见。"); }
+            Check(File.ReadAllText(Path.Combine(directory!, "input.json")) ==
+                File.ReadAllText(Path.Combine(_results, "current-step", "input.json")), "两种窗口的冻结案例及装配外观不一致。");
         }
         finally
         {

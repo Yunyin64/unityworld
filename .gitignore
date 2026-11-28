@@ -42,7 +42,9 @@
 
 # Godot 客户端源码、场景与运行所需素材
 !/Xianxia.Client.csproj
+!/Xianxia.Client.sln
 !/project.godot
+!/export_presets.cfg
 !/README_GODOT.md
 !/icon.svg
 !/icon.svg.import
@@ -66,11 +68,18 @@
 !/assets/presentation/**
 !/assets/testing/
 !/assets/testing/**
+!/src/
+!/src/.gdignore
+!/src/cards/
+!/src/cards/*.png
+!/src/landmarks/
+!/src/landmarks/*.png
 
 # 战斗观察器的客户端验证工具
 !/tools/
 !/tools/client-observer/
 !/tools/client-observer/**
+!/tools/Export-Windows.ps1
 !/tools/spine/
 !/tools/spine/build_duel_rigs.py
 !/tools/spine/duel_reference_parts.json

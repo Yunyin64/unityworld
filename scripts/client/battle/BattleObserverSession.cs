@@ -60,7 +60,8 @@ public sealed class BattleObserverSession : IBattleObserverState, IDisposable
     public IReadOnlyList<CombatPresentationEvent> UncommittedEvents { get; private set; } = Array.Empty<CombatPresentationEvent>();
 
     /// <summary>Initialize the only core host, assemble participants in input order, and pause at Tick 0.</summary>
-    public void Initialize(BattleCase input, string dataRoot)
+    public void Initialize(BattleCase input, string dataRoot, AssetMgr? assets = null, NpcAppearanceCatalog? appearance = null,
+        string? appearanceFingerprint = null)
     {
         if (_initialized || _disposed) throw new InvalidOperationException("每个观察会话只能初始化一次；重开需要新进程。");
         _initialized = true;
@@ -70,13 +71,14 @@ public sealed class BattleObserverSession : IBattleObserverState, IDisposable
             BattleCaseFactory.Validate(Case);
             DataIdentity = BattleCaseFactory.Fingerprint(dataRoot);
             DataFingerprint = DataIdentity.Sha256;
-            Case = BattleCaseFactory.VerifyVersion(Case, DataFingerprint);
+            Case = BattleCaseFactory.VerifyVersion(Case, DataFingerprint, appearanceFingerprint);
             if (WorldMgr._domains.Count != 0 || WorldMgr._gameplays.Count != 0)
                 throw new InvalidOperationException("其他宿主已初始化世界；观察器不会接管或结束它。");
             _ownsWorld = true;
-            WorldMgr.Initialize(Case.WorldSeed, dataRoot);
+            WorldMgr.Initialize(Case.WorldSeed, dataRoot, preparedAssets: assets, preparedAppearance: appearance);
             WorldMgr.Start();
-            _scene = BattleCaseFactory.Assemble(Case);
+            _scene = BattleCaseFactory.Assemble(Case, out var assembled);
+            Case = assembled;
             _scene.EnablePresentationRecording(_observePresentation);
             _collector = new BattleRecordCollector(_scene);
             if (_observeEvents) _collector.Subscribe();

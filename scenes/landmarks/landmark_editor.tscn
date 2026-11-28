@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/client/ui/landmarks/LandmarkEditorView.cs" id="1"]
+[ext_resource type="Theme" path="res://assets/presentation/test_ui_theme.tres" id="2"]
+
+[node name="LandmarkEditor" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("2")
+script = ExtResource("1")

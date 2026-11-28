@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Xianxia.Client.Templates;
+using Xianxia.Client.Battle;
 using UnityWorld.Game.Data;
 using UnityWorld.Game.Domain;
 
@@ -20,6 +21,23 @@ public static class TemplateEditorValidationChecks
         };
         var definitions = new TestDefinitions(catalog);
         var template = Basic();
+        var legacyDraft = TemplateDocumentConverter.FromDefinition(Basic());
+        legacyDraft.Presentation.Appearance = new BattleActorLook("male", new()
+        {
+            ["hair"] = new("jade", "aa5555")
+        });
+        legacyDraft.NpcFields.Appearance = new() { ["HairFront"] = "hair/front/braid" };
+        var migrated = TemplateDraftStore.ParseDraft(JsonSerializer.Serialize(legacyDraft, TemplateJson.Options));
+        var exported = TemplateDocumentConverter.ToDefinition(migrated);
+        Check(migrated.Presentation.Appearance == null && exported.Appearance?.Count == 2 &&
+            exported.Appearance["hairFront"] == "hair/front/braid" && exported.Appearance["hairRear"] == "hair/rear/jade[#aa5555]",
+            "旧整组发型迁到两个槽，保留显式新前发与旧后发染色");
+        migrated.NpcFields.Appearance = new() { ["face"] = "face/angular[#bad]" };
+        Check(TemplateDocumentConverter.Validate(migrated, catalog).Issues.Any(issue => issue.Code == "Appearance" &&
+            issue.Severity == TemplateIssueSeverity.Error), "无效染色需要编辑器报告");
+        migrated.NpcFields.Appearance = new() { ["face"] = "mod/face[#555555]" };
+        Check(TemplateDocumentConverter.Validate(migrated, catalog).Issues.Any(issue => issue.Code == "Appearance" &&
+            issue.Severity == TemplateIssueSeverity.Warning), "缺包地址需要保留并提示");
         var beforeJson = JsonSerializer.Serialize(template);
         var baseline = TemplateEditorValidator.Validate(template, definitions);
         Check(baseline.IsValid && baseline.OccupiedSp == 3 && baseline.Layout?.Width == 5, "默认装配可预检");

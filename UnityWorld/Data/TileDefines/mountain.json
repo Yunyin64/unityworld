@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "mountain", "DisplayName": "山地", "Description": "开发样例：山地代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["山类"], "Color": "#8a907c", "Symbol": "山",
+    "Tags": ["山类"], "Color": "#8a907c", "Symbol": "山", "AssetRef": "atlas:mountain",
     "InitialAura": {"Jin": 2, "Mu": 0.5, "Shui": 0.8, "Huo": 0.8, "Tu": 1.2}, "AllowFill": true, "FillWeight": 5,
     "Environment": {
       "Elevation": {"Min": 0.35, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

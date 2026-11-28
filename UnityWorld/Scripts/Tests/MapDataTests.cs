@@ -47,6 +47,18 @@ public static class MapDataTests
         var region = catalog.Regions["region_taihang"];
         var oldMax = region.MaxCount; region.MaxCount = 0; Reject(catalog.Validate, "MinCount/MaxCount"); region.MaxCount = oldMax;
         region.LandMarkLayout.Add((199,199), "natural_leyline_eye"); Reject(catalog.Validate, "outside actual footprint"); region.LandMarkLayout.Remove((199,199));
+        var landmarkCell = region.LandMarkLayout.First();
+        var extra = new RegionLandMarkPlacement { Dq = landmarkCell.Key.dq, Dr = landmarkCell.Key.dr, LandMarkId = landmarkCell.Value };
+        region.AdditionalLandMarks = new() { extra };
+        Reject(catalog.Validate, "duplicate landmark");
+        extra.LandMarkId = "not_a_landmark"; Reject(catalog.Validate, "unknown ID");
+        extra.LandMarkId = catalog.LandMarks.Values.First(item => !item.IsSingleton && item.ID != landmarkCell.Value).ID;
+        catalog.Validate();
+        Check(catalog.ConfigHash != originalHash, "附加地标进入配置摘要");
+        region.LandMarkLayout.Remove(landmarkCell.Key);
+        Reject(catalog.Validate, "requires a primary landmark");
+        region.LandMarkLayout.Add(landmarkCell.Key, landmarkCell.Value);
+        region.AdditionalLandMarks = null;
         region.TerrainLayout[(0,0)] = "does_not_exist"; Reject(catalog.Validate, "unknown ID"); region.TerrainLayout[(0,0)] = "mountain";
         var range = catalog.Tiles["mountain"].Environment.Elevation; var oldMin = range.Min; range.Min = 1; range.Max = .5; Reject(catalog.Validate, "Min exceeds Max"); range.Min = oldMin; range.Max = 1;
         fixedSea.ForcedPositions.Add(fixedSea.ForcedPositions[0]); Reject(catalog.Validate, "duplicate forced position"); fixedSea.ForcedPositions.RemoveAt(fixedSea.ForcedPositions.Count - 1);

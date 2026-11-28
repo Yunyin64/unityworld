@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "forest", "DisplayName": "森林", "Description": "开发样例：森林代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["林木"], "Color": "#4b8250", "Symbol": "森",
+    "Tags": ["林木"], "Color": "#4b8250", "Symbol": "森", "AssetRef": "atlas:forest",
     "InitialAura": {"Jin": 0.8, "Mu": 2.5, "Shui": 1.2, "Huo": 0.5, "Tu": 0.8}, "AllowFill": true, "FillWeight": 5,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

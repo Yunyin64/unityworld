@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "forest_mountain", "DisplayName": "林山",
-    "Description": "开发样例：林山代表一片地域，包含格内小尺度景观；不等同真实中国位置。", "Tags": ["山类", "林木"], "Color": "#496b4e", "Symbol": "林",
+    "Description": "开发样例：林山代表一片地域，包含格内小尺度景观；不等同真实中国位置。", "Tags": ["山类", "林木"], "Color": "#496b4e", "Symbol": "林", "AssetRef": "atlas:forest_mountain",
     "InitialAura": {"Jin": 1.5, "Mu": 2, "Shui": 0.9, "Huo": 0.5, "Tu": 1.1}, "AllowFill": true, "FillWeight": 5,
     "Environment": {
       "Elevation": {"Min": 0.4, "Max": 1}, "Moisture": {"Min": 0.3, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

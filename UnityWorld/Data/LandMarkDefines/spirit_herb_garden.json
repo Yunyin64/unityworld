@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "spirit_herb_garden",
+    "DisplayName": "灵药圃",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/spirit_herb_garden.png",
+    "Tags": [
+      "灵植",
+      "药材"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

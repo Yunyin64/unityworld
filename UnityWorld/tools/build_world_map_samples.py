@@ -171,19 +171,35 @@ for ident,name,w,h,variant in [('lake_plain','平原大湖样例',15,11,0),('lak
 save('RegionDefines.json',regions)
 
 landmarks=json.loads((LEGACY/'LandMarkDefines.json').read_text(encoding='utf-8-sig'))
+initial_sites = {
+    'natural_leyline_eye': dict(PerTileChance=.003, MinCount=5, NeedCount=3, MinSpacing=8,
+                                TerrainConditions=['forest','forest_mountain','mountain','hill']),
+    'natural_volcanic_pillar': dict(PerTileChance=.008, MinCount=1, MinSpacing=12, TerrainConditions=['desert','volcano']),
+    'natural_stone_gate': dict(PerTileChance=.002, MinSpacing=8, TagConditions=['山类']),
+    'natural_ancient_tree': dict(PerTileChance=.004, MinSpacing=6, TagConditions=['林木','No:寒冷']),
+    'natural_mineral_vein': dict(PerTileChance=.006, MinCount=3, MinSpacing=5, TagConditions=['山类','No:寒冷']),
+    'natural_snow_spring': dict(PerTileChance=.003, MinCount=2, MinSpacing=8, TagConditions=['寒冷']),
+    'natural_reed_marsh': dict(PerTileChance=.008, MinSpacing=4, TagConditions=['湿润']),
+    'natural_karst_cave': dict(PerTileChance=.02, MinCount=2, MinSpacing=5, TerrainConditions=['karst','forest_mountain']),
+}
 for lm in landmarks:
-    lm['SchemaVersion']=2;lm['PlacementTypeIds']=[legacy_map[v] for v in lm.pop('PlacementTerrains',[])];lm['PlacementTags']=[];lm['AuraOffset']=aura((0,0,0,0,0))
+    for key in ('SchemaVersion','SpawnWeight','PlacementTerrains','PlacementExtraTerrains'):
+        lm.pop(key,None)
+    if lm['ID'] in initial_sites: lm['InitialPlacement']=initial_sites[lm['ID']]
+    lm['AuraOffset']=aura((0,0,0,0,0))
 # The original three retain zero offsets. New samples explicitly separate initial values and future rates.
-for ident,name,tags,offset,mods in [
-('natural_stone_gate','天门石阙',['山类'],(2,0,0,0,1),[]),
-('natural_ancient_tree','千年古木',['林木'],(0,4,1,0,0),['aura_ancient_forest']),
-('natural_mineral_vein','露天矿脉',['山类'],(3,0,0,0,2),[]),
-('natural_snow_spring','冰川灵泉',['寒冷'],(0,0,4,0,0),[]),
-('natural_reed_marsh','芦荡灵泽',['湿润'],(0,2,3,0,0),[]),
-('natural_karst_cave','溶洞天窗',['山类'],(1,0,2,0,1),[]),
+for ident,name,offset,mods in [
+('natural_stone_gate','天门石阙',(2,0,0,0,1),[]),
+('natural_ancient_tree','千年古木',(0,4,1,0,0),['aura_ancient_forest']),
+('natural_mineral_vein','露天矿脉',(3,0,0,0,2),[]),
+('natural_snow_spring','冰川灵泉',(0,0,4,0,0),[]),
+('natural_reed_marsh','芦荡灵泽',(0,2,3,0,0),[]),
+('natural_karst_cave','溶洞天窗',(1,0,2,0,1),[]),
 ]:
-    landmarks.append(dict(SchemaVersion=2,ID=ident,DisplayName=name,IsNatural=True,IsSingleton=False,SpawnWeight=1,PlacementTypeIds=[],PlacementTags=tags,PlacementExtraTerrains=[],ModifierDefineIds=mods,AuraOffset=aura(offset),Tags=['开发样例','自然奇观']))
-landmarks.append(dict(SchemaVersion=2,ID='building_old_observatory',DisplayName='古观星台',IsNatural=False,IsSingleton=False,SpawnWeight=0,PlacementTypeIds=[],PlacementTags=[],PlacementExtraTerrains=[],ModifierDefineIds=[],AuraOffset=aura((0,0,0,3,0)),Tags=['开发样例','人工建筑']))
+    landmarks.append(dict(ID=ident,DisplayName=name,IsNatural=True,IsSingleton=False,InitialPlacement=initial_sites[ident],
+                          ModifierDefineIds=mods,AuraOffset=aura(offset),Tags=['开发样例','自然奇观']))
+landmarks.append(dict(ID='building_old_observatory',DisplayName='古观星台',IsNatural=False,IsSingleton=False,
+                      ModifierDefineIds=[],AuraOffset=aura((0,0,0,3,0)),Tags=['开发样例','人工建筑']))
 save('LandMarkDefines.json',landmarks)
 
 print(json.dumps(dict(tiles=len(tiles),regions=len(regions),landmarks=len(landmarks),fixedTemplates=[dict(id=r['ID'],cells=len(r['TerrainLayout']),anchors=len(r['ForcedPositions'])) for r in regions if r.get('ForcedPositions')]),ensure_ascii=False))

@@ -11,6 +11,9 @@ public class RegionDefine : DefineBase
 {
     /// <summary>地图配置格式版本；当前为 2。</summary>
     public int SchemaVersion { get; set; } = 2;
+    /// <summary>供区域模板作者填写的可选描述。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Description { get; set; }
     /// <summary>绝对 Offset 固定锚点；每个位置完整放一份拼图，最先放置，不参加普通随机筛选。</summary>
     public List<OffsetPointDefine> ForcedPositions { get; set; } = new();
     /// <summary>固定地区为后续环境生成提供的锚定值；没有固定锚点时不使用。</summary>
@@ -42,8 +45,22 @@ public class RegionDefine : DefineBase
     /// <summary>实际占地集合及逐格固定类型，键为相对 Axial 坐标。</summary>
     public Dictionary<(int dq, int dr), string> TerrainLayout { get; set; } = new();
     [JsonConverter(typeof(AxialOffsetStringDictConverter))]
-    /// <summary>随地区原子生成的固定地标布局。</summary>
+    /// <summary>随地区原子生成的固定主地标布局。</summary>
     public Dictionary<(int dq, int dr), string> LandMarkLayout { get; set; } = new();
+    /// <summary>允许首批独立地标使用该地区的空格。作者放置、已有地标和地形不受开关影响。</summary>
+    public bool AllowInitialLandMarks { get; set; } = true;
+    /// <summary>在已有主地标的位置依配置顺序附加的地标。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<RegionLandMarkPlacement>? AdditionalLandMarks { get; set; }
+
+    internal IEnumerable<((int dq, int dr) Cell, string Id)> LandMarkPlacements()
+    {
+        foreach (var (cell, id) in LandMarkLayout.OrderBy(pair => pair.Key.dr).ThenBy(pair => pair.Key.dq))
+            yield return (cell, id);
+        if (AdditionalLandMarks == null) yield break;
+        foreach (var placement in AdditionalLandMarks.OrderBy(point => point.Dr).ThenBy(point => point.Dq))
+            yield return ((placement.Dq, placement.Dr), placement.LandMarkId);
+    }
     /// <summary>保留的地区拓展语义标签，不增加隐式地形。</summary>
     public List<string> ExtraTerrainIds { get; set; } = new();
     /// <summary>保留的兼容功能：对实际占地应用一次偏移；正式内容默认全零，不作为地区玩法依赖。</summary>
@@ -116,4 +133,15 @@ public sealed class LakePortDefine
     public int Dr { get; set; }
     public int Direction { get; set; }
     public bool IsInlet { get; set; }
+}
+
+/// <summary>地区模板里与主地标同格的有序附加地标。</summary>
+public sealed class RegionLandMarkPlacement
+{
+    /// <summary>相对锚点的 Axial q。</summary>
+    public int Dq { get; set; }
+    /// <summary>相对锚点的 Axial r。</summary>
+    public int Dr { get; set; }
+    /// <summary>对应的地标定义 ID。</summary>
+    public string LandMarkId { get; set; } = "";
 }

@@ -102,7 +102,9 @@ public sealed class TemplateDraftStore
         using var document = JsonDocument.Parse(json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
         RejectDuplicateProperties(document.RootElement, "$");
         var draft = JsonSerializer.Deserialize<TemplateDraft>(json, TemplateJson.StrictOptions) ?? throw new InvalidDataException("草稿为空。");
-        EnsureStructure(draft); return draft;
+        EnsureStructure(draft);
+        TemplateDocumentConverter.MigrateAppearance(draft);
+        return draft;
     }
 
     private static void EnsureStructure(TemplateDraft draft)

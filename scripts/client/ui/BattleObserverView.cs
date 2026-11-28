@@ -49,7 +49,8 @@ public partial class BattleObserverView : Control
                 ? ProjectSettings.GlobalizePath("res://UnityWorld")
                 : Path.GetDirectoryName(OS.GetExecutablePath())!);
             _dataRoot = Path.GetFullPath(dataRoot);
-            _session.Initialize(battleCase, dataRoot);
+            _session.Initialize(battleCase, dataRoot, GameBootstrap.Assets.Catalog, GameBootstrap.Assets.Appearance(dataRoot),
+                GameBootstrap.Assets.AppearanceFingerprint(dataRoot));
             _output.SaveInput(_session.Case);
             if (_session.Diagnostic != null) throw new InvalidOperationException(_session.Diagnostic);
             Refresh();

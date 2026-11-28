@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "spirit_waterfall",
+    "DisplayName": "灵瀑",
+    "IsNatural": true,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/spirit_waterfall.png",
+    "Tags": [
+      "灵水",
+      "奇观"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 1.5,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

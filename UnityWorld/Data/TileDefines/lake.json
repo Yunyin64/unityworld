@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "lake", "DisplayName": "湖泊", "Description": "开发样例：湖泊代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["水系"], "Color": "#559aaf", "Symbol": "湖",
+    "Tags": ["水系"], "Color": "#559aaf", "Symbol": "湖", "AssetRef": "atlas:lake",
     "InitialAura": {"Jin": 0.6, "Mu": 1.4, "Shui": 3, "Huo": 0.3, "Tu": 0.8}, "AllowFill": true, "FillWeight": 2,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

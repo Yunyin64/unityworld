@@ -13,6 +13,7 @@ public partial class TemplateCardLibraryPanel : Panel
 {
     private readonly CardLibraryFilter _filter = new();
     private readonly List<string> _elements = new();
+    private readonly List<ClientAssetPool.Lease<TemplateCardTile>> cardTiles = new();
     private IReadOnlyList<CardDefine> _definitions = Array.Empty<CardDefine>();
     private TemplateCatalog? _catalog;
     private IReadOnlyDictionary<string, KeywordLabel> _keywordLabels = new Dictionary<string, KeywordLabel>();
@@ -102,6 +103,20 @@ public partial class TemplateCardLibraryPanel : Panel
         if (_searchDelay <= 0) RefreshResults();
     }
 
+    /// <summary>交还本卡库当前使用的卡面，供下一场景复用。</summary>
+    public override void _ExitTree() => ReturnTiles();
+
+    private void ReturnTiles()
+    {
+        foreach (var lease in cardTiles)
+        {
+            var tile = lease.Instance;
+            tile.GetParent()?.RemoveChild(tile);
+            lease.Dispose();
+        }
+        cardTiles.Clear();
+    }
+
     private void ClearFilters()
     {
         _filter.Clear();
@@ -174,16 +189,21 @@ public partial class TemplateCardLibraryPanel : Panel
     {
         SetProcess(false);
         if (_art == null || _catalog == null) return;
+        ReturnTiles();
         Clear(_cards);
         var matches = CardLibraryQuery.Search(_definitions, _filter, _catalog.GetShape, _catalog.HasExtraElement);
         _count.Text = $"{matches.Count} 张";
         foreach (var card in matches)
         {
-            var tile = new TemplateCardTile { CustomMinimumSize = new(132, 102) };
-            _cards.AddChild(tile);
+            var lease = GameBootstrap.AssetInstances.Rent(nameof(TemplateCardTile),
+                static () => new TemplateCardTile { CustomMinimumSize = new(132, 102) },
+                static cardTile => cardTile.ResetForPool(), static cardTile => cardTile.QueueFree())!;
+            cardTiles.Add(lease);
+            var tile = lease.Instance;
             tile.Configure(card, _art.Card(card.ID), _art.CardTranspose(card.ID), _canDrag,
                 CardLibraryQuery.UnavailableReason(card, _catalog.GetShape, _catalog.HasExtraElement));
             tile.Selected += id => CardSelected?.Invoke(id);
+            _cards.AddChild(tile);
         }
         if (matches.Count == 0)
             FlowText(_cards, "没有符合条件的卡牌，可清空筛选。", 17);

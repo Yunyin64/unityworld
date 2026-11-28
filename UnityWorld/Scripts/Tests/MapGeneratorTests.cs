@@ -23,11 +23,19 @@ public static class MapGeneratorTests
     {
         _checks = 0;
         FixedPlacements(baseDir);
+        InitialLandmarkPlacements(baseDir);
         var catalog = MapCatalog.Load(baseDir); var profile = Profile(catalog);
-        Reject(() => WorldMapGenerator.Generate(catalog, new WorldGenerationOptions { ID = profile.ID, LandmarkDensity = -1 }, 1),
+        Reject(() => WorldMapGenerator.Generate(catalog, new WorldGenerationOptions { ID = profile.ID, RegionCoverageTarget = -1 }, 1),
             "configuration", "Caller-provided ordinary options cannot bypass parameter validation.");
         string configBefore = catalog.ConfigHash;
         var a = WorldMapGenerator.Generate(catalog, profile, 1);
+        var leylineSites = a.Cells.Where(cell => cell.LandMarkDefineId == "natural_leyline_eye" ||
+            cell.AdditionalLandMarkDefineIds.Contains("natural_leyline_eye")).ToArray();
+        var caves = a.Cells.Where(cell => cell.LandMarkDefineId == "seclusion_cave" &&
+            (cell.RegionIndex is not int index || a.Regions[index].DefineId != "lake_mountain")).ToArray();
+        Check(a.Diagnostics.Metrics["landmarks.seclusion_cave.possible"] > a.Diagnostics.Metrics["landmarks.seclusion_cave.authored"] &&
+            caves.All(cell => (cell.TileDefineId is "mountain" or "forest_mountain") &&
+            leylineSites.Any(eye => cell.Id.DistanceTo(eye.Id) <= 3)), "independent caves use final terrain and prior leyline sites");
         Check(catalog.ConfigHash == configBefore, "Materialized rim must not alter normalized configuration hash.");
         Check(a.Cells.Length == 40000 && a.Cells.All(x => catalog.Tiles.ContainsKey(x.TileDefineId)), "Full map has 40000 known types.");
         Check(a.Cells.Count(x => x.IsFixed) == catalog.Regions.Values.Sum(r => r.ForcedPositions.Count * r.TerrainLayout.Count), "Procedural rim exact count.");
@@ -181,12 +189,12 @@ public static class MapGeneratorTests
         for (int row = 0; row < 5; row++) for (int col = 0; col < 5; col++)
         { var relative = Plane.OffsetToAxial(col, row); fixedPuzzle.TerrainLayout[(relative.Q, relative.R)] = "volcano"; }
         catalog.Regions.Add(fixedPuzzle.ID, fixedPuzzle);
-        catalog.LandMarks.Add("fixed-nature", new() { ID = "fixed-nature", SpawnWeight = 0, IsSingleton = true,
-            PlacementTypeIds = new() { "ocean" }, ForcedPositions = new() { new() { Col = 31, Row = 30 } } });
-        catalog.LandMarks.Add("fixed-artificial", new() { ID = "fixed-artificial", IsNatural = false, SpawnWeight = 0,
-            PlacementTypeIds = new() { "ocean" }, ForcedPositions = new() { new() { Col = 90, Row = 80 } } });
+        catalog.LandMarks.Add("fixed-nature", new() { ID = "fixed-nature", IsSingleton = true,
+            InitialPlacement = new() { TerrainConditions = new() { "ocean" }, ForcedPositions = new() { new() { Col = 31, Row = 30 } } } });
+        catalog.LandMarks.Add("fixed-artificial", new() { ID = "fixed-artificial", IsNatural = false,
+            InitialPlacement = new() { TerrainConditions = new() { "ocean" }, ForcedPositions = new() { new() { Col = 90, Row = 80 } } } });
         var options = new WorldGenerationOptions { WholeMapAttempts = 1, RegionCoverageTarget = 0, OptionalRegionAttempts = 0,
-            LandmarkDensity = 0, Hydrology = new() { RiverCount = 0 } };
+            Hydrology = new() { RiverCount = 0 } };
         var world = WorldMapGenerator.Generate(catalog, options, 41);
         Check(world.Regions.Count(r => r.DefineId == fixedPuzzle.ID) == 2, "Fixed positions bypass max count, spacing, weights and environment.");
         foreach (var point in fixedPuzzle.ForcedPositions)
@@ -202,6 +210,23 @@ public static class MapGeneratorTests
             "Absolute landmark reservations ignore scatter filters and coexist with fixed regions or fill.");
         var second = WorldMapGenerator.Generate(catalog, options, 42);
         Check(WorldMapExport.BoundaryHash(world) == WorldMapExport.BoundaryHash(second), "Fixed hash excludes random tile type beneath standalone fixed landmarks.");
+        var independentRules = catalog.LandMarks.Values.Where(item => item.InitialPlacement?.ForcedPositions.Count == 0)
+            .ToDictionary(item => item, item => item.InitialPlacement);
+        foreach (var item in independentRules.Keys) item.InitialPlacement = null;
+        catalog.LandMarks.Add("fixed_region_scatter", new() { ID = "fixed_region_scatter",
+            InitialPlacement = new() { PerTileChance = 0, TerrainConditions = ["volcano"],
+                TagConditions = ["山类", "No:寒冷"], LandMarkConditions = ["Near(1):fixed-nature"] } });
+        var scatter = WorldMapGenerator.Generate(catalog, options, 41);
+        Check(scatter.At(30, 30).LandMarkDefineId == "fixed_region_scatter" && scatter.At(31, 30).LandMarkDefineId == "fixed-nature" &&
+            scatter.At(33, 30).LandMarkDefineId == null, "fixed region permits eligible sites near the authored landmark and preserves its position");
+        fixedPuzzle.AllowInitialLandMarks = false;
+        var closed = WorldMapGenerator.Generate(catalog, options, 41);
+        Check(closed.At(30, 30).LandMarkDefineId == null && closed.At(31, 30).LandMarkDefineId == "fixed-nature" &&
+            WorldMapExport.BoundaryHash(scatter) == WorldMapExport.BoundaryHash(closed),
+            "opt-out excludes fixed region sites without changing the authored boundary");
+        catalog.LandMarks.Remove("fixed_region_scatter");
+        foreach (var (item, placement) in independentRules) item.InitialPlacement = placement;
+        fixedPuzzle.AllowInitialLandMarks = true;
         Check(world.ConfigHash == catalog.ComputeConfigHash(options) && world.ConfigHash != catalog.ConfigHash,
             "Effective caller options have their own configuration digest.");
         var changed = world.At(30, 30); changed.TileDefineId = "plain";
@@ -214,7 +239,87 @@ public static class MapGeneratorTests
         Reject(() => WorldMapGenerator.Generate(catalog, options, 41), "fixed-regions", "Out of bounds fixed puzzle is never cropped.");
         fixedPuzzle.ForcedPositions[1].Col = 60;
         Reject(() => WorldMapGenerator.Generate(catalog, options, 41, new HashSet<string> { "fixed-nature" }), "fixed-landmarks", "Fixed singleton respects existing instances.");
-        catalog.LandMarks["fixed-artificial"].ForcedPositions[0] = new() { Col = 31, Row = 30 };
+        catalog.LandMarks["fixed-artificial"].InitialPlacement.ForcedPositions[0] = new() { Col = 31, Row = 30 };
         Reject(() => WorldMapGenerator.Generate(catalog, options, 41), "fixed-landmarks", "Two forced landmarks cannot occupy one tile.");
+    }
+
+    private static void InitialLandmarkPlacements(string baseDir)
+    {
+        var catalog = MapCatalog.Load(baseDir);
+        foreach (var define in catalog.LandMarks.Values) define.InitialPlacement = null;
+        foreach (var region in catalog.Regions.Values) region.AllowInitialLandMarks = false;
+        var rules = new InitialPlacement { PerTileChance = 0, MinCount = 0, MaxCount = 100, TerrainConditions = ["plain"] };
+        catalog.LandMarks.Add("landmark_fixture", new() { ID = "landmark_fixture", InitialPlacement = rules });
+        var options = new WorldGenerationOptions { WholeMapAttempts = 1, RegionCoverageTarget = 0, OptionalRegionAttempts = 0,
+            Hydrology = new() { RiverCount = 0 } };
+        GeneratedWorld Plan(IReadOnlySet<string> reserved = null) => WorldMapGenerator.Generate(catalog, options, 41, reserved);
+        static int Count(GeneratedWorld world, string key) => (int)world.Diagnostics.Metrics["landmarks.landmark_fixture." + key];
+        var all = Plan();
+        Check(Count(all, "possible") >= 1000 && Count(all, "normal") <= 100, "zero chance enters the capped quantity draw");
+        rules.PerTileChance = .006;
+        var rolled = Plan();
+        int hit = Count(rolled, "rolled");
+        Check(hit is > 0 and < 100 && hit == Count(rolled, "possible") && hit == Count(rolled, "normal"),
+            "positive chance below cap keeps every hit");
+        rules.ExtraCondition = "this is deliberately invalid Lua";
+        Check(rolled.Cells.Select(cell => cell.LandMarkDefineId).SequenceEqual(Plan().Cells.Select(cell => cell.LandMarkDefineId)),
+            "reserved condition cannot be compiled or evaluated");
+        rules.MinCount = 100;
+        Check(Count(Plan(), "normal") == hit, "soft minimum cannot increase a short ordinary result");
+        rules.NeedCount = 100;
+        var guaranteed = Plan();
+        Check(Count(guaranteed, "normal") == hit && Count(guaranteed, "conditionFill") == 100 - hit &&
+            Count(guaranteed, "fallback") == 0, "guarantee uses unrolled suitable sites before relaxation");
+        rules.PerTileChance = null; rules.MinCount = null; rules.MaxCount = null; rules.NeedCount = 1;
+        var needOnly = Plan();
+        Check(Count(needOnly, "eligible") >= 1000 && Count(needOnly, "rolled") == 0 && Count(needOnly, "normal") == 0 &&
+            Count(needOnly, "conditionFill") == 1 && Count(needOnly, "total") == 1,
+            "need-only fills exactly the deficit even when many eligible sites exist");
+        rules.ForcedPositions = [new() { Col = 90, Row = 80 }];
+        var authored = Plan();
+        Check(Count(authored, "authored") == 1 && Count(authored, "total") == 1 && Count(authored, "conditionFill") == 0,
+            "need-only is already satisfied by a single author position");
+        rules.ForcedPositions.Clear();
+        rules.NeedCount = 3;
+        rules.TerrainConditions = ["volcano"];
+        rules.MinSpacing = 7;
+        var fallback = Plan();
+        var points = fallback.Cells.Where(cell => cell.LandMarkDefineId == "landmark_fixture").ToArray();
+        Check(Count(fallback, "normal") == 0 && Count(fallback, "fallback") == 3 &&
+            points.All(cell => cell.Source == TileGenerationSource.Fill && !cell.IsFixed) &&
+            points.SelectMany(cell => points.Where(other => cell != other).Select(other => cell.Id.DistanceTo(other.Id))).All(distance => distance >= 7),
+            "need-only may relax terrain while preserving fixed cells and spacing");
+        rules.NeedCount = 1; catalog.LandMarks["landmark_fixture"].IsSingleton = true;
+        Reject(() => Plan(new HashSet<string> { "landmark_fixture" }), "landmarks", "reserved singleton makes the hard guarantee impossible");
+        rules.NeedCount = 2; rules.MaxCount = 1;
+        Reject(() => Plan(), "configuration", "need exceeding the cap fails configuration");
+
+        var first = catalog.LandMarks["landmark_fixture"];
+        var second = new LandMarkDefine { ID = "ordinary_fixture" };
+        catalog.LandMarks.Add(second.ID, second);
+        first.IsSingleton = false;
+        var quota = new InitialPlacement { NeedCount = 1, TerrainConditions = ["plain"] };
+        var scatter = new InitialPlacement { PerTileChance = 0 };
+        first.InitialPlacement = quota;
+        second.InitialPlacement = scatter;
+        Check(Count(Plan(), "total") == 1, "ordinary-only scatter cannot consume sites needed by another definition's quota");
+        // 固定种子与 ID 顺序，交换两种规则，覆盖两种初始竞争顺序。
+        first.InitialPlacement = scatter;
+        second.InitialPlacement = quota;
+        Check(Plan().Diagnostics.Metrics["landmarks.ordinary_fixture.total"] == 1,
+            "quota priority is independent of which landmark gets the first seeded turn");
+
+        quota.NeedCount = 2;
+        quota.MinSpacing = int.MaxValue;
+        try
+        {
+            Plan();
+            throw new InvalidOperationException("Expected the spacing constraint to prevent the second required landmark.");
+        }
+        catch (MapGenerationException ex)
+        {
+            Check(ex.Stage == "landmarks" && ex.Message.Contains("placed 1, missing 1") && ex.Message.Contains("MinSpacing"),
+                "world generation preserves hard spacing and reports the quota deficit with its limiting constraint");
+        }
     }
 }

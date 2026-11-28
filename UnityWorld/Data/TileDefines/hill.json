@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "hill", "DisplayName": "丘陵", "Description": "开发样例：丘陵代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["丘陵"], "Color": "#9caa67", "Symbol": "丘",
+    "Tags": ["丘陵"], "Color": "#9caa67", "Symbol": "丘", "AssetRef": "atlas:hill",
     "InitialAura": {"Jin": 1, "Mu": 0.8, "Shui": 0.8, "Huo": 0.8, "Tu": 1.5}, "AllowFill": true, "FillWeight": 4,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

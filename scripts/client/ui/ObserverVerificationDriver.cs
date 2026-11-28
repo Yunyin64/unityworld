@@ -184,21 +184,21 @@ internal sealed class ObserverVerificationDriver
         _canvas.AddChild(gallery);
         Panel(gallery, new Rect2(0, 0, 1460, 740), Style(new Color("172f33")));
         Text(gallery, "素材核验 · 静态容器预览（非战斗实例）", new Rect2(28, 16, 1400, 40), 26, Ink);
-        // 素材台账已统一归入核心项目 Docs，仍按磁盘文件读取。
-        using var manifest = JsonDocument.Parse(File.ReadAllText(ProjectSettings.GlobalizePath("res://UnityWorld/Docs/art/card_asset_manifest.json")));
-        var items = manifest.RootElement.GetProperty("cards").EnumerateArray()
-            .Where(c => c.TryGetProperty("texture", out var texture) && texture.ValueKind == JsonValueKind.String).ToArray();
+        // 使用实际卡图映射，项目和发布包都能检查同一批外部资源。
+        using var manifest = JsonDocument.Parse(Godot.FileAccess.GetFileAsString("res://assets/presentation/card_visuals.json"));
+        var items = manifest.RootElement.GetProperty("cards").EnumerateObject();
         int index = 0;
         foreach (var item in items)
         {
-            string id = item.GetProperty("id").GetString()!;
-            int cells = item.GetProperty("size").GetInt32();
+            string id = item.Name;
+            var definition = UnityWorld.Game.Data.CardDefineMgr.Instance.Get(id);
+            int cells = Math.Max(1, definition?.Size ?? 1);
             var origin = new Vector2(30 + (index % 6) * 237, 80 + (index / 6) * 210);
             var size = new Vector2(86 * Math.Min(cells, 2), 86);
             Panel(gallery, new Rect2(origin, size), Style(new Color("cfc49e")));
             var image = new TextureRect { ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize, Texture = _art.Card(id), Position = origin + new Vector2(5, 5), Size = size - new Vector2(10, 10), StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered, MouseFilter = Control.MouseFilterEnum.Ignore };
             gallery.AddChild(image);
-            Text(gallery, item.GetProperty("name").GetString()! + $" · {cells} 格", new Rect2(origin + new Vector2(0, 94), new Vector2(230, 28)), 18, Ink);
+            Text(gallery, ObserverArtCatalog.CardName(definition?.DisplayName, id) + $" · {cells} 格", new Rect2(origin + new Vector2(0, 94), new Vector2(230, 28)), 18, Ink);
             Text(gallery, id, new Rect2(origin + new Vector2(0, 125), new Vector2(230, 25)), 14, Muted);
             index++;
         }

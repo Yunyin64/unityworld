@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "array_altar",
+    "DisplayName": "聚灵阵坛",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/array_altar.png",
+    "Tags": [
+      "阵法",
+      "修炼"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

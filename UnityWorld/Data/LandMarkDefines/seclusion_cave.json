@@ -1,0 +1,33 @@
+[
+  {
+    "ImagePath": "landmarks/seclusion_cave.png",
+    "InitialPlacement": {
+      "ForcedPositions": [],
+      "MinCount": 100,
+      "MaxCount": 200,
+      "MinSpacing": 3,
+      "TerrainConditions": [],
+      "LandMarkConditions": [],
+      "TagConditions": [],
+      "ExtraCondition": ""
+    },
+    "DrawType": "Icon",
+    "IsHide": false,
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ModifierDefineIds": [],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    },
+    "ID": "seclusion_cave",
+    "DisplayName": "闭关洞府",
+    "Tags": [
+      "洞府",
+      "修炼"
+    ]
+  }
+]

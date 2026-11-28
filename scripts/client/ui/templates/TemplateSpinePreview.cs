@@ -10,10 +10,14 @@ public partial class TemplateSpinePreview : Control
     private string _pose = "Ready";
     private float _seconds;
 
+    /// <summary>人物缩小时使用图集的多级纹理保持干净的轮廓。</summary>
+    public override void _Ready() => TextureFilter = TextureFilterEnum.LinearWithMipmaps;
+
     internal bool SetLook(BattleActorLook? look)
     {
         string? rig = look == null ? null : DuelSpineActor.ResolveRig(look.Rig);
-        if (_actor?.Instance.Rig != rig)
+        if (_actor?.Instance.Rig != rig ||
+            _actor is { } current && current.Instance.Generation != GameBootstrap.Assets.Generation)
         {
             ReleaseActor();
             if (rig != null) _actor = DuelSpineActor.Rent(rig);
@@ -52,8 +56,7 @@ public partial class TemplateSpinePreview : Control
     public override void _Draw()
     {
         if (_actor?.Instance is not { } actor) return;
-        float height = Mathf.Min(Size.Y * .90f, Size.X * .75f);
-        var foot = new Vector2(Size.X * .53f, Size.Y * .92f - 4);
+        var (height, foot) = Framing(Size);
         DrawSetTransform(foot, 0, new Vector2(1, .18f));
         for (int i = 0; i < 3; i++)
             DrawCircle(Vector2.Zero, height * (.37f - i * .058f), new Color("2e2a20", .085f), true, -1, true);
@@ -63,4 +66,8 @@ public partial class TemplateSpinePreview : Control
         actor.Draw(this, height, false, Colors.White);
         DrawSetTransform(Vector2.Zero);
     }
+
+    internal static (float Height, Vector2 Foot) Framing(Vector2 size) =>
+        // Keep a single scale and floor across the whole clip, including the raised weapon in Guard and Smash.
+        (Mathf.Min(size.Y * .72f, size.X * .68f), new Vector2(size.X * .50f, size.Y * .91f));
 }

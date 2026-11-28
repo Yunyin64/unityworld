@@ -130,9 +130,9 @@ public static class MapRuntimeTests
 
             catalog.Tiles.Add("plain", new TileDefine { ID = "plain", Tags = new() { "可刷新" } });
             catalog.LandMarks.Add("corpse", new LandMarkDefine { ID = "corpse", IsNatural = false,
-                PlacementTypeIds = new() { "plain" }, PlacementTags = new() { "可刷新" }, SpawnWeight = 0, AuraOffset = Fire(-2) });
+                InitialPlacement = new() { TerrainConditions = ["ocean"] }, AuraOffset = Fire(-2) });
             var candidates = landmarks.GetIndependentSpawnCandidates(b, "corpse");
-            Check(candidates.Count == 1 && ReferenceEquals(candidates[0], tile), "独立刷新按类型标签找格，不依赖地区和创世权重");
+            Check(candidates.Count == 1 && ReferenceEquals(candidates[0], tile), "运行时空格查询独立于创世条件");
             var corpse = landmarks.Place(b, candidates[0], "corpse");
             Check(tile.CurrentAura.Huo == 17.25f && !landmarks.GetIndependentSpawnCandidates(b, "corpse").Any(), "人工地标放置无瞬间变化，已占格不再成为候选");
             auraSystem.Tick(b, .5f);
@@ -211,10 +211,16 @@ public static class MapRuntimeTests
         var log = new LogMgr(41);
         GameDataMgr.Initialize(baseDir);
         var catalog = GameDataMgr.Instance.MapCatalog;
-        catalog.LandMarks.Add("forced-origin", new() { ID = "forced-origin", SpawnWeight = 0, IsSingleton = true,
-            AuraOffset = Fire(3), PlacementTypeIds = new() { "ocean" }, ForcedPositions = new() { new() { Col = 0, Row = 0 } } });
-        catalog.LandMarks.Add("forced-building", new() { ID = "forced-building", IsNatural = false, SpawnWeight = 0,
-            AuraOffset = Fire(4), PlacementTypeIds = new() { "ocean" }, ForcedPositions = new() { new() { Col = 90, Row = 80 } } });
+        catalog.LandMarks.Add("forced-origin", new() { ID = "forced-origin", IsSingleton = true,
+            AuraOffset = Fire(3), InitialPlacement = new() { TerrainConditions = ["ocean"], ForcedPositions = [new() { Col = 0, Row = 0 }] } });
+        catalog.LandMarks.Add("forced-building", new() { ID = "forced-building", IsNatural = false,
+            AuraOffset = Fire(4), InitialPlacement = new() { TerrainConditions = ["ocean"], ForcedPositions = [new() { Col = 90, Row = 80 }] } });
+        catalog.LandMarks.Add("group-building", new() { ID = "group-building", IsNatural = false, IsHide = true, AuraOffset = Fire(4) });
+        var grouped = catalog.Regions["fixed_north_mountains"];
+        catalog.LandMarks.Add("group-spring", new() { ID = "group-spring", DrawType = "None", AuraOffset = Fire(3),
+            InitialPlacement = new() { MinCount = grouped.ForcedPositions.Count, MaxCount = grouped.ForcedPositions.Count } });
+        grouped.LandMarkLayout[(0, 0)] = "group-building";
+        grouped.AdditionalLandMarks = new() { new() { LandMarkId = "group-spring" } };
         var dao = new AuraDaoMgr();
         var planes = new PlaneMgr(); planes.Init();
         var tiles = new TileMgr(); tiles.Init();
@@ -223,11 +229,26 @@ public static class MapRuntimeTests
         try
         {
             var options = new WorldGenerationOptions { RegionCoverageTarget = 0, OptionalRegionAttempts = 0,
-                LandmarkDensity = 0, Hydrology = new() { RiverCount = 0 } };
+                Hydrology = new() { RiverCount = 0 } };
             var plane = planes.CreatePlane(new PlaneConfig { Width = 200, Height = 200,
                 GenerationMode = PlaneGenerationMode.Continent, GenerationOptions = options });
             var natural = plane.GetTile(Plane.OffsetToAxial(0, 0));
             var artificial = plane.GetTile(Plane.OffsetToAxial(90, 80));
+            var anchor = grouped.ForcedPositions[0];
+            var groupTile = plane.GetTile(Plane.OffsetToAxial(anchor.Col, anchor.Row));
+            var groupPlan = plane.GenerationResult.At(anchor.Col, anchor.Row);
+            Check(groupPlan.LandMarkDefineId == "group-building" && groupPlan.AdditionalLandMarkDefineIds.SequenceEqual(new[] { "group-spring" }),
+                "地区计划保留主地标和附加地标");
+            Check(plane.GenerationResult.Diagnostics.Metrics["landmarks.group-spring.authored"] == grouped.ForcedPositions.Count &&
+                plane.GenerationResult.Diagnostics.Metrics["landmarks.group-spring.total"] == grouped.ForcedPositions.Count,
+                "地区附加地标占用独立刷新的配额");
+            Check(groupTile.LandMarkIds.Select(id => landmarks.GetById(id).DefineId).SequenceEqual(new[] { "group-building", "group-spring" }),
+                "创建阶段与运行时主副地标顺序相互独立");
+            var groupRegion = regions.GetAt(plane.Id, groupTile.Id);
+            Check(groupTile.LandMarkIds.All(groupRegion.LandMarkIds.Contains), "地区索引包含同一格的全部地标");
+            float groupBase = catalog.Tiles[groupTile.TypeId].InitialAura.Huo;
+            Check(Math.Abs(dao.GetOrigin(plane.Id, groupTile.Id).Huo - groupBase - 3) < 1e-5f,
+                "同格人工偏移不进快照，附加自然偏移进入快照");
             Check(natural.IsFixed && natural.HasForcedLandmark && artificial.HasForcedLandmark && !artificial.IsFixed,
                 "固定地标位置与固定地区来源彼此独立，均复制到运行时");
             float naturalBase = catalog.Tiles[natural.TypeId].InitialAura.Huo;
@@ -240,6 +261,17 @@ public static class MapRuntimeTests
             new TileSystemAura().Tick(plane, .5f);
             Check(natural.CurrentAura.Huo == naturalBase + 3 && artificial.CurrentAura.Huo == artificialBase + 2,
                 "创世自然偏移不重复，固定人工地标在半秒后增加2");
+            Check(Math.Abs(groupTile.CurrentAura.Huo - groupBase - 5) < 1e-5f, "同格人工地标按时间应用元气偏移");
+            var projection = groupTile.CopyForObservation();
+            int primaryId = groupTile.LandMarkId.Value;
+            int extraId = groupTile.LandMarkIds[1];
+            Check(landmarks.Remove(primaryId) && groupTile.LandMarkId == extraId &&
+                groupTile.LandMarkIds.Count == 1 && !groupRegion.LandMarkIds.Contains(primaryId) && groupRegion.LandMarkIds.Contains(extraId),
+                "移除主地标后保留同格地标并更新地区索引");
+            new TileSystemAura().Tick(plane, .5f);
+            Check(projection.LandMarkIds.SequenceEqual(new[] { extraId }) && projection.LandMarkId == extraId &&
+                Math.Abs(groupTile.CurrentAura.Huo - groupBase - 5) < 1e-5f,
+                "观察副本过滤隐藏主地标并提升可见附加地标，隐藏地标实际元气仍生效直到移除");
             Check(plane.GenerationResult.ConfigHash == catalog.ComputeConfigHash(options), "PlaneConfig普通参数进入有效配置摘要");
         }
         finally { planes.End(); landmarks.End(); regions.End(); tiles.End(); dao.End(); log.End(); }
@@ -278,13 +310,15 @@ public static class MapRuntimeTests
                 Check(region.OwnedTiles.All(t => plane.GetTile(t).RegionId == region.Id
                     && RegionMgr.Instance.GetAt(plane.Id, t) == region), "地块地区双向关联");
                 Check(TileMgr.Instance.GetByRegion(region.Id).Select(t => t.Id).ToHashSet().SetEquals(region.OwnedTiles), "地区地块查询只返回实际占地");
-                Check(region.LandMarkIds.Count == define.LandMarkLayout.Count && region.LandMarkIds.All(id =>
+                Check(region.LandMarkIds.ToHashSet().SetEquals(region.OwnedTiles.SelectMany(tile => plane.GetTile(tile).LandMarkIds)) &&
+                    region.LandMarkIds.All(id => LandMarkMgr.Instance.GetById(id).PlaneId == region.PlaneId),
+                    "地区地标索引包含作者布局和地区空格新增的全部实例");
+                Check(define.LandMarkLayout.All(pair =>
                 {
-                    var landmark = LandMarkMgr.Instance.GetById(id);
-                    var relative = landmark.Position - region.Anchor;
-                    return define.LandMarkLayout.TryGetValue((relative.Q, relative.R), out var definitionId)
-                        && definitionId == landmark.DefineId && landmark.PlaneId == region.PlaneId;
-                }), "地区地标列表与模板布局逐项对应");
+                    var at = region.Anchor + new TileId(pair.Key.dq, pair.Key.dr);
+                    int? id = plane.GetTile(at).LandMarkId;
+                    return id.HasValue && LandMarkMgr.Instance.GetById(id.Value).DefineId == pair.Value;
+                }), "作者模板配置的主地标保留原位");
             }
             bool auraValid = true;
             foreach (var tile in plane.Tiles.Values)

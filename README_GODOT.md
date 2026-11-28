@@ -19,6 +19,7 @@
 | [3D 世界探索](scenes/exploration/exploration_world_3d.tscn) | 立体地图、环境光、镜头、地点详情和行程操作 |
 | [2D 地图测试](scenes/exploration/exploration_view.tscn) | 地图、人物名牌、日期、地点详情、缩放和行程操作 |
 | [角色模板编辑器](scenes/templates/character_template_editor.tscn) | 模板库、背包装配、卡库、详情和试战按钮 |
+| [地标编辑器](scenes/landmarks/landmark_editor.tscn) | 从测试首页打开，编辑地标定义、预览 PNG 并导出到世界地图 |
 | [战斗观察器](scenes/battle/battle_observer.tscn) | 两侧储物阵、人物、Buff、待发飞牌、播放控制和战报 |
 | [卡牌详情](scenes/ui/CardTip.tscn) · [Buff 详情](scenes/ui/BuffTip.tscn) | 供各窗口悬浮层实例化的图片、标题、文本和宽度 |
 
@@ -63,6 +64,8 @@
 
 ## 2D 探索试玩
 
+在测试首页选择「地标编辑器」。可以新建草稿，也可以在地标库选择现有定义并复制。填写一个新 ID，导入 PNG，点击「导出新地标」。编辑器把定义写入地图数据目录的 `Data/LandMarkDefines`，新导入的图写入 `src/landmarks`。返回首页后重新进入「2D 地图测试」，有图的地标会在地图格与地点缩略图里显示。想在指定格查看，可填一行 `列,行` 固定坐标，由编辑器校验默认地图能否生成。
+
 用 Godot .NET 打开项目，选中 [exploration_view.tscn](scenes/exploration/exploration_view.tscn) 后按 **F6**。命令行也可从仓库根目录启动：
 
 ```powershell
@@ -88,13 +91,34 @@ godot --path . res://scenes/exploration/exploration_view.tscn -- --exploration
 
 ### 人物外观
 
-模板编辑器的人像右侧可以选部位、换款式、染色、恢复原色，也可以随机组装和预览动作。项目模板可直接预览动作，点「复制后换装」建立个人草稿。人物骨架随模板性别切换。草稿把外观存到 `Presentation.Appearance`，发起试战时将双方外观带入该次输入，重开时读取同一份输入。正式模板导出继续使用原有 NPC 定义格式。
+模板编辑器的人像右侧可以选部位、换款式、染色、恢复原色，也可以随机组装和预览动作。项目模板可直接预览动作，点「复制后换装」建立个人草稿。人物骨架随模板性别切换。外观写进标准的 `NpcDefine.Appearance`，发起试战时冻结双方装配结果，重开时读取同一份输入。
 
 默认男角采用墨髻、玉剑和灰蓝披肩，女角采用绛带高马尾、朱衣和木符。默认部件从 `duel_transition_poses.png` 的两张备招原画拆出。男女骨架、图集和部件目录位于 [Spine 人物资源](assets/art/battle/spine/)。战斗舞台继续决定进退、镜头、命中停顿和特效时点，Spine 4.2 时间线据此驱动人物姿态。两套骨架共用皮肤部件，新款式可用相同插槽名和独立部件 ID 加入目录。非人形模板沿用原展示。
 
-可在 Spine 4.2 中用 Texture Unpacker 拆出 `duel_parts.atlas` 的图片，再用 Import Data 导入 `duel_male.json` 或 `duel_female.json`，并将 Images 路径指向拆图目录。[Spine 官方导入说明](https://esotericsoftware.com/blog/Importing-skeleton-data)
+男女试战骨架使用同一套人形命名。可导出带独立 PNG 的 Spine 4.2 导入副本，作为动作和换装的起点。骨骼名、前后层级与复制步骤见 [试战人形骨架制作说明](tools/spine/README.md)。
 
 ## 运行与操作
+
+Windows 发布使用 Godot .NET 的匹配导出模板。执行 `tools/Export-Windows.ps1 -Godot <Godot 控制台程序> -OutputDirectory <发布目录>`，脚本会把外部 `Data`、`src` 随 `Xianxia.exe` 一起交付。通过 `-- --check-asset-pipeline` 可以在项目和发布程序里检查卡图共享、跨场景卡面复用和回收上限。
+
+### 2D Mod 素材
+
+用 `--asset-mod=example=<包根目录>` 启用测试包，可按顺序传入多个包。包根下的 `src` 放原始图片，`Data/Appearance` 放外观组件声明，`script` 留给脚本扩展。若包内有 `src/cards/jin_fa.png`，会按资源挂载顺序替换同地址卡图。
+
+一份最小的前发声明可以保存在 `Data/Appearance/front.json`。图片位于同一包的 `src/hair/example.png`，尺寸与坐标使用骨架局部单位。后发需要自己的声明和地址。
+
+```json
+{
+  "Slot": "hairFront",
+  "Address": "hair/front/example",
+  "Label": "示例前发",
+  "Rigs": {
+    "male": [{ "Image": "hair/example.png", "X": 0, "Y": 0, "Width": 48, "Height": 40 }]
+  }
+}
+```
+
+在标准 NPC JSON 中可写 `"Appearance": { "HairFront": "hair/front/example[#555555]" }`。只指定前发时，后发在装配时从后发候选独立选取。省略 `[#555555]` 或写成 `[]` 会使用原图颜色。一个插槽需要随动作换图时，在同一组件里为每张图声明对应的 `Key`，例如眼睛的 `base` 和出招时的 `angry`。
 
 在仓库根目录执行：
 
@@ -168,9 +192,9 @@ godot --path . res://scenes/battle/battle_observer.tscn -- --battle-observer "--
 
 | 路径 | 内容 |
 | --- | --- |
-| `assets/art/cards/` | 已确认首批 10 张卡图的项目资源目录 |
+| `src/cards/` | 外置正式卡图目录，含 10 张独立卡图与长剑卡用的玉剑副本 |
 | `assets/art/icons/mana/` | 金、木、水、火、土 5 张灵元图标 |
-| `assets/art/icons/artifacts/jade_sword.png` | 原有玉剑，复用于长剑，原图保留 |
+| `assets/art/icons/artifacts/jade_sword.png` | 原有玉剑供旧素材预览使用，正式长剑映射使用外置副本 |
 | `assets/presentation/card_visuals.json` | Card 定义 ID → 图片/裁切/朝向；状态仍按实例 ID 管理 |
 | `assets/presentation/mana_visuals.json` | 既有元素 ID → 图标；激活亮度由客户端绘制 |
 | `UnityWorld/Docs/art/card_asset_manifest.json` | 全量 88 个 Card 和独立 5 元素台账、提示词、来源及检查状态 |

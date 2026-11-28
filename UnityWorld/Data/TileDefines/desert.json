@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "desert", "DisplayName": "沙漠", "Description": "开发样例：沙漠代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["干旱"], "Color": "#d7b36a", "Symbol": "沙",
+    "Tags": ["干旱"], "Color": "#d7b36a", "Symbol": "沙", "AssetRef": "atlas:desert",
     "InitialAura": {"Jin": 1, "Mu": 0.3, "Shui": 0.3, "Huo": 2.5, "Tu": 1.5}, "AllowFill": true, "FillWeight": 4,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 0.62}, "Temperature": {"Min": 0, "Max": 1},

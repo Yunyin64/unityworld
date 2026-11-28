@@ -31,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Game 用同一份骨架元数据登记内置插槽，控制台无需依赖 Godot。 -->
+    <EmbeddedResource Include="../assets/art/battle/spine/wardrobe.json;../assets/art/battle/spine/duel_male.json;../assets/art/battle/spine/duel_female.json">
+      <LogicalName>UnityWorld.Appearance.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
     <Content Include="Data\**\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

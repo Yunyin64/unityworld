@@ -134,23 +134,4 @@ public static partial class WorldMapGenerator
             return new FillCandidateRecord { TypeId = x.Type.ID, BaseWeight = x.Type.FillWeight, EnvironmentWeight = environment,
                 AdjacencyWeight = x.Weight / (x.Type.FillWeight * environment), FinalWeight = x.Weight };
         }).ToList();
-
-    /// <summary>依地标规则和权重在合格的填充空格散布地标</summary>
-    private static void ScatterLandmarks(Context c)
-    {
-        var definitions = c.Catalog.LandMarks.Values.OrderBy(x => x.ID, StringComparer.Ordinal).Where(x => x.ForcedPositions.Count == 0 && x.SpawnWeight > 0).ToArray();
-        foreach (var cell in c.World.Cells)
-        {
-            if (cell.Source != TileGenerationSource.Fill || cell.LandMarkDefineId != null || c.LandmarkRandom.NextDouble() >= c.Profile.LandmarkDensity) continue;
-            var tile = c.Catalog.Tiles[cell.TileDefineId];
-            var options = definitions.Where(x => (!x.IsSingleton || !c.Singletons.Contains(x.ID))
-                && (x.PlacementTypeIds.Count == 0 || x.PlacementTypeIds.Contains(tile.ID))
-                && (x.PlacementTags.Count == 0 || x.PlacementTags.All(t => tile.Tags.Contains(t)))
-                && x.PlacementExtraTerrains.Count == 0).ToArray();
-            int pick = WeightedIndex(options, x => x.SpawnWeight, c.LandmarkRandom);
-            if (pick < 0) continue;
-            cell.LandMarkDefineId = options[pick].ID;
-            if (options[pick].IsSingleton) c.Singletons.Add(options[pick].ID);
-        }
-    }
 }

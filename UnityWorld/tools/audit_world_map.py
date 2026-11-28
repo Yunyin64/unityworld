@@ -10,6 +10,8 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 KINDS=('TileDefines','RegionDefines','LandMarkDefines','TileModifierDefines')
 LEGACY={0:'plain',1:'hill',2:'mountain',3:'river',4:'ocean',5:'desert',6:'forest'}
+OLD_LANDMARK_FIELDS={'SchemaVersion','SpawnWeight','ForcedPositions','PlacementTypeIds',
+                     'PlacementTags','PlacementExtraTerrains','PlacementTerrains'}
 
 class AuditError(ValueError): pass
 
@@ -69,6 +71,7 @@ def finite_tree(value,path=''):
 
 def audit(root):
     data,locations=load(root)
+    tile_tags={tag for tile in data['TileDefines'].values() for tag in tile.get('Tags',[])}
     def refs(ids,kind,path):
         for ident in ids:
             if ident not in data[kind]: raise AuditError(f'{path}: unknown {kind} ID {ident!r}')
@@ -76,7 +79,7 @@ def audit(root):
         for ident,item in collection.items():
             path=locations[(kind,ident)]+'/'+ident
             finite_tree(item,path)
-            if kind!='TileModifierDefines' and item.get('SchemaVersion')!=2: raise AuditError(f'{path}: SchemaVersion=2 required')
+            if kind in ('TileDefines','RegionDefines') and item.get('SchemaVersion')!=2: raise AuditError(f'{path}: SchemaVersion=2 required')
             if 'PlacementTerrains' in item or 'IsGuaranteed' in item: raise AuditError(f'{path}: legacy fields require migration')
             if kind=='TileDefines':
                 for key in ('AllowedNeighborIds','ForbiddenNeighborIds'): refs(item.get(key,[]),'TileDefines',path+'.'+key)
@@ -84,6 +87,8 @@ def audit(root):
                 if item.get('WaterKind','none') not in ('none','river','lake','ocean'): raise AuditError(f'{path}: invalid WaterKind')
                 if item.get('BlocksAllMovement') and item.get('MovementModes'): raise AuditError(f'{path}: block/movement conflict')
             if kind=='RegionDefines':
+                if type(item.get('AllowInitialLandMarks',True)) is not bool:
+                    raise AuditError(f'{path}.AllowInitialLandMarks: expected boolean')
                 footprint=coords(item.get('TerrainLayout',{}),path+'.TerrainLayout')
                 if not footprint: raise AuditError(f'{path}: empty footprint')
                 lm=coords(item.get('LandMarkLayout',{}),path+'.LandMarkLayout')
@@ -100,12 +105,40 @@ def audit(root):
                     if not 0<=point['Direction']<6: raise AuditError(f'{path}: bad river port direction')
             if kind in ('RegionDefines','LandMarkDefines'):
                 seen=set()
-                for point in item.get('ForcedPositions',[]):
+                placement=item if kind=='RegionDefines' else item.get('InitialPlacement',{})
+                if not isinstance(placement,dict): raise AuditError(f'{path}.InitialPlacement: expected object')
+                for point in placement.get('ForcedPositions',[]):
                     key=(point['Col'],point['Row'])
                     if not (0<=key[0]<200 and 0<=key[1]<200) or key in seen: raise AuditError(f'{path}: invalid or duplicate forced position')
                     seen.add(key)
             if kind=='LandMarkDefines':
-                refs(item.get('PlacementTypeIds',[]),'TileDefines',path+'.PlacementTypeIds')
+                old=OLD_LANDMARK_FIELDS & item.keys()
+                if old: raise AuditError(f'{path}: retired landmark fields {sorted(old)}')
+                if item.get('DrawType','Icon') not in ('Icon','TerrainMask','Shader','Atmosphere','None'):
+                    raise AuditError(f'{path}.DrawType: unknown draw type')
+                if type(item.get('IsHide',False)) is not bool: raise AuditError(f'{path}.IsHide: expected boolean')
+                if not isinstance(placement.get('ExtraCondition',''),str): raise AuditError(f'{path}.ExtraCondition: expected text')
+                chance=placement.get('PerTileChance',0)
+                if type(chance) not in (int,float) or not 0<=chance<=1:
+                    raise AuditError(f'{path}.PerTileChance: expected number in [0,1]')
+                for field in ('MinCount','MaxCount','NeedCount','MinSpacing'):
+                    value=placement.get(field,0)
+                    if type(value) is not int or not 0<=value<=2147483647:
+                        raise AuditError(f'{path}.{field}: expected nonnegative Int32')
+                cap=placement.get('MaxCount',2147483647)
+                if max(placement.get('MinCount',0),placement.get('NeedCount',0))>cap:
+                    raise AuditError(f'{path}: MinCount or NeedCount exceeds MaxCount')
+                if item.get('IsSingleton',False) and (placement.get('NeedCount',0)>1 or len(seen)>1):
+                    raise AuditError(f'{path}: singleton has more than one guarantee or fixed position')
+                refs((value.removeprefix('No:') for value in placement.get('TerrainConditions',[])),
+                     'TileDefines',path+'.TerrainConditions')
+                for value in placement.get('TagConditions',[]):
+                    if value.removeprefix('No:') not in tile_tags: raise AuditError(f'{path}.TagConditions: unknown tag {value!r}')
+                for value in placement.get('LandMarkConditions',[]):
+                    match=re.fullmatch(r'(?:(?:No:)?(?:Near\(([0-9]+)\):)?|After:)([^:()]+)',value)
+                    if not match or match[1] is not None and not 1<=int(match[1])<=2147483647 or match[2]==ident:
+                        raise AuditError(f'{path}.LandMarkConditions: invalid condition {value!r}')
+                    refs([match[2]],'LandMarkDefines',path+'.LandMarkConditions')
                 refs(item.get('ModifierDefineIds',[]),'TileModifierDefines',path+'.ModifierDefineIds')
             if kind=='TileModifierDefines':
                 duration=item.get('Duration',-1)
@@ -124,6 +157,21 @@ def migrate_rows(kind,rows,report,path):
         if kind=='TileModifierDefines':
             report.append(dict(path=loc,action='preserved AuraData as per-second rate; no initial aura conversion'))
             continue
+        if kind=='LandMarkDefines':
+            if not OLD_LANDMARK_FIELDS.intersection(row): continue
+            if 'InitialPlacement' in row: raise AuditError(f'{loc}: mixed new and retired landmark fields')
+            placement={}
+            old_type_ids=row.get('PlacementTypeIds',row.get('PlacementTerrains',[]))
+            if old_type_ids: placement['TerrainConditions']=[map_type(v,loc+'.PlacementTerrains') for v in old_type_ids]
+            if row.get('PlacementTags'): placement['TagConditions']=row['PlacementTags']
+            if row.get('ForcedPositions'): placement['ForcedPositions']=row['ForcedPositions']
+            if row.get('PlacementExtraTerrains'):
+                raise AuditError(f'{loc}: choose a replacement for PlacementExtraTerrains before migration')
+            for field in OLD_LANDMARK_FIELDS: row.pop(field,None)
+            if placement: row['InitialPlacement']=placement
+            row.setdefault('AuraOffset',dict(Jin=0,Mu=0,Shui=0,Huo=0,Tu=0))
+            report.append(dict(path=loc,action='kept fixed sites and site conditions; author first-wave quantity explicitly'))
+            continue
         if row.get('SchemaVersion')==2:
             if 'IsGuaranteed' in row or 'PlacementTerrains' in row: raise AuditError(f'{loc}: mixed new and legacy fields')
             if kind=='RegionDefines' and any(not isinstance(v,str) for v in row.get('TerrainLayout',{}).values()): raise AuditError(f'{loc}: schema 2 contains legacy terrain numbers')
@@ -138,12 +186,6 @@ def migrate_rows(kind,rows,report,path):
             row['MinCount']=1 if row.pop('IsGuaranteed',False) else 0
             row['PlacementTypeIds']=[map_type(v,loc+'.PlacementTerrains') for v in row.pop('PlacementTerrains',[])]
             report.append(dict(path=loc,action='kept exact footprint and landmarks; Width/Height remain metadata; IsGuaranteed -> MinCount',footprint=len(footprint),placementConditions=row['PlacementTypeIds']))
-        elif kind=='LandMarkDefines':
-            if 'PlacementTypeIds' in row: raise AuditError(f'{loc}: mixed new and legacy fields')
-            row['PlacementTypeIds']=[map_type(v,loc+'.PlacementTerrains') for v in row.pop('PlacementTerrains',[])]
-            row.setdefault('PlacementTags',[])
-            row.setdefault('AuraOffset',dict(Jin=0,Mu=0,Shui=0,Huo=0,Tu=0))
-            report.append(dict(path=loc,action='terrain IDs converted; initial offset zero; modifiers preserved as rates'))
         else: raise AuditError(f'{loc}: no legacy converter for {kind}; supply explicit schema 2')
         row['SchemaVersion']=2
     finite_tree(result,path)

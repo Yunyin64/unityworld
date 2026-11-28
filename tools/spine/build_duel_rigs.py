@@ -8,6 +8,8 @@ from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageOps
 
+from duel_humanoid import add_painted_pieces, apply_paint, export_import_copy, standardize, unpack_atlas
+
 
 HAIR = ('jade', 'cinnabar', 'ink', 'braid')
 FACES = ('angular', 'soft', 'slender', 'bronze', 'freckled', 'blush')
@@ -23,7 +25,7 @@ ACCESSORIES = ('diadem', 'ribbon', 'butterfly', 'pin')
 SLOT_BONES = (
     ('hairRear', 'hair'), ('cape', 'cape'), ('pantsBack', 'thighBack'), ('bootBack', 'shinBack'),
     ('pantsFront', 'thighFront'), ('bootFront', 'shinFront'), ('armBack', 'armBack'),
-    ('elbowBack', 'elbowBack'), ('robeTails', 'cloth'), ('neck', 'torso'), ('robe', 'torso'), ('weapon', 'weapon'),
+    ('elbowBack', 'elbowBack'), ('robeTails', 'cloth'), ('robe', 'torso'), ('weapon', 'weapon'),
     ('handBack', 'handBack'), ('armFront', 'armFront'), ('elbowFront', 'elbowFront'), ('handFront', 'handFront'),
     ('face', 'head'), ('eyes', 'head'), ('brows', 'head'), ('mouth', 'head'),
     ('hairFront', 'head'), ('accessory', 'hair'),
@@ -330,7 +332,7 @@ def rig(name, design, reference, pieces):
     identity_boot = 'violet' if female else 'dark'
     identity_accessory = 'ribbon' if female else 'diadem'
 
-    for slot in ('neck', 'handFront', 'handBack', 'elbowBack', 'elbowFront'):
+    for slot in ('handFront', 'handBack', 'elbowBack', 'elbowFront'):
         native('default', slot)
 
     for hair in HAIR:
@@ -440,14 +442,41 @@ def rig(name, design, reference, pieces):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('heads', type=Path)
-    parser.add_argument('clothes', type=Path)
-    parser.add_argument('props', type=Path)
+    parser.add_argument('heads', type=Path, nargs='?')
+    parser.add_argument('clothes', type=Path, nargs='?')
+    parser.add_argument('props', type=Path, nargs='?')
+    parser.add_argument('--from-atlas', type=Path, help='Use the existing published rigs and atlas as the source project.')
     parser.add_argument('--output', type=Path, default=Path('assets/art/battle/spine'))
+    parser.add_argument('--import-copy', type=Path, help='Copy the two rigs and loose parts into a Spine 4.2 import folder.')
+    parser.add_argument('--appearance-report', type=Path, help='Add each tested appearance as a dressed Spine import.')
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=True)
-
     designs = json.loads(Path(__file__).with_name('duel_reference_parts.json').read_text(encoding='utf-8'))
+    if args.from_atlas:
+        if any((args.heads, args.clothes, args.props)):
+            parser.error('--from-atlas already supplies the original wardrobe and animations.')
+        pieces = unpack_atlas(args.from_atlas)
+        rigs = {name: json.loads((args.from_atlas / f'duel_{name}.json').read_text(encoding='utf-8'))
+                for name in ('male', 'female')}
+    else:
+        if not all((args.heads, args.clothes, args.props)):
+            parser.error('Provide --from-atlas or all three original variant sheets.')
+        rigs, pieces = rebuild_original(args, designs)
+
+    add_painted_pieces(pieces, Path(__file__).with_name('art'))
+    for name, result in rigs.items():
+        standardize(result, designs[name])
+        apply_paint(result, pieces, 'cinnabar' if name == 'female' else 'jade')
+
+    args.output.mkdir(parents=True, exist_ok=True)
+    write_atlas(args.output, pieces)
+    for name, result in rigs.items():
+        (args.output / f'duel_{name}.json').write_text(json.dumps(result, separators=(',', ':')) + '\n', encoding='utf-8')
+    if args.import_copy:
+        samples = json.loads(args.appearance_report.read_text(encoding='utf-8'))['samples'] if args.appearance_report else []
+        export_import_copy(args.import_copy, rigs, pieces, samples)
+
+
+def rebuild_original(args, designs):
     with Image.open(designs['source']) as sheet:
         source = sheet.convert('RGBA')
     pieces = {}
@@ -481,10 +510,7 @@ def main():
                 pieces[f'variant_{name}_{slot}_{robe}'] = sleeve
 
     expression_parts(pieces)
-    write_atlas(args.output, pieces)
-    for name in ('male', 'female'):
-        result = rig(name, designs[name], originals[name], pieces)
-        (args.output / f'duel_{name}.json').write_text(json.dumps(result, separators=(',', ':')) + '\n', encoding='utf-8')
+    return {name: rig(name, designs[name], originals[name], pieces) for name in ('male', 'female')}, pieces
 
 
 if __name__ == '__main__':

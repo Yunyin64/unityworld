@@ -126,12 +126,12 @@ public static partial class WorldMapGenerator
                 return Reject("external-port");
         }
         var localSingleton = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var pair in def.LandMarkLayout.OrderBy(x => x.Key.dr).ThenBy(x => x.Key.dq))
+        foreach (var (cell, id) in def.LandMarkPlacements())
         {
-            int i = c.Index(origin + new TileId(pair.Key.dq, pair.Key.dr));
-            if (!indexTypes.ContainsKey(i) || !c.Catalog.LandMarks.TryGetValue(pair.Value, out var landmark)) return Reject("landmark-reference");
-            if (landmark.IsSingleton && (c.Singletons.Contains(pair.Value) || !localSingleton.Add(pair.Value))) return Reject("landmark-singleton");
-            trial.Landmarks.Add((i, pair.Value));
+            int i = c.Index(origin + new TileId(cell.dq, cell.dr));
+            if (!indexTypes.ContainsKey(i) || !c.Catalog.LandMarks.TryGetValue(id, out var landmark)) return Reject("landmark-reference");
+            if (landmark.IsSingleton && (c.Singletons.Contains(id) || !localSingleton.Add(id))) return Reject("landmark-singleton");
+            trial.Landmarks.Add((i, id));
         }
         plan = trial; return true;
     }
@@ -157,8 +157,9 @@ public static partial class WorldMapGenerator
         }
         foreach (var item in plan.Landmarks)
         {
-            c.World.Cells[item.index].LandMarkDefineId = item.define;
-            region.LandMarkCellIndices.Add(item.index);
+            var cell = c.World.Cells[item.index];
+            if (cell.LandMarkDefineId == null) region.LandMarkCellIndices.Add(item.index);
+            cell.AddPlannedLandMark(item.define);
             if (c.Catalog.LandMarks[item.define].IsSingleton) c.Singletons.Add(item.define);
         }
         c.World.Diagnostics.Adjustments.AddRange(plan.Adjustments);
@@ -171,7 +172,7 @@ public static partial class WorldMapGenerator
     private static void UndoRegion(Context c, RegionPlan plan, GeneratedRegion region)
     {
         foreach (int i in region.CellIndices)
-        { var cell = c.World.Cells[i]; cell.TileDefineId = null; cell.RegionIndex = null; cell.LandMarkDefineId = null; cell.Source=default; cell.IsFixed=false; }
+        { var cell = c.World.Cells[i]; cell.TileDefineId = null; cell.RegionIndex = null; cell.ClearPlannedLandMarks(); cell.Source=default; cell.IsFixed=false; }
         foreach (var item in plan.Landmarks) if (c.Catalog.LandMarks[item.define].IsSingleton) c.Singletons.Remove(item.define);
         foreach (var a in plan.Adjustments) c.World.Cells[a.CellIndex].Environment = a.Before.Copy();
         if (plan.Adjustments.Count > 0) c.World.Diagnostics.Adjustments.RemoveRange(c.World.Diagnostics.Adjustments.Count - plan.Adjustments.Count, plan.Adjustments.Count);

@@ -23,6 +23,13 @@ internal sealed class ClientAssetPool : IDisposable
         BucketFor<T>(assetPath).SetRetentionLimit(limit);
     }
 
+    /// <summary>资源更新后废弃旧实例，尚在使用的实例在归还时释放。</summary>
+    internal void Drop<T>(string assetPath) where T : class
+    {
+        if (_buckets.Remove((PoolKey(assetPath), typeof(T)), out var bucket))
+            bucket.Dispose();
+    }
+
     /// <summary>清理空闲实例，退出时尚未归还的实例会在归还时丢弃。</summary>
     public void Dispose()
     {
@@ -36,13 +43,16 @@ internal sealed class ClientAssetPool : IDisposable
     private Bucket<T> BucketFor<T>(string assetPath) where T : class
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        string path = AssetMgr.GetFixedPath(assetPath);
+        string path = PoolKey(assetPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         var key = (path, typeof(T));
         if (!_buckets.TryGetValue(key, out var bucket))
             _buckets.Add(key, bucket = new Bucket<T>());
         return (Bucket<T>)bucket;
     }
+
+    // 资源地址沿用 Core 的 src 别名规则，Godot 控件模板仍可用引擎路径做键。
+    private static string PoolKey(string path) => AssetMgr.NormalizeAddress(path) ?? AssetMgr.GetFixedPath(path);
 
     /// <summary>场景持有租约期间独占该实例，可重复调用 Dispose。</summary>
     internal sealed class Lease<T>(T instance, Action release) : IDisposable where T : class

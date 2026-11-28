@@ -1,4 +1,5 @@
 using UnityWorld.Core;
+using UnityWorld.Game.Data;
 
 namespace UnityWorld.Game.Domain
 {
@@ -30,11 +31,19 @@ namespace UnityWorld.Game.Domain
         public override void OnEntityBorn(BirthContext context)
         {
             var npc = context.MainNpc;
+            var gender = context.GetEmValue<NpcTypes.Gender>("Gender");
+            var npcType = context.GetEmValue<NpcTypes.NpcType>("NpcType", NpcTypes.NpcType.Human);
+            string template = context.GetValue("AppearanceTemplate");
+            string rig = NpcAppearanceCatalog.RigFor(npcType, gender, template, npc.Id);
+            var appearance = (GameDataMgr.Instance?.Appearance ?? NpcAppearanceCatalog.Default).Resolve(
+                rig, context.Get<Dictionary<string, string>>("Appearance"), npc.Id,
+                issue => LogMgr.Instance?.Warn("[NpcAppearance] {0}/{1}：{2}", template, issue.Slot, issue.Message));
+            appearance.Height = npc.Soul.Random(155f, 190f);
 
             var data = new NpcBioData
             {
-                Gender = context.GetEmValue<NpcTypes.Gender>("Gender"),
-                NpcType = context.GetEmValue<NpcTypes.NpcType>("NpcType", NpcTypes.NpcType.Human),
+                Gender = gender,
+                NpcType = npcType,
                 IsAlive = true,
                 AgeAccumulated = 0f,
                 BirthTick = 0,
@@ -45,10 +54,7 @@ namespace UnityWorld.Game.Domain
                     GivenName = context.GetValue("GivenName"),
                     DaoTitle = context.GetValue("DaoTitle"),
                 },
-                AppearanceData = new NpcAppearanceData
-                {
-                    Height = npc.Soul.Random(155f, 190f),
-                },
+                AppearanceData = appearance,
             };
 
             Register(npc, data);

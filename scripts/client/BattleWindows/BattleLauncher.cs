@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xianxia.Client.Battle;
 using Xianxia.Client.UI;
 
@@ -22,7 +23,8 @@ public static class BattleLauncher
     {
         var frozen = input.Copy();
         BattleCaseFactory.Validate(frozen);
-        frozen = BattleCaseFactory.VerifyVersion(frozen, BattleCaseFactory.Fingerprint(dataRoot).Sha256);
+        frozen = BattleCaseFactory.VerifyVersion(frozen, BattleCaseFactory.Fingerprint(dataRoot).Sha256,
+            GameBootstrap.Assets.AppearanceFingerprint(dataRoot));
         var path = BattleCaseInput.Write(frozen, ProjectSettings.GlobalizePath("user://BattleInputs"));
         if (mode == BattleWindowMode.NewWindow)
         {
@@ -60,13 +62,14 @@ public static class BattleLauncher
         args.Add(Path.Combine(Path.GetDirectoryName(inputPath)!, "observer-engine.log"));
         args.Add(scene);
         args.Add("--");
+        args.AddRange(OS.GetCmdlineUserArgs().Where(arg => arg.StartsWith("--asset-mod=", StringComparison.Ordinal)));
         return args;
     }
 
     public static List<string> ObserverArguments(string path, string dataRoot)
     {
         if (!Path.IsPathFullyQualified(path)) throw new ArgumentException("战斗输入需要绝对路径。", nameof(path));
-        var args = ProcessArguments(ObserverScene, path);
+        var args = ProcessArguments(ObserverScene, path, DisplayServer.GetName() == "headless");
         args.Add("--battle-observer");
         args.Add("--observer-case-input=" + path);
         args.Add("--observer-data-root=" + Path.GetFullPath(dataRoot));

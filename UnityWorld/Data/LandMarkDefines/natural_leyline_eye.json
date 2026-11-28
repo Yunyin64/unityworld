@@ -1,8 +1,42 @@
 [
   {
-    "ID": "natural_leyline_eye", "DisplayName": "灵脉眼", "IsNatural": true, "IsSingleton": false, "SpawnWeight": 2.0,
-    "PlacementExtraTerrains": [], "ModifierDefineIds": ["aura_leyline_spring"], "Tags": ["圣地", "灵脉", "修炼"],
-    "SchemaVersion": 2, "PlacementTypeIds": [], "PlacementTags": [],
-    "AuraOffset": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}
+    "ImagePath": "landmarks/natural_leyline_eye.png",
+    "InitialPlacement": {
+      "ForcedPositions": [],
+      "PerTileChance": 0.003,
+      "MinCount": 500,
+      "NeedCount": 3,
+      "MinSpacing": 8,
+      "TerrainConditions": [
+        "forest",
+        "forest_mountain",
+        "mountain",
+        "hill"
+      ],
+      "LandMarkConditions": [],
+      "TagConditions": [],
+      "ExtraCondition": ""
+    },
+    "DrawType": "Icon",
+    "IsHide": false,
+    "IsNatural": true,
+    "IsSingleton": false,
+    "ModifierDefineIds": [
+      "aura_leyline_spring"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    },
+    "ID": "natural_leyline_eye",
+    "DisplayName": "灵脉眼",
+    "Tags": [
+      "圣地",
+      "灵脉",
+      "修炼"
+    ]
   }
 ]

@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "cloud_ferry",
+    "DisplayName": "云渡码头",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/cloud_ferry.png",
+    "Tags": [
+      "渡口",
+      "交通"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

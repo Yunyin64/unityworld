@@ -63,36 +63,24 @@ public class LandMarkMgr : IDomainMgrBase
         return landmark;
     }
 
-    /// <summary>
-    /// 独立刷新扩展入口：按地标定义的类型、标签、占位与唯一性筛选候选，不要求来自地区模板。
-    /// 后续可在这里之上配置“指定类型上每次刷新 min..max 个”、随机选择、周期和失败策略，
-    /// 选定后逐个调用 Place；不要调用创世阶段或修改原初快照。刷新不以 SpawnWeight 判断资格。
-    /// 创世随机散布仍由地图生成器执行，保留其只使用 Fill 空格的规则。
-    /// </summary>
+    /// <summary>查找运行时可供调用方选址的空格，检查定义、占位和全局唯一性。</summary>
     public IReadOnlyList<Tile> GetIndependentSpawnCandidates(Plane plane, string defineId)
     {
         var define = Resolve(defineId);
         if (define == null || (define.IsSingleton && HasInstance(defineId))) return Array.Empty<Tile>();
-        return plane.Tiles.Values.Where(tile =>
-        {
-            if (tile.LandMarkId.HasValue) return false;
-            var type = _catalog != null ? _catalog.Tiles.GetValueOrDefault(tile.TypeId) : TileDefineMgr.Instance?.Get(tile.TypeId);
-            if (type == null || (define.PlacementTypeIds.Count > 0 && !define.PlacementTypeIds.Contains(type.ID))
-                || !define.PlacementTags.All(type.Tags.Contains)) return false;
-            if (define.PlacementExtraTerrains.Count == 0) return true;
-            var region = tile.RegionId.HasValue ? RegionMgr.Instance?.GetById(tile.RegionId.Value) : null;
-            return region != null && _catalog != null && _catalog.Regions.TryGetValue(region.DefineId, out var definition)
-                && define.PlacementExtraTerrains.All(definition.ExtraTerrainIds.Contains);
-        }).OrderBy(tile => tile.Id.R).ThenBy(tile => tile.Id.Q).ToArray();
+        return plane.Tiles.Values.Where(tile => !tile.LandMarkId.HasValue &&
+                (_catalog != null ? _catalog.Tiles.ContainsKey(tile.TypeId) : TileDefineMgr.Instance?.Get(tile.TypeId) != null))
+            .OrderBy(tile => tile.Id.R).ThenBy(tile => tile.Id.Q).ToArray();
     }
 
     /// <summary>在候选格构建地标。只有创世自然阶段立即偏移，其余阶段挂每秒速率。</summary>
-    internal LandMark Prepare(Plane plane, Tile tile, string defineId, LandMarkPlacementPhase phase = LandMarkPlacementPhase.Dynamic)
+    internal LandMark Prepare(Plane plane, Tile tile, string defineId, LandMarkPlacementPhase phase = LandMarkPlacementPhase.Dynamic,
+        bool fromLandMarkGroup = false)
     {
         var define = Resolve(defineId) ?? throw new InvalidDataException($"未知地标 {defineId}");
         if (phase == LandMarkPlacementPhase.CreationNatural && (!define.IsNatural || AuraDaoMgr.Instance?.HasSnapshot(plane.Id) == true))
             throw new InvalidOperationException("创世自然地标必须在原初快照之前生成。");
-        if (tile.LandMarkId.HasValue) throw new InvalidOperationException($"地块 {tile.Id} 已有地标。");
+        if (!fromLandMarkGroup && tile.LandMarkId.HasValue) throw new InvalidOperationException($"地块 {tile.Id} 已有地标。");
         if (define.IsSingleton && HasInstance(defineId)) throw new InvalidOperationException($"单例地标 {defineId} 已存在。");
         var definitions = define.ModifierDefineIds.Select(id => ResolveModifier(id)
             ?? throw new InvalidDataException($"地标 {defineId} 缺失修正引用 {id}")).ToArray();
@@ -103,7 +91,7 @@ public class LandMarkMgr : IDomainMgrBase
             modifiers.Add(new TileModifier("landmark_aura_offset", sourceId, define.AuraOffset));
         var landmark = new LandMark(instanceId, defineId, tile.Id, plane.Id);
         tile.Modifiers.AddRange(modifiers);
-        tile.LandMarkId = instanceId;
+        tile.AddLandMark(instanceId);
         if (phase == LandMarkPlacementPhase.CreationNatural) tile.CurrentAura.AddFrom(define.AuraOffset);
         return landmark;
     }
@@ -126,7 +114,7 @@ public class LandMarkMgr : IDomainMgrBase
         if (_tiles.Remove(id, out var tile))
         {
             tile.RemoveModifiersFromSource(id.ToString(CultureInfo.InvariantCulture));
-            if (tile.LandMarkId == id) tile.LandMarkId = null;
+            tile.RemoveLandMark(id);
             if (tile.RegionId.HasValue) RegionMgr.Instance?.GetById(tile.RegionId.Value)?.RemoveLandMark(id);
         }
         landmark.IsActive = false;
@@ -141,6 +129,8 @@ public class LandMarkMgr : IDomainMgrBase
     public bool HasInstance(string defineId) => _allLandMarks.Values.Any(lm => lm.DefineId == defineId && lm.IsActive);
     /// <summary>按实例编号查询地标</summary>
     public LandMark GetById(int id) => _allLandMarks.GetValueOrDefault(id);
+    /// <summary>地标是否在玩家和 NPC 的普通观察中隐藏。</summary>
+    internal bool IsHidden(int id) => GetById(id) is { } landmark && Resolve(landmark.DefineId)?.IsHide == true;
     /// <summary>枚举指定位面的已发布地标</summary>
     public IEnumerable<LandMark> GetByPlane(int planeId) => _allLandMarks.Values.Where(lm => lm.PlaneId == planeId);
     /// <summary>筛出指定位面的天然地标</summary>

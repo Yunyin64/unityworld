@@ -95,6 +95,9 @@ public sealed record BattleCase
     public int TicksPerRow { get; init; } = 10;
     /// <summary>Template assembly order, preserved on replay.</summary>
     public IReadOnlyList<BattleParticipant> Participants { get; init; } = Array.Empty<BattleParticipant>();
+    /// <summary>冻结试战使用的外观资源版本。旧案例没有该字段。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? AppearanceFingerprint { get; init; }
     /// <summary>Expected or verified aggregate JSON/Lua SHA256; empty only before first initialization.</summary>
     public string DataFingerprint { get; init; } = "";
     /// <summary>Expected or verified core assembly module identity.</summary>
@@ -178,13 +181,20 @@ public sealed record BattleDataFingerprint(string Sha256, IReadOnlyList<DataFile
 /// <summary>Shared source-identity and exact-order assembly adapter for all observer hosts.</summary>
 public static class BattleCaseFactory
 {
-    public static BattleCase VerifyVersion(BattleCase input, string fingerprint)
+    public static BattleCase VerifyVersion(BattleCase input, string fingerprint, string? appearanceFingerprint = null)
     {
         if (input.DataFingerprint.Length != 0 && input.DataFingerprint != fingerprint)
             throw new InvalidOperationException($"数据版本已变化，已停止重放。期待 {input.DataFingerprint}；实际 {fingerprint}。");
         if (input.CoreVersion.Length != 0 && input.CoreVersion != CoreVersion)
             throw new InvalidOperationException($"核心版本已变化，已停止重放。期待 {input.CoreVersion}；实际 {CoreVersion}。");
-        return input with { DataFingerprint = fingerprint, CoreVersion = CoreVersion };
+        if (appearanceFingerprint != null && input.AppearanceFingerprint is { } expectedAppearance &&
+            expectedAppearance != appearanceFingerprint)
+            throw new InvalidOperationException("外观资源版本已变化，请刷新后重新发起试战。");
+        return input with
+        {
+            DataFingerprint = fingerprint, CoreVersion = CoreVersion,
+            AppearanceFingerprint = appearanceFingerprint ?? input.AppearanceFingerprint
+        };
     }
     /// <summary>Hash all JSON/Lua files under dataRoot/Data, including their relative path names.</summary>
     public static BattleDataFingerprint Fingerprint(string dataRoot)
@@ -235,7 +245,7 @@ public static class BattleCaseFactory
     }
 
     // Called only after WorldMgr.Initialize -> Start. Assembly order matches the original console.
-    internal static CombatScene Assemble(BattleCase input)
+    internal static CombatScene Assemble(BattleCase input, out BattleCase assembled)
     {
         var participants = input.Participants.Select(p =>
         {
@@ -243,10 +253,20 @@ public static class BattleCaseFactory
                 ? BattleTemplateSnapshot.Copy(p.Definition ?? throw new InvalidDataException("个人快照定义缺失。"))
                 : NpcDefineMgr.Instance.Get(p.TemplateId)
                     ?? throw new InvalidDataException($"NPC 模板不存在：{p.TemplateId}。");
-            return (NpcMgr.Instance.Assemble(definition), Enum.Parse<CombatTeam>(p.Team));
+            string rig = NpcAppearanceCatalog.RigFor(definition.NpcType, definition.Gender, definition.ID, 0);
+            var frozen = p.Appearance?.ToConfiguration(rig);
+            if (frozen != null && definition.Appearance != null)
+                foreach (var (slot, value) in definition.Appearance)
+                    frozen.TryAdd(slot, value);
+            return (NpcMgr.Instance.Assemble(definition, frozen), Enum.Parse<CombatTeam>(p.Team));
         }).ToArray();
         var scene = new CombatScene { TicksPerRow = input.TicksPerRow };
         scene.Init(input.CombatSeed, participants, input.MaxTicks);
+        assembled = input with
+        {
+            Participants = Array.AsReadOnly(input.Participants.Select((participant, index) =>
+                participant with { Appearance = BattleActorLook.FromData(participants[index].Item1.AppearanceData) }).ToArray())
+        };
         return scene;
     }
 }

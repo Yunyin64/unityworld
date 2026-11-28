@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "ocean", "DisplayName": "东海", "Description": "开发样例：东海代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["水系"], "Color": "#356a97", "Symbol": "东",
+    "Tags": ["水系"], "Color": "#356a97", "Symbol": "东", "AssetRef": "atlas:ocean",
     "InitialAura": {"Jin": 0.5, "Mu": 0.8, "Shui": 4, "Huo": 0.3, "Tu": 0.5}, "AllowFill": true, "FillWeight": 8,
     "Environment": {
       "Elevation": {"Min": 0, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 1},

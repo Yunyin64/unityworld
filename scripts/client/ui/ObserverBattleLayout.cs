@@ -173,20 +173,8 @@ internal sealed class ObserverBattleLayout
     private void LoadAppearances(BattleCase input, string dataRoot)
     {
         _appearanceCase = input;
-        var looks = new Dictionary<string, BattleActorLook?>(StringComparer.Ordinal);
-        TemplateCatalog? catalog = null;
-        try
-        {
-            if (input.Participants.Any(p => p.Appearance == null && p.Definition == null))
-                catalog = TemplateCatalog.Load(dataRoot);
-        }
-        catch (Exception error) { GD.PushWarning("无法读取项目人物外观来源。" + error.Message); }
-        foreach (var participant in input.Participants)
-        {
-            var definition = participant.Definition ?? catalog?.GetNpc(participant.TemplateId);
-            var look = definition == null ? participant.Appearance : DuelWardrobe.For(definition, participant.TemplateId, participant.Appearance);
-            looks[participant.Team] = look;
-        }
-        Stage.SetAppearances(looks);
+        Stage.SetAppearances(input.Participants.GroupBy(participant => participant.Team, StringComparer.Ordinal)
+            .ToDictionary(team => team.Key, team => team.Last().Appearance,
+            StringComparer.Ordinal), GameBootstrap.Assets.Appearance(dataRoot));
     }
 }

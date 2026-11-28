@@ -24,7 +24,10 @@
       "0,5": "hill"
     },
     "LandMarkLayout": {
-      "0,0": "natural_stone_gate", "1,0": "building_old_observatory"
+      "0,0": "natural_stone_gate", "1,0": "building_old_observatory",
+      "-2,-2": "sect_archive",
+      "1,1": "sword_practice_ground",
+      "-2,3": "array_altar"
     },
     "ExtraTerrainIds": [], "AuraProfile": {"Jin": 0, "Mu": 0, "Shui": 0, "Huo": 0, "Tu": 0}, "Tags": ["开发样例", "中国地貌参考"],
     "AnchorEnvironment": {

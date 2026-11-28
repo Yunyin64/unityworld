@@ -9,7 +9,7 @@ namespace Xianxia.Client.UI;
 /// <summary>客户端图片映射；只按定义或元素查图，不持有战斗对象。</summary>
 public sealed class ObserverArtCatalog
 {
-    private readonly Dictionary<string, Texture2D> _cards = new();
+    private readonly Dictionary<string, (string Path, Rect2? Crop)> _cards = new();
     private readonly Dictionary<string, Texture2D> _mana = new();
     private readonly Dictionary<string, string> _casts = new();
     private readonly HashSet<string> _missing = new();
@@ -18,8 +18,15 @@ public sealed class ObserverArtCatalog
     /// <summary>加载客户端映射，错误只影响图片，不影响模拟。</summary>
     public ObserverArtCatalog()
     {
-        Load("res://assets/presentation/card_visuals.json", "cards", _cards, _transposed, _casts);
-        Load("res://assets/presentation/mana_visuals.json", "elements", _mana, null);
+        Load("res://assets/presentation/card_visuals.json", "cards",
+            (id, address, crop) => _cards.Add(id, (address, crop)), _transposed, _casts);
+        Load("res://assets/presentation/mana_visuals.json", "elements", (id, address, crop) =>
+        {
+            if (!ResourceLoader.Exists(address)) return;
+            var texture = GD.Load<Texture2D>(address);
+            if (texture != null)
+                _mana[id] = crop is { } rect ? new AtlasTexture { Atlas = texture, Region = rect } : texture;
+        });
     }
 
     internal static string CardName(string? name, string? defineId) =>
@@ -32,7 +39,13 @@ public sealed class ObserverArtCatalog
     };
 
     /// <summary>返回卡图，缺图返回空并保留文字回退。</summary>
-    public Texture2D? Card(string id) => Find(_cards, "card", id);
+    public Texture2D? Card(string id)
+    {
+        if (_cards.TryGetValue(id, out var card) && GameBootstrap.Assets.Texture(card.Path, card.Crop) is { } texture)
+            return texture;
+        if (_missing.Add("card:" + id)) GD.Print($"[ObserverArt] 缺图，使用名称回退：card/{id} ({card.Path})");
+        return null;
+    }
 
     /// <summary>映射指定的显示转置仅影响绘制，不改原图。</summary>
     public bool CardTranspose(string id) => _transposed.Contains(id);
@@ -68,7 +81,7 @@ public sealed class ObserverArtCatalog
         return null;
     }
 
-    private static void Load(string path, string key, Dictionary<string, Texture2D> target, HashSet<string>? transposed,
+    private static void Load(string path, string key, Action<string, string, Rect2?> add, HashSet<string>? transposed = null,
         Dictionary<string, string>? casts = null)
     {
         if (!Godot.FileAccess.FileExists(path))
@@ -87,14 +100,12 @@ public sealed class ObserverArtCatalog
                     casts[property.Name] = element;
                 if (!item.TryGetProperty("texture", out var texturePath) || texturePath.ValueKind != JsonValueKind.String) continue;
                 var resourcePath = texturePath.GetString()!;
-                if (!ResourceLoader.Exists(resourcePath)) continue;
-                Texture2D texture = GD.Load<Texture2D>(resourcePath);
+                Rect2? crop = null;
                 if (item.TryGetProperty("region", out var region) && region.ValueKind == JsonValueKind.Array && region.GetArrayLength() == 4)
-                    texture = new AtlasTexture { Atlas = texture, Region = new Rect2(region[0].GetSingle(), region[1].GetSingle(), region[2].GetSingle(), region[3].GetSingle()) };
-                target[property.Name] = texture;
+                    crop = new Rect2(region[0].GetSingle(), region[1].GetSingle(), region[2].GetSingle(), region[3].GetSingle());
+                add(property.Name, resourcePath, crop);
                 if (item.TryGetProperty("transpose", out var flip) && flip.ValueKind == JsonValueKind.True) transposed?.Add(property.Name);
             }
-            GD.Print($"[ObserverArt] {key}: {target.Count} 张图片已加载");
         }
         catch (Exception exception) { GD.PushWarning($"[ObserverArt] {path}: {exception.Message}"); }
     }

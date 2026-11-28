@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "sect_archive",
+    "DisplayName": "藏经阁",
+    "IsNatural": false,
+    "IsSingleton": false,
+    "ImagePath": "landmarks/sect_archive.png",
+    "Tags": [
+      "宗门",
+      "典籍"
+    ],
+    "AuraOffset": {
+      "Jin": 0,
+      "Mu": 0,
+      "Shui": 0,
+      "Huo": 0,
+      "Tu": 0
+    }
+  }
+]

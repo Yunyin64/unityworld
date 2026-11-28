@@ -1,7 +1,7 @@
 [
   {
     "SchemaVersion": 2, "ID": "snow_mountain", "DisplayName": "雪山", "Description": "开发样例：雪山代表一片地域，包含格内小尺度景观；不等同真实中国位置。",
-    "Tags": ["山类", "寒冷"], "Color": "#d9e2e0", "Symbol": "雪",
+    "Tags": ["山类", "寒冷"], "Color": "#d9e2e0", "Symbol": "雪", "AssetRef": "atlas:snow_mountain",
     "InitialAura": {"Jin": 1.8, "Mu": 0.2, "Shui": 2, "Huo": 0.1, "Tu": 1.4}, "AllowFill": true, "FillWeight": 2,
     "Environment": {
       "Elevation": {"Min": 0.5, "Max": 1}, "Moisture": {"Min": 0, "Max": 1}, "Temperature": {"Min": 0, "Max": 0.47},

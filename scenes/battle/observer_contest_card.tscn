@@ -2,7 +2,6 @@
 
 [ext_resource type="Theme" path="res://scenes/battle/observer_theme.tres" id="theme"]
 [ext_resource type="Script" path="res://scripts/client/ui/ObserverContestCard.cs" id="card"]
-[ext_resource type="Texture2D" path="res://assets/art/cards/card_jin_slash.png" id="preview"]
 
 [sub_resource type="StyleBoxFlat" id="Face"]
 bg_color = Color(0.062745, 0.12549, 0.172549, 0.96)
@@ -80,7 +79,6 @@ offset_top = 4.0
 offset_right = -4.0
 offset_bottom = -4.0
 mouse_filter = 2
-texture = ExtResource("preview")
 expand_mode = 1
 stretch_mode = 5
 
